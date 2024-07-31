@@ -26,7 +26,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 public class ClientAttachmentTest implements ClientModInitializer {
 	public static final RegistryEntryAttachment<Block, Boolean> BASED =
-			RegistryEntryAttachment.boolBuilder(Registries.BLOCK, new Identifier("quilt", "based"))
+			RegistryEntryAttachment.boolBuilder(Registries.BLOCK, Identifier.of("quilt", "based"))
 					.side(RegistryEntryAttachment.Side.CLIENT).build();
 
 	@Override

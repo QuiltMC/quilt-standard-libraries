@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
 
 import org.quiltmc.config.api.ReflectiveConfig;
@@ -33,29 +34,29 @@ public class RegistryConfig extends ReflectiveConfig {
 
 	public static class RegistrySync extends Section {
 		@Comment("""
-		Mod protocol is a feature allowing you to prevent clients with mismatched settings to join.
-		Client with mismatched values won't be able to connect to servers having this enabled.
-		It should be used only for non-vanilla compatible modpacks!
-		Protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.
-		""")
-		public final TrackedValue<Integer> mod_protocol_version = value(-1);
-		@Comment("Protocol id. It should be different for every modpack, to prevent joining with mismatched mods.")
-		public final TrackedValue<String> mod_protocol_id = value("my_quilt_modpack");
-		@Comment("A mod protocol name. Used for easier identification. Doesn't effect functionality")
-		public final TrackedValue<String> mod_protocol_name = value("My Quilt Modpack");
+				The modpack protocol is a feature allowing you to prevent clients with mismatched settings from joining.
+				It can be used to require a specific version of a specific Quilt modpack.
+
+				Modpack protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.
+				""")
+		public final TrackedValue<Integer> modpack_protocol_version = value(-1);
+		@Comment("Modpack protocol id. It should be different for every modpack, to prevent joining with mismatched mods.")
+		public final TrackedValue<String> modpack_protocol_id = value("my_quilt_modpack");
+		@Comment("A modpack protocol name. Used for easier identification. Doesn't effect functionality")
+		public final TrackedValue<String> modpack_protocol_name = value("My Quilt Modpack");
 
 
 		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> missing_registry_sync_message = value(Text.Serializer.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
+		public final TrackedValue<String> missing_registry_sync_message = value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
 				Unsupported (vanilla?) client!
-				This server requires modded client to join!
-				""")));
+				This server requires a modded client to join!
+				"""), DynamicRegistryManager.EMPTY));
 
 		@Comment("Top part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> mismatched_entries_top_message = value(Text.Serializer.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
+		public final TrackedValue<String> mismatched_entries_top_message = value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
 				Failed to synchronize client with the server!
 				This can happen when client's and server's mods don't match.
-				""")));
+				"""), DynamicRegistryManager.EMPTY));
 
 		@Comment("Bottom part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
 		public final TrackedValue<String> mismatched_entries_bottom_message = value("");

@@ -34,19 +34,7 @@ import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 @ClientOnly
 @Mixin(WorldLoader.class)
-public class WorldLoaderMixin {
-	@ModifyArg(
-			method = "load",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/ServerReloadableResources;loadResources(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/DynamicRegistryManager$Frozen;Lnet/minecraft/feature_flags/FeatureFlagBitSet;Lnet/minecraft/server/command/CommandManager$RegistrationEnvironment;ILjava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
-			),
-			index = 1
-	)
-	private static DynamicRegistryManager.Frozen onLoad(DynamicRegistryManager.Frozen registry) {
-		ClientTagRegistryManager.applyAll(registry, ClientRegistryStatus.LOCAL);
-		return registry;
-	}
+public abstract class WorldLoaderMixin {
 
 	@Inject(
 			method = "load",

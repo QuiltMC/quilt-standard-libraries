@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.test.client;
 
+import java.util.Optional;
 import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +24,18 @@ import org.jetbrains.annotations.NotNull;
 import com.mojang.blaze3d.texture.NativeImage;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.resource.PackPosition;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.resource.pack.PackLocationInfo;
+import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.PackSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
+import org.quiltmc.qsl.resource.loader.api.InMemoryPack;
+import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
 public class ResourcePackProfileProviderTestMod implements ClientModInitializer {
@@ -40,30 +43,25 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerPackProfileProvider((profileAdder) -> {
 			var pack = new TestPack();
-			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, pack.getDisplayName(), false, name -> pack, ResourceType.CLIENT_RESOURCES,
-					ResourcePackProfile.InsertionPosition.TOP,
-					new ResourcePackSource() {
-						@Override
-						public Text decorate(Text name) {
-							return name.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY));
-						}
-
-						@Override
-						public boolean shouldAddAutomatically() {
-							return false;
-						}
-					}));
+			profileAdder.accept(PackProfile.of(
+					pack.getLocationInfo(),
+					QuiltPackProfile.wrapToFactory(pack),
+					ResourceType.CLIENT_RESOURCES,
+					new PackPosition(
+						true,
+						PackProfile.InsertionPosition.TOP,
+						true
+					)));
 		});
 	}
 
-	static class TestPack extends InMemoryResourcePack {
-		private static final Identifier DIRT_IDENTIFIER = new Identifier("textures/block/dirt.png");
+	static class TestPack extends InMemoryPack {
+		private static final Identifier DIRT_IDENTIFIER = Identifier.ofDefault("textures/block/dirt.png");
 		private final Random random = new Random();
 
-		public TestPack() {
+		TestPack() {
 			this.putText("pack.mcmeta", String.format("""
 							{"pack":{"pack_format":%d,"description":"Just testing."}}
 							""",
@@ -87,6 +85,16 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			}
 
 			return image;
+		}
+
+		@Override
+		public PackLocationInfo getLocationInfo() {
+			return new PackLocationInfo(
+				PACK_NAME,
+				this.getDisplayName(),
+				PackSource.PACK_SOURCE_BUILTIN,
+				Optional.empty()
+			);
 		}
 
 		@Override

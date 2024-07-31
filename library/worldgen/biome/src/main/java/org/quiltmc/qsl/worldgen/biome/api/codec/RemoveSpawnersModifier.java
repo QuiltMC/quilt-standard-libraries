@@ -46,7 +46,7 @@ public record RemoveSpawnersModifier(
 		Set<Identifier> entityTypes,
 		Set<SpawnGroup> groups
 ) implements BiomeModifier {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "remove_spawners");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),
 			CodecHelpers.listOrValue(Identifier.CODEC).xmap(Set::copyOf, List::copyOf).fieldOf("entity_types").forGetter(RemoveSpawnersModifier::entityTypes),

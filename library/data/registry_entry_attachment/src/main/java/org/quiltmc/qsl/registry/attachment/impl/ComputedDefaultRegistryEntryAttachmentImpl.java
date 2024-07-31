@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -33,8 +35,8 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 
 	private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 
-	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider) {
-		super(registry, id, valueClass, codec, side);
+	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider) {
+		super(registry, id, valueClass, codec, packetCodec, side);
 		this.defaultValueProvider = defaultValueProvider;
 	}
 

@@ -31,7 +31,7 @@ public final class QuiltStatusEffectInternals {
 	public static final String NAMESPACE = "quilt_status_effect";
 
 	public static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 
 	public static final StatusEffectRemovalReason UNKNOWN_REASON = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("unknown"));

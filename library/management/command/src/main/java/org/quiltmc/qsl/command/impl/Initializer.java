@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.command.impl;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
+import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import net.minecraft.util.Identifier;
 
@@ -34,7 +34,7 @@ public final class Initializer implements ModInitializer {
 	public static final String NAMESPACE = "quilt_command";
 
 	public static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 
 	private static final Logger LOGGER = LogUtils.getLogger();

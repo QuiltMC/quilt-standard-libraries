@@ -55,7 +55,7 @@ public interface EntityPart<E extends Entity> {
 			double entityPartY = ownerY + MathHelper.lerp(tickDelta, entityPart.lastRenderY, entityPart.getY());
 			double entityPartZ = ownerZ + MathHelper.lerp(tickDelta, entityPart.lastRenderZ, entityPart.getZ());
 			matrices.translate(entityPartX, entityPartY, entityPartZ);
-			WorldRenderer.drawBox(matrices, vertices, entityPart.getBoundingBox().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
+			WorldRenderer.drawBox(matrices, vertices, entityPart.getVisibilityBoundingBox().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
 			matrices.pop();
 		}
 	}

@@ -25,6 +25,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(targets = {"net.minecraft.screen.LoomScreenHandler$C_ntobwfpp"})
@@ -39,6 +40,7 @@ public class LoomOutputSlotMixin extends Slot {
 				slot,
 				amount,
 				null,
+				RecipeRemainderLocation.LOOM_DYE,
 				player
 		);
 

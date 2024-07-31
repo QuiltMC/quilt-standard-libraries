@@ -3,7 +3,6 @@
   "package": "org.quiltmc.qsl.chat.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "client.ClientPlayNetworkHandlerAccessor",
     "client.ClientPlayNetworkHandlerMixin"
   ],
   "mixins": [

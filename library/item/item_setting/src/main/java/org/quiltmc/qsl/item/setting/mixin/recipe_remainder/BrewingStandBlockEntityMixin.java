@@ -28,6 +28,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(BrewingStandBlockEntity.class)
@@ -44,6 +45,7 @@ public class BrewingStandBlockEntityMixin {
 				ingredient,
 				amount,
 				null,
+				RecipeRemainderLocation.POTION_ADDITION,
 				inventory,
 				INGREDIENT_SLOT,
 				world,

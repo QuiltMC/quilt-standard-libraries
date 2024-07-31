@@ -48,7 +48,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	private static final TagKey<Greetings> GREETING_TEST_TAG = TagKey.of(Greetings.REGISTRY_KEY, id("test_tag"));
 
 	public static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 
 	@Override
@@ -72,8 +72,8 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetSynced(QuiltTestContext ctx) {
 		ctx.succeedIf(() -> ctx.assertTrue(
-				DynamicRegistrySync.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
-				"Modded registry key should appear in the list of synced dynamic registries"
+			DynamicRegistrySync.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
+			"Modded registry key should appear in the list of synced dynamic registries"
 		));
 	}
 

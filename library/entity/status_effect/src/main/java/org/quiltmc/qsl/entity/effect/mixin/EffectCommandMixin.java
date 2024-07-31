@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.server.command.EffectCommand;
+import net.minecraft.registry.Holder;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 
@@ -40,10 +41,10 @@ public abstract class EffectCommandMixin {
 			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/registry/Holder;)I",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/entity/effect/StatusEffect;)Z"
+					target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/registry/Holder;)Z"
 			)
 	)
-	private static boolean quilt$addRemovalReason(LivingEntity instance, StatusEffect type) {
-		return instance.removeStatusEffect(type, StatusEffectRemovalReason.COMMAND_ONE);
+	private static boolean quilt$addRemovalReason(LivingEntity instance, Holder<StatusEffect> type) {
+		return instance.removeStatusEffect(type.value(), StatusEffectRemovalReason.COMMAND_ONE);
 	}
 }

@@ -24,6 +24,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -107,7 +108,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @param group the group of the recipe
 	 * @return the shapeless crafting recipe
 	 */
-	public ShapelessRecipe build(Identifier id, String group) {
+	public RecipeHolder<ShapelessRecipe> build(Identifier id, String group) {
 		this.checkOutputItem();
 
 		if (this.ingredients.size() == 0) throw new IllegalStateException("Cannot build a recipe without ingredients.");
@@ -120,6 +121,6 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 			i++;
 		}
 
-		return new ShapelessRecipe(id, group, this.category, this.output, ingredients);
+		return new RecipeHolder<>(id, new ShapelessRecipe(group, this.category, this.output, ingredients));
 	}
 }

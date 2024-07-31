@@ -47,12 +47,12 @@ public abstract class MinecraftServerMixin {
 	public abstract DynamicRegistryManager.Frozen getRegistryManager();
 
 	@Inject(
-			method = "method_29437(Lnet/minecraft/registry/DynamicRegistryManager$Frozen;Lcom/google/common/collect/ImmutableList;)Ljava/util/concurrent/CompletionStage;",
+			method = "method_29437",
 			at = @At("RETURN"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onReloadResourcesStart(
-			DynamicRegistryManager.Frozen frozen, ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
+			ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
 			AutoCloseableResourceManager currentResourceManager
 	) {
 		ResourceLoaderEventContextsImpl.server = new WeakReference<>((MinecraftServer) (Object) this);

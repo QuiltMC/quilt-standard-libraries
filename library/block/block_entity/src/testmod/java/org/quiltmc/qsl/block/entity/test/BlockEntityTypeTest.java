@@ -61,7 +61,7 @@ public class BlockEntityTypeTest implements ModInitializer {
 	}
 
 	private static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 
 	private static <B extends Block> B register(Identifier id, B block) {

@@ -22,9 +22,10 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -46,7 +47,7 @@ public final class ClientTooltipTestMod implements ItemTooltipCallback, TooltipC
 	}
 
 	@Override
-	public void onTooltipRequest(ItemStack stack, @Nullable PlayerEntity player, TooltipContext context, List<Text> lines) {
+	public void onTooltipRequest(ItemStack stack, @Nullable PlayerEntity player, Item.TooltipContext context, TooltipConfig config, List<Text> lines) {
 		lines.add(Text.literal("Fancy tooltips").formatted(Formatting.LIGHT_PURPLE));
 	}
 }

@@ -12,12 +12,20 @@ qslModule {
 			api("qsl_base")
 			testmodOnly("lifecycle_events")
 		}
+		gui {
+			impl("screen")
+		}
+	}
+	entrypoints {
+		client_events {
+			values = ["org.quiltmc.qsl.resource.loader.impl.client.PackScreenTooltips"]
+		}
 	}
 	accessWidener()
 	injectedInterface("net/minecraft/class_3262") {
-		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePack"]
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltPack"]
 	}
 	injectedInterface("net/minecraft/class_3288") {
-		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePackProfile"]
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltPackProfile"]
 	}
 }

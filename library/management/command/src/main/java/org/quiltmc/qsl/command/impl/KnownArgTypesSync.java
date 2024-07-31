@@ -21,15 +21,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
+import org.quiltmc.qsl.networking.api.server.ServerLoginConnectionEvents;
+import org.quiltmc.qsl.networking.api.server.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 
 @ApiStatus.Internal

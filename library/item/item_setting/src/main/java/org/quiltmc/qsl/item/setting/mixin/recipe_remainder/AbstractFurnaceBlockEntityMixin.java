@@ -31,18 +31,20 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.SingleRecipeInput;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
@@ -59,7 +61,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	protected DefaultedList<ItemStack> inventory;
 	@Shadow
 	@Final
-	private RecipeManager.CachedCheck<Inventory, ? extends AbstractCookingRecipe> recipeCache;
+	private RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> recipeCache;
 
 	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -75,15 +77,15 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	// prevent additional smelting if remainder item overflow would have no location to be dropped into the world
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
-	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
+	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable RecipeHolder<?> recipeHolder, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValue() && quilt$THREAD_LOCAL_BLOCK_ENTITY.get() == null) {
 			ItemStack original = inventory.get(INPUT_SLOT).copy();
 
 			if (!original.isEmpty()) {
-				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe).copy();
+				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipeHolder.value(), RecipeRemainderLocation.FURNACE_INGREDIENT).copy();
 				original.decrement(1);
 
-				if (!remainder.isEmpty() && ItemStack.canCombine(original, remainder)) {
+				if (!remainder.isEmpty() && ItemStack.itemsAndComponentsMatch(original, remainder)) {
 					int toTake = Math.min(original.getMaxCount() - original.getCount(), remainder.getCount());
 					remainder.decrement(toTake);
 
@@ -102,7 +104,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 		Recipe<?> recipe;
 		if (!cast.inventory.get(INPUT_SLOT).isEmpty()) {
-			recipe = cast.recipeCache.getRecipeFor(blockEntity, world).orElse(null);
+			recipe = cast.recipeCache.getFirstMatch(new SingleRecipeInput(cast.inventory.get(INPUT_SLOT)), world).map(RecipeHolder::value).orElse(null);
 		} else {
 			recipe = null;
 		}
@@ -111,6 +113,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				fuelStack,
 				amount,
 				recipe,
+				RecipeRemainderLocation.FURNACE_FUEL,
 				cast.inventory,
 				FUEL_SLOT,
 				blockEntity.getWorld(),
@@ -124,11 +127,12 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setInputRemainder(ItemStack inputStack, int amount, DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
+	private static void setInputRemainder(ItemStack inputStack, int amount, DynamicRegistryManager registryManager, @Nullable RecipeHolder<?> recipeHolder, DefaultedList<ItemStack> inventory, int count) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
 				amount,
-				recipe,
+				recipeHolder == null ? null : recipeHolder.value(),
+				RecipeRemainderLocation.FURNACE_INGREDIENT,
 				inventory,
 				INPUT_SLOT,
 				remainder -> { // consumer only called when there are excess remainder items that can be dropped into the world

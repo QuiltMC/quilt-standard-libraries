@@ -23,9 +23,13 @@ import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceType;
@@ -61,6 +65,22 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Creates a builder for an attachment.
 	 *
+	 * @param <R>         type of the entries in the registry
+	 * @param <V>         attached value type
+	 * @param registry    registry to attach to
+	 * @param id          attachment identifier
+	 * @param valueClass  attached value class
+	 * @param codec       attached value codec
+	 * @param packetCodec type to packet codec mapper
+	 * @return a builder
+	 */
+	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec) {
+		return new Builder<>(registry, id, valueClass, codec, packetCodec);
+	}
+
+	/**
+	 * Creates a builder for an attachment.
+	 *
 	 * @param <R>        type of the entries in the registry
 	 * @param <V>        attached value type
 	 * @param registry   registry to attach to
@@ -69,8 +89,27 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param codec      attached value codec
 	 * @return a builder
 	 */
+	@Deprecated
 	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
-		return new Builder<>(registry, id, valueClass, codec);
+		return new Builder<>(registry, id, valueClass, codec, PacketCodecs.fromRegistryCodec(codec));
+	}
+
+	/**
+	 * Creates a builder for an attachment using {@linkplain Codec#dispatch(Function, Function) dispatched codecs}
+	 * for polymorphic types.
+	 *
+	 * @param registry    registry to attach to
+	 * @param id          attachment identifier
+	 * @param valueClass  attached value class
+	 * @param codec       type to codec mapper
+	 * @param packetCodec type to packet codec mapper
+	 * @param <R>         type of the entries in the registry
+	 * @param <V>         attached value type
+	 * @return a builder
+	 */
+	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
+			Class<V> valueClass, Function<Identifier, MapCodec<? extends V>> codec, Function<Identifier, PacketCodec<RegistryByteBuf, ? extends V>> packetCodec) {
+		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec), Identifier.PACKET_CODEC.<RegistryByteBuf>cast().dispatch(V::getType, packetCodec));
 	}
 
 	/**
@@ -85,8 +124,9 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <V>        attached value type
 	 * @return a builder
 	 */
+	@Deprecated
 	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
-			Class<V> valueClass, Function<Identifier, Codec<? extends V>> codec) {
+			Class<V> valueClass, Function<Identifier, MapCodec<? extends V>> codec) {
 		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec));
 	}
 
@@ -99,7 +139,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Boolean.class, Codec.BOOL);
+		return builder(registry, id, Boolean.class, Codec.BOOL, PacketCodecs.BOOL.cast());
 	}
 
 	/**
@@ -111,7 +151,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Integer> intBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Integer.class, Codec.INT);
+		return builder(registry, id, Integer.class, Codec.INT, PacketCodecs.VAR_INT.cast());
 	}
 
 	/**
@@ -126,7 +166,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Integer> intRangeBuilder(Registry<R> registry, Identifier id, int min, int max) {
-		return builder(registry, id, Integer.class, Codec.intRange(min, max));
+		return builder(registry, id, Integer.class, Codec.intRange(min, max), PacketCodecs.VAR_INT.cast());
 	}
 
 	/**
@@ -138,7 +178,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Long> longBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Long.class, Codec.LONG);
+		return builder(registry, id, Long.class, Codec.LONG, PacketCodecs.VAR_LONG.cast());
 	}
 
 	/**
@@ -156,7 +196,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		// Codec.longRange(long, long) doesn't exist for some reason
 		// implement it ourselves
 		final Function<Long, DataResult<Long>> checker = Codec.checkRange(min, max);
-		return builder(registry, id, Long.class, Codec.LONG.flatXmap(checker, checker));
+		return builder(registry, id, Long.class, Codec.LONG.flatXmap(checker, checker), PacketCodecs.VAR_LONG.cast());
 	}
 
 	/**
@@ -168,7 +208,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Float> floatBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Float.class, Codec.FLOAT);
+		return builder(registry, id, Float.class, Codec.FLOAT, PacketCodecs.FLOAT.cast());
 	}
 
 	/**
@@ -183,7 +223,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Float> floatRangeBuilder(Registry<R> registry, Identifier id, float min, float max) {
-		return builder(registry, id, Float.class, Codec.floatRange(min, max));
+		return builder(registry, id, Float.class, Codec.floatRange(min, max), PacketCodecs.FLOAT.cast());
 	}
 
 	/**
@@ -195,7 +235,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Double.class, Codec.DOUBLE);
+		return builder(registry, id, Double.class, Codec.DOUBLE, PacketCodecs.DOUBLE.cast());
 	}
 
 	/**
@@ -210,7 +250,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, Double> doubleRangeBuilder(Registry<R> registry, Identifier id, double min, double max) {
-		return builder(registry, id, Double.class, Codec.doubleRange(min, max));
+		return builder(registry, id, Double.class, Codec.doubleRange(min, max), PacketCodecs.DOUBLE.cast());
 	}
 
 	/**
@@ -222,7 +262,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R> Builder<R, String> stringBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, String.class, Codec.STRING);
+		return builder(registry, id, String.class, Codec.STRING, PacketCodecs.STRING.cast());
 	}
 
 	/**
@@ -249,9 +289,16 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Gets the {@code Codec} used to (de)serialize this attachment's values.
 	 *
-	 * @return value codec
+	 * @return codec
 	 */
 	Codec<V> codec();
+
+	/**
+	 * Gets the {@code PacketCodec} used to (de)serialize this attachment's values over the network.
+	 *
+	 * @return packet codec
+	 */
+	PacketCodec<RegistryByteBuf, V> packetCodec();
 
 	/**
 	 * Gets the side this attachment should exist on.
@@ -300,6 +347,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 
 	/**
 	 * Associates a value with an entry.
+	 *
 	 * <p>
 	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
@@ -307,7 +355,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 *
 	 * @param entry registry entry
 	 * @param value value
-	 *
 	 * @throws IllegalArgumentException if the given entry hasn't been registered in the {@linkplain #registry() registry},
 	 *                                  or if the given value is invalid, according to the {@linkplain #codec() codec}.
 	 */
@@ -315,6 +362,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 
 	/**
 	 * Associates a value with a tag.
+	 *
 	 * <p>
 	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
@@ -322,13 +370,13 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 *
 	 * @param tag   tag
 	 * @param value value
-	 *
 	 * @throws IllegalArgumentException if the given value is invalid, according to the {@linkplain #codec() codec}.
 	 */
 	void put(TagKey<R> tag, V value);
 
 	/**
 	 * Removes any value associated with an entry.
+	 *
 	 * <p>
 	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
@@ -341,6 +389,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 
 	/**
 	 * Removes any value associated with a tag.
+	 *
 	 * <p>
 	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
@@ -429,7 +478,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		 * @param entry the registry entry
 		 * @param value the associated value
 		 */
-		public Entry {}
+		public Entry {
+		}
 	}
 
 	/**
@@ -447,7 +497,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		 * @param tag   the tag
 		 * @param value the associated value
 		 */
-		public TagEntry {}
+		public TagEntry {
+		}
 	}
 
 	/**
@@ -503,21 +554,23 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		private final Identifier id;
 		private final Class<V> valueClass;
 		private final Codec<V> codec;
+		private final PacketCodec<RegistryByteBuf, V> packetCodec;
 
 		private Side side;
 		private @Nullable V defaultValue;
 		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
-		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
+		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec) {
 			this.registry = registry;
 			this.id = id;
 			this.valueClass = valueClass;
 			this.codec = codec;
+			this.packetCodec = packetCodec;
 			this.side = Side.BOTH;
 
 			if (RegistryEntryAttachmentHolder.getAttachment(registry, id) != null) {
 				throw new IllegalStateException("Attachment with ID '%s' is already registered for registry %s!"
-						.formatted(id, registry.getKey().getValue()));
+					.formatted(id, registry.getKey().getValue()));
 			}
 		}
 
@@ -534,6 +587,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 
 		/**
 		 * Sets the default value of this attachment.
+		 *
 		 * <p>
 		 * Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValueProvider(DefaultValueProvider) default value provider}!
@@ -550,8 +604,10 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		/**
 		 * Sets the <em>default value provider</em> of this attachment, which will be used to compute a value for a
 		 * specific entry, should it be missing.
+		 *
 		 * <p>
 		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 *
 		 * <p>
 		 * Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValue(Object) default value}!
@@ -574,11 +630,12 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 			RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValue);
+					this.codec, this.packetCodec, this.side, this.defaultValue);
 			} else {
 				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValueProvider);
+					this.codec, this.packetCodec, this.side, this.defaultValueProvider);
 			}
+
 			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;
 		}

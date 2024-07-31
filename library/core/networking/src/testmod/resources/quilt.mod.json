@@ -12,7 +12,7 @@
     "load_type": "always",
     "entrypoints": {
       "init": [
-        "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindPacketTest",
+        "org.quiltmc.qsl.networking.test.keybindreceiver.NetworkingKeyBindPacketTest",
         "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryTest",
         "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
       ],
@@ -21,9 +21,11 @@
         "org.quiltmc.qsl.networking.test.trackingevents.NetworkingEntityTrackingEventsTest"
       ],
       "client_init": [
-        "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindClientPacketTest",
+        "org.quiltmc.qsl.networking.test.keybindreceiver.NetworkingKeyBindClientPacketTest",
         "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryClientTest",
-        "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketClientTest"
+        "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketClientTest",
+        "org.quiltmc.qsl.networking.test.payload.S2CPayloadTest",
+        "org.quiltmc.qsl.networking.test.payload.C2SPayloadTest"
       ],
       "client_events": [
         "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelClientTest"

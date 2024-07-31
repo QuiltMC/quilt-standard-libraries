@@ -19,6 +19,8 @@ package org.quiltmc.qsl.lifecycle.mixin;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.server.WorldGenerationProgressListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -83,16 +85,9 @@ abstract class MinecraftServerMixin {
 
 	// Loading/unloading worlds
 
-	// Yes an Inject could be used for this and it would work with no issues.
-	//
-	// The reason for a redirect here is the frankly ridiculous amount of local variables that would be captured to obtain
-	// the instance of the world being loaded. A redirect does this much more cleanly.
-	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-	private <K, V> V loadWorld(Map<K, V> worlds, K key, V world) {
-		final V result = worlds.put(key, world);
+	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
+	private void loadWorld(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, @Local ServerWorld world) {
 		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, (ServerWorld) world);
-
-		return result;
 	}
 
 	@Inject(

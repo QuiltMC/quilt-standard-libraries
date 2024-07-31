@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,27 +26,40 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import net.minecraft.network.NetworkPhase;
+import net.minecraft.network.NetworkSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 @ApiStatus.Internal
 public final class GlobalReceiverRegistry<H> {
+	public static final int DEFAULT_CHANNEL_NAME_MAX_LENGTH = 128;
+	private final NetworkSide side;
+	private final NetworkPhase phase;
+	@Nullable
+	private final PayloadTypeRegistryImpl<?> payloadTypeRegistry;
+
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
-	private final Map<Identifier, H> receivers;
+	private final Map<CustomPayload.Id<?>, H> receivers = new Object2ObjectOpenHashMap<>();
 	private final Set<AbstractNetworkAddon<H>> trackedAddons = new HashSet<>();
 
-	public GlobalReceiverRegistry() {
-		this(new Object2ObjectOpenHashMap<>()); // sync map should be fine as there is little read write competitions
-	}
+	public GlobalReceiverRegistry(NetworkSide side, NetworkPhase phase, @Nullable PayloadTypeRegistryImpl<?> payloadTypeRegistry) {
+		this.side = side;
+		this.phase = phase;
+		this.payloadTypeRegistry = payloadTypeRegistry;
 
-	public GlobalReceiverRegistry(Map<Identifier, H> map) {
-		this.receivers = map;
+		if (payloadTypeRegistry != null) {
+			if (phase != payloadTypeRegistry.getPhase() || side != payloadTypeRegistry.getSide()) {
+				throw new AssertionError();
+			}
+		}
 	}
 
 	@Nullable
-	public H getReceiver(Identifier channelName) {
+	public H getReceiver(CustomPayload.Id<?> channelName) {
 		Lock lock = this.lock.readLock();
 		lock.lock();
 
@@ -56,11 +70,11 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	public boolean registerGlobalReceiver(Identifier channelName, H handler) {
+	public boolean registerGlobalReceiver(CustomPayload.Id<?> channelName, H handler) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(handler, "Channel handler cannot be null");
 
-		if (NetworkingImpl.isReservedPlayChannel(channelName)) {
+		if (NetworkingImpl.isReservedCommonChannel(channelName)) {
 			throw new IllegalArgumentException(String.format("Cannot register handler for reserved channel with name \"%s\"", channelName));
 		}
 
@@ -80,13 +94,14 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	public H unregisterGlobalReceiver(Identifier channelName) {
+	public H unregisterGlobalReceiver(CustomPayload.Id<?> channelName) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 
-		if (NetworkingImpl.isReservedPlayChannel(channelName)) {
+		if (NetworkingImpl.isReservedCommonChannel(channelName)) {
 			throw new IllegalArgumentException(String.format("Cannot unregister packet handler for reserved channel with name \"%s\"", channelName));
 		}
 
+		this.assertPayloadType(channelName);
 		Lock lock = this.lock.writeLock();
 		lock.lock();
 
@@ -103,7 +118,7 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	public Map<Identifier, H> getReceivers() {
+	public Map<CustomPayload.Id<?>, H> getReceivers() {
 		Lock lock = this.lock.writeLock();
 		lock.lock();
 
@@ -114,7 +129,7 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	public Set<Identifier> getChannels() {
+	public Set<CustomPayload.Id<?>> getChannels() {
 		Lock lock = this.lock.readLock();
 		lock.lock();
 
@@ -149,7 +164,7 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	private void handleRegistration(Identifier channelName, H handler) {
+	private void handleRegistration(CustomPayload.Id<?> channelName, H handler) {
 		Lock lock = this.lock.writeLock();
 		lock.lock();
 
@@ -162,7 +177,7 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	private void handleUnregistration(Identifier channelName) {
+	private void handleUnregistration(CustomPayload.Id<?> channelName) {
 		Lock lock = this.lock.writeLock();
 		lock.lock();
 
@@ -173,5 +188,23 @@ public final class GlobalReceiverRegistry<H> {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	public void assertPayloadType(CustomPayload.Id<?> channelName) {
+		if (this.payloadTypeRegistry == null) {
+			return;
+		}
+
+		if (this.payloadTypeRegistry.get(channelName) == null) {
+			throw new IllegalArgumentException(String.format("Cannot register handler as no payload type has been registered with name \"%s\" for %s %s", channelName, this.side, this.phase));
+		}
+
+		if (channelName.toString().length() > DEFAULT_CHANNEL_NAME_MAX_LENGTH) {
+			throw new IllegalArgumentException(String.format("Cannot register handler for channel with name \"%s\" as it exceeds the maximum length of 128 characters", channelName));
+		}
+	}
+
+	public NetworkPhase getPhase() {
+		return this.phase;
 	}
 }

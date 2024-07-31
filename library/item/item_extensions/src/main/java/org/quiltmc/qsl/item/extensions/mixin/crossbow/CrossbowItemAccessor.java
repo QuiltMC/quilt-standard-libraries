@@ -19,13 +19,13 @@ package org.quiltmc.qsl.item.extensions.mixin.crossbow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
+import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
 
 @Mixin(CrossbowItem.class)
 public interface CrossbowItemAccessor {
 	@Invoker("getSpeed")
-	static float invokeGetSpeed(ItemStack stack) {
+	static float invokeGetSpeed(ChargedProjectilesComponent component) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

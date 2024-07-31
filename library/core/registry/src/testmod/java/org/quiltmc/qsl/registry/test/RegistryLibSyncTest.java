@@ -72,11 +72,11 @@ public class RegistryLibSyncTest implements ModInitializer {
 			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
-		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registries.REGISTRY,
-				new Identifier(NAMESPACE, "synced_registry"),
-				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable()));
+		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registries.ROOT,
+				Identifier.of(NAMESPACE, "synced_registry"),
+				new SimpleRegistry<>(RegistryKey.ofRegistry(Identifier.of(NAMESPACE, "synced_registry")), Lifecycle.stable()));
 
-		Registry.register(customRequiredRegistry, new Identifier("quilt:game_dir"), QuiltLoader.getGameDir());
+		Registry.register(customRequiredRegistry, Identifier.parse("quilt:game_dir"), QuiltLoader.getGameDir());
 		RegistrySynchronization.markForSync(customRequiredRegistry);
 	}
 
@@ -88,8 +88,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 			);
 
-			for (var reg : Registries.REGISTRY) {
-				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registries.REGISTRY).getId(reg) + "\n");
+			for (var reg : Registries.ROOT) {
+				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registries.ROOT).getId(reg) + "\n");
 				if (reg instanceof SynchronizedRegistry<?> sync) {
 					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
 					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
@@ -118,7 +118,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
-		var id = new Identifier(NAMESPACE, "entry_" + i);
+		var id = Identifier.of(NAMESPACE, "entry_" + i);
 		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK));
 
 		Registry.register(Registries.BLOCK, id, block);

@@ -132,7 +132,7 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
 				}
 
-				id = new Identifier(idStr);
+				id = Identifier.parse(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of '{}': syntax error",
 						i, resourceId);
@@ -180,7 +180,7 @@ final class AttachmentDictionary<R, V> {
 					idStr = idStr.substring(0, idStr.length() - 1);
 				}
 
-				id = new Identifier(idStr);
+				id = Identifier.parse(idStr);
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
 						resourceId, entry.getKey());

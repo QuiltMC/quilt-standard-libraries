@@ -27,18 +27,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SmithingScreenHandler;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(SmithingScreenHandler.class)
 public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable SmithingRecipe currentRecipe;
+	private @Nullable RecipeHolder<SmithingRecipe> currentRecipe;
 
 	@Shadow
 	public abstract void updateResult();
@@ -47,12 +49,18 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
 
-	@Redirect(method = "decrementStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private void applyRecipeRemainder(ItemStack instance, int amount, int slot) {
+	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
+	private void applyRecipeRemainderToIngredient(SmithingScreenHandler instance, int slot) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				this.getSlot(slot),
-				amount,
-				this.currentRecipe,
+				1,
+				this.currentRecipe.value(),
+				switch (slot) {
+					case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
+					case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
+					case SmithingScreenHandler.ADDITIONAL_SLOT -> RecipeRemainderLocation.SMITHING_INGREDIENT;
+					default -> throw new IllegalStateException("Unexpected value: " + slot);
+				},
 				this.player
 		);
 	}

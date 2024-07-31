@@ -190,13 +190,12 @@ public final class ArmorRenderingRegistry {
 		 * @param stack          the item stack representing the worn armor
 		 * @param slot           the equipment slot the armor is being worn in
 		 * @param useSecondLayer {@code true} to use inner armor (leggings) texture, or {@code false} to use outer armor texture
-		 * @param suffix         suffix to append to the end of the texture name
 		 * @return the new armor texture, or {@code texture} if the texture should not be changed
 		 */
 		@NotNull Identifier getArmorTexture(
 				@NotNull Identifier texture,
 				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-				boolean useSecondLayer, @Nullable String suffix
+				boolean useSecondLayer
 		);
 	}
 

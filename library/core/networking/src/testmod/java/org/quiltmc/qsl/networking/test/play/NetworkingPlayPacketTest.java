@@ -27,26 +27,28 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.PacketBundleS2CPacket;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
+import org.quiltmc.qsl.networking.api.server.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 
 public final class NetworkingPlayPacketTest implements ModInitializer {
-	public static final Identifier TEST_CHANNEL = NetworkingTestMods.id("test_channel");
+	public static final CustomPayload.Id<TestPacket> TEST_CHANNEL = NetworkingTestMods.id("test_channel");
+	public static final PacketCodec<PacketByteBuf, TestPacket> TEST_CODEC = CustomPayload.create(TestPacket::write, TestPacket::new);
 
 	public static void sendToTestChannel(ServerPlayerEntity player, String stuff) {
-		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeText(Text.of(stuff));
-		ServerPlayNetworking.send(player, TEST_CHANNEL, buf);
+		ServerPlayNetworking.send(player, new TestPacket(stuff));
 		NetworkingTestMods.LOGGER.info("Sent custom payload packet in {}", TEST_CHANNEL);
 	}
 
@@ -61,15 +63,15 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 				}))
 				.then(literal("bundled").executes(ctx -> {
 					PacketByteBuf bufA = PacketByteBufs.create();
-					bufA.writeText(Text.literal("Bundled #1"));
+					bufA.writeString("Bundled #1");
 					PacketByteBuf bufB = PacketByteBufs.create();
-					bufB.writeText(Text.literal("Bundled #2"));
+					bufB.writeString("Bundled #2");
 
 					var packet = new PacketBundleS2CPacket(List.of(
-							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
-							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
+							(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(new TestPacket("Bundled #1")),
+							(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(new TestPacket("Bundled #2"))
 					));
-					ctx.getSource().getPlayer().networkHandler.sendPacket(packet);
+					ctx.getSource().getPlayer().networkHandler.send(packet);
 					return Command.SINGLE_SUCCESS;
 				})));
 	}
@@ -77,9 +79,25 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		NetworkingTestMods.LOGGER.info("Hello from networking user!");
+		PayloadTypeRegistry.playS2C().register(TEST_CHANNEL, TEST_CODEC);
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
 			NetworkingPlayPacketTest.registerCommand(dispatcher);
 		});
+	}
+
+	public record TestPacket(String text) implements CustomPayload {
+		public TestPacket(PacketByteBuf buf) {
+			this(buf.readString());
+		}
+
+		private void write(PacketByteBuf buf) {
+			buf.writeString(this.text);
+		}
+
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return TEST_CHANNEL;
+		}
 	}
 }

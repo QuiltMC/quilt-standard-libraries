@@ -25,6 +25,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.network.CookieStorage;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
@@ -32,8 +33,11 @@ import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 @ClientOnly
 @Mixin(ConnectScreen.class)
 public class ConnectScreenMixin {
-	@Inject(method = "connect(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/network/ServerAddress;Lnet/minecraft/client/network/ServerInfo;)V", at = @At("HEAD"))
-	private void quilt$snapshotRegistry(MinecraftClient client, ServerAddress address, ServerInfo serverInfo, CallbackInfo ci) {
+	@Inject(
+			method = "connect(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/network/ServerAddress;Lnet/minecraft/client/network/ServerInfo;Lnet/minecraft/network/CookieStorage;)V",
+			at = @At(value = "HEAD")
+	)
+	private void quilt$snapshotRegistry(MinecraftClient client, ServerAddress address, ServerInfo serverInfo, CookieStorage cookieStorage, CallbackInfo ci) {
 		ClientRegistrySync.createSnapshot();
 	}
 }

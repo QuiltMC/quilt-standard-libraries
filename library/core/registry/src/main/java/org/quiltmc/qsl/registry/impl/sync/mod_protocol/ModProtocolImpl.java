@@ -29,13 +29,14 @@ import org.slf4j.Logger;
 import org.quiltmc.loader.api.LoaderValue;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.Version;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
 
 public class ModProtocolImpl {
 	public static boolean enabled = false;
 	public static boolean disableQuery = false;
 	public static String prioritizedId = "";
-	public static ModProtocolDef prioritizedEntry;
+	public static ModProtocolDef modpackDef;
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final Map<String, ModProtocolDef> PROTOCOL_VERSIONS = new HashMap<>();
@@ -47,10 +48,10 @@ public class ModProtocolImpl {
 		var config = RegistryConfig.INSTANCE.registry_sync;
 		disableQuery = config.disable_mod_protocol_ping.value();
 
-		if (config.mod_protocol_version.value() >= 0) {
-			prioritizedEntry = new ModProtocolDef("global:" + config.mod_protocol_id.value(), config.mod_protocol_name.value(), IntList.of(config.mod_protocol_version.value()), false);
-			prioritizedId = prioritizedEntry.id();
-			add(prioritizedEntry);
+		if (config.modpack_protocol_version.value() >= 0) {
+			modpackDef = new ModProtocolDef("modpack:" + config.modpack_protocol_id.value(), config.modpack_protocol_name.value(), IntList.of(config.modpack_protocol_version.value()), false);
+			prioritizedId = modpackDef.id();
+			add(modpackDef);
 		}
 
 		for (var container : QuiltLoader.getAllMods()) {
@@ -90,14 +91,23 @@ public class ModProtocolImpl {
 				var version = decodeVersion(".value", container, object.get("value"));
 
 				if (version != null) {
-					add(new ModProtocolDef("mod:" + data.id(), data.name(), version, optional));
+					add(new ModProtocolDef("mod:" + data.id(), data.name() + " " + getVersionString(data.version()), version, optional));
 				}
 			} else {
 				var version = decodeVersion("", container, value);
 				if (version != null) {
-					add(new ModProtocolDef("mod:" + data.id(), data.name(), version, false));
+					add(new ModProtocolDef("mod:" + data.id(), data.name() + " " + getVersionString(data.version()), version, false));
 				}
 			}
+		}
+	}
+
+	private static String getVersionString(Version version) {
+		String ret = version.toString();
+		if (Character.isDigit(ret.charAt(0))) {
+			return "v" + ret;
+		} else {
+			return ret;
 		}
 	}
 
@@ -140,11 +150,11 @@ public class ModProtocolImpl {
 	}
 
 	private static void invalidEntryType(String path, ModContainer c, LoaderValue.LType expected, LoaderValue.LType found) {
-		LOGGER.warn("Mod {} ({}) contains invalid 'quilt_registry.mod_protocol{}' entry! Expected '{}', found '{}'", path, c.metadata().name(), c.metadata().id(), expected.name(), found.name());
+		LOGGER.warn("Mod {} ({}) contains invalid 'quilt_registry.modpack_protocol{}' entry! Expected '{}', found '{}'", path, c.metadata().name(), c.metadata().id(), expected.name(), found.name());
 	}
 
 	private static void negativeEntry(String path, ModContainer c, int i) {
-		LOGGER.warn("Mod {} ({}) contains invalid 'quilt_registry.mod_protocol{}' entry! Protocol requires non-negative integer, found '{}'!", path, c.metadata().name(), c.metadata().id(), i);
+		LOGGER.warn("Mod {} ({}) contains invalid 'quilt_registry.modpack_protocol{}' entry! Protocol requires non-negative integer, found '{}'!", path, c.metadata().name(), c.metadata().id(), i);
 	}
 
 	public static IntList getVersion(String string) {

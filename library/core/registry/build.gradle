@@ -18,6 +18,9 @@ qslModule {
 		data {
 			testmodOnly("tags")
 		}
+		gui {
+			testmodOnly("screen") // for resource loader
+		}
 	}
 	entrypoints {
 		client_init {

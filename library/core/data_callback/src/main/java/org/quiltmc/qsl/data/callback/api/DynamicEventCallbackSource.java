@@ -90,7 +90,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 		this.callbackClass = callbackClass;
 		this.event = event;
 		this.combiner = combiner;
-		this.codec = Codecs.createLazy(() -> codecs.createDelegatingCodecPhased(callbackClass.getSimpleName()));
+		this.codec = Codec.lazyInitialized(() -> codecs.createDelegatingCodecPhased(callbackClass.getSimpleName()));
 
 		@SuppressWarnings("unchecked")
 		var emptyArray = (T[]) Array.newInstance(callbackClass, 0);

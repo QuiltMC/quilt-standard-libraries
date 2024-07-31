@@ -20,6 +20,7 @@ package org.quiltmc.qsl.testing.mixin.server;
 import java.io.File;
 import java.nio.file.Path;
 
+import com.mojang.serialization.Dynamic;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -30,13 +31,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.resource.pack.PackManager;
 import net.minecraft.server.Main;
 import net.minecraft.server.Services;
 import net.minecraft.server.dedicated.EulaReader;
 import net.minecraft.server.dedicated.ServerPropertiesLoader;
 import net.minecraft.world.storage.WorldSaveStorage;
-import net.minecraft.world.storage.WorldSaveSummary;
 
 import org.quiltmc.loader.api.minecraft.DedicatedServerOnly;
 import org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl;
@@ -53,7 +53,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createDataPackManager(Ljava/nio/file/Path;)Lnet/minecraft/resource/pack/ResourcePackManager;",
+					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createPackManager(Lnet/minecraft/world/storage/WorldSaveStorage$Session;)Lnet/minecraft/resource/pack/PackManager;",
 					shift = At.Shift.BY,
 					by = 2,
 					remap = true
@@ -63,13 +63,16 @@ public class MainMixin {
 			remap = false
 	)
 	private static void onStart(String[] strings, CallbackInfo ci,
-			OptionParser optionParser,
-			OptionSpec optionSpec, OptionSpec optionSpec2, OptionSpec optionSpec3, OptionSpec optionSpec4, OptionSpec optionSpec5,
-			OptionSpec optionSpec6, OptionSpec optionSpec7, OptionSpec optionSpec8, OptionSpec optionSpec9, OptionSpec optionSpec10,
-			OptionSpec optionSpec11, OptionSpec optionSpec12, OptionSpec optionSpec13, OptionSpec optionSpec14, OptionSpec optionSpec15,
-			OptionSpec optionSpec16, OptionSet optionSet, Path path, Path path2, ServerPropertiesLoader serverPropertiesLoader,
-			Path path3, EulaReader eulaReader, File file, Services services, String string, WorldSaveStorage worldSaveStorage,
-			WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, ResourcePackManager resourcePackManager) {
+								OptionParser optionParser, OptionSpec<?> optionSpec, OptionSpec<?> optionSpec2,
+								OptionSpec<?> optionSpec3, OptionSpec<?> optionSpec4, OptionSpec<?> optionSpec5,
+								OptionSpec<?> optionSpec6, OptionSpec<?> optionSpec7, OptionSpec<?> optionSpec8,
+								OptionSpec<?> optionSpec9, OptionSpec<?> optionSpec10, OptionSpec<?> optionSpec11,
+								OptionSpec<?> optionSpec12, OptionSpec<?> optionSpec13, OptionSpec<?> optionSpec14,
+								OptionSpec<?> optionSpec15, OptionSpec<?> optionSpec16, OptionSet optionSet, Path path, Path path2,
+								ServerPropertiesLoader serverPropertiesLoader, Path path3, EulaReader eulaReader,
+								File file, Services services, String string, WorldSaveStorage worldSaveStorage,
+								WorldSaveStorage.Session session, Dynamic<?> worldSaveSummary, Dynamic<?> dynamic, boolean bl,
+								PackManager resourcePackManager) {
 		if (QuiltGameTestImpl.ENABLED) {
 			QuiltGameTestImpl.runHeadlessServer(session, resourcePackManager);
 			ci.cancel(); // Do not progress in starting the normal dedicated server.

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +33,7 @@ import net.minecraft.block.OxidizableBlock;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.Properties;
@@ -40,6 +41,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -65,7 +67,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(Registries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
+		RegistryExtensions.register(Registries.BLOCK, Identifier.of(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
@@ -122,8 +124,8 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	}
 
 	private record EnchantingBlockStateBooster() implements EnchantingBooster {
-		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier(MOD_ID, "block_state_booster"),
-				new EnchantingBoosterType(Codec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));
+		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(Identifier.of(MOD_ID, "block_state_booster"),
+				new EnchantingBoosterType(MapCodec.unit(EnchantingBlockStateBooster::new), PacketCodec.unit(new EnchantingBlockStateBooster()), Optional.of(new EnchantingBlockStateBooster())));
 
 		@Override
 		public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
@@ -176,7 +178,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 		void run(QuiltTestContext context) {
 			this.entries.forEach(entry -> context.setBlockState(entry.pos(), entry.baseState()));
 
-			var player = context.createMockPlayer();
+			var player = context.createMockPlayer(GameMode.SURVIVAL);
 			this.entries.forEach(entry -> {
 				context.useStackOnBlockAt(player, this.tool, entry.pos(), Direction.UP);
 			});

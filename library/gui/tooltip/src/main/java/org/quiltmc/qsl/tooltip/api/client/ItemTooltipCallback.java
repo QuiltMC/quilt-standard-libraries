@@ -21,8 +21,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -35,9 +36,9 @@ public interface ItemTooltipCallback extends ClientEventAwareListener {
 	/**
 	 * Fired after the game has appended all base tooltip lines to the list.
 	 */
-	Event<ItemTooltipCallback> EVENT = Event.create(ItemTooltipCallback.class, callbacks -> (stack, player, context, lines) -> {
+	Event<ItemTooltipCallback> EVENT = Event.create(ItemTooltipCallback.class, callbacks -> (stack, player, context, config, lines) -> {
 		for (var callback : callbacks) {
-			callback.onTooltipRequest(stack, player, context, lines);
+			callback.onTooltipRequest(stack, player, context, config, lines);
 		}
 	});
 
@@ -48,7 +49,8 @@ public interface ItemTooltipCallback extends ClientEventAwareListener {
 	 * @param stack   the item for which the tooltip is requested
 	 * @param player  the player who requested the tooltip, may be {@code null}
 	 * @param context the tooltip context
+	 * @param config  the tooltip config
 	 * @param lines   the list containing the lines of text displayed on the stack's tooltip
 	 */
-	void onTooltipRequest(ItemStack stack, @Nullable PlayerEntity player, TooltipContext context, List<Text> lines);
+	void onTooltipRequest(ItemStack stack, @Nullable PlayerEntity player, Item.TooltipContext context, TooltipConfig config, List<Text> lines);
 }

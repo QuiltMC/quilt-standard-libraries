@@ -27,7 +27,7 @@ import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
 @ClientOnly
 @ApiStatus.Internal
-public class ClientResourceLoaderEventContextsImpl implements ClientResourceLoaderEvents.StartResourcePackReload.Context {
+public class ClientResourceLoaderEventContextsImpl implements ClientResourceLoaderEvents.StartPackReload.Context {
 	private final ResourceManager resourceManager;
 	private final boolean first;
 
@@ -47,7 +47,7 @@ public class ClientResourceLoaderEventContextsImpl implements ClientResourceLoad
 	}
 
 	public static final class ReloadEndContext extends ClientResourceLoaderEventContextsImpl
-			implements ClientResourceLoaderEvents.EndResourcePackReload.Context {
+			implements ClientResourceLoaderEvents.EndPackReload.Context {
 		private final Optional<Throwable> error;
 
 		public ReloadEndContext(ResourceManager resourceManager, boolean first, Optional<Throwable> error) {

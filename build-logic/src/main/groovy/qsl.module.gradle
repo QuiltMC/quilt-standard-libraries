@@ -15,7 +15,6 @@
 
 import qsl.internal.Git
 import qsl.internal.Versions
-import qsl.internal.extension.QslLibraryExtension
 import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
 
@@ -25,7 +24,7 @@ plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	id("org.quiltmc.gradle.licenser")
+	id("dev.yumi.gradle.licenser")
 	id("qsl.common")
 }
 
@@ -104,6 +103,11 @@ sourceSets {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
 	}
+
+	test {
+		compileClasspath += sourceSets.testmod.compileClasspath
+		runtimeClasspath += sourceSets.testmod.runtimeClasspath
+	}
 }
 
 processTestmodResources {
@@ -126,12 +130,21 @@ processTestmodResources {
 dependencies {
 	// testmod sourceSet should depend on everything in the main source set.
 	testmodImplementation sourceSets.main.output
+
+	testImplementation "org.quiltmc:quilt-loader-junit:${Versions.LOADER_VERSION}"
+	testImplementation sourceSets.testmod.output
+	testImplementation 'org.mockito:mockito-core:5.4.0'
+}
+
+test {
+	useJUnitPlatform()
 }
 
 loom {
 	runs {
 		testmodClient {
 			client()
+			property("mixin.debug", "true")
 			source(sourceSets.testmod)
 		}
 
@@ -148,6 +161,16 @@ loom {
 			property("quilt.game_test", "true")
 			property("quilt.game_test.report_file", "${project.buildDir}/game_test/report.xml")
 			runDir("build/game_test")
+		}
+	}
+
+	mods {
+		"${extension.id}" {
+			sourceSet sourceSets.main
+		}
+
+		"${extension.id}_testmod" {
+			sourceSet sourceSets.testmod
 		}
 	}
 }
@@ -174,7 +197,7 @@ javadoc {
 				"https://asm.ow2.io/javadoc/",
 				"https://docs.oracle.com/en/java/javase/17/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
-				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+				"https://logging.apache.org/log4j/2.x/javadoc/log4j-api/"
 		)
 
 		// Disable the overzealous doclint tool in Java 8
@@ -193,9 +216,5 @@ javadoc {
 }
 
 license {
-	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
-	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/HEADER")
-
-	include "**/*.java"
 }

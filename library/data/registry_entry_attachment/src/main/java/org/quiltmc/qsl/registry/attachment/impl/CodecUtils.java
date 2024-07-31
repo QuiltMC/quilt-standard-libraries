@@ -23,13 +23,17 @@ public final class CodecUtils {
 	private CodecUtils() {}
 
 	public static <T> void assertValid(Codec<T> codec, T value) {
+		assertValid(codec, value, "Value");
+	}
+
+	public static <T> void assertValid(Codec<T> codec, T value, String error) {
 		var encoded = codec.encodeStart(JsonOps.INSTANCE, value);
 
 		if (encoded.result().isEmpty()) {
 			if (encoded.error().isPresent()) {
-				throw new IllegalArgumentException("Value is invalid: " + encoded.error().get().message());
+				throw new IllegalArgumentException(error + " is invalid: " + encoded.error().get().message());
 			} else {
-				throw new IllegalArgumentException("Value is invalid: unknown error");
+				throw new IllegalArgumentException(error + " is invalid: unknown error");
 			}
 		}
 	}

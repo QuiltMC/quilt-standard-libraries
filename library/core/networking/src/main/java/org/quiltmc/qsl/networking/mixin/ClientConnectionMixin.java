@@ -18,6 +18,8 @@ package org.quiltmc.qsl.networking.mixin;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -30,12 +32,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkPhase;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
@@ -54,11 +57,11 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	public abstract void disconnect(Text disconnectReason);
 
 	@Unique
-	private Collection<Identifier> playChannels;
+	private Map<NetworkPhase, Collection<CustomPayload.Id<?>>> playChannels;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddedFields(NetworkSide side, CallbackInfo ci) {
-		this.playChannels = Collections.newSetFromMap(new ConcurrentHashMap<>());
+		this.playChannels = new HashMap<>();
 	}
 
 	// Must be fully qualified due to mixin not working in production without it
@@ -85,7 +88,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-	private void checkPacket(Packet<?> packet, PacketSendListener listener, CallbackInfo ci) {
+	private void checkPacket(Packet<?> packet, PacketSendListener listener, boolean flush, CallbackInfo ci) {
 		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
 			callbackListener.sent(packet);
 		}
@@ -99,7 +102,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Override
-	public Collection<Identifier> getPendingChannelsNames() {
-		return this.playChannels;
+	public Collection<CustomPayload.Id<?>> getPendingChannelsNames(NetworkPhase state) {
+		return this.playChannels.computeIfAbsent(state, (s) -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
 	}
 }

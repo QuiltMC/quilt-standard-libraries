@@ -31,8 +31,8 @@ import net.minecraft.util.BlockRotation;
 public final class QuiltTestFunction extends TestFunction {
 	private final Class<?> sourceClass;
 
-	public QuiltTestFunction(String batchId, String structurePath, String structureName, BlockRotation rotation, int timeout, long startDelay, boolean required, int requiredSuccesses, int maxAttempts, Consumer<TestContext> starter, Class<?> sourceClass) {
-		super(batchId, structurePath, structureName, rotation, timeout, startDelay, required, requiredSuccesses, maxAttempts, starter);
+	public QuiltTestFunction(String batchId, String structurePath, String structureName, BlockRotation rotation, int timeout, long startDelay, boolean required, boolean manualOnly, int maxAttempts, int requiredSuccesses, boolean skyAccess, Consumer<TestContext> starter, Class<?> sourceClass) {
+		super(batchId, structurePath, structureName, rotation, timeout, startDelay, required, manualOnly, maxAttempts, requiredSuccesses, skyAccess, starter);
 		this.sourceClass = sourceClass;
 	}
 

@@ -19,35 +19,29 @@ package org.quiltmc.qsl.command.mixin;
 
 import java.util.Set;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.command.impl.KnownArgTypesStorage;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public abstract class ServerLoginNetworkHandlerMixin implements KnownArgTypesStorage {
-	@Unique
-	private Set<Identifier> quilt$knownArgumentTypes;
+	@Shadow
+	@Final
+	ClientConnection connection;
 
 	@Override
 	public Set<Identifier> quilt$getKnownArgumentTypes() {
-		return this.quilt$knownArgumentTypes;
+		return ((KnownArgTypesStorage) this.connection).quilt$getKnownArgumentTypes();
 	}
 
 	@Override
 	public void quilt$setKnownArgumentTypes(Set<Identifier> types) {
-		this.quilt$knownArgumentTypes = types;
-	}
-
-	@Inject(method = "addToServer", at = @At("HEAD"))
-	public void passKnownArgumentTypesToPlayer(ServerPlayerEntity player, CallbackInfo ci) {
-		((KnownArgTypesStorage) player).quilt$setKnownArgumentTypes(this.quilt$knownArgumentTypes);
+		((KnownArgTypesStorage) this.connection).quilt$setKnownArgumentTypes(types);
 	}
 }

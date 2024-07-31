@@ -62,7 +62,7 @@ public final class DumpBuiltinAttachmentsCommand {
 	private static void register0(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(literal("dump_builtin_attachments")
 				.then(argument("registry", IdentifierArgumentType.identifier())
-						.requires(src -> src.hasPermissionLevel(4))
+						.requires(src -> src.hasPermission(4))
 						.executes(DumpBuiltinAttachmentsCommand::execute))
 		);
 	}
@@ -82,7 +82,7 @@ public final class DumpBuiltinAttachmentsCommand {
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
 		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
-		var registry = Registries.REGISTRY.get(registryId);
+		var registry = Registries.ROOT.get(registryId);
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
 		}

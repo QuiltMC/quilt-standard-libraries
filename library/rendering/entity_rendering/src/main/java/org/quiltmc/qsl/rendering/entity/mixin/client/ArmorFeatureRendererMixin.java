@@ -17,14 +17,9 @@
 
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
-import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
-
-import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,22 +31,21 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.trim.ArmorTrimPermutation;
+import net.minecraft.registry.Holder;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.rendering.entity.api.client.ArmorTextureUtils;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin {
-	@Shadow
-	@Final
-	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
-
 	@Unique
 	private LivingEntity quilt$capturedEntity;
 	@Unique
@@ -81,33 +75,18 @@ public abstract class ArmorFeatureRendererMixin {
 		cir.setReturnValue(model);
 	}
 
-	@Inject(
-			method = "getArmorTexture",
+	@WrapOperation(
+			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"
-			),
-			cancellable = true
+					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
+			)
 	)
-	private void quilt$getArmorTexture(ArmorItem item, boolean useSecondLayer, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
+	private Sprite quilt$getArmorTexture(SpriteAtlasTexture instance, Identifier texture, Operation<Sprite> original, Holder<ArmorMaterial> material, MatrixStack matrices, VertexConsumerProvider verticies, int i, ArmorTrimPermutation trimPermutation, BipedEntityModel<?> model, boolean hasGlint) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
+		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot, hasGlint);
 
-		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
-				item.getMaterial().getTexture()
-						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondLayer, suffix)
-						+ ".png",
-				Identifier::new);
-		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot,
-				useSecondLayer, suffix);
-
-		String textureString = texture.toString();
-		if (!textureString.contains(".")) {
-			LOGGER.warn("Armor texture identifier '" + texture + "' is missing file extension, automatically appending '.png'");
-			textureString += ".png";
-		}
-
-		// save armor texture for modifyArmorRenderLayer
-		cir.setReturnValue(this.quilt$capturedArmorTexture = ARMOR_TEXTURE_CACHE.computeIfAbsent(textureString, Identifier::new));
+		return original.call(instance, texture);
 	}
 
 	@ModifyArg(
@@ -127,7 +106,7 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
+			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
@@ -140,7 +119,7 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
+			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"

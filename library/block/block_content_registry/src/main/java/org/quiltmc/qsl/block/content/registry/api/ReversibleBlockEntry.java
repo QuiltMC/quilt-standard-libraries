@@ -21,7 +21,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.block.Block;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 
 public record ReversibleBlockEntry(Block block, boolean reversible) {
 	public static final Codec<ReversibleBlockEntry> CODEC = Codec.either(
@@ -34,4 +38,13 @@ public record ReversibleBlockEntry(Block block, boolean reversible) {
 			.xmap(
 					either -> either.map(entry -> entry, b -> new ReversibleBlockEntry(b, true)),
 					entry -> entry.reversible ? Either.right(entry.block) : Either.left(entry));
+
+	public static final PacketCodec<RegistryByteBuf, ReversibleBlockEntry> PACKET_CODEC = PacketCodec
+			.tuple(
+				PacketCodecs.registryValue(RegistryKeys.BLOCK).cast(),
+				ReversibleBlockEntry::block,
+				PacketCodecs.BOOL.cast(),
+				ReversibleBlockEntry::reversible,
+				ReversibleBlockEntry::new
+			);
 }

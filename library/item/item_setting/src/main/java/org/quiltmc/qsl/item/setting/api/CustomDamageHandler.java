@@ -17,13 +17,13 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
-import java.util.function.Consumer;
-
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
- * Allows an item to run custom logic when {@link ItemStack#damage(int, LivingEntity, Consumer)} is called.
+ * Allows an item to run custom logic when {@link ItemStack#method_7970(int, LivingEntity, EquipmentSlot)} is called.
  * This is useful for items that, for example, may drain durability from some other source before damaging
  * the stack itself.
  * <p>
@@ -38,8 +38,9 @@ public interface CustomDamageHandler {
 	 * @param stack         the {@link ItemStack} that is being damaged
 	 * @param amount        the amount of damage originally requested
 	 * @param entity        the {@link LivingEntity} whose item is being damaged
-	 * @param breakCallback callback when the stack reaches zero damage. See {@link ItemStack#damage(int, LivingEntity, Consumer)} and its callsites for more information.
+	 * @param slot          the {@link EquipmentSlot} for the item stack
+	 * @param breakCallback callback when the stack reaches zero damage. See {@link ItemStack#method_7956(int, net.minecraft.util.random.RandomGenerator, ServerPlayerEntity, Runnable)} and its callsites for more information.
 	 * @return the amount of damage to pass to vanilla's logic
 	 */
-	int damage(ItemStack stack, int amount, LivingEntity entity, Consumer<LivingEntity> breakCallback);
+	int damage(ItemStack stack, int amount, LivingEntity entity, EquipmentSlot slot, Runnable breakCallback);
 }

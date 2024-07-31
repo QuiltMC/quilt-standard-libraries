@@ -34,13 +34,13 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =
 			RegistryEntryAttachment.intBuilder(Registries.ITEM,
-					new Identifier("quilt", "test_attachment")).build();
+					Identifier.of("quilt", "test_attachment")).build();
 	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 =
 			RegistryEntryAttachment.floatBuilder(Registries.ITEM,
-					new Identifier("quilt", "test_attachment_2")).build();
+					Identifier.of("quilt", "test_attachment_2")).build();
 
 	public static final MyItem MY_ITEM = RegistryExtensions.register(Registries.ITEM,
-			new Identifier("quilt", "simple_attachment_test_item"),
+			Identifier.of("quilt", "simple_attachment_test_item"),
 			new MyItem(new Item.Settings()),
 			TEST_ATTACHMENT_2, 2.0f);
 

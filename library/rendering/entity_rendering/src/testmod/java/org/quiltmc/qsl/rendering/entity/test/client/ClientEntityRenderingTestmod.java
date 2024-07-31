@@ -42,7 +42,7 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
-			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer, @Nullable String suffix) {
+			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer) {
 		if (slot == EquipmentSlot.LEGS) {
 			// redirect leggings texture, because it has a non-standard name
 			return LEGGINGS_TEXTURE_ID;

@@ -29,81 +29,65 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 
 public class RecipeRemainderTests implements ModInitializer {
 	// Static field so we can use it in BrewingRecipeRegistryMixin
 	public static final Item POTION_INGREDIENT_REMAINDER = Registry.register(
 			Registries.ITEM,
-			new Identifier(QuiltItemSettingsTests.NAMESPACE, "potion_ingredient_remainder"),
+			Identifier.of(QuiltItemSettingsTests.NAMESPACE, "potion_ingredient_remainder"),
 			new Item(
 					new QuiltItemSettings().recipeRemainder(
-							(original, recipe) -> new ItemStack(Items.BLAZE_POWDER)
+						(original, recipe) -> new ItemStack(Items.BLAZE_POWDER), RecipeRemainderLocation.POTION_ADDITION
 					)
 			)
 	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		// TODO: figure out a way to test these better. Maybe a gametest?
 		Item hammerItem = new Item(new QuiltItemSettings().maxDamage(16).recipeDamageRemainder());
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
 
-		Item furnaceInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
-				return Items.DIAMOND.getDefaultStack();
-			}
-
-			return ItemStack.EMPTY;
-		}));
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
+		Item furnaceInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> Items.DIAMOND.getDefaultStack(), RecipeRemainderLocation.FURNACE_INGREDIENT));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
 
 		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
-				var remainder = original.copy();
-				remainder.setCount(2);
-				return remainder;
-			}
-
-			return ItemStack.EMPTY;
-		}));
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
+			var remainder = original.copy();
+			remainder.setCount(2);
+			return remainder;
+		}, RecipeRemainderLocation.FURNACE_INGREDIENT));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
 
 		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			var remainder = original.copy();
-			if (recipe != null) {
-				if (recipe.getType() == RecipeType.SMELTING) {
-					remainder.setCount(1);
-				} else if (recipe.getType() == RecipeType.SMOKING) {
-					remainder.setCount(2);
-				} else if (recipe.getType() == RecipeType.BLASTING) {
-					remainder.setCount(3);
-				}
-
-				return remainder;
+			if (recipe == null) {
+				// noop
+			} else if (recipe.getType() == RecipeType.SMELTING) {
+				remainder.setCount(1);
+			} else if (recipe.getType() == RecipeType.SMOKING) {
+				remainder.setCount(2);
+			} else if (recipe.getType() == RecipeType.BLASTING) {
+				remainder.setCount(3);
 			}
 
-			return ItemStack.EMPTY;
-		}));
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
+			return remainder;
+		}, RecipeRemainderLocation.FURNACE_FUEL));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
 
-		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
-				return original.getItem().getDefaultStack();
-			}
+		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeSelfRemainder(RecipeRemainderLocation.SMITHING_INGREDIENT));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
 
-			return Items.NETHERITE_SCRAP.getDefaultStack();
-		}));
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
+		Item smithingTemplateRemainder = new Item(new QuiltItemSettings().maxDamage(100).recipeDamageRemainder(1, RecipeRemainderLocation.SMITHING_TEMPLATE));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite_template"), smithingTemplateRemainder);
 
-		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().maxDamage(100).recipeDamageRemainder());
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_dye"), loomInputRemainder);
+		Item smithingBaseRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> new ItemStack(Items.LEATHER), RecipeRemainderLocation.SMITHING_BASE));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "leaving_leather_base"), smithingBaseRemainder);
 
-		Item cuttingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			if (recipe != null && recipe.getType() == RecipeType.STONECUTTING) {
-				return Items.STONE.getDefaultStack();
-			}
+		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().maxDamage(100).recipeDamageRemainder(RecipeRemainderLocation.LOOM_DYE));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "reusable_dye"), loomInputRemainder);
 
-			return ItemStack.EMPTY;
-		}));
-		Registry.register(Registries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_stone"), cuttingInputRemainder);
+		Item cuttingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> Items.STONE.getDefaultStack(), RecipeRemainderLocation.STONECUTTER_INPUT));
+		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_stone"), cuttingInputRemainder);
 	}
 }

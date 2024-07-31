@@ -35,7 +35,7 @@ abstract class LivingEntityMixin {
 			at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EquipmentSlot;MAINHAND:Lnet/minecraft/entity/EquipmentSlot;"),
 			cancellable = true
 	)
-	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {
+	private void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {
 		var equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(stack.getItem());
 
 		if (equipmentSlotProvider != null) {

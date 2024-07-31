@@ -30,7 +30,7 @@ import net.minecraft.util.math.MathHelper;
 import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 
 @Mixin(Registries.class)
-public class RegistriesMixin {
+public abstract class RegistriesMixin {
 	@Inject(method = "freeze", at = @At("RETURN"))
 	private static void onFreezeBuiltins(CallbackInfo ci) {
 		//region Fix MC-197259

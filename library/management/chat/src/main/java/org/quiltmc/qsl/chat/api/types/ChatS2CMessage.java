@@ -43,7 +43,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	private final MessageBody.Serialized body;
 	private final Text unsignedContent;
 	private final FilterMask filterMask;
-	private final MessageType.Serialized messageType;
+	private final MessageType.Parameters messageType;
 
 	public ChatS2CMessage(PlayerEntity player, boolean isClient, ChatMessageS2CPacket packet) {
 		this(
@@ -58,7 +58,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 		);
 	}
 
-	public ChatS2CMessage(PlayerEntity player, boolean isClient, UUID sender, int index, MessageSignature signature, MessageBody.Serialized body, Text unsignedContent, FilterMask filterMask, MessageType.Serialized messageType) {
+	public ChatS2CMessage(PlayerEntity player, boolean isClient, UUID sender, int index, MessageSignature signature, MessageBody.Serialized body, Text unsignedContent, FilterMask filterMask, MessageType.Parameters messageType) {
 		super(player, isClient);
 		this.sender = sender;
 		this.index = index;
@@ -110,7 +110,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	}
 
 	@Contract(pure = true)
-	public MessageType.Serialized getMessageType() {
+	public MessageType.Parameters getMessageType() {
 		return this.messageType;
 	}
 
@@ -145,7 +145,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	}
 
 	@Contract(value = "_ -> new", pure = true)
-	public ChatS2CMessage withMessageType(MessageType.Serialized messageType) {
+	public ChatS2CMessage withMessageType(MessageType.Parameters messageType) {
 		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, this.signature, this.body, this.unsignedContent, this.filterMask, messageType);
 	}
 

@@ -37,7 +37,7 @@ import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 
 @Mixin(ServerMetadata.Version.class)
-public class ServerMetadataVersionMixin implements ModProtocolContainer {
+public abstract class ServerMetadataVersionMixin implements ModProtocolContainer {
 	@Shadow
 	@Final
 	@Mutable

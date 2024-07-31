@@ -31,7 +31,8 @@ import org.quiltmc.qsl.entity.event.api.ServerEntityLoadEvents;
 @Mixin(targets = "net/minecraft/server/world/ServerWorld$ServerEntityHandler")
 public abstract class ServerEntityHandlerMixin {
 	@Shadow
-	@Final ServerWorld world; // ServerWorld.this
+	@Final
+	ServerWorld world; // ServerWorld.this
 
 	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	private void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {

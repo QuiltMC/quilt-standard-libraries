@@ -56,7 +56,7 @@ public final class PasteurizedMilkBucketItem extends Item {
 	}
 
 	@Override
-	public int getMaxUseTime(ItemStack stack) {
+	public int getUseTicks(ItemStack stack, LivingEntity entity) {
 		return MAX_USE_TIME;
 	}
 

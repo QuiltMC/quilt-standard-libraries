@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl.client;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,10 +23,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.NetworkPhase;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.client.C2SPlayChannelEvents;
@@ -36,22 +35,22 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
-import org.quiltmc.qsl.networking.mixin.accessor.ClientPlayNetworkHandlerAccessor;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 
 @ApiStatus.Internal
 @ClientOnly
-public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<ClientPlayNetworking.ChannelReceiver> {
+public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<ClientPlayNetworking.CustomChannelReceiver<?>> {
 	private final ClientPlayNetworkHandler handler;
 	private final MinecraftClient client;
 	private boolean sentInitialRegisterPacket;
 
 	public ClientPlayNetworkAddon(ClientPlayNetworkHandler handler, MinecraftClient client) {
-		super(ClientNetworkingImpl.PLAY, ((ClientPlayNetworkHandlerAccessor) handler).getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
+		super(ClientNetworkingImpl.PLAY, handler.getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
 		this.handler = handler;
 		this.client = client;
 
 		// Must register pending channels via lateinit
-		this.registerPendingChannels((ChannelInfoHolder) this.connection);
+		this.registerPendingChannels((ChannelInfoHolder) this.connection, NetworkPhase.PLAY);
 
 		// Register global receivers and attach to session
 		this.receiver.startSession(this);
@@ -59,7 +58,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ClientPlayNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<CustomPayload.Id<?>, ClientPlayNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -74,25 +73,10 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 		this.sentInitialRegisterPacket = true;
 	}
 
-	/**
-	 * Handles an incoming packet.
-	 *
-	 * @param packet the packet to handle
-	 * @return true if the packet has been handled
-	 */
-	public boolean handle(CustomPayloadS2CPacket packet) {
-		PacketByteBuf buf = packet.getData();
-
-		try {
-			return this.handle(packet.getChannel(), buf);
-		} finally {
-			buf.release();
-		}
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void receive(ClientPlayNetworking.ChannelReceiver handler, PacketByteBuf buf) {
-		handler.receive(this.client, this.handler, buf, this);
+	protected <T extends CustomPayload> void receive(ClientPlayNetworking.CustomChannelReceiver<?> handler, T buf) {
+		((ClientPlayNetworking.CustomChannelReceiver<T>) handler).receive(this.client, this.handler, buf, this);
 	}
 
 	// impl details
@@ -103,40 +87,40 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	}
 
 	@Override
-	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
-		return ClientPlayNetworking.createC2SPacket(channelName, buf);
+	public Packet<?> createPacket(CustomPayload payload) {
+		return ClientNetworkingImpl.createC2SPacket(payload);
 	}
 
 	@Override
-	protected void invokeRegisterEvent(List<Identifier> ids) {
+	protected void invokeRegisterEvent(List<CustomPayload.Id<?>> ids) {
 		C2SPlayChannelEvents.REGISTER.invoker().onChannelRegister(this.handler, this, this.client, ids);
 	}
 
 	@Override
-	protected void invokeUnregisterEvent(List<Identifier> ids) {
+	protected void invokeUnregisterEvent(List<CustomPayload.Id<?>> ids) {
 		C2SPlayChannelEvents.UNREGISTER.invoker().onChannelUnregister(this.handler, this, this.client, ids);
 	}
 
 	@Override
-	protected void handleRegistration(Identifier channelName) {
+	protected void handleRegistration(CustomPayload.Id<?> channelName) {
 		// If we can already send packets, immediately send the register packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadC2SPacket(payload));
 			}
 		}
 	}
 
 	@Override
-	protected void handleUnregistration(Identifier channelName) {
+	protected void handleUnregistration(CustomPayload.Id<?> channelName) {
 		// If we can already send packets, immediately send the unregister packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.UNREGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadC2SPacket(payload));
 			}
 		}
 	}
@@ -148,7 +132,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	}
 
 	@Override
-	protected boolean isReservedChannel(Identifier channelName) {
-		return NetworkingImpl.isReservedPlayChannel(channelName);
+	protected boolean isReservedChannel(CustomPayload.Id<?> channelName) {
+		return NetworkingImpl.isReservedCommonChannel(channelName);
 	}
 }

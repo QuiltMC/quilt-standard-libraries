@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "networking.CreeperEntityRendererMixin"
+  ],
+  "mixins": [
+    "networking.CreeperEntityMixin",
+    "TntMinecartEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

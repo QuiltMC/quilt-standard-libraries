@@ -48,7 +48,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.server.command.CommandManager;
@@ -126,10 +125,6 @@ public final class ClientCommandInternals {
 
 			commandSource.sendError(getErrorMessage(e));
 			return true;
-		} catch (CommandException e) {
-			LOGGER.warn("Error while executing client-side command '{}'", message, e);
-			commandSource.sendError(e.getTextMessage());
-			return true;
 		} catch (RuntimeException e) {
 			LOGGER.warn("Error while executing client-side command '{}'", message, e);
 			commandSource.sendError(Text.of(e.getMessage()));
@@ -203,7 +198,7 @@ public final class ClientCommandInternals {
 			currentDispatcher = DEFAULT_DISPATCHER;
 
 			if (environment == CommandManager.RegistrationEnvironment.ALL) {
-				registerCommands(CommandBuildContext.createConfigurable(ClientRegistryLayer.createLayeredManager().getCompositeManager(), FeatureFlagBitSet.empty()), environment);
+				registerCommands(CommandBuildContext.createSimple(ClientRegistryLayer.createLayeredManager().getCompositeManager(), FeatureFlagBitSet.empty()), environment);
 			}
 		} else {
 			currentDispatcher = new CommandDispatcher<>();

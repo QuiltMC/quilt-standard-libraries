@@ -1,3 +1,8 @@
 accessWidener   v2  named
 
 accessible method net/minecraft/registry/Holder$Reference setValue (Ljava/lang/Object;)V
+
+accessible class net/minecraft/registry/RegistryLoader$ContentLoader
+accessible class net/minecraft/registry/RegistryLoader$LoadingFunction
+mutable field net/minecraft/registry/RegistryLoader SYNCED_REGISTRIES Ljava/util/List;
+mutable field net/minecraft/registry/DynamicRegistrySync SYNCED_CODECS Ljava/util/Set;

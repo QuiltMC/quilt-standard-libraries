@@ -25,7 +25,7 @@ public final class ResourceLoaderTestMod {
 	public static boolean loadingServerResources = false;
 
 	public static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 
 	private ResourceLoaderTestMod() {

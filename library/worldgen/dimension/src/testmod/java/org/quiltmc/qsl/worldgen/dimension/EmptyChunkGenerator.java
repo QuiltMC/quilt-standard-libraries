@@ -19,9 +19,8 @@ package org.quiltmc.qsl.worldgen.dimension;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.block.BlockState;
@@ -44,15 +43,15 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
-	public static final Codec<EmptyChunkGenerator> CODEC =
-			RecordCodecBuilder.create(instance -> instance.group(RegistryOps.retrieveElement(Biomes.PLAINS)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
+	public static final MapCodec<EmptyChunkGenerator> CODEC =
+			RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.retrieveElement(Biomes.PLAINS)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	public EmptyChunkGenerator(Holder.Reference<Biome> biomeReference) {
 		super(new FixedBiomeSource(biomeReference));
 	}
 
 	@Override
-	protected Codec<? extends ChunkGenerator> getCodec() {
+	protected MapCodec<? extends ChunkGenerator> getCodec() {
 		return CODEC;
 	}
 
@@ -71,8 +70,8 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk) {
-		return CompletableFuture.completedFuture(chunk);
+	public CompletableFuture<Chunk> populateNoise(Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk) {
+		return null;
 	}
 
 	@Override

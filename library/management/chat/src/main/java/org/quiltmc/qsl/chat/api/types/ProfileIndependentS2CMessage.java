@@ -29,7 +29,6 @@ import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-import org.quiltmc.qsl.chat.mixin.client.ClientPlayNetworkHandlerAccessor;
 
 /**
  * A wrapper around a "profile independent" message. These are usually created as a result of commands like {@link net.minecraft.server.command.MessageCommand}.
@@ -43,13 +42,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 				player,
 				isClient,
 				packet.message(),
-				packet.messageType().createParameters(player.getWorld().getRegistryManager()).orElseGet(() -> {
-					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
-						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
-					}
-
-					return null;
-				})
+				packet.messageType()
 		);
 	}
 
@@ -66,7 +59,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public @NotNull ProfileIndependentMessageS2CPacket serialized() {
-		return new ProfileIndependentMessageS2CPacket(this.message, this.messageType.serialize(this.player.getWorld().getRegistryManager()));
+		return new ProfileIndependentMessageS2CPacket(this.message, this.messageType);
 	}
 
 	@Contract(pure = true)

@@ -42,6 +42,7 @@ import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
@@ -68,7 +69,7 @@ import org.quiltmc.qsl.tag.mixin.client.DynamicRegistrySyncAccessor;
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
 			new WeakHashMap<>();
-	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.REGISTRY);
+	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.ROOT);
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	/**
@@ -109,7 +110,7 @@ public final class ClientTagRegistryManager<T> {
 		this.registryKey = registryKey;
 		this.lookupProvider = VANILLA_PROVIDERS;
 
-		if (Registries.REGISTRY.contains((RegistryKey) registryKey)) {
+		if (Registries.ROOT.contains((RegistryKey) registryKey)) {
 			// The registry is static, this means we have only one source of truth that is not updated after starting the game.
 			this.registryFetcher = new StaticRegistryFetcher();
 			this.status = ClientRegistryStatus.STATIC;
@@ -266,7 +267,7 @@ public final class ClientTagRegistryManager<T> {
 	@SuppressWarnings("unchecked")
 	public static <T> ClientTagRegistryManager<T> get(RegistryKey<? extends Registry<T>> registryKey) {
 		return (ClientTagRegistryManager<T>) TAG_GROUP_MANAGERS.computeIfAbsent(registryKey,
-				key -> new ClientTagRegistryManager<>(registryKey, TagManagerLoader.getRegistryDirectory(key))
+				key -> new ClientTagRegistryManager<>(registryKey, RegistryKeys.getTagDirectory(key))
 		);
 	}
 
@@ -274,12 +275,12 @@ public final class ClientTagRegistryManager<T> {
 	@ClientOnly
 	static void init() {
 		// Add up all known static registries.
-		Registries.REGISTRY.forEach(registry -> {
+		Registries.ROOT.forEach(registry -> {
 			get(registry.getKey());
 		});
 
 		// Add up known synced dynamic registries.
-		DynamicRegistrySyncAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
+		DynamicRegistrySyncAccessor.quilt$getSyncableRegistries().forEach((registry) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {

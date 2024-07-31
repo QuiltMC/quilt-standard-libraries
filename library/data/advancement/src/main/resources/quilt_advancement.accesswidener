@@ -1,3 +1,0 @@
-accessWidener   v2  named
-
-transitive-accessible method net/minecraft/advancement/criterion/Criteria register (Lnet/minecraft/advancement/criterion/Criterion;)Lnet/minecraft/advancement/criterion/Criterion;

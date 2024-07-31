@@ -1,4 +1,0 @@
-accessWidener v2 named
-
-transitive-accessible  field   net/minecraft/entity/attribute/DefaultAttributeRegistry  DEFAULT_ATTRIBUTE_REGISTRY  Ljava/util/Map;
-transitive-accessible  method  net/minecraft/entity/SpawnRestriction                    register                    (Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/entity/SpawnRestriction$SpawnPredicate;)V

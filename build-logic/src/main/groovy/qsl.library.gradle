@@ -107,9 +107,9 @@ jar {
 	enabled = false
 }
 
-prepareRemapJar {
-	enabled = false
-}
+//prepareRemapJar {
+//	enabled = false
+//}
 
 remapJar {
 	enabled = false

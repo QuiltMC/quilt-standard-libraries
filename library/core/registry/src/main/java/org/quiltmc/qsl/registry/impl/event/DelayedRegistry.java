@@ -31,15 +31,10 @@ import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.registry.Holder;
+import net.minecraft.registry.*;
 import net.minecraft.registry.Holder.Reference;
 import net.minecraft.registry.HolderLookup.RegistryLookup;
-import net.minecraft.registry.HolderOwner;
-import net.minecraft.registry.HolderProvider;
 import net.minecraft.registry.HolderSet.NamedSet;
-import net.minecraft.registry.MutableRegistry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.random.RandomGenerator;
@@ -79,13 +74,18 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Lifecycle getEntryLifecycle(T entry) {
-		return this.wrapped.getEntryLifecycle(entry);
+	public Optional<RegistrationInfo> getRegistrationInfo(RegistryKey<T> registryKey) {
+		return this.wrapped.getRegistrationInfo(registryKey);
 	}
 
 	@Override
 	public Lifecycle getLifecycle() {
 		return this.wrapped.getLifecycle();
+	}
+
+	@Override
+	public Optional<Reference<T>> getAny() {
+		return this.wrapped.getAny();
 	}
 
 	@Override
@@ -132,6 +132,11 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	@Override
 	public Optional<Reference<T>> getHolder(int index) {
 		return this.wrapped.getHolder(index);
+	}
+
+	@Override
+	public Optional<Reference<T>> getHolder(Identifier id) {
+		return this.wrapped.getHolder(id);
 	}
 
 	@Override
@@ -210,13 +215,8 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> set(int rawId, RegistryKey<T> key, T entry, Lifecycle lifecycle) {
-		throw new UnsupportedOperationException("DelayedRegistry does not support set.");
-	}
-
-	@Override
-	public Reference<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
-		this.delayedEntries.add(new DelayedEntry<>(key, entry, lifecycle));
+	public Reference<T> register(RegistryKey<T> key, T entry, RegistrationInfo info) {
+		this.delayedEntries.add(new DelayedEntry<>(key, entry, info));
 		return Holder.Reference.create(this.wrapped.asHolderOwner(), key);
 	}
 
@@ -234,9 +234,9 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 		DelayedEntry<T> entry;
 
 		while ((entry = this.delayedEntries.poll()) != null) {
-			this.wrapped.register(entry.key(), entry.entry(), entry.lifecycle());
+			this.wrapped.register(entry.key(), entry.entry(), entry.info());
 		}
 	}
 
-	record DelayedEntry<T>(RegistryKey<T> key, T entry, Lifecycle lifecycle) {}
+	record DelayedEntry<T>(RegistryKey<T> key, T entry, RegistrationInfo info) {}
 }

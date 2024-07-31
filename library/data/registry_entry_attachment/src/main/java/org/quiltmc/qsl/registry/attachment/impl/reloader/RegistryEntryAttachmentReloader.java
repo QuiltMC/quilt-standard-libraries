@@ -57,8 +57,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	static final Logger LOGGER = LogUtils.getLogger();
-	private static final Identifier ID_DATA = new Identifier(Initializer.NAMESPACE, "data");
-	private static final Identifier ID_ASSETS = new Identifier(Initializer.NAMESPACE, "assets");
+	private static final Identifier ID_DATA = Identifier.of(Initializer.NAMESPACE, "data");
+	private static final Identifier ID_ASSETS = Identifier.of(Initializer.NAMESPACE, "assets");
 
 	private final ResourceType source;
 	private final Identifier id;
@@ -85,7 +85,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		return CompletableFuture.supplyAsync(() -> {
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
-			for (var entry : Registries.REGISTRY.getEntries()) {
+			for (var entry : Registries.ROOT.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
@@ -156,7 +156,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
-		return new Identifier(jsonId.getNamespace(), path);
+		return Identifier.of(jsonId.getNamespace(), path);
 	}
 
 	protected final class LoadedData {
@@ -170,7 +170,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		public void apply(Profiler profiler) {
 			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
 
-			for (var entry : Registries.REGISTRY.getEntries()) {
+			for (var entry : Registries.ROOT.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
 						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}

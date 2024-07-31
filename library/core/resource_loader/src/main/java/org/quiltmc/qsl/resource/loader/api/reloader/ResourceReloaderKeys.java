@@ -32,7 +32,7 @@ public final class ResourceReloaderKeys {
 	 *
 	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
 	 */
-	public static final Identifier BEFORE_VANILLA = new Identifier("quilt", "before_vanilla");
+	public static final Identifier BEFORE_VANILLA = Identifier.of("quilt", "before_vanilla");
 	/**
 	 * Represents the application phase after Vanilla resource reloaders are invoked.
 	 * <p>
@@ -40,7 +40,7 @@ public final class ResourceReloaderKeys {
 	 *
 	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
 	 */
-	public static final Identifier AFTER_VANILLA = new Identifier("quilt", "after_vanilla");
+	public static final Identifier AFTER_VANILLA = Identifier.of("quilt", "after_vanilla");
 
 	/**
 	 * Keys for various client resource reloaders.
@@ -76,7 +76,6 @@ public final class ResourceReloaderKeys {
 	public static final class Server {
 		public static final Identifier ADVANCEMENTS = id("advancements");
 		public static final Identifier FUNCTIONS = id("functions");
-		public static final Identifier LOOT_TABLES = id("loot_tables");
 		public static final Identifier RECIPES = id("recipes");
 		public static final Identifier TAGS = id("tags");
 
@@ -88,6 +87,6 @@ public final class ResourceReloaderKeys {
 	}
 
 	private static Identifier id(String path) {
-		return new Identifier(Identifier.DEFAULT_NAMESPACE, path);
+		return Identifier.ofDefault(path);
 	}
 }

@@ -32,9 +32,10 @@ import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
+import net.minecraft.loot.LootTable;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
@@ -72,7 +73,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.pistonBehavior(otherAccessor.getPistonBehavior());
 		this.requiresTool(otherAccessor.getToolRequired());
 		((AbstractBlockSettingsAccessor) this).setOffsetFunction(otherAccessor.getOffsetFunction());
-		this.spawnsParticlesOnBreak(otherAccessor.getSpawnsParticlesOnBreak());
+		this.spawnsDustParticles(otherAccessor.getSpawnsDustParticles());
 		this.requiredFlags(otherAccessor.getRequiredFlags());
 		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
 		this.instrument(otherAccessor.getInstrument());
@@ -267,8 +268,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings requiresTool() {
-		super.requiresTool();
+	public QuiltBlockSettings toolRequired() {
+		super.toolRequired();
 		return this;
 	}
 
@@ -311,8 +312,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings disableParticlesOnBreak() {
-		super.disableParticlesOnBreak();
+	public QuiltBlockSettings withoutDustParticles() {
+		super.withoutDustParticles();
 		return this;
 	}
 
@@ -412,13 +413,13 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @param dropTableId the new loot table identifier
 	 * @return {@code this} builder
 	 */
-	public QuiltBlockSettings drops(Identifier dropTableId) {
+	public QuiltBlockSettings drops(RegistryKey<LootTable> dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
 		return this;
 	}
 
-	public QuiltBlockSettings spawnsParticlesOnBreak(boolean spawnsParticlesOnBreak) {
-		((AbstractBlockSettingsAccessor) this).setSpawnsParticlesOnBreak(spawnsParticlesOnBreak);
+	public QuiltBlockSettings spawnsDustParticles(boolean spawnsDustParticles) {
+		((AbstractBlockSettingsAccessor) this).setSpawnsDustParticles(spawnsDustParticles);
 		return this;
 	}
 

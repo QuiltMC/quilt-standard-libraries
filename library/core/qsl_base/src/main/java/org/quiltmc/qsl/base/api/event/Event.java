@@ -120,7 +120,7 @@ public final class Event<T> {
 	 * The identifier of the default phase.
 	 * Have a look at {@link Event#createWithPhases} for an explanation of event phases.
 	 */
-	public static final Identifier DEFAULT_PHASE = new Identifier("quilt", "default");
+	public static final Identifier DEFAULT_PHASE = Identifier.of("quilt", "default");
 
 	/**
 	 * Creates a new instance of {@link Event}.

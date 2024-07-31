@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,7 +51,7 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Shadow
 	@Mutable
 	@Final
-	public static Codec<TheEndBiomeSource> CODEC;
+	public static MapCodec<TheEndBiomeSource> CODEC;
 
 	@Unique
 	private Supplier<TheEndBiomeData.Overrides> quilt$overrides;
@@ -67,8 +68,8 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	 */
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void modifyCodec(CallbackInfo ci) {
-		CODEC = RecordCodecBuilder.create((instance) ->
-			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::create)));
+		CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME))
+			.apply(instance, instance.stable(TheEndBiomeSource::create)));
 	}
 
 	@Inject(method = "create", at = @At("RETURN"))

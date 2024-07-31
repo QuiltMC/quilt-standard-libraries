@@ -22,8 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.DimensionTransition;
 
 @ApiStatus.Internal
 public class QuiltDimensionsImpl {
@@ -32,34 +31,26 @@ public class QuiltDimensionsImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Entity> E teleport(Entity entity, ServerWorld destinationWorld, TeleportTarget location) {
+	public static <E extends Entity> E teleport(Entity entity, DimensionTransition transition) {
 		Preconditions.checkArgument(
 				Thread.currentThread() == entity.getServer().getThread(),
 				"This method may only be called from the main server thread"
 		);
 
-		var access = (EntityAccess) entity;
-		access.setTeleportTarget(location);
-
-		try {
-			// Fast path for teleporting within the same dimension.
-			if (entity.getWorld() == destinationWorld) {
-				if (entity instanceof ServerPlayerEntity serverPlayerEntity) {
-					serverPlayerEntity.networkHandler.requestTeleport(location.position.x, location.position.y, location.position.z, location.yaw, entity.getPitch());
-				} else {
-					entity.refreshPositionAndAngles(location.position.x, location.position.y, location.position.z, location.yaw, entity.getPitch());
-				}
-
-				entity.setVelocity(location.velocity);
-				entity.setHeadYaw(location.yaw);
-
-				return (E) entity;
+		// Fast path for teleporting within the same dimension.
+		if (entity.getWorld() == transition.newWorld()) {
+			if (entity instanceof ServerPlayerEntity serverPlayerEntity) {
+				serverPlayerEntity.networkHandler.requestTeleport(transition.pos().x, transition.pos().y, transition.pos().z, transition.xRot(), entity.getPitch());
+			} else {
+				entity.refreshPositionAndAngles(transition.pos().x, transition.pos().y, transition.pos().z, transition.xRot(), entity.getPitch());
 			}
 
-			return (E) entity.moveToWorld(destinationWorld);
-		} finally {
-			// Always clean up!
-			access.setTeleportTarget(null);
+			entity.setVelocity(transition.speed());
+			entity.setHeadYaw(transition.yRot());
+
+			return (E) entity;
 		}
+
+		return (E) entity.moveToWorld(transition);
 	}
 }

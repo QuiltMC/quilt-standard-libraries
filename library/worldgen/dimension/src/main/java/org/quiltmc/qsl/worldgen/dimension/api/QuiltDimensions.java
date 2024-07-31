@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.DimensionTransition;
 
 import org.quiltmc.qsl.worldgen.dimension.impl.QuiltDimensionsImpl;
 
@@ -36,27 +36,25 @@ public final class QuiltDimensions {
 	}
 
 	/**
-	 * Directly teleports the specified entity to the specified location in another dimension,
+	 * Directly teleports the specified entity to the specified transition in another dimension,
 	 * circumventing the built-in portal logic in vanilla.
 	 * <p>
 	 * Note: When teleporting a non-player entity to another dimension, it may be replaced with
 	 * a new entity in the target dimension.
 	 *
 	 * @param entity           the entity to teleport
-	 * @param destinationWorld the dimension to teleport the entity to
-	 * @param location         the location to place the entity at after it is moved to the specified world.
-	 *                         Just like in vanilla, the velocity is ignored. If this location is set to {@code null},
-	 *                         the entity will not be teleported.
+	 * @param transition       the dimension transition for the entity.
+	 *                         Just like in vanilla, the velocity is ignored.
 	 * @param <E>              the type of the entity that is being teleported
 	 * @return the teleported entity in the destination dimension, which will either be a new entity or teleported,
 	 * depending on the type of entity
 	 * @apiNote this method may only be called on the main server thread
 	 */
-	public static <E extends Entity> @Nullable E teleport(Entity entity, ServerWorld destinationWorld, @Nullable TeleportTarget location) {
+	public static <E extends Entity> @Nullable E teleport(Entity entity, DimensionTransition transition) {
 		Preconditions.checkNotNull(entity, "entity may not be null");
-		Preconditions.checkNotNull(destinationWorld, "destinationWorld may not be null");
-		Preconditions.checkArgument(!destinationWorld.isClient(), "This method may only be called from the server side");
+		Preconditions.checkNotNull(transition, "destinationWorld may not be null");
+		Preconditions.checkArgument(!transition.newWorld().isClient(), "This method may only be called from the server side");
 
-		return QuiltDimensionsImpl.teleport(entity, destinationWorld, location);
+		return QuiltDimensionsImpl.teleport(entity, transition);
 	}
 }

@@ -51,10 +51,10 @@ public class RecipeTestMod implements ModInitializer {
 		RecipeManagerHelper.registerStaticRecipe(
 				VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.DIAMOND))
 						.ingredient(Items.STICK)
-						.build(new Identifier(NAMESPACE, "test1"), ""));
+						.build(Identifier.of(NAMESPACE, "test1"), ""));
 
 		RecipeManagerHelper.addRecipes(handler -> {
-			handler.register(new Identifier(NAMESPACE, "test2"),
+			handler.register(Identifier.of(NAMESPACE, "test2"),
 					id -> VanillaRecipeBuilders.shapedRecipe("IG", "C#")
 							.ingredient('I', Items.IRON_INGOT)
 							.ingredient('G', Items.GOLD_INGOT)
@@ -67,17 +67,17 @@ public class RecipeTestMod implements ModInitializer {
 		RecipeManagerHelper.modifyRecipes(handler -> {
 			handler.replace(VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.NETHER_STAR))
 					.ingredient(Items.ACACIA_PLANKS)
-					.build(new Identifier("acacia_button"), ""));
+					.build(Identifier.ofDefault("acacia_button"), ""));
 			handler.replace(VanillaRecipeBuilders.shapedRecipe("A", "C")
 					.ingredient('A', ItemTags.PLANKS)
 					.ingredient('C', Items.COAL)
 					.output(new ItemStack(Items.NETHER_BRICK))
-					.build(new Identifier("oak_button"), ""));
+					.build(Identifier.ofDefault("oak_button"), ""));
 		});
 
 		RecipeManagerHelper.removeRecipes(handler -> {
 			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-				return craftingRecipe.getResult(handler.getRegistryManager()).getItem() instanceof BlockItem blockItem
+				return craftingRecipe.value().getResult(handler.getRegistryManager()).getItem() instanceof BlockItem blockItem
 						&& blockItem.getBlock() instanceof PressurePlateBlock;
 			});
 		});

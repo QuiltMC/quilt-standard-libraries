@@ -83,8 +83,8 @@ public final class EventTests implements Runnable {
 	}
 
 	private static void testMultipleDefaultPhases() {
-		var first = new Identifier("quilt", "first");
-		var second = new Identifier("quilt", "second");
+		var first = Identifier.of("quilt", "first");
+		var second = Identifier.of("quilt", "second");
 		var event = Event.createWithPhases(TestCallback.class, INVOKER_FACTORY, first, second, Event.DEFAULT_PHASE);
 
 		event.register(second, ensureOrder(1));
@@ -101,10 +101,10 @@ public final class EventTests implements Runnable {
 	private static void testAddedPhases() {
 		var event = createEvent();
 
-		var veryEarly = new Identifier("quilt", "very_early");
-		var early = new Identifier("quilt", "early");
-		var late = new Identifier("quilt", "late");
-		var veryLate = new Identifier("quilt", "very_late");
+		var veryEarly = Identifier.of("quilt", "very_early");
+		var early = Identifier.of("quilt", "early");
+		var late = Identifier.of("quilt", "late");
+		var veryLate = Identifier.of("quilt", "very_late");
 
 		event.addPhaseOrdering(veryEarly, early);
 		event.addPhaseOrdering(early, Event.DEFAULT_PHASE);
@@ -132,10 +132,10 @@ public final class EventTests implements Runnable {
 	private static void testCycle() {
 		var event = createEvent();
 
-		var a = new Identifier("quilt", "a");
-		var b1 = new Identifier("quilt", "b1");
-		var b2 = new Identifier("quilt", "b2");
-		var b3 = new Identifier("quilt", "b3");
+		var a = Identifier.of("quilt", "a");
+		var b1 = Identifier.of("quilt", "b1");
+		var b2 = Identifier.of("quilt", "b2");
+		var b3 = Identifier.of("quilt", "b3");
 		var c = Event.DEFAULT_PHASE;
 
 		// A always first and C always last.
@@ -185,13 +185,13 @@ public final class EventTests implements Runnable {
 	 * We get for the final order: [a, d, e, cycle [b, y, z], f].
 	 */
 	private static void testDeterministicOrdering() {
-		var a = new Identifier("quilt", "a");
-		var b = new Identifier("quilt", "b");
-		var d = new Identifier("quilt", "d");
-		var e = new Identifier("quilt", "e");
-		var f = new Identifier("quilt", "f");
-		var y = new Identifier("quilt", "y");
-		var z = new Identifier("quilt", "z");
+		var a = Identifier.of("quilt", "a");
+		var b = Identifier.of("quilt", "b");
+		var d = Identifier.of("quilt", "d");
+		var e = Identifier.of("quilt", "e");
+		var f = Identifier.of("quilt", "f");
+		var y = Identifier.of("quilt", "y");
+		var z = Identifier.of("quilt", "z");
 
 		List<Consumer<Event<TestCallback>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(a, z),
@@ -230,11 +230,11 @@ public final class EventTests implements Runnable {
 	 * </pre>
 	 */
 	private static void testTwoCycles() {
-		Identifier a = new Identifier("quilt", "a");
-		Identifier b = new Identifier("quilt", "b");
-		Identifier c = new Identifier("quilt", "c");
-		Identifier d = new Identifier("quilt", "d");
-		Identifier e = new Identifier("quilt", "e");
+		Identifier a = Identifier.of("quilt", "a");
+		Identifier b = Identifier.of("quilt", "b");
+		Identifier c = Identifier.of("quilt", "c");
+		Identifier d = Identifier.of("quilt", "d");
+		Identifier e = Identifier.of("quilt", "e");
 
 		List<Consumer<Event<TestCallback>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(e, a),

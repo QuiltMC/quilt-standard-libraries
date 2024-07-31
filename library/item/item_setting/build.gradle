@@ -3,6 +3,7 @@ import qsl.internal.analysis.ClassAnalysisUtils
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
+import java.util.stream.Collectors
 
 plugins {
 	id("qsl.module")
@@ -57,15 +58,17 @@ static def checkItemSettings(FileSystem moduleFs, FileSystem mcFs) {
 	def quiltClassDesc = "L${quiltClassName};"
 	def quiltClassMethods = ClassAnalysisUtils.buildMethodLookup(quiltClass)
 
-	mcClass.methods.stream().filter {
+	def missingMethods = mcClass.methods.stream().filter {
 		// Only get the methods that are part of the builder pattern.
 		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) == 0)
 				&& it.desc.endsWith(mcSettingsClassDesc)
-	}.forEach {
-		String desc = it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
+	}.map {
+		it.name + it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
+	}.filter {
+		!quiltClassMethods.containsKey(it)
+	}.collect(Collectors.joining(","))
 
-		if (!quiltClassMethods.containsKey(it.name + desc)) {
-			throw new GradleException("Missing QuiltItemSettings builder method ${it.name}${desc}.")
-		}
+	if (!missingMethods.isEmpty()) {
+		throw new GradleException("Missing QuiltItemSettings builder methods: ${missingMethods}.")
 	}
 }

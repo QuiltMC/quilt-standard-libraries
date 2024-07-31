@@ -19,7 +19,7 @@ package org.quiltmc.qsl.item.extensions.api.crossbow;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -48,7 +48,7 @@ public final class CrossbowShotProjectileEvents {
 	public static final Event<ReplaceProjectileFromCrossbow> CROSSBOW_REPLACE_SHOT_PROJECTILE = Event.create(ReplaceProjectileFromCrossbow.class,
 			callbacks -> (bowStack, projectileStack, user, projectile) -> {
 				for (var callback : callbacks) {
-					PersistentProjectileEntity replacedEntity = callback.replaceProjectileShot(bowStack, projectileStack, user, projectile);
+					ProjectileEntity replacedEntity = callback.replaceProjectileShot(bowStack, projectileStack, user, projectile);
 
 					if (replacedEntity != null) {
 						return replacedEntity;
@@ -70,8 +70,8 @@ public final class CrossbowShotProjectileEvents {
 		 * @param projectile      the arrow entity to be spawned
 		 * @return the new projectile entity, or {@code null} if you do not change the entity
 		 */
-		PersistentProjectileEntity replaceProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user,
-				@NotNull PersistentProjectileEntity projectile);
+		ProjectileEntity replaceProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user,
+				@NotNull ProjectileEntity projectile);
 	}
 
 	public interface ModifyProjectileFromCrossbow {
@@ -83,6 +83,6 @@ public final class CrossbowShotProjectileEvents {
 		 * @param user            the user of the crossbow
 		 * @param projectile      the arrow entity to be spawned
 		 */
-		void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile);
+		void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull ProjectileEntity projectile);
 	}
 }

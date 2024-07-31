@@ -16,6 +16,10 @@
 
 package org.quiltmc.qsl.item.setting.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -27,15 +31,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @ApiStatus.Internal
 public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLogicHandler {
+	public static final Map<Identifier, RecipeRemainderLocation> LOCATIONS = new HashMap<>();
+	public static final Set<RecipeRemainderLocation> DEFAULT_LOCATIONS = new HashSet<>();
+
 	/**
-	 * {@return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed}
+	 * @return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToInventory(ItemStack remainder, DefaultedList<ItemStack> inventory, int index) {
@@ -49,7 +56,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	/**
-	 * {@return {@code true} if returning the item to the slot was successful, or {@code false} if additional handling for the remainder is needed}
+	 * @return {@code true} if returning the item to the slot was successful, or {@code false} if additional handling for the remainder is needed
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToSlot(ItemStack remainder, Slot slot) {
@@ -63,13 +70,13 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	/**
-	 * {@return {@code true} if the remainder stack was fully merged into the base stack, or {@code false} otherwise}
+	 * @return {@code true} if the remainder stack was fully merged into the base stack, or {@code false} otherwise
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryMergeStacks(ItemStack base, ItemStack remainder) {
 		if (remainder.isEmpty()) {
 			return true;
-		} else if (!ItemStack.canCombine(base, remainder)) {
+		} else if (!ItemStack.itemsAndComponentsMatch(base, remainder)) {
 			return false;
 		}
 
@@ -80,30 +87,30 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1")
-	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe) {
+	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
 		if (original.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
 
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe);
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe, location);
 
 		original.decrement(amount);
 
 		return remainder;
 	}
 
-	@Contract(mutates = "param1, param4, param6")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
-		ItemStack remainder = decrementWithRemainder(input, amount, recipe);
+	@Contract(mutates = "param1, param5, param7")
+	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
+		ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
 			failure.accept(remainder);
 		}
 	}
 
-	@Contract(mutates = "param1, param4")
-	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, PlayerEntity player) {
-		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe);
+	@Contract(mutates = "param1, param5")
+	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player) {
+		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
 
 		if (!tryReturnItemToSlot(remainder, slot)) {
 			player.getInventory().offerOrDrop(remainder);

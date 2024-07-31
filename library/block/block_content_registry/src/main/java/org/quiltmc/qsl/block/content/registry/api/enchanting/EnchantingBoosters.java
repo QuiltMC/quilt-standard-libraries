@@ -23,7 +23,10 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.Identifier;
 
 /**
@@ -76,6 +79,17 @@ public class EnchantingBoosters {
 						return DataResult.success(Either.right(enchantingBooster));
 					});
 
+	public static final PacketCodec<RegistryByteBuf, EnchantingBooster> PACKET_CODEC = Identifier
+			.PACKET_CODEC
+			.map(
+				TYPES::get,
+				type -> TYPES.inverse().get(type)
+			).<RegistryByteBuf>cast()
+			.dispatch(
+				EnchantingBooster::getType,
+				EnchantingBoosterType::packetCodec
+			);
+
 	/**
 	 * Registers a non-simple booster type.
 	 *
@@ -83,8 +97,8 @@ public class EnchantingBoosters {
 	 * @param codec the codec for the booster
 	 * @return the type for the booster
 	 */
-	public static EnchantingBoosterType register(Identifier id, Codec<? extends EnchantingBooster> codec) {
-		var type = new EnchantingBoosterType(codec, Optional.empty());
+	public static EnchantingBoosterType register(Identifier id, MapCodec<? extends EnchantingBooster> codec, PacketCodec<RegistryByteBuf, ? extends EnchantingBooster> packetCodec) {
+		var type = new EnchantingBoosterType(codec, packetCodec, Optional.empty());
 		return register(id, type);
 	}
 

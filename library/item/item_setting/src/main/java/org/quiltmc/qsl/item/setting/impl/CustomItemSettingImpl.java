@@ -28,11 +28,11 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
 import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
 import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @ApiStatus.Internal
@@ -41,7 +41,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSetting.create(() -> null);
 
 	@SuppressWarnings("ConstantConditions")
-	public static final CustomItemSetting<RecipeRemainderProvider> RECIPE_REMAINDER_PROVIDER = new CustomItemSettingImpl<>(() -> (original, recipe) -> original.getItem().hasRecipeRemainder() ? original.getItem().getRecipeRemainder().getDefaultStack() : ItemStack.EMPTY) {
+	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>> RECIPE_REMAINDER_PROVIDER = new CustomItemSettingImpl<>(HashMap::new) {
 		@Override
 		public void apply(Item.Settings settings, Item item) {
 			if (item.hasRecipeRemainder()) {
@@ -76,6 +76,13 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 
 		this.customSettings.put(settings, value);
 		CUSTOM_SETTINGS.computeIfAbsent(settings, s -> new HashSet<>()).add(this);
+	}
+
+	public T get(Item.Settings settings) {
+		Objects.requireNonNull(settings);
+
+		CUSTOM_SETTINGS.computeIfAbsent(settings, s -> new HashSet<>()).add(this);
+		return this.customSettings.computeIfAbsent(settings, _setting -> this.defaultValue.get());
 	}
 
 	public void apply(Item.Settings settings, Item item) {

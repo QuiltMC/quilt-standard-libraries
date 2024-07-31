@@ -38,7 +38,7 @@ public final class SurfaceRuleEvents {
 	 * <p>
 	 * This phase always happen after the {@link Event#DEFAULT_PHASE default phase}.
 	 */
-	public static final Identifier REMOVE_PHASE = new Identifier("quilt", "remove");
+	public static final Identifier REMOVE_PHASE = Identifier.of("quilt", "remove");
 
 	/**
 	 * An event indicating that the surface rules for the Overworld dimension may get modified by mods,
@@ -58,7 +58,7 @@ public final class SurfaceRuleEvents {
 	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
 	 */
 	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt", "surface_rules/overworld"),
+			Identifier.of("quilt", "surface_rules/overworld"),
 			MODIFY_OVERWORLD_CODECS,
 			OverworldModifierCallback.class,
 			MODIFY_OVERWORLD,
@@ -87,7 +87,7 @@ public final class SurfaceRuleEvents {
 	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
 	 */
 	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt", "surface_rules/nether"),
+			Identifier.of("quilt", "surface_rules/nether"),
 			MODIFY_NETHER_CODECS,
 			NetherModifierCallback.class,
 			MODIFY_NETHER,
@@ -116,7 +116,7 @@ public final class SurfaceRuleEvents {
 	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
 	 */
 	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt", "surface_rules/the_end"),
+			Identifier.of("quilt", "surface_rules/the_end"),
 			MODIFY_THE_END_CODECS,
 			TheEndModifierCallback.class,
 			MODIFY_THE_END,
@@ -146,7 +146,7 @@ public final class SurfaceRuleEvents {
 	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
 	 */
 	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt", "surface_rules/generic"),
+			Identifier.of("quilt", "surface_rules/generic"),
 			MODIFY_GENERIC_CODECS,
 			GenericModifierCallback.class,
 			MODIFY_GENERIC,

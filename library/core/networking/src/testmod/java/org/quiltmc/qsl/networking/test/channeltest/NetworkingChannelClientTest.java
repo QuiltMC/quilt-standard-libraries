@@ -23,7 +23,7 @@ import java.util.Set;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -35,7 +35,7 @@ public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 		C2SPlayChannelEvents.Register, C2SPlayChannelEvents.Unregister,
 		ClientLoginConnectionEvents.Disconnect, ClientPlayConnectionEvents.Disconnect {
 	// public static final KeyBinding OPEN = KeyBindingHelper.registerKeyBinding(new KeyBinding("networking-v1-test", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_MENU, "fabric-networking-api-v1-testmod\""));
-	static final Set<Identifier> SUPPORTED_C2S_CHANNELS = new HashSet<>();
+	static final Set<CustomPayload.Id<?>> SUPPORTED_C2S_CHANNELS = new HashSet<>();
 
 	@Override
 	public void endClientTick(MinecraftClient client) {
@@ -51,7 +51,7 @@ public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 	}
 
 	@Override
-	public void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels) {
+	public void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<CustomPayload.Id<?>> channels) {
 		SUPPORTED_C2S_CHANNELS.addAll(channels);
 
 		if (MinecraftClient.getInstance().currentScreen instanceof ChannelScreen channelScreen) {
@@ -60,7 +60,7 @@ public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 	}
 
 	@Override
-	public void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels) {
+	public void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<CustomPayload.Id<?>> channels) {
 		SUPPORTED_C2S_CHANNELS.removeAll(channels);
 
 		if (MinecraftClient.getInstance().currentScreen instanceof ChannelScreen channelScreen) {

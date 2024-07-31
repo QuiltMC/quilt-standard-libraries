@@ -26,35 +26,48 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.MultiPackResourceManager;
+import net.minecraft.resource.PackPosition;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.DefaultResourcePack;
-import net.minecraft.resource.pack.ResourcePackManager;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.resource.pack.DefaultPack;
+import net.minecraft.resource.pack.PackLocationInfo;
+import net.minecraft.resource.pack.PackManager;
+import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
+import org.quiltmc.qsl.resource.loader.impl.ModPackProvider;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @ClientOnly
 @ApiStatus.Internal
 final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader {
-	private static final Identifier ID = new Identifier(ClientQuiltTagsMod.NAMESPACE, "client_default_tags");
-	private final ResourcePackManager resourcePackManager;
+	private static final Identifier ID = Identifier.of(ClientQuiltTagsMod.NAMESPACE, "client_default_tags");
+	private final PackManager resourcePackManager;
 
 	ClientDefaultTagManagerReloader() {
-		DefaultResourcePack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
+		DefaultPack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
 
-		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, defaultPack);
-		this.resourcePackManager = new ResourcePackManager((profileAdder) -> {
-			profileAdder.accept(ResourcePackProfile.of("vanilla", pack.getDisplayName(), true, name -> pack,
-					ResourceType.SERVER_DATA, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN
+		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, defaultPack);
+		this.resourcePackManager = new PackManager((profileAdder) -> {
+			profileAdder.accept(PackProfile.of(
+				new PackLocationInfo(
+						"vanilla",
+						pack.getDisplayName(),
+						null,
+						pack.getKnownPackInfo()),
+					QuiltPackProfile.wrapToFactory(pack),
+					ResourceType.SERVER_DATA,
+					new PackPosition(
+						true,
+						PackProfile.InsertionPosition.BOTTOM,
+						true
+					)
 			));
-		}, ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER);
+		}, ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER);
 	}
 
 	@Override

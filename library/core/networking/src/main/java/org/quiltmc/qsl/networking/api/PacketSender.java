@@ -23,21 +23,20 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 /**
  * Represents something that supports sending packets to channels.
  *
  * @see PacketByteBufs
  */
-public interface PacketSender {
+public interface PacketSender<C> {
 	/**
 	 * Makes a packet for a channel.
 	 *
-	 * @param channelName the identifier of the channel
-	 * @param buf         the content of the packet
+	 * @param payload the payload
 	 */
-	Packet<?> createPacket(Identifier channelName, PacketByteBuf buf);
+	Packet<?> createPacket(C payload);
 
 	/**
 	 * Sends a packet.
@@ -57,27 +56,11 @@ public interface PacketSender {
 	/**
 	 * Sends a packet to a channel.
 	 *
-	 * @param channel the identifier of the channel
-	 * @param buf     the content of the packet
+	 * @param payload the payload
 	 */
-	default void sendPacket(Identifier channel, PacketByteBuf buf) {
-		Objects.requireNonNull(channel, "Channel cannot be null");
-		Objects.requireNonNull(buf, "Payload cannot be null");
+	default void sendPayload(C payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
 
-		this.sendPacket(this.createPacket(channel, buf));
-	}
-
-	/**
-	 * Sends a packet to a channel.
-	 *
-	 * @param channel  the identifier of the channel
-	 * @param buf      the content of the packet
-	 * @param listener an optional listener containing callbacks to execute after the packet is sent, may be {@code null}
-	 */
-	default void sendPacket(Identifier channel, PacketByteBuf buf, @Nullable PacketSendListener listener) {
-		Objects.requireNonNull(channel, "Channel cannot be null");
-		Objects.requireNonNull(buf, "Payload cannot be null");
-
-		this.sendPacket(this.createPacket(channel, buf), listener);
+		this.sendPacket(this.createPacket(payload));
 	}
 }

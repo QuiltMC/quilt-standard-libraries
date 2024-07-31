@@ -8,9 +8,10 @@
     "TagKeyMixin"
   ],
   "client": [
-    "client.DynamicRegistrySyncAccessor",
     "client.ClientPlayNetworkHandlerMixin",
+    "client.DynamicRegistrySyncAccessor",
     "client.HolderReferenceMixin",
+    "client.ReloadableRegistriesMixin",
     "client.WorldLoaderMixin"
   ],
   "injectors": {

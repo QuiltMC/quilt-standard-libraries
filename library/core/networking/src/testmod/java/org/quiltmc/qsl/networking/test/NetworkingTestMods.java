@@ -19,14 +19,15 @@ package org.quiltmc.qsl.networking.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public final class NetworkingTestMods {
 	public static final String ID = "quilt_networking_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
-	public static Identifier id(String name) {
-		return new Identifier(ID, name);
+	public static <T extends CustomPayload> CustomPayload.Id<T> id(String name) {
+		return new CustomPayload.Id<>(Identifier.of(ID, name));
 	}
 
 	private NetworkingTestMods() {

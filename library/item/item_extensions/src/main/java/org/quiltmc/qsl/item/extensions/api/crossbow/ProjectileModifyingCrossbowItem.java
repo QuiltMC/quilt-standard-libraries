@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 
@@ -34,12 +35,11 @@ public class ProjectileModifyingCrossbowItem extends CrossbowItem implements Cro
 	}
 
 	@Override
-	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user,
-			@NotNull PersistentProjectileEntity projectile) {
+	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull ProjectileEntity projectile) {
 		if (crossbowStack.getItem() == this) {
 			this.onProjectileShot(crossbowStack, projectileStack, user, projectile);
 		}
 	}
 
-	public void onProjectileShot(ItemStack crossbowStack, ItemStack arrowStack, LivingEntity user, PersistentProjectileEntity projectile) {}
+	public void onProjectileShot(ItemStack crossbowStack, ItemStack arrowStack, LivingEntity user, ProjectileEntity projectile) {}
 }

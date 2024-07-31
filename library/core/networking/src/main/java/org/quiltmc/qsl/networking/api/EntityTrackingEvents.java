@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.networking.api;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -29,7 +30,7 @@ public final class EntityTrackingEvents {
 	/**
 	 * An event that is called before player starts tracking an entity.
 	 * Typically, this occurs when an entity enters a client's view distance.
-	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
+	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket(EntityTrackerEntry) spawn packet}.
 	 *
 	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
 	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
@@ -43,7 +44,7 @@ public final class EntityTrackingEvents {
 	/**
 	 * An event that is called after a player starts tracking an entity.
 	 * Typically, this occurs when an entity enters a client's view distance.
-	 * This event is called after the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet},
+	 * This event is called after the player's client is sent the entity's {@link Entity#createSpawnPacket(EntityTrackerEntry) spawn packet},
 	 * so packets may be sent referencing the entity.
 	 *
 	 * @apiNote If you're using this to tell the client information for <em>your own</em> entity, you may want to instead override {@link Entity#onStartedTrackingBy(ServerPlayerEntity)}.

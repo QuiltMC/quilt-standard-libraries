@@ -41,8 +41,8 @@ public final class TooltipTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
-		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
+		Registry.register(Registries.ITEM, Identifier.of(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
+		Registry.register(Registries.ITEM, Identifier.of(NAMESPACE, "custom_convertible_tooltip_item"),
 				CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);
 	}
 

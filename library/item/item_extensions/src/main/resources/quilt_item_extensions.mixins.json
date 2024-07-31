@@ -3,12 +3,12 @@
   "package": "org.quiltmc.qsl.item.extensions.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ArmorItemMixin",
     "ProjectileUtilMixin",
     "bow.AbstractSkeletonEntityMixin",
     "bow.BowAttackGoalMixin",
     "bow.BowAttackMixin",
     "bow.BowItemMixin",
+    "bow.RangedWeaponItemMixin",
     "bow.EntityUseBowMixin",
     "crossbow.CrossbowItemAccessor",
     "crossbow.CrossbowItemMixin",

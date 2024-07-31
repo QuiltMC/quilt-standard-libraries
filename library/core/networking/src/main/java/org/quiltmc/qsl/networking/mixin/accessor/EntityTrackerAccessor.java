@@ -21,10 +21,10 @@ import java.util.Set;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.server.world.EntityTrackingListener;
+import net.minecraft.server.network.ServerPlayerConnection;
 
 @Mixin(targets = "net/minecraft/server/world/ThreadedChunkManager$EntityTracker")
 public interface EntityTrackerAccessor {
-	@Accessor("listeners")
-	Set<EntityTrackingListener> getPlayersTracking();
+	@Accessor
+	Set<ServerPlayerConnection> getListeners();
 }

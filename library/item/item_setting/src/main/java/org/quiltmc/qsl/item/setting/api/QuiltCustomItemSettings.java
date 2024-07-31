@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import java.util.Map;
+
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
@@ -36,17 +38,20 @@ public final class QuiltCustomItemSettings {
 
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders.
+	 *
 	 * <p>
 	 * The setting is currently used in the following places:
 	 * <ul>
-	 *     <li>Crafting Table</li>
+	 *     <li>Crafting</li>
 	 *     <li>Furnace Fuel</li>
 	 *     <li>Furnace Ingredient</li>
-	 *     <li>Loom Dye Input</li>
-	 *     <li>Brewing Stand Ingredient</li>
-	 *     <li>Smithing Table Addition</li>
-	 *     <li>Stone Cutter Ingredient</li>
+	 *     <li>Loom Dye</li>
+	 *     <li>Brewing Ingredient</li>
+	 *     <li>Smithing Template</li>
+	 *     <li>Smithing Base</li>
+	 *     <li>Smithing Ingredient</li>
+	 *     <li>Stonecutter Input</li>
 	 * </ul>
 	 */
-	public static final CustomItemSetting<RecipeRemainderProvider> RECIPE_REMAINDER_PROVIDER = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER;
+	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>> RECIPE_REMAINDER_PROVIDER = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER;
 }

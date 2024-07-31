@@ -19,6 +19,7 @@ package org.quiltmc.qsl.networking.api.client;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -28,10 +29,11 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
+import org.quiltmc.qsl.networking.api.server.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 
 /**
@@ -58,7 +60,7 @@ public final class ClientLoginNetworking {
 	 * @see ClientLoginNetworking#registerReceiver(Identifier, QueryRequestReceiver)
 	 */
 	public static boolean registerGlobalReceiver(Identifier channelName, QueryRequestReceiver queryHandler) {
-		return ClientNetworkingImpl.LOGIN.registerGlobalReceiver(channelName, queryHandler);
+		return ClientNetworkingImpl.LOGIN.registerGlobalReceiver(new CustomPayload.Id<>(channelName), queryHandler);
 	}
 
 	/**
@@ -74,7 +76,7 @@ public final class ClientLoginNetworking {
 	 */
 	@Nullable
 	public static ClientLoginNetworking.QueryRequestReceiver unregisterGlobalReceiver(Identifier channelName) {
-		return ClientNetworkingImpl.LOGIN.unregisterGlobalReceiver(channelName);
+		return ClientNetworkingImpl.LOGIN.unregisterGlobalReceiver(new CustomPayload.Id<>(channelName));
 	}
 
 	/**
@@ -84,7 +86,7 @@ public final class ClientLoginNetworking {
 	 * @return all channel names which global receivers are registered for
 	 */
 	public static Set<Identifier> getGlobalReceivers() {
-		return ClientNetworkingImpl.LOGIN.getChannels();
+		return ClientNetworkingImpl.LOGIN.getChannels().stream().map(CustomPayload.Id::id).collect(Collectors.toUnmodifiableSet());
 	}
 
 	/**
@@ -105,7 +107,7 @@ public final class ClientLoginNetworking {
 			final PacketListener packetListener = connection.getPacketListener();
 
 			if (packetListener instanceof ClientLoginNetworkHandler clientHandler) {
-				return ClientNetworkingImpl.getAddon(clientHandler).registerChannel(channelName, queryHandler);
+				return ClientNetworkingImpl.getAddon(clientHandler).registerChannel(new CustomPayload.Id<>(channelName), queryHandler);
 			}
 		}
 
@@ -129,7 +131,7 @@ public final class ClientLoginNetworking {
 			final PacketListener packetListener = connection.getPacketListener();
 
 			if (packetListener instanceof ClientLoginNetworkHandler clientHandler) {
-				return ClientNetworkingImpl.getAddon(clientHandler).unregisterChannel(channelName);
+				return ClientNetworkingImpl.getAddon(clientHandler).unregisterChannel(new CustomPayload.Id<>(channelName));
 			}
 		}
 
@@ -159,6 +161,6 @@ public final class ClientLoginNetworking {
 		 * @return a completable future which contains the payload to respond to the server with.
 		 * If the future contains {@code null}, then the server will be notified that the client did not understand the query.
 		 */
-		CompletableFuture<@Nullable PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder);
+		CompletableFuture<PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder);
 	}
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.mojang.datafixers.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
@@ -95,7 +94,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		ResourceLoader.registerBuiltinResourcePack(id("registry_entry_existence_test"), mod, ResourcePackActivationType.NORMAL);
+		ResourceLoader.registerBuiltinPack(id("registry_entry_existence_test"), mod, PackActivationType.NORMAL);
 
 		Preconditions.checkArgument(NetherBiomes.canGenerateInNether(Biomes.NETHER_WASTES));
 		Preconditions.checkArgument(!NetherBiomes.canGenerateInNether(Biomes.END_HIGHLANDS));
@@ -147,7 +146,7 @@ public class QuiltBiomeTest implements ModInitializer {
 		TheEndBiomes.addMidlandsBiome(TEST_END_HIGHLANDS, TEST_END_MIDLANDS, 10.0);
 		TheEndBiomes.addBarrensBiome(TEST_END_HIGHLANDS, TEST_END_BARRRENS, 10.0);
 
-		BiomeModifications.create(new Identifier("quilt:testmod"))
+		BiomeModifications.create(Identifier.of("quilt", "testmod"))
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.foundInOverworld(),
 						modification -> modification.getWeather().setDownfall(100))
@@ -260,6 +259,6 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	private static Identifier id(String path) {
-		return new Identifier(NAMESPACE, path);
+		return Identifier.of(NAMESPACE, path);
 	}
 }

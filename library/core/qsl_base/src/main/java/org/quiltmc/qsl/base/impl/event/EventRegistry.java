@@ -69,7 +69,7 @@ public final class EventRegistry implements ModInitializer {
 
 		for (var annotation : listenerClass.getAnnotations()) {
 			if (annotation instanceof ListenerPhase phase) {
-				map.put(phase.callbackTarget(), new Identifier(phase.namespace(), phase.path()));
+				map.put(phase.callbackTarget(), Identifier.of(phase.namespace(), phase.path()));
 			}
 		}
 

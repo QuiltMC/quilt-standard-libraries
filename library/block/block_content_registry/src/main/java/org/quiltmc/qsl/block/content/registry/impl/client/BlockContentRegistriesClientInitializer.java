@@ -41,7 +41,7 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 	public void onInitializeClient(ModContainer mod) {
 		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || QuiltLoader.isModLoaded("quilt_block_content_registry_testmod")) {
 			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
-				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
+				ItemTooltipCallback.EVENT.register((stack, player, context, config, lines) -> {
 					Block block = Block.getBlockFromItem(stack.getItem());
 
 					BlockContentRegistries.FLATTENABLE.get(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));

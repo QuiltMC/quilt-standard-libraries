@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.block.entity.test;
 
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.AbstractBlock;
@@ -28,7 +29,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,7 +39,7 @@ public class AngyBlock extends BlockWithEntity {
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 		if (!world.isClient()) {
 			var blockEntity = BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.get(world, pos);
 
@@ -66,6 +66,11 @@ public class AngyBlock extends BlockWithEntity {
 	@Override
 	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
 		return BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.instantiate(pos, state);
+	}
+
+	@Override
+	protected MapCodec<? extends BlockWithEntity> getCodec() {
+		return null;
 	}
 
 	@Override

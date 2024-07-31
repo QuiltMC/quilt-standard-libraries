@@ -26,12 +26,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
-import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientLoginNetworkAddon;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
 
 @ClientOnly
 @Mixin(ClientLoginNetworkHandler.class)
@@ -54,13 +55,17 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 			cancellable = true
 	)
 	private void handleQueryRequest(LoginQueryRequestS2CPacket packet, CallbackInfo ci) {
-		if (this.addon.handlePacket(packet)) {
-			ci.cancel();
+		if (packet.payload() instanceof PacketByteBufLoginQueryRequestPayload payload) {
+			if (this.addon.handlePacket(packet)) {
+				ci.cancel();
+			} else {
+				payload.data().skipBytes(payload.data().readableBytes());
+			}
 		}
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
-	private void invokeLoginDisconnectEvent(Text reason, CallbackInfo ci) {
+	private void invokeLoginDisconnectEvent(DisconnectionDetails details, CallbackInfo ci) {
 		this.addon.handleDisconnect();
 	}
 

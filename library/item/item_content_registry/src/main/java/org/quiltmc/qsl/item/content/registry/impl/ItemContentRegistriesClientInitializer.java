@@ -39,7 +39,7 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 	public void onInitializeClient(ModContainer mod) {
 		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || QuiltLoader.isModLoaded("quilt_item_content_registry_testmod")) {
 			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
-				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
+				ItemTooltipCallback.EVENT.register((stack, player, context, config, lines) -> {
 					Item item = stack.getItem();
 
 					ItemContentRegistries.FUEL_TIMES.get(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));

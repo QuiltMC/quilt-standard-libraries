@@ -15,13 +15,23 @@ qslModule {
 		management {
 			testmodOnly("command")
 		}
+		gui {
+			testmodOnly("screen") // for resource loader
+		}
 	}
 	entrypoints {
 		init {
-			values = ["org.quiltmc.qsl.networking.impl.NetworkingImpl::init"]
+			values = [
+				"org.quiltmc.qsl.networking.impl.NetworkingImpl::init",
+				"org.quiltmc.qsl.networking.impl.common.CommonPacketsImpl::init"
+			]
 		}
 		client_init {
 			values = ["org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl::clientInit"]
 		}
+	}
+
+	injectedInterface("net/minecraft/class_8610") {
+		values = ["org/quiltmc/qsl/networking/api/server/ServerConfigurationTaskManager"]
 	}
 }

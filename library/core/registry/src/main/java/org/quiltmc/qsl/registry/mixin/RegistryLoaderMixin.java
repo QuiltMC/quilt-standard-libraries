@@ -20,19 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.mojang.datafixers.util.Pair;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.MutableRegistry;
-import net.minecraft.registry.RegistryLoader;
+import net.minecraft.registry.*;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
@@ -41,42 +35,54 @@ import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
 import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 
 @Mixin(RegistryLoader.class)
-public class RegistryLoaderMixin {
+public abstract class RegistryLoaderMixin {
 	@Shadow
 	@Final
 	@Mutable
 	public static List<RegistryLoader.DecodingData<?>> WORLDGEN_REGISTRIES;
 
+	@Shadow
+	@Final
+	@Mutable
+	public static List<RegistryLoader.DecodingData<?>> SYNCED_REGISTRIES;
+
+	@Unique
+	private static final ThreadLocal<ResourceManager> cachedResourceManager = new ThreadLocal<>();
+
 	static {
 		WORLDGEN_REGISTRIES = new ArrayList<>(WORLDGEN_REGISTRIES);
+		SYNCED_REGISTRIES = new ArrayList<>(SYNCED_REGISTRIES);
 	}
 
-	@Inject(method = "getPath", at = @At("HEAD"), cancellable = true)
-	private static void replaceDynamicRegistryPath(Identifier id, CallbackInfoReturnable<String> cir) {
-		if (DynamicMetaRegistryImpl.isModdedRegistryId(id)) {
-			cir.setReturnValue(id.getNamespace() + "/" + id.getPath());
-		}
+	// TODO is there a better solution for acquiring the used resource manager?
+	@Inject(method = "loadFromResource", at = @At("HEAD"))
+	private static void cacheResourceManager(
+			ResourceManager resourceManager,
+			DynamicRegistryManager registryManager,
+			List<RegistryLoader.DecodingData<?>> entries,
+			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
+		cachedResourceManager.set(resourceManager);
 	}
 
 	@Inject(
-			method = "loadRegistriesIntoManager",
+			method = "load",
 			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = At.Shift.AFTER),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private static void onBeforeLoad(
-			ResourceManager resourceManager,
+			RegistryLoader.LoadingFunction function,
 			DynamicRegistryManager registryManager,
-			List<RegistryLoader.DecodingData<?>> decodingData,
+			List<RegistryLoader.DecodingData<?>> data,
 			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
-			Map<?, ?> map,
-			List<Pair<MutableRegistry<?>, ?>> registries) {
+			Map<RegistryKey<?>, Exception> map, List<RegistryLoader.ContentLoader<?>> list, RegistryOps.RegistryInfoLookup registryInfoLookup) {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
-				new DynamicRegistryManagerSetupContextImpl(resourceManager, registries.stream().map(Pair::getFirst))
+				new DynamicRegistryManagerSetupContextImpl(cachedResourceManager.get(), list.stream().map(RegistryLoader.ContentLoader::registry))
 		);
+		cachedResourceManager.remove();
 	}
 
 	@Inject(
-			method = "loadRegistriesIntoManager",
+			method = "load",
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
@@ -84,7 +90,9 @@ public class RegistryLoaderMixin {
 					shift = At.Shift.AFTER
 			)
 	)
-	private static void onAfterLoad(ResourceManager resourceManager, DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData,
+	private static void onAfterLoad(RegistryLoader.LoadingFunction function,
+									DynamicRegistryManager registryManager,
+									List<RegistryLoader.DecodingData<?>> data,
 									CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
 		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);
 	}

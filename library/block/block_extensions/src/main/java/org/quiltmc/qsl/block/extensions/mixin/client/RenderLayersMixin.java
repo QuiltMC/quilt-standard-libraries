@@ -41,9 +41,6 @@ public abstract class RenderLayersMixin {
 	private static Map<Fluid, RenderLayer> FLUIDS;
 
 	static {
-		BlockRenderLayerMapImpl.initialize(
-				(block, renderLayer) -> BLOCKS.put(block, renderLayer),
-				(fluid, renderLayer) -> FLUIDS.put(fluid, renderLayer)
-		);
+		BlockRenderLayerMapImpl.initialize(BLOCKS::put, FLUIDS::put);
 	}
 }

@@ -41,7 +41,7 @@ public final class QuiltTestCommand {
 	public static int executeExport(ServerCommandSource source) {
 		BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
 		ServerWorld world = source.getWorld();
-		BlockPos nearestStructureBlockPos = StructureTestUtil.findNearestStructureBlock(currentPos, 15, world);
+		BlockPos nearestStructureBlockPos = StructureTestUtil.findNearestStructureBlock(currentPos, 15, world).orElse(null);
 
 		if (nearestStructureBlockPos == null) {
 			source.sendError(Text.literal("Couldn't find any structure block within 15 blocks radius."));
@@ -54,9 +54,9 @@ public final class QuiltTestCommand {
 
 	public static int executeExport(ServerCommandSource source, String structure) {
 		Path directoryPath = Paths.get(StructureTestUtil.testStructuresDirectoryName);
-		var structureId = new Identifier(structure);
+		var structureId = Identifier.parse(structure);
 
-		Path structurePath = source.getWorld().getStructureTemplateManager().getStructurePath(structureId, ".nbt");
+		Path structurePath = source.getWorld().getStructureTemplateManager().method_15085(structureId, ".nbt");
 		Path exportedPath = NbtProvider.convertNbtToSnbt(DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath);
 
 		if (exportedPath == null) {

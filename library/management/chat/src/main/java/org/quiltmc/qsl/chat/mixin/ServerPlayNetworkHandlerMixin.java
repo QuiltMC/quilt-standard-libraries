@@ -98,11 +98,11 @@ public class ServerPlayNetworkHandlerMixin {
 			method = "sendProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;)V"
 			)
 	)
 	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
-		instance.sendPacket(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
+		instance.send(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
 		QuiltChatEvents.AFTER_PROCESS.invoke(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
@@ -110,7 +110,7 @@ public class ServerPlayNetworkHandlerMixin {
 			method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;)V"
 			)
 	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
@@ -124,7 +124,7 @@ public class ServerPlayNetworkHandlerMixin {
 			}
 
 			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
-			instance.sendPacket(message.serialized());
+			instance.send(message.serialized());
 			QuiltChatEvents.AFTER_PROCESS.invoke(message);
 		} else {
 			throw new IllegalArgumentException("Received non-ChatMessageS2CPacket for argument to ServerPlayNetworkHandler.sendPacket in ServerPlayNetworkHandler.sendChatMessage");

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.unmapped.C_dicxqeuf;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
@@ -137,7 +137,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	public static float calculateBookshelfCount(World world, BlockPos pos) {
 		float count = 0;
 
-		for (BlockPos offset : EnchantingTableBlock.POSSIBLE_BOOKSHELF_LOCATIONS) {
+		for (BlockPos offset : C_dicxqeuf.field_36535) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
 				var blockPos = pos.add(offset);
 				var state = world.getBlockState(blockPos);

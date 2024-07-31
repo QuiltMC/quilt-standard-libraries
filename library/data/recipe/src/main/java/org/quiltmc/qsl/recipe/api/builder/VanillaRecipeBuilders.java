@@ -23,6 +23,7 @@ import net.minecraft.recipe.BlastingRecipe;
 import net.minecraft.recipe.CampfireCookingRecipe;
 import net.minecraft.recipe.CookingCategory;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
@@ -82,7 +83,7 @@ public final class VanillaRecipeBuilders {
 	 * @param output the output item stack
 	 * @return the stone cutting recipe
 	 */
-	public static StonecuttingRecipe stonecuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
+	public static RecipeHolder<StonecuttingRecipe> stonecuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
 		return VanillaRecipeBuildersImpl.stonecuttingRecipe(id, group, input, output);
 	}
 
@@ -98,8 +99,8 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smelting recipe
 	 */
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
-			float experience, int cookTime) {
+	public static RecipeHolder<SmeltingRecipe> smeltingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
+																float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.smeltingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
@@ -115,7 +116,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the blasting recipe
 	 */
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
+	public static RecipeHolder<BlastingRecipe> blastingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
 			float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.blastingRecipe(id, group, category, input, output, experience, cookTime);
 	}
@@ -132,7 +133,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smoking recipe
 	 */
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
+	public static RecipeHolder<SmokingRecipe> smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.smokingRecipe(id, group, category, input, output, experience, cookTime);
 	}
@@ -149,7 +150,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the campfire cooking recipe
 	 */
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
+	public static RecipeHolder<CampfireCookingRecipe> campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, category, input, output, experience, cookTime);
 	}

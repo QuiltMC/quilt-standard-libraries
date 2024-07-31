@@ -19,10 +19,10 @@ package org.quiltmc.qsl.item.setting.api;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeInput;
 import net.minecraft.util.collection.DefaultedList;
 
 /**
@@ -30,6 +30,7 @@ import net.minecraft.util.collection.DefaultedList;
  * The recipe remainder is an {@link ItemStack} instead of an {@link Item}.
  * This can be used to allow your item to get damaged instead of
  * getting removed when used in crafting.
+ *
  * <p>
  * Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.
  */
@@ -45,10 +46,10 @@ public interface RecipeRemainderProvider {
 	@Contract(value = "_, _ -> new")
 	ItemStack getRecipeRemainder(ItemStack original, @Nullable Recipe<?> recipe);
 
-	static DefaultedList<ItemStack> getRemainingStacks(Inventory inventory, Recipe<?> recipe, DefaultedList<ItemStack> defaultedList) {
+	static DefaultedList<ItemStack> getRemainingStacks(RecipeInput input, Recipe<?> recipe, RecipeRemainderLocation location, DefaultedList<ItemStack> defaultedList) {
 		for (int i = 0; i < defaultedList.size(); ++i) {
-			ItemStack stack = inventory.getStack(i);
-			ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(stack, recipe);
+			ItemStack stack = input.get(i);
+			ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(stack, recipe, location);
 
 			if (!remainder.isEmpty()) {
 				defaultedList.set(i, remainder);

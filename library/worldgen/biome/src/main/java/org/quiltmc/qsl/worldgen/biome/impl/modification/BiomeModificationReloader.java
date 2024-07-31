@@ -50,10 +50,10 @@ public class BiomeModificationReloader {
 
 	private static final Gson GSON = new GsonBuilder().setLenient().create();
 
-	private static final Codec<Pair<ModificationPhase, BiomeModifier>> CODEC = Codecs.createLazy(() ->
+	private static final Codec<Pair<ModificationPhase, BiomeModifier>> CODEC = Codec.lazyInitialized(() ->
 			Codec.pair(ModificationPhase.CODEC.fieldOf("phase").codec(), BiomeModifier.BIOME_MODIFIER_CODECS.createDelegatingCodec("biome modifier")));
 
-	private final Identifier resourcePath = new Identifier("quilt", "biome_modifiers");
+	private final Identifier resourcePath = Identifier.of("quilt", "biome_modifiers");
 
 	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> listeners = new HashMap<>();
 

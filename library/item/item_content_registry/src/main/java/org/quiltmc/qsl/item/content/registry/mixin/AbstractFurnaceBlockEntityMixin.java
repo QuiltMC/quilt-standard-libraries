@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.tag.TagKey;
 
 import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
@@ -55,13 +56,13 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 	// Serializes burn time as an integer instead of a short.
 	// Should not cause any desyncs as BE sync packets are now NBT.
 
-	@Inject(method = "readNbt", at = @At("TAIL"))
-	private void readBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	@Inject(method = "method_11014", at = @At("TAIL"))
+	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
 		this.burnTime = nbt.getInt("BurnTime");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
-	private void writeBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
 		nbt.putInt("BurnTime", this.burnTime);
 	}
 }

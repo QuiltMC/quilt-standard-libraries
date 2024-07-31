@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectType;
 
 import org.quiltmc.qsl.base.api.util.TriState;
+import org.quiltmc.qsl.entity.effect.mixin.StatusEffectAccessor;
 
 /**
  * Utilities for dealing with status effects.
@@ -39,16 +41,26 @@ public final class StatusEffectUtils {
 	 * @param effect the status effect
 	 * @param reason the reason the status effect should be removed
 	 * @return {@code true} if the status effect should be removed, or {@code false} otherwise.
-	 *
 	 * @see StatusEffectEvents#SHOULD_REMOVE
 	 * @see StatusEffect#shouldRemove(LivingEntity, StatusEffectInstance, StatusEffectRemovalReason)
 	 */
 	public static boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
 		TriState eventResult = StatusEffectEvents.SHOULD_REMOVE.invoker().shouldRemove(entity, effect, reason);
 		if (eventResult == TriState.DEFAULT) {
-			return effect.getEffectType().shouldRemove(entity, effect, reason);
+			return effect.getEffectType().value().shouldRemove(entity, effect, reason);
 		} else {
 			return eventResult.toBooleanOrElse(false);
 		}
+	}
+
+	/**
+	 * Creates a new status effect by calling {@link StatusEffect#StatusEffect(StatusEffectType, int)}.
+	 *
+	 * @param type  the type for the effect
+	 * @param color the color for the effect
+	 * @return the new effect
+	 */
+	public static StatusEffect createEffect(StatusEffectType type, int color) {
+		return StatusEffectAccessor.invokeNew(type, color);
 	}
 }

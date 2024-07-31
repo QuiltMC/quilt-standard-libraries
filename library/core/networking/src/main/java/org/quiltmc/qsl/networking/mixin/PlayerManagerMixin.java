@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.ConnectedClientData;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -29,8 +30,14 @@ import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 @Mixin(PlayerManager.class)
 abstract class PlayerManagerMixin {
-	@Inject(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/CustomPayloadS2CPacket;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/network/PacketByteBuf;)V"))
-	private void handlePlayerConnection(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+	@Inject(
+			method = "onPlayerConnect",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/server/PlayerManager;sendToAll(Lnet/minecraft/network/packet/Packet;)V"
+			)
+	)
+	private void handlePlayerConnection(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData connectedClientData, CallbackInfo ci) {
 		ServerNetworkingImpl.getAddon(player.networkHandler).onClientReady();
 	}
 }

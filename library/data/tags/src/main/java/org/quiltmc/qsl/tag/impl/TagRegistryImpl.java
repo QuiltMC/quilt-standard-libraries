@@ -51,7 +51,7 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static boolean isRegistryDynamic(RegistryKey<? extends Registry<?>> registryKey) {
-		return !Registries.REGISTRY.contains((RegistryKey) registryKey);
+		return !Registries.ROOT.contains((RegistryKey) registryKey);
 	}
 
 	public static void populateTags(Map<TagKey<?>, List<Holder<?>>> tags) {

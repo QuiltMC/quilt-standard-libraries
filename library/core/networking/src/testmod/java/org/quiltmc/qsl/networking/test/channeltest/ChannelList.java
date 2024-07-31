@@ -19,14 +19,14 @@ package org.quiltmc.qsl.networking.test.channeltest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.gui.widget.list.EntryListWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 	ChannelList(MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
-		super(client, width, height, top, bottom, itemHeight);
+		super(client, top, width, bottom-top, itemHeight);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 	}
 
 	@Override
-	public void appendNarrations(NarrationMessageBuilder arg) {
+	public void updateNarration(NarrationMessageBuilder arg) {
 		// TODO seems to be possibly accessibility related
 	}
 

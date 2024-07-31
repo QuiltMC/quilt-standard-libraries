@@ -61,7 +61,7 @@ public class TestFunctionsMixin {
 			}
 		} else {
 			// We can't really guess anything since we don't have enough data, so we fallback to Vanilla's default implementation.
-			return testFunction.getStructurePath().toLowerCase().startsWith(testClass.toLowerCase() + ".");
+			return testFunction.testName().toLowerCase().startsWith(testClass.toLowerCase() + ".");
 		}
 	}
 }

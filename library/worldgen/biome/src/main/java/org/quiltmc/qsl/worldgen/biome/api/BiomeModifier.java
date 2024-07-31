@@ -21,7 +21,6 @@ import java.util.function.Function;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
 
 import org.quiltmc.qsl.data.callback.api.CodecAware;
@@ -39,7 +38,7 @@ public interface BiomeModifier extends CodecAware {
 	 */
 	CodecMap<BiomeModifier> BIOME_MODIFIER_CODECS = new CodecMap<>();
 
-	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codecs.createLazy(() ->
+	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codec.lazyInitialized(() ->
 			Codec.either(BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selector"), Biome.LIST_CODEC)
 					.xmap(either -> either.map(Function.identity(), ValueBiomeSelector::new),
 							predicate -> predicate instanceof ValueBiomeSelector valueSelector

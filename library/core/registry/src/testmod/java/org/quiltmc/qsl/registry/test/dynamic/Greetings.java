@@ -30,6 +30,6 @@ public record Greetings(String text, int weight) {
 	).apply(instance, Greetings::new));
 
 	public static final RegistryKey<Registry<Greetings>> REGISTRY_KEY = RegistryKey.ofRegistry(
-			new Identifier("quilt_registry_testmod", "greetings")
+			Identifier.of("quilt_registry_testmod", "greetings")
 	);
 }

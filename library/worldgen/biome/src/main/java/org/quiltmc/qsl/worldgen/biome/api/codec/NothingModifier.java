@@ -35,7 +35,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * }</code></pre>
  */
 public final class NothingModifier implements BiomeModifier {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "nothing");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "nothing");
 	public static final NothingModifier INSTANCE = new NothingModifier();
 	public static final Codec<NothingModifier> CODEC = Codec.unit(INSTANCE);
 

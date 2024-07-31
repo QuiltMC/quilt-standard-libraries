@@ -26,8 +26,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -37,7 +37,7 @@ import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 @ClientOnly
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
-	private static final Identifier HUD_ICONS = new Identifier("textures/gui/icons.png");
+	private static final Identifier ARMOR_FULL_ICON = Identifier.ofDefault("hud/armor_full");
 	private Screen actualScreen;
 
 	@Override
@@ -64,7 +64,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			graphics.drawTexture(HUD_ICONS, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
+			graphics.drawGuiTexture(ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
 		}
 	}
 }

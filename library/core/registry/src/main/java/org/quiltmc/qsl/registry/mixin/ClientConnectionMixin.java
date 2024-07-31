@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.IdentityHashMap;
 
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
@@ -30,19 +31,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Util;
 
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 @Mixin(ClientConnection.class)
-public class ClientConnectionMixin implements ExtendedConnectionClient {
+public abstract class ClientConnectionMixin implements ExtendedConnectionClient {
 	@Unique
 	private IdentityHashMap<Registry<?>, ObjectOpenCustomHashSet<Object>> quilt$unknownEntries = new IdentityHashMap<>();
 	@Unique
 	private Object2IntMap<String> quilt$modProtocol = new Object2IntOpenHashMap<>();
 	@Unique
 	private boolean quilt$understandsOptional;
+
+	@Unique
+	private final Hash.Strategy<Object> quilt$identiyHashStrategy = new Hash.Strategy<>() {
+
+		@Override
+		public int hashCode(Object o) {
+			return System.identityHashCode(o);
+		}
+
+		@Override
+		public boolean equals(Object o1, Object o2) {
+			return o1 == o2;
+		}
+	};
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quilt$setDefault(NetworkSide side, CallbackInfo ci) {
@@ -54,7 +68,7 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 		var set = this.quilt$unknownEntries.get(registry);
 
 		if (set == null) {
-			set = new ObjectOpenCustomHashSet<>(Util.identityHashStrategy());
+			set = new ObjectOpenCustomHashSet<>(this.quilt$identiyHashStrategy);
 			this.quilt$unknownEntries.put(registry, set);
 		}
 

@@ -19,13 +19,13 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.gui.screen.pack.PackListWidget.ResourcePackEntry;
 import net.minecraft.client.gui.screen.pack.ResourcePackOrganizer;
+import net.minecraft.client.gui.widget.list.pack.PackEntryListWidget;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 @ClientOnly
-@Mixin(ResourcePackEntry.class)
+@Mixin(PackEntryListWidget.PackEntry.class)
 public interface ResourcePackEntryAccessor {
 	@Accessor
 	ResourcePackOrganizer.Pack getPack();

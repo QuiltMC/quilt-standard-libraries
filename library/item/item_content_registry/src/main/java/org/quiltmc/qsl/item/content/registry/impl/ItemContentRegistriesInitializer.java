@@ -47,7 +47,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 	public static final Map<ItemConvertible, Float> INITIAL_COMPOST_CHANCE = ImmutableMap.copyOf(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE);
 
-	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(RegistryKeys.ITEM, new Identifier("quilt", "fuel_filters"));
+	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "fuel_filters"));
 
 	private static boolean collectInitialTags = false;
 

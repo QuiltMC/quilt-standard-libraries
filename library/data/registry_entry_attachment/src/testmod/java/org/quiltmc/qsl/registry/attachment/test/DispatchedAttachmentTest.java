@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.attachment.test;
 
 import com.mojang.logging.LogUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,8 +26,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -46,8 +43,8 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 public class DispatchedAttachmentTest implements ModInitializer,
 		ResourceLoaderEvents.EndDataPackReload {
 	public static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION =
-			RegistryEntryAttachment.dispatchedBuilder(Registries.ITEM, new Identifier("quilt", "modular_function"),
-					FuncValue.class, FuncValue.CODECS::get).build();
+			RegistryEntryAttachment.dispatchedBuilder(Registries.ITEM, Identifier.of("quilt", "modular_function"),
+					FuncValue.class, FuncValue.CODECS::get, FuncValue.PACKET_CODECS::get).build();
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -73,38 +70,38 @@ public class DispatchedAttachmentTest implements ModInitializer,
 	 * Has a built-in value of one type.
 	 */
 	public static final ModularFunctionItem ITEM_1 = RegistryExtensions.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_1"), new ModularFunctionItem(new Item.Settings()),
+			Identifier.of("quilt", "modular_item_1"), new ModularFunctionItem(new Item.Settings()),
 			MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!"));
 	/**
 	 * Has a built-in value of one type, overridden via datapack by a value with another type.
 	 */
 	public static final ModularFunctionItem ITEM_2 = RegistryExtensions.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_2"), new ModularFunctionItem(new Item.Settings()),
+			Identifier.of("quilt", "modular_item_2"), new ModularFunctionItem(new Item.Settings()),
 			MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!"));
 	/**
 	 * Set via datapack.
 	 */
 	public static final ModularFunctionItem ITEM_3 = Registry.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_3"), new ModularFunctionItem(new Item.Settings()));
+			Identifier.of("quilt", "modular_item_3"), new ModularFunctionItem(new Item.Settings()));
 	/**
 	 * Has no value at all.
 	 */
 	public static final ModularFunctionItem ITEM_4 = Registry.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
+			Identifier.of("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
 	/**
 	 * Has a value a provided by a tag.
 	 */
 	public static final ModularFunctionItem ITEM_5 = Registry.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
+			Identifier.of("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
 	/**
 	 * Has a value a provided by a tag via datapack.
 	 */
 	public static final ModularFunctionItem ITEM_6 = Registry.register(Registries.ITEM,
-			new Identifier("quilt", "modular_item_6"), new ModularFunctionItem(new Item.Settings()));
+			Identifier.of("quilt", "modular_item_6"), new ModularFunctionItem(new Item.Settings()));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		MODULAR_FUNCTION.put(TagKey.of(RegistryKeys.ITEM, new Identifier("quilt", "modular_tag_1")),
+		MODULAR_FUNCTION.put(TagKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "modular_tag_1")),
 				new SendMessageFuncValue("Built-in value via tag!"));
 	}
 

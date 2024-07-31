@@ -24,8 +24,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -36,11 +37,7 @@ import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 @Mixin(ItemStack.class)
 public final class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"))
-	private void onGetTooltip(@Nullable PlayerEntity player, TooltipContext context,
-			CallbackInfoReturnable<List<Text>> cir) {
-		ItemTooltipCallback.EVENT.invoker().onTooltipRequest(
-				(ItemStack) (Object) this, player, context,
-				cir.getReturnValue()
-		);
+	private void onGetTooltip(Item.TooltipContext context, PlayerEntity player, TooltipConfig config, CallbackInfoReturnable<List<Text>> cir) {
+		ItemTooltipCallback.EVENT.invoker().onTooltipRequest((ItemStack) (Object) this, player, context, config, cir.getReturnValue());
 	}
 }

@@ -46,7 +46,7 @@ public record AddSpawnersModifier(
 		List<SpawnSettings.SpawnEntry> spawners,
 		Optional<SpawnGroup> group
 ) implements BiomeModifier {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "add_spawners");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_spawners");
 	public static final Codec<AddSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddSpawnersModifier::selector),
 			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),

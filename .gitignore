@@ -36,3 +36,6 @@ $RECYCLE.BIN/
 
 # Mac
 .DS_Store
+
+# QFAPI
+qfapi/quilt

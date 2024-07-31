@@ -28,8 +28,8 @@ import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
@@ -37,6 +37,8 @@ import org.quiltmc.qsl.networking.api.PacketSendListeners;
 import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryResponsePayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
@@ -56,16 +58,17 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 	}
 
 	public boolean handlePacket(LoginQueryRequestS2CPacket packet) {
-		return this.handlePacket(packet.getQueryId(), packet.getChannel(), packet.getPayload());
+		PacketByteBufLoginQueryRequestPayload payload = (PacketByteBufLoginQueryRequestPayload) packet.payload();
+		return this.handlePacket(packet.queryId(), new CustomPayload.Id<>(payload.id()), payload.data());
 	}
 
-	private boolean handlePacket(int queryId, Identifier channelName, PacketByteBuf originalBuf) {
+	private boolean handlePacket(int queryId, CustomPayload.Id<?> channelName, PacketByteBuf originalBuf) {
 		this.logger.debug("Handling inbound login response with id {} and channel with name {}", queryId, channelName);
 
 		if (this.firstResponse) {
 			// Register global handlers
-			for (Map.Entry<Identifier, ClientLoginNetworking.QueryRequestReceiver> entry : ClientNetworkingImpl.LOGIN.getReceivers().entrySet()) {
-				ClientLoginNetworking.registerReceiver(entry.getKey(), entry.getValue());
+			for (Map.Entry<CustomPayload.Id<?>, ClientLoginNetworking.QueryRequestReceiver> entry : ClientNetworkingImpl.LOGIN.getReceivers().entrySet()) {
+				ClientLoginNetworking.registerReceiver(entry.getKey().id(), entry.getValue());
 			}
 
 			ClientLoginConnectionEvents.QUERY_START.invoker().onLoginQueryStart(this.handler, this.client);
@@ -82,16 +85,16 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 		var futureListeners = new ArrayList<PacketSendListener>();
 
 		try {
-			CompletableFuture<@Nullable PacketByteBuf> future = handler.receive(this.client, this.handler, buf, futureListeners::add);
+			CompletableFuture<PacketByteBuf> future = handler.receive(this.client, this.handler, buf, futureListeners::add);
 			future.thenAccept(result -> {
-				var packet = new LoginQueryResponseC2SPacket(queryId, result);
+				var response = new LoginQueryResponseC2SPacket(queryId, new PacketByteBufLoginQueryResponsePayload(result));
 				PacketSendListener listener = null;
 
 				for (var each : futureListeners) {
 					listener = PacketSendListeners.union(listener, each);
 				}
 
-				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(packet, listener);
+				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(response, listener);
 			});
 		} catch (Throwable ex) {
 			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);
@@ -102,11 +105,11 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 	}
 
 	@Override
-	protected void handleRegistration(Identifier channelName) {
+	protected void handleRegistration(CustomPayload.Id<?> channelName) {
 	}
 
 	@Override
-	protected void handleUnregistration(Identifier channelName) {
+	protected void handleUnregistration(CustomPayload.Id<?> channelName) {
 	}
 
 	@Override
@@ -120,7 +123,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 	}
 
 	@Override
-	protected boolean isReservedChannel(Identifier channelName) {
+	protected boolean isReservedChannel(CustomPayload.Id<?> channelName) {
 		return false;
 	}
 }

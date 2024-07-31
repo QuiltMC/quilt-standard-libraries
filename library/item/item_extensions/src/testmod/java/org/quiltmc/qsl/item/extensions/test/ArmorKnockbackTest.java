@@ -16,71 +16,47 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import java.util.EnumMap;
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorItem.ArmorSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Holder;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.world.World;
+import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class ArmorKnockbackTest implements ModInitializer {
-	private static final ArmorMaterial KNOCKBACK_RESISTANCE_ARMOR = new ArmorMaterial() {
-		@Override
-		public int getDurability(ArmorSlot slot) {
-			return 10;
-		}
-
-		@Override
-		public int getProtection(ArmorSlot slot) {
-			return 0;
-		}
-
-		@Override
-		public int getEnchantability() {
-			return 0;
-		}
-
-		@Override
-		public SoundEvent getEquipSound() {
-			return SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME;
-		}
-
-		@Override
-		public Ingredient getRepairIngredient() {
-			return Ingredient.EMPTY;
-		}
-
-		@Override
-		public String getName() {
-			return "knockback_resistance";
-		}
-
-		@Override
-		public float getToughness() {
-			return 0;
-		}
-
-		@Override
-		public float getKnockbackResistance() {
-			return 200;
-		}
-	};
+	private static final Holder<ArmorMaterial> KNOCKBACK_RESISTANCE_ARMOR = Registry.registerHolder(
+			Registries.ARMOR_MATERIAL,
+			Identifier.of("quilt-item-extension-testmod", "knockback_armor"),
+			new ArmorMaterial(
+				Util.make(new EnumMap<>(ArmorItem.ArmorSlot.class), (map) -> {
+					map.put(ArmorSlot.BOOTS, 0);
+					map.put(ArmorSlot.LEGGINGS, 0);
+					map.put(ArmorSlot.CHESTPLATE, 0);
+					map.put(ArmorSlot.HELMET, 0);
+					map.put(ArmorSlot.BODY, 0);
+				}),
+				0,
+				Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
+					() -> Ingredient.EMPTY,
+				List.of(new ArmorMaterial.Layer(Identifier.of("quilt-item-extension-testmod", "knockback_armor"))),
+				0.0F, 200.0F)
+		);
 
 	private static final ArmorItem KNOCKBACK_RESISTANCE_CHESTPLATE = new ArmorItem(
 			KNOCKBACK_RESISTANCE_ARMOR,
@@ -88,9 +64,9 @@ public class ArmorKnockbackTest implements ModInitializer {
 			new Item.Settings().rarity(Rarity.RARE)
 	) {
 		@Override
-		public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+		public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipConfig config) {
 			tooltip.add(Text.of("This tooltip should mention the knockback resistance."));
-			super.appendTooltip(stack, world, tooltip, context);
+			super.appendTooltip(stack, context, tooltip, config);
 		}
 	};
 
@@ -98,7 +74,7 @@ public class ArmorKnockbackTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		Registry.register(
 				Registries.ITEM,
-				new Identifier(mod.metadata().id(), "knockback_resistance_chestplate"),
+				Identifier.of(mod.metadata().id(), "knockback_resistance_chestplate"),
 				KNOCKBACK_RESISTANCE_CHESTPLATE
 		);
 	}

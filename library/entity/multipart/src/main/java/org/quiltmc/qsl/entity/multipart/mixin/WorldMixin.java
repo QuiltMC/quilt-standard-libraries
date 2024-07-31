@@ -99,7 +99,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 				continue;
 			}
 
-			if (part != except && part.getBoundingBox().intersects(box) && predicate.test(part)) {
+			if (part != except && part.getVisibilityBoundingBox().intersects(box) && predicate.test(part)) {
 				list.add(part);
 			}
 		}
@@ -140,7 +140,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 					continue;
 				}
 
-				if (downcastPart.getBoundingBox().intersects(box) && predicate.test(downcastPart)) {
+				if (downcastPart.getVisibilityBoundingBox().intersects(box) && predicate.test(downcastPart)) {
 					collection.add(downcastPart);
 
 					if (collection.size() >= maxEntities) {

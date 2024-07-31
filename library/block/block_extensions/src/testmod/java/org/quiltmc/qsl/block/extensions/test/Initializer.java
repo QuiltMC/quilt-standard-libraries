@@ -31,13 +31,13 @@ import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 
 public final class Initializer implements ModInitializer {
 	public static final Block BLOCK = Registry.register(Registries.BLOCK,
-			new Identifier("quilt_block_extensions_testmod", "test_block"),
+			Identifier.of("quilt_block_extensions_testmod", "test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.luminance(15)
 					.pistonBehavior(PistonBehavior.PUSH_ONLY)));
 
 	public static final Block BLOCK2 = Registry.register(Registries.BLOCK,
-			new Identifier("quilt_block_extensions_testmod", "test_block2"),
+			Identifier.of("quilt_block_extensions_testmod", "test_block2"),
 			new VineBlock(QuiltBlockSettings.copyOf(Blocks.VINE).ticksRandomly(false)));
 
 	@Override

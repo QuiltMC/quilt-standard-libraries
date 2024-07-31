@@ -20,10 +20,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -33,12 +36,12 @@ import org.quiltmc.qsl.recipe.api.BaseRecipeHandler;
 
 class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final RecipeManager recipeManager;
-	final Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
-	final Map<Identifier, Recipe<?>> globalRecipes;
+	final Multimap<RecipeType<?>, RecipeHolder<?>> recipes;
+	final Map<Identifier, RecipeHolder<?>> globalRecipes;
 	private final DynamicRegistryManager registryManager;
 
-	BasicRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	BasicRecipeHandlerImpl(RecipeManager recipeManager, Multimap<RecipeType<?>, RecipeHolder<?>> recipes,
+						   Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		this.recipeManager = recipeManager;
 		this.recipes = recipes;
 		this.globalRecipes = globalRecipes;
@@ -47,11 +50,11 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 
 	@Override
 	public @Nullable RecipeType<?> getTypeOf(Identifier id) {
-		return this.recipes.entrySet().stream()
-				.filter(entry -> entry.getValue().containsKey(id))
-				.findFirst()
-				.map(Map.Entry::getKey)
-				.orElse(null);
+		return recipes.entries().stream()
+			.filter(entry -> entry.getValue().id().equals(id))
+			.findFirst()
+			.map(Map.Entry::getKey)
+			.orElse(null);
 	}
 
 	@Override
@@ -61,43 +64,43 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 
 	@Override
 	public boolean contains(Identifier id, RecipeType<?> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+		Collection<RecipeHolder<?>> recipe = this.recipes.get(type);
 
-		if (recipes == null) return false;
+		if (recipe.isEmpty()) return false;
 
-		return recipes.containsKey(id);
+		return recipe.stream().anyMatch(holder -> holder.id().equals(id));
 	}
 
 	@Override
-	public @Nullable Recipe<?> getRecipe(Identifier id) {
+	public @Nullable RecipeHolder<?> getRecipe(Identifier id) {
 		return this.globalRecipes.get(id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> @Nullable T getRecipe(Identifier id, RecipeType<T> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+	public <T extends Recipe<?>> @Nullable RecipeHolder<T> getRecipe(Identifier id, RecipeType<T> type) {
+		Collection<RecipeHolder<?>> recipes = this.recipes.get(type);
 
-		if (recipes == null) return null;
+		if (recipes.isEmpty()) return null;
 
-		return (T) recipes.get(id);
+		return (RecipeHolder<T>) recipes.stream().filter(holder -> holder.id().equals(id)).findFirst().orElse(null);
 	}
 
 	@Override
-	public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
-		return Collections.unmodifiableMap(this.recipes);
+	public ImmutableMultimap<RecipeType<?>, RecipeHolder<?>> getRecipes() {
+		return ImmutableMultimap.copyOf(this.recipes);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+	public <T extends Recipe<?>> Collection<RecipeHolder<T>> getRecipesOfType(RecipeType<T> type) {
+		Collection<RecipeHolder<?>> recipes = this.recipes.get(type);
 
-		if (recipes == null) {
+		if (recipes.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		return Collections.unmodifiableCollection((Collection<T>) recipes.values());
+		return recipes.stream().map(recipeHolder -> (RecipeHolder<T>) recipeHolder).toList();
 	}
 
 	@Override

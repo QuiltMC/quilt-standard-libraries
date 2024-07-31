@@ -40,7 +40,6 @@ import net.minecraft.client.resource.GrassColormapResourceSupplier;
 import net.minecraft.client.resource.SplashTextResourceSupplier;
 import net.minecraft.client.resource.VideoWarningManager;
 import net.minecraft.client.resource.language.LanguageManager;
-import net.minecraft.client.search.SearchManager;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.texture.PaintingManager;
 import net.minecraft.client.texture.SpriteAtlasHolder;
@@ -61,7 +60,7 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 		StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
 		SpriteAtlasHolder.class,
 		/* private */
-		GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class, SearchManager.class
+		GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class,
 })
 public abstract class KeyedClientResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
@@ -110,7 +109,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 			} else if (self instanceof SpriteAtlasHolder) {
 				this.quilt$id = ResourceReloaderKeys.Client.SPRITE_ATLASES;
 			} else {
-				this.quilt$id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+				this.quilt$id = Identifier.ofDefault("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
 			}
 		}
 

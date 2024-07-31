@@ -30,6 +30,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
@@ -45,7 +46,7 @@ public class StonecutterOutputSlotMixin extends Slot {
 	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		int selectedRecipe = this.field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe) : null;
+		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe).value() : null;
 		Item inputItem = slot.getStack().getItem();
 		int inputCount = slot.getStack().getCount();
 
@@ -53,6 +54,7 @@ public class StonecutterOutputSlotMixin extends Slot {
 				slot,
 				amount,
 				recipe,
+				RecipeRemainderLocation.STONECUTTER_INPUT,
 				player
 		);
 

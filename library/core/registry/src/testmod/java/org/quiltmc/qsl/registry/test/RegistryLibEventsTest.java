@@ -34,7 +34,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 public class RegistryLibEventsTest implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Registry Lib Events Test");
 
-	private static final Identifier TEST_BLOCK_ID = new Identifier("quilt_registry_test_events", "event_test_block");
+	private static final Identifier TEST_BLOCK_ID = Identifier.of("quilt_registry_test_events", "event_test_block");
 
 	private static boolean entryAddEventFoundBlock = false;
 

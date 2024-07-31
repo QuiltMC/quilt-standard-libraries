@@ -50,7 +50,7 @@ public final class PacketByteBufs {
 	// Convenience methods for byte buffer methods that return a new byte buffer
 
 	/**
-	 * Wraps the newly created buf from {@code buf.readBytes} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code buf.readBytes} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param length the number of bytes to transfer
@@ -199,6 +199,18 @@ public final class PacketByteBufs {
 		Objects.requireNonNull(buf, "ByteBuf cannot be null");
 
 		return new PacketByteBuf(buf.retainedDuplicate());
+	}
+
+	/**
+	 * Copys the data from the buf and then advances it to the end.
+	 * @param buf the original buffer
+	 * @return the written buffer
+	 */
+	public static PacketByteBuf read(PacketByteBuf buf) {
+		PacketByteBuf newBuf = create();
+		newBuf.writeBytes(buf.copy());
+		buf.skipBytes(buf.readableBytes());
+		return newBuf;
 	}
 
 	private PacketByteBufs() {

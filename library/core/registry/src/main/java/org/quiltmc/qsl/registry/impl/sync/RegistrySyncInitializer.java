@@ -22,9 +22,13 @@ import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
+import org.quiltmc.qsl.networking.api.server.ServerConfigurationConnectionEvents;
+import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.server.SetupSyncTask;
 
 @ApiStatus.Internal
 public class RegistrySyncInitializer implements ModInitializer {
@@ -34,18 +38,25 @@ public class RegistrySyncInitializer implements ModInitializer {
 		ModProtocolImpl.loadVersions();
 
 		SynchronizedRegistry.markForSync(
+				Registries.ARMOR_MATERIAL,
 				Registries.BLOCK,
 				Registries.BLOCK_ENTITY_TYPE,
 				Registries.CAT_VARIANT,
 				Registries.COMMAND_ARGUMENT_TYPE,
-				Registries.ENCHANTMENT,
+				Registries.CUSTOM_STAT,
+				Registries.DATA_COMPONENT_TYPE,
+				Registries.ENTITY_ATTRIBUTE,
 				Registries.ENTITY_TYPE,
 				Registries.FLUID,
 				Registries.FROG_VARIANT,
 				Registries.GAME_EVENT,
 				Registries.ITEM,
-				Registries.PAINTING_VARIANT,
+				Registries.NUMBER_FORMAT_TYPE,
+				Registries.MAP_DECORATION_TYPE,
 				Registries.PARTICLE_TYPE,
+				Registries.POSITION_SOURCE_TYPE,
+				Registries.POTION,
+				Registries.RECIPE_SERIALIZER,
 				Registries.SCREEN_HANDLER_TYPE,
 				Registries.SOUND_EVENT,
 				Registries.STAT_TYPE,
@@ -53,5 +64,27 @@ public class RegistrySyncInitializer implements ModInitializer {
 				Registries.VILLAGER_TYPE,
 				Registries.VILLAGER_PROFESSION
 		);
+
+		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
+			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
+		});
+
+		ServerRegistrySync.registerHandlers();
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.Handshake.ID, ServerPackets.Handshake.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.End.ID, ServerPackets.End.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.RegistryStart.ID, ServerPackets.RegistryStart.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.RegistryData.ID, ServerPackets.RegistryData.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.RegistryApply.ID, ServerPackets.RegistryApply.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.ValidateStates.StateType.BLOCK.packetId(), ServerPackets.ValidateStates.CODEC_BLOCK);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.ValidateStates.StateType.FLUID.packetId(), ServerPackets.ValidateStates.CODEC_FLUID);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.RegistryRestore.ID, ServerPackets.RegistryRestore.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.ErrorStyle.ID, ServerPackets.ErrorStyle.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ServerPackets.ModProtocol.ID, ServerPackets.ModProtocol.CODEC);
+
+		PayloadTypeRegistry.configurationC2S().register(ClientPackets.Handshake.ID, ClientPackets.Handshake.CODEC);
+		PayloadTypeRegistry.configurationC2S().register(ClientPackets.SyncFailed.ID, ClientPackets.SyncFailed.CODEC);
+		PayloadTypeRegistry.configurationC2S().register(ClientPackets.UnknownEntry.ID, ClientPackets.UnknownEntry.CODEC);
+		PayloadTypeRegistry.configurationC2S().register(ClientPackets.ModProtocol.ID, ClientPackets.ModProtocol.CODEC);
+		PayloadTypeRegistry.configurationC2S().register(ClientPackets.End.ID, ClientPackets.End.CODEC);
 	}
 }

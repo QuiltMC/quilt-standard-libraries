@@ -19,13 +19,13 @@ package org.quiltmc.qsl.resource.loader.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.DefaultPack;
 import net.minecraft.resource.pack.VanillaDataPackProvider;
 
 @Mixin(VanillaDataPackProvider.class)
 public interface VanillaDataPackProviderAccessor {
 	@Invoker
-	static DefaultResourcePack invokeCreateVanillaResourcePack() {
+	static DefaultPack invokeDefaultPackBuilder() {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 }

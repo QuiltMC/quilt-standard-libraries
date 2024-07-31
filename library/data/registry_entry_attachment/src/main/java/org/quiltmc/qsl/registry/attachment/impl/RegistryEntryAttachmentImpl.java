@@ -26,6 +26,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -39,6 +41,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Identifier id;
 	protected final Class<V> valueClass;
 	protected final Codec<V> codec;
+	protected final PacketCodec<RegistryByteBuf, V> packetCodec;
 	protected final Side side;
 	protected final Event<ValueAdded<R, V>> valueAddedEvent;
 	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
@@ -46,11 +49,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
-			Side side) {
+									   PacketCodec<RegistryByteBuf, V> packetCodec, Side side) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
 		this.codec = codec;
+		this.packetCodec = packetCodec;
 		this.side = side;
 
 		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
@@ -93,6 +97,11 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public Codec<V> codec() {
 		return this.codec;
+	}
+
+	@Override
+	public PacketCodec<RegistryByteBuf, V> packetCodec() {
+		return this.packetCodec;
 	}
 
 	@Override

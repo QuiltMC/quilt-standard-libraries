@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
-import com.mojang.serialization.Codec;
-
 import net.minecraft.util.StringIdentifiable;
 
 /**
@@ -65,7 +63,7 @@ public enum ModificationPhase implements StringIdentifiable {
 	 */
 	POST_PROCESSING("post_processing");
 
-	public static final Codec<ModificationPhase> CODEC = StringIdentifiable.createCodec(ModificationPhase::values);
+	public static final com.mojang.serialization.Codec<ModificationPhase> CODEC = StringIdentifiable.createCodec(ModificationPhase::values);
 
 	private final String name;
 

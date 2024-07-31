@@ -20,12 +20,13 @@ import java.util.Collection;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.network.NetworkPhase;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 @ApiStatus.Internal
 public interface ChannelInfoHolder {
 	/**
 	 * @return Channels which are declared as receivable by the other side but have not been declared yet.
 	 */
-	Collection<Identifier> getPendingChannelsNames();
+	Collection<CustomPayload.Id<?>> getPendingChannelsNames(NetworkPhase state);
 }

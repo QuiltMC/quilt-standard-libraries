@@ -18,12 +18,11 @@ package org.quiltmc.qsl.registry.attachment.impl;
 
 import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
@@ -31,10 +30,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
@@ -45,10 +44,10 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
+import org.quiltmc.qsl.networking.api.server.ServerPlayConnectionEvents;
+import org.quiltmc.qsl.networking.api.server.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -56,45 +55,96 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 public final class RegistryEntryAttachmentSync {
 	/**
 	 * Indicates the packet version.
+	 *
 	 * <p>
 	 * This value should be updated whenever packet formats are changed.
 	 */
-	private static final byte PACKET_VERSION = 1;
+	private static final byte PACKET_VERSION = 2;
 
 	private RegistryEntryAttachmentSync() {
 	}
 
-	public static final Identifier PACKET_ID = id("sync");
+	private static final CustomPayload.Id<CachePacket<Object>> PACKET_ID = new CustomPayload.Id<>(id("sync"));
 
-	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries) {
-	}
-
-	private record CacheEntry(Identifier registryId, Set<NamespaceValuePair> namespacesToValues) {
-	}
-
-	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
-		public void write(PacketByteBuf buf) {
-			buf.writeString(this.path);
-			buf.writeBoolean(this.isTag);
-
-			NbtCompound compound = new NbtCompound();
-			compound.put("value", this.value);
-			buf.writeNbt(compound);
+	private record CachePacket<V>(byte version, NamespaceValuePair<V> namespacesToValues) implements CustomPayload {
+		CachePacket(NamespaceValuePair<V> namespacesToValues) {
+			this(PACKET_VERSION, namespacesToValues);
 		}
 
-		public static AttachmentEntry read(PacketByteBuf buf) {
-			String path = buf.readString();
-			boolean isTag = buf.readBoolean();
-			NbtElement value = buf.readNbt().get("value");
+		@SuppressWarnings("unchecked")
+		public static PacketCodec<RegistryByteBuf, CachePacket<Object>> CODEC = PacketCodec
+				.tuple(
+					PacketCodecs.BYTE,
+					CachePacket::version,
+					Identifier
+						.PACKET_CODEC
+						.map(
+							id -> (Registry<Object>) Registries.ROOT.get(id),
+							registry -> registry.getKey().getValue()
+						)
+						.<RegistryByteBuf>cast()
+						.dispatch(
+							RegistryEntryAttachment::registry,
+							registry -> Identifier
+								.PACKET_CODEC
+								.map(
+									id -> (RegistryEntryAttachment<Object, Object>) RegistryEntryAttachmentHolder.getAttachment(registry, id),
+									RegistryEntryAttachment::id)
+								.cast()
+						)
+						.dispatch(
+							entry -> (RegistryEntryAttachment<Object, Object>) entry.registryEntryAttachment,
+							NamespaceValuePair::codec
+						),
+					CachePacket::namespacesToValues,
+					CachePacket::new
+				);
 
-			return new AttachmentEntry(path, isTag, value);
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return PACKET_ID;
 		}
 	}
 
-	public static final Map<Identifier, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
+	private record CacheEntry<V>(Set<NamespaceValuePair<V>> namespacesToValues) {
+		Stream<CachePacket<V>> toPayloads() {
+			return this.namespacesToValues()
+				.stream()
+				.map(CachePacket::new);
+		}
+	}
+
+	private record NamespaceValuePair<V>(String namespace, Set<AttachmentEntry<V>> entries, RegistryEntryAttachment<?, V> registryEntryAttachment) {
+		public static <V> PacketCodec<RegistryByteBuf, NamespaceValuePair<V>> codec(RegistryEntryAttachment<?, V> registryEntryAttachment) {
+			return PacketCodec.tuple(
+				PacketCodecs.STRING,
+				NamespaceValuePair::namespace,
+				PacketCodecs.collection(HashSet::newHashSet, AttachmentEntry.codec(registryEntryAttachment), Integer.MAX_VALUE),
+				NamespaceValuePair::entries,
+				(namespace, entries) -> new NamespaceValuePair<>(namespace, entries, registryEntryAttachment)
+			);
+		}
+	}
+
+	private record AttachmentEntry<V>(String path, boolean isTag, V value) {
+		public static <V> PacketCodec<RegistryByteBuf, AttachmentEntry<V>> codec(RegistryEntryAttachment<?, V> registryEntryAttachment) {
+			return PacketCodec.tuple(
+				PacketCodecs.STRING,
+				AttachmentEntry::path,
+				PacketCodecs.BOOL,
+				AttachmentEntry::isTag,
+				registryEntryAttachment.packetCodec(),
+				AttachmentEntry::value,
+				AttachmentEntry::new
+			);
+		}
+	}
+
+	private static final Map<Identifier, CacheEntry<?>> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
 
 	public static void register() {
 		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
+		PayloadTypeRegistry.playS2C().register(PACKET_ID, CachePacket.CODEC);
 	}
 
 	@ClientOnly
@@ -102,27 +152,13 @@ public final class RegistryEntryAttachmentSync {
 		ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, RegistryEntryAttachmentSync::receiveSyncPacket);
 	}
 
-	public static List<PacketByteBuf> createSyncPackets() {
+	private static Stream<CachePacket<?>> createSyncPackets() {
 		fillEncodedValuesCache();
-		var bufs = new ArrayList<PacketByteBuf>();
 
-		for (var entry : ENCODED_VALUES_CACHE.entrySet()) {
-			for (var valueMap : entry.getValue().namespacesToValues()) {
-				var buf = PacketByteBufs.create();
-				buf.writeByte(PACKET_VERSION);
-				buf.writeIdentifier(entry.getValue().registryId());
-				buf.writeIdentifier(entry.getKey());
-				buf.writeString(valueMap.namespace());
-				buf.writeInt(valueMap.entries().size());
-				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
-					attachmentEntry.write(buf);
-				}
-
-				bufs.add(buf);
-			}
-		}
-
-		return bufs;
+		return ENCODED_VALUES_CACHE
+			.values()
+			.stream()
+			.flatMap(CacheEntry::toPayloads);
 	}
 
 	public static void syncAttachmentsToAllPlayers() {
@@ -135,10 +171,14 @@ public final class RegistryEntryAttachmentSync {
 		for (var player : server.getPlayerManager().getPlayerList()) {
 			if (isPlayerLocal(player)) continue;
 
-			for (var buf : createSyncPackets()) {
-				ServerPlayNetworking.send(player, PACKET_ID, buf);
-			}
+			createSyncPackets().forEach(cachePacket -> ServerPlayNetworking.send(player, cachePacket));
 		}
+	}
+
+	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server) {
+		if (isPlayerLocal(handler.getPlayer())) return;
+
+		createSyncPackets().forEach(sender::sendPayload);
 	}
 
 	private static boolean isPlayerLocal(ServerPlayerEntity player) {
@@ -159,126 +199,89 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
-		for (var registryEntry : Registries.REGISTRY.getEntries()) {
+		for (var registryEntry : Registries.ROOT.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
 			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
 			for (var attachmentEntry : RegistryEntryAttachmentHolder.getAttachmentEntries(registry)) {
-				var attachment = (RegistryEntryAttachment<Object, Object>) attachmentEntry.getValue();
-				if (attachment.side() != RegistryEntryAttachment.Side.BOTH) {
-					continue;
-				}
-
-				// Namespace, Attachment
-				var encoded = new HashMap<String, Set<AttachmentEntry>>();
-				Map<Object, Object> entryValues = dataHolder.valueTable.rowMap().get(attachmentEntry.getValue());
-				if (entryValues != null) {
-					for (var valueEntry : entryValues.entrySet()) {
-						var entryId = registry.getId(valueEntry.getKey());
-						if (entryId == null) {
-							throw new IllegalStateException("Foreign object in data holder of attachment %s: %s"
-									.formatted(attachment.id(), valueEntry.getKey()));
-						}
-
-						encoded.computeIfAbsent(entryId.getNamespace(), id -> new HashSet<>()).add(
-								new AttachmentEntry(entryId.getPath(), false, attachment.codec()
-										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
-										.getOrThrow(false, msg -> {
-											throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
-													.formatted(attachment.id(), entryId, msg));
-										})
-								)
-						);
-					}
-				}
-
-				Map<TagKey<Object>, Object> entryTagValues = dataHolder.valueTagTable.rowMap().get(attachmentEntry.getValue());
-				if (entryTagValues != null) {
-					for (var valueEntry : entryTagValues.entrySet()) {
-						encoded.computeIfAbsent(valueEntry.getKey().id().getNamespace(), id -> new HashSet<>()).add(
-								new AttachmentEntry(valueEntry.getKey().id().getPath(), true, attachment.codec()
-										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
-										.getOrThrow(false, msg -> {
-											throw new IllegalStateException("Failed to encode value for attachment tag %s of registry %s: %s"
-													.formatted(attachment.id(), valueEntry.getKey().id(), msg));
-										})));
-					}
-				}
-
-				var valueMaps = new HashSet<NamespaceValuePair>();
-				for (var namespaceEntry : encoded.entrySet()) {
-					valueMaps.add(new NamespaceValuePair(namespaceEntry.getKey(), namespaceEntry.getValue()));
-				}
-
-				ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry(attachment.registry().getKey().getValue(), valueMaps));
+				cacheAttachments(attachmentEntry.getValue(), dataHolder, registry);
 			}
 		}
 	}
 
-	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
-		if (isPlayerLocal(handler.getPlayer())) return;
-
-		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
-			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
+	@SuppressWarnings("unchecked")
+	private static <T, V> void cacheAttachments(RegistryEntryAttachment<T, V> attachment, DataRegistryEntryAttachmentHolder<T> dataHolder, Registry<T> registry) {
+		if (attachment.side() != RegistryEntryAttachment.Side.BOTH) {
+			return;
 		}
+
+		// Namespace, Attachment
+		var encoded = new HashMap<String, Set<AttachmentEntry<V>>>();
+		Map<T, Object> entryValues = dataHolder.valueTable.rowMap().get(attachment);
+		if (entryValues != null) {
+			for (var valueEntry : entryValues.entrySet()) {
+				var entryId = registry.getId(valueEntry.getKey());
+				if (entryId == null) {
+					throw new IllegalStateException("Foreign object in data holder of attachment %s: %s"
+							.formatted(attachment.id(), valueEntry.getKey()));
+				}
+
+				encoded.computeIfAbsent(entryId.getNamespace(), id -> new HashSet<>()).add(
+					new AttachmentEntry<>(entryId.getPath(), false, (V) valueEntry.getValue())
+				);
+			}
+		}
+
+		Map<TagKey<T>, Object> entryTagValues = dataHolder.valueTagTable.rowMap().get(attachment);
+		if (entryTagValues != null) {
+			for (var valueEntry : entryTagValues.entrySet()) {
+				encoded.computeIfAbsent(valueEntry.getKey().id().getNamespace(), id -> new HashSet<>()).add(
+						new AttachmentEntry<>(valueEntry.getKey().id().getPath(), true, (V) valueEntry.getValue())
+				);
+			}
+		}
+
+		var valueMaps = new HashSet<NamespaceValuePair<V>>();
+		for (var namespaceEntry : encoded.entrySet()) {
+			valueMaps.add(new NamespaceValuePair<>(namespaceEntry.getKey(), namespaceEntry.getValue(), attachment));
+		}
+
+		ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry<>(valueMaps));
 	}
 
 	@ClientOnly
-	@SuppressWarnings("unchecked")
-	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		var packetVersion = buf.readByte();
-		if (packetVersion != PACKET_VERSION) {
+	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, CachePacket<Object> packet, PacketSender<CustomPayload> responseSender) {
+		if (packet.version() != PACKET_VERSION) {
 			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");
 		}
 
-		var registryId = buf.readIdentifier();
-		var attachmentId = buf.readIdentifier();
-		var namespace = buf.readString();
+		client.execute(() -> applyPacket(packet));
+	}
 
-		var size = buf.readInt();
-		var attachments = new HashSet<AttachmentEntry>();
+	@SuppressWarnings("unchecked")
+	private static <V> void applyPacket(CachePacket<V> packet) {
+		RegistryEntryAttachment<Object, V> attachment = (RegistryEntryAttachment<Object, V>) packet.namespacesToValues().registryEntryAttachment();
+		Registry<Object> registry = attachment.registry();
 
-		while (size > 0) {
-			attachments.add(AttachmentEntry.read(buf));
-			size--;
+		var holder = RegistryEntryAttachmentHolder.getData(registry);
+		holder.valueTable.row(attachment).clear();
+		holder.valueTagTable.row(attachment).clear();
+
+		for (AttachmentEntry<V> attachmentEntry : packet.namespacesToValues().entries()) {
+			var entryId = Identifier.of(packet.namespacesToValues().namespace(), attachmentEntry.path);
+
+			var registryObject = registry.get(entryId);
+			if (registryObject == null) {
+				throw new IllegalStateException("Foreign ID %s".formatted(entryId));
+			}
+
+			var parsedValue = attachmentEntry.value();
+
+			if (attachmentEntry.isTag) {
+				holder.putValue(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
+			} else {
+				holder.putValue(attachment, registryObject, parsedValue);
+			}
 		}
-
-		client.execute(() -> {
-			var registry = (Registry<Object>) Registries.REGISTRY.get(registryId);
-			if (registry == null) {
-				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
-			}
-
-			var attachment = (RegistryEntryAttachment<Object, Object>) RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
-			if (attachment == null) {
-				throw new IllegalStateException("Unknown attachment %s for registry %s".formatted(attachmentId, registryId));
-			}
-
-			var holder = RegistryEntryAttachmentHolder.getData(registry);
-			holder.valueTable.row(attachment).clear();
-			holder.valueTagTable.row(attachment).clear();
-
-			for (AttachmentEntry attachmentEntry : attachments) {
-				var entryId = new Identifier(namespace, attachmentEntry.path);
-
-				var registryObject = registry.get(entryId);
-				if (registryObject == null) {
-					throw new IllegalStateException("Foreign ID %s".formatted(entryId));
-				}
-
-				var parsedValue = attachment.codec()
-						.parse(NbtOps.INSTANCE, attachmentEntry.value)
-						.getOrThrow(false, msg -> {
-							throw new IllegalStateException("Failed to decode value for attachment %s of registry entry %s: %s"
-									.formatted(attachment.id(), entryId, msg));
-						});
-
-				if (attachmentEntry.isTag) {
-					holder.putValue(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
-				} else {
-					holder.putValue(attachment, registryObject, parsedValue);
-				}
-			}
-		});
 	}
 }

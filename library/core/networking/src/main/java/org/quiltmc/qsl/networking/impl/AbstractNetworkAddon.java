@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.payload.CustomPayload;
 
 /**
  * A network addon is a simple abstraction to hold information about a player's registered channels.
@@ -41,12 +41,12 @@ import net.minecraft.util.Identifier;
 @ApiStatus.Internal
 public abstract class AbstractNetworkAddon<H> {
 	protected final GlobalReceiverRegistry<H> receiver;
-	protected final Logger logger;
+	public final Logger logger;
 	// A lock is used due to possible access on netty's event loops and game thread at same times such as during dynamic registration
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	// Sync map should be fine as there is little read write competition
 	// All access to this map is guarded by the lock
-	private final Map<Identifier, H> handlers = new Object2ObjectOpenHashMap<>();
+	private final Map<CustomPayload.Id<?>, H> handlers = new Object2ObjectOpenHashMap<>();
 	private final AtomicBoolean disconnected = new AtomicBoolean(); // blocks redundant disconnect notifications
 
 	protected AbstractNetworkAddon(GlobalReceiverRegistry<H> receiver, String description) {
@@ -55,7 +55,7 @@ public abstract class AbstractNetworkAddon<H> {
 	}
 
 	@Nullable
-	public H getHandler(Identifier channel) {
+	public H getHandler(CustomPayload.Id<?> channel) {
 		Lock lock = this.lock.readLock();
 		lock.lock();
 
@@ -66,7 +66,7 @@ public abstract class AbstractNetworkAddon<H> {
 		}
 	}
 
-	public boolean registerChannel(Identifier channelName, H handler) {
+	public boolean registerChannel(CustomPayload.Id<?> channelName, H handler) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(handler, "Packet handler cannot be null");
 
@@ -90,7 +90,7 @@ public abstract class AbstractNetworkAddon<H> {
 		}
 	}
 
-	public H unregisterChannel(Identifier channelName) {
+	public H unregisterChannel(CustomPayload.Id<?> channelName) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 
 		if (this.isReservedChannel(channelName)) {
@@ -113,7 +113,7 @@ public abstract class AbstractNetworkAddon<H> {
 		}
 	}
 
-	public Set<Identifier> getReceivableChannels() {
+	public Set<CustomPayload.Id<?>> getReceivableChannels() {
 		Lock lock = this.lock.readLock();
 		lock.lock();
 
@@ -124,9 +124,9 @@ public abstract class AbstractNetworkAddon<H> {
 		}
 	}
 
-	protected abstract void handleRegistration(Identifier channelName);
+	protected abstract void handleRegistration(CustomPayload.Id<?> channelName);
 
-	protected abstract void handleUnregistration(Identifier channelName);
+	protected abstract void handleUnregistration(CustomPayload.Id<?> channelName);
 
 	public final void handleDisconnect() {
 		if (this.disconnected.compareAndSet(false, true)) {
@@ -143,5 +143,5 @@ public abstract class AbstractNetworkAddon<H> {
 	 * @param channelName the channel name
 	 * @return whether the channel is reserved
 	 */
-	protected abstract boolean isReservedChannel(Identifier channelName);
+	protected abstract boolean isReservedChannel(CustomPayload.Id<?> channelName);
 }

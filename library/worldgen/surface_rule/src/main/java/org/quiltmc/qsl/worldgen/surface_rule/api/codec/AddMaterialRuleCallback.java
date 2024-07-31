@@ -42,7 +42,7 @@ public record AddMaterialRuleCallback(
 		SurfaceRules.MaterialRule rule, boolean append, Optional<List<Identifier>> ids
 ) implements SurfaceRuleEvents.OverworldModifierCallback, SurfaceRuleEvents.NetherModifierCallback, SurfaceRuleEvents.TheEndModifierCallback,
 		SurfaceRuleEvents.GenericModifierCallback {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "add_material_rule");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_material_rule");
 	public static final Codec<AddMaterialRuleCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(AddMaterialRuleCallback::rule),
 			Codec.BOOL.optionalFieldOf("append", false).forGetter(AddMaterialRuleCallback::append),
@@ -60,17 +60,17 @@ public record AddMaterialRuleCallback(
 	}
 
 	@Override
-	public void modifyOverworldRules(SurfaceRuleContext.@NotNull Overworld context) {
+	public void modifyOverworldRules(@NotNull SurfaceRuleContext.Overworld context) {
 		this.modifyRules(context);
 	}
 
 	@Override
-	public void modifyNetherRules(SurfaceRuleContext.@NotNull Nether context) {
+	public void modifyNetherRules(@NotNull SurfaceRuleContext.Nether context) {
 		this.modifyRules(context);
 	}
 
 	@Override
-	public void modifyTheEndRules(SurfaceRuleContext.@NotNull TheEnd context) {
+	public void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context) {
 		this.modifyRules(context);
 	}
 

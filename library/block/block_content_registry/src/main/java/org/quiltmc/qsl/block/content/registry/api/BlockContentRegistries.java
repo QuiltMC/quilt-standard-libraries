@@ -20,7 +20,9 @@ import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 
@@ -54,9 +56,10 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "flattenable"),
+					Identifier.of(NAMESPACE, "flattenable"),
 					BlockState.class,
-					BlockState.CODEC)
+					BlockState.CODEC,
+					PacketCodecs.entryOf(Block.STATE_IDS).cast())
 			.build();
 
 	/**
@@ -66,9 +69,10 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "oxidizable"),
+					Identifier.of(NAMESPACE, "oxidizable"),
 					ReversibleBlockEntry.class,
-					ReversibleBlockEntry.CODEC)
+					ReversibleBlockEntry.CODEC,
+					ReversibleBlockEntry.PACKET_CODEC)
 			.build();
 
 	/**
@@ -78,9 +82,10 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "waxable"),
+					Identifier.of(NAMESPACE, "waxable"),
 					ReversibleBlockEntry.class,
-					ReversibleBlockEntry.CODEC)
+					ReversibleBlockEntry.CODEC,
+					ReversibleBlockEntry.PACKET_CODEC)
 			.build();
 
 	/**
@@ -90,7 +95,7 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "strippable"),
+					Identifier.of(NAMESPACE, "strippable"),
 					Block.class,
 					Registries.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
@@ -104,7 +109,8 @@ public class BlockContentRegistries {
 						}
 
 						return DataResult.success(block);
-					}))
+					}),
+					PacketCodecs.registryValue(RegistryKeys.BLOCK))
 			.build();
 
 	/**
@@ -114,9 +120,10 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "flammable"),
+					Identifier.of(NAMESPACE, "flammable"),
 					FlammableBlockEntry.class,
-					FlammableBlockEntry.CODEC)
+					FlammableBlockEntry.CODEC,
+					FlammableBlockEntry.PACKET_CODEC)
 			.build();
 
 	/**
@@ -126,9 +133,10 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
-					new Identifier(NAMESPACE, "enchanting_boosters"),
+					Identifier.of(NAMESPACE, "enchanting_boosters"),
 					EnchantingBooster.class,
-					EnchantingBoosters.CODEC)
+					EnchantingBoosters.CODEC,
+					EnchantingBoosters.PACKET_CODEC)
 			.build();
 }
 

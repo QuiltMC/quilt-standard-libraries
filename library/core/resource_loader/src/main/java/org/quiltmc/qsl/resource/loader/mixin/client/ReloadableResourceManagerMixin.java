@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReload;
@@ -53,7 +52,7 @@ public abstract class ReloadableResourceManagerMixin implements ResourceManager 
 
 		if (firstReload != null) {
 			try {
-				ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.invoker().onStartResourcePackReload(
+				ClientResourceLoaderEvents.START_PACK_RELOAD.invoker().onStartPackReload(
 						new ClientResourceLoaderEventContextsImpl(this, firstReload)
 				);
 			} finally {

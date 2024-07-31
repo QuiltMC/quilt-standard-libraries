@@ -20,6 +20,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -27,19 +29,11 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	private final @Nullable V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-			Codec<V> codec, Side side, @Nullable V defaultValue) {
-		super(registry, id, valueClass, codec, side);
+													  Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec, Side side, @Nullable V defaultValue) {
+		super(registry, id, valueClass, codec, packetCodec, side);
 
 		if (defaultValue != null) {
-			var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
-
-			if (encoded.result().isEmpty()) {
-				if (encoded.error().isPresent()) {
-					throw new IllegalArgumentException("Default value is invalid: " + encoded.error().get().message());
-				} else {
-					throw new IllegalArgumentException("Default value is invalid: unknown error");
-				}
-			}
+			CodecUtils.assertValid(this.codec(), defaultValue, "Default value");
 		}
 
 		this.defaultValue = defaultValue;

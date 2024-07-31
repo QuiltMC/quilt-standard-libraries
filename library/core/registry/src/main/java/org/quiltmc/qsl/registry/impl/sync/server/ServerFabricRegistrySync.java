@@ -24,20 +24,23 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.server.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
@@ -48,9 +51,8 @@ import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 @ApiStatus.Internal
 public class ServerFabricRegistrySync {
 	private static final int MAX_PAYLOAD_SIZE = 1048576;
-	public static final Identifier ID = new Identifier("fabric", "registry/sync/direct");
 
-	public static void sendSyncPackets(ClientConnection connection) {
+	public static void sendSyncPackets(Consumer<Packet<?>> sender) {
 		var registryMap = createRegistryMap();
 
 		PacketByteBuf buf = PacketByteBufs.create();
@@ -94,7 +96,7 @@ public class ServerFabricRegistrySync {
 					while (idPairIter.hasNext()) {
 						currentPair = idPairIter.next();
 
-						if (currentBulk.get(currentBulk.size() - 1).getIntValue() + 1 != currentPair.getIntValue()) {
+						if (currentBulk.getLast().getIntValue() + 1 != currentPair.getIntValue()) {
 							bulks.add(currentBulk);
 							currentBulk = new ArrayList<>();
 						}
@@ -108,7 +110,7 @@ public class ServerFabricRegistrySync {
 					buf.writeVarInt(bulks.size());
 
 					for (List<Object2IntMap.Entry<Identifier>> bulk : bulks) {
-						int firstRawId = bulk.get(0).getIntValue();
+						int firstRawId = bulk.getFirst().getIntValue();
 						int bulkRawIdStartDiff = firstRawId - lastBulkLastRawId;
 
 						buf.writeVarInt(bulkRawIdStartDiff);
@@ -131,19 +133,19 @@ public class ServerFabricRegistrySync {
 		while (sliceIndex < readableBytes) {
 			int sliceSize = Math.min(readableBytes - sliceIndex, MAX_PAYLOAD_SIZE);
 			PacketByteBuf slicedBuf = PacketByteBufs.slice(buf, sliceIndex, sliceSize);
-			sendPacket(connection, slicedBuf);
+			sendPacket(sender, slicedBuf);
 			sliceIndex += sliceSize;
 		}
 
 		// Send an empty buffer to mark the end of the split.
-		sendPacket(connection, PacketByteBufs.empty());
+		sendPacket(sender, PacketByteBufs.empty());
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Identifier, Object2IntMap<Identifier>> createRegistryMap() {
 		var map = new HashMap<Identifier, Object2IntMap<Identifier>>();
 
-		for (var registry : Registries.REGISTRY) {
+		for (var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				var idMap = new Object2IntOpenHashMap<Identifier>();
@@ -152,7 +154,7 @@ public class ServerFabricRegistrySync {
 				for (var entry : syncMap.entrySet()) {
 					for (var entry2 : entry.getValue()) {
 						if (!RegistryFlag.isOptional(entry2.flags()) && !RegistryFlag.isSkipped(entry2.flags())) {
-							idMap.put(new Identifier(entry.getKey(), entry2.path()), entry2.rawId());
+							idMap.put(Identifier.of(entry.getKey(), entry2.path()), entry2.rawId());
 						}
 					}
 				}
@@ -164,11 +166,48 @@ public class ServerFabricRegistrySync {
 		return map;
 	}
 
-	private static void sendPacket(ClientConnection connection, PacketByteBuf buf) {
-		connection.send(ServerPlayNetworking.createS2CPacket(ID, buf));
+	private static void sendPacket(Consumer<Packet<?>> sender, PacketByteBuf buf) {
+		sender.accept(ServerPlayNetworking.createS2CPacket(new Payload(buf.array())));
 	}
 
 	private static String optimizeNamespace(String namespace) {
 		return namespace.equals(Identifier.DEFAULT_NAMESPACE) ? "" : namespace;
+	}
+
+	public record Payload(byte[] data) implements CustomPayload {
+		public static CustomPayload.Id<Payload> ID = new Id<>(Identifier.of("fabric", "registry/sync/direct"));
+		public static PacketCodec<PacketByteBuf, Payload> CODEC = CustomPayload.create(Payload::write, Payload::new);
+
+		Payload(PacketByteBuf buf) {
+			this(readAllBytes(buf));
+		}
+
+		private void write(PacketByteBuf buf) {
+			buf.writeBytes(this.data);
+		}
+
+		private static byte[] readAllBytes(PacketByteBuf buf) {
+			byte[] bytes = new byte[buf.readableBytes()];
+			buf.readBytes(bytes);
+			return bytes;
+		}
+
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+	}
+
+	public static class SyncCompletePayload implements CustomPayload {
+		public static final SyncCompletePayload INSTANCE = new SyncCompletePayload();
+		public static final CustomPayload.Id<?> ID = new CustomPayload.Id<>(Identifier.of("fabric", "registry/sync/complete"));
+		public static final PacketCodec<PacketByteBuf, SyncCompletePayload> CODEC = PacketCodec.unit(INSTANCE);
+
+		private SyncCompletePayload() { }
+
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
 	}
 }

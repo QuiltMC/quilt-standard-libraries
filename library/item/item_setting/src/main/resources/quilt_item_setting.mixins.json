@@ -7,9 +7,12 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "recipe_remainder.AbstractFurnaceBlockEntityMixin",
+    "recipe_remainder.BannerDuplicateRecipeMixin",
+    "recipe_remainder.BookCloningRecipeMixin",
     "recipe_remainder.BrewingStandBlockEntityMixin",
+    "recipe_remainder.ItemsMixin",
     "recipe_remainder.LoomOutputSlotMixin",
-    "recipe_remainder.RecipeManagerMixin",
+    "recipe_remainder.RecipeMixin",
     "recipe_remainder.SmithingScreenHandlerMixin",
     "recipe_remainder.StonecutterOutputSlotMixin"
   ],

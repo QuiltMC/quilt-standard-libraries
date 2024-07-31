@@ -47,9 +47,9 @@ public final class ArmorRenderingRegistryImpl {
 	@Contract("-> new")
 	public static @NotNull Event<ArmorRenderingRegistry.TextureProvider> createTextureProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.TextureProvider.class,
-				listeners -> (texture, entity, stack, slot, useSecondTexture, suffix) -> {
+				listeners -> (texture, entity, stack, slot, useSecondTexture) -> {
 					for (var listener : listeners) {
-						texture = listener.getArmorTexture(texture, entity, stack, slot, useSecondTexture, suffix);
+						texture = listener.getArmorTexture(texture, entity, stack, slot, useSecondTexture);
 					}
 
 					return texture;
@@ -112,13 +112,13 @@ public final class ArmorRenderingRegistryImpl {
 
 	public static @NotNull Identifier getArmorTexture(@NotNull Identifier texture,
 			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-			boolean useSecondTexture, @Nullable String suffix) {
+			boolean useSecondTexture) {
 		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
 		if (e == null) {
 			return texture;
 		}
 
-		return e.invoker().getArmorTexture(texture, entity, stack, slot, useSecondTexture, suffix);
+		return e.invoker().getArmorTexture(texture, entity, stack, slot, useSecondTexture);
 	}
 
 	public static @NotNull BipedEntityModel<LivingEntity> getArmorModel(@NotNull BipedEntityModel<LivingEntity> model,

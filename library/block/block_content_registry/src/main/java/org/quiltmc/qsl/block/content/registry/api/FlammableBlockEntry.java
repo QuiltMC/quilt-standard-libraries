@@ -20,9 +20,25 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.Range;
 
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+
 public record FlammableBlockEntry(@Range(from = 0, to = Integer.MAX_VALUE) int burn, @Range(from = 0, to = Integer.MAX_VALUE) int spread) {
-	public static final Codec<FlammableBlockEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.intRange(0, Integer.MAX_VALUE).fieldOf("burn").forGetter(FlammableBlockEntry::burn),
-			Codec.intRange(0, Integer.MAX_VALUE).fieldOf("spread").forGetter(FlammableBlockEntry::spread)
-	).apply(instance, FlammableBlockEntry::new));
+	public static final Codec<FlammableBlockEntry> CODEC = RecordCodecBuilder
+			.create(instance -> instance
+				.group(
+					Codec.intRange(0, Integer.MAX_VALUE).fieldOf("burn").forGetter(FlammableBlockEntry::burn),
+					Codec.intRange(0, Integer.MAX_VALUE).fieldOf("spread").forGetter(FlammableBlockEntry::spread)
+				).apply(instance, FlammableBlockEntry::new)
+			);
+
+	public static final PacketCodec<RegistryByteBuf, FlammableBlockEntry> PACKET_CODEC = PacketCodec
+			.tuple(
+				PacketCodecs.INT.cast(),
+				FlammableBlockEntry::burn,
+				PacketCodecs.INT.cast(),
+				FlammableBlockEntry::spread,
+				FlammableBlockEntry::new
+			);
 }

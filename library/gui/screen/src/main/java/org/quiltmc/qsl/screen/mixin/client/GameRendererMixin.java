@@ -17,23 +17,14 @@
 
 package org.quiltmc.qsl.screen.mixin.client;
 
-import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.Final;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import com.mojang.blaze3d.glfw.Window;
-
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
@@ -41,42 +32,10 @@ import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 @ClientOnly
 @Mixin(GameRenderer.class)
 abstract class GameRendererMixin {
-	@Shadow
-	@Final
-	MinecraftClient client;
-
-	@Unique
-	private Screen quilt$renderingScreen;
-
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@Inject(
-			method = "render",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									  int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
-		// Store the screen in a variable in case someone tries to change the screen during this before render event.
-		// If someone changes the screen, the after render event will likely have class cast exceptions or an NPE.
-		this.quilt$renderingScreen = this.client.currentScreen;
-		ScreenEvents.BEFORE_RENDER.invoker().beforeRender(this.quilt$renderingScreen, graphics, mouseX, mouseY, tickDelta);
-	}
-
-	// This injection should end up in the try block so exceptions are caught
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@Inject(
-			method = "render",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
-					shift = At.Shift.AFTER
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									 int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
-		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, graphics, mouseX, mouseY, tickDelta);
-		// Finally set the currently rendering screen to null
-		this.quilt$renderingScreen = null;
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+	private void renderScreen(Screen instance, GuiGraphics graphics, int mouseX, int mouseY, float delta, Operation<Void> original) {
+		ScreenEvents.BEFORE_RENDER.invoker().beforeRender(instance, graphics, mouseX, mouseY, delta);
+		original.call(instance, graphics, mouseX, mouseY, delta);
+		ScreenEvents.AFTER_RENDER.invoker().afterRender(instance, graphics, mouseX, mouseY, delta);
 	}
 }

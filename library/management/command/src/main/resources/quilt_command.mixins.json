@@ -3,7 +3,9 @@
   "package": "org.quiltmc.qsl.command.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractServerPacketHandlerMixin",
     "ArgumentTypeInfosAccessor",
+    "ClientConnectionMixin",
     "CommandManagerMixin",
     "CommandManagerMixin$RegistrationEnvironmentMixin",
     "EntitySelectorOptionsAccessor",

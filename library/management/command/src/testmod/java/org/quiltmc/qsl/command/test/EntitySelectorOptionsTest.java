@@ -29,7 +29,7 @@ public class EntitySelectorOptionsTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		EntitySelectorOptionRegistry.register(
-				new Identifier("quilt_command_testmod", "health"),
+				Identifier.of("quilt_command_testmod", "health"),
 				optionReader -> {
 					var reader = optionReader.getReader();
 					float health = reader.readFloat();

@@ -19,16 +19,17 @@ package org.quiltmc.qsl.entity.event.mixin;
 
 import java.util.Set;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementFlag;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.DimensionTransition;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
@@ -38,7 +39,7 @@ public abstract class EntityMixin {
 	@Shadow public World world;
 
 	@Inject(method = "moveToWorld", at = @At("RETURN"))
-	private void quilt$afterWorldChanged(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+	private void quilt$afterWorldChanged(DimensionTransition transition, CallbackInfoReturnable<Entity> cir) {
 		// Ret will only have an entity if the teleport worked (entity not removed, teleportTarget was valid, entity was successfully created)
 		Entity ret = cir.getReturnValue();
 
@@ -49,11 +50,9 @@ public abstract class EntityMixin {
 
 	@Inject(
 			method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDLjava/util/Set;FF)Z",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"),
-			locals = LocalCapture.CAPTURE_FAILEXCEPTION
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V")
 	)
-	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<MovementFlag> relativeMovements, float yaw,
-												   float pitch, CallbackInfoReturnable<Boolean> ci, float f, Entity newEntity) {
+	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<MovementFlag> relativeMovements, float yaw, float pitch, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) Entity newEntity) {
 		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), destination);
 	}
 }

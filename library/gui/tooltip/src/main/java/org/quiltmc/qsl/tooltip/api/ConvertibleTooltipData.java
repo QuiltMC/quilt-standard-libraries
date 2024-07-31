@@ -40,7 +40,7 @@ public interface ConvertibleTooltipData extends TooltipData {
 	 * in {@link org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback}, allowing listeners of the default phase of the event to
 	 * override behavior from this interface if needed.
 	 */
-	Identifier EVENT_PHASE = new Identifier(QuiltClientTooltipMod.NAMESPACE, QuiltClientTooltipMod.CONVERTIBLE_TOOLTIP_DATA_PHASE);
+	Identifier EVENT_PHASE = Identifier.of(QuiltClientTooltipMod.NAMESPACE, QuiltClientTooltipMod.CONVERTIBLE_TOOLTIP_DATA_PHASE);
 
 	/**
 	 * {@return the associated component}

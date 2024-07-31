@@ -46,7 +46,7 @@ public record AddCarversModifier(
 		List<RegistryKey<ConfiguredCarver<?>>> carvers,
 		GenerationStep.Carver step
 ) implements BiomeModifier {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "add_carvers");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_carvers");
 	public static final Codec<AddCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddCarversModifier::selector),
 			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(AddCarversModifier::carvers),

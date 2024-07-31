@@ -19,6 +19,8 @@ package org.quiltmc.qsl.screen.mixin.client;
 
 import java.util.List;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -69,26 +71,14 @@ abstract class ScreenMixin implements QuiltScreen {
 	@Unique
 	private ButtonList quilt$quiltButtons = null;
 
-	@Inject(
-			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
+	@WrapOperation(method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
 			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
-			)
-	)
-	private void quilt$beforeInitScreen(CallbackInfo ci) {
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
+			))
+	private void quilt$wrapInitScreen(Screen instance, Operation<Void> original) {
 		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, this.client, !this.initialized);
-	}
-
-	@Inject(
-			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;init()V",
-					shift = At.Shift.AFTER
-			)
-	)
-	private void quilt$afterInitScreen(CallbackInfo ci) {
+		original.call(instance);
 		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, this.client, !this.initialized);
 	}
 

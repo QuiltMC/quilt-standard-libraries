@@ -21,12 +21,13 @@ import org.slf4j.Logger;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
@@ -36,17 +37,17 @@ public final class NetworkingPlayPacketClientTest implements ClientModInitialize
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		//ClientPlayNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, this::receive);
+		PayloadTypeRegistry.playC2S().register(NetworkingPlayPacketTest.TEST_CHANNEL, NetworkingPlayPacketTest.TEST_CODEC);
 
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			ClientPlayNetworking.registerReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf));
+			ClientPlayNetworking.registerReceiver(NetworkingPlayPacketTest.TEST_CHANNEL,  (client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf));
 		});
 	}
 
-	private void receive(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, PacketByteBuf buf) {
-		Text text = buf.readText();
+	private void receive(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, NetworkingPlayPacketTest.TestPacket text) {
 		client.execute(() -> {
-			LOGGER.info("Received text from {} which says {}.", NetworkingPlayPacketTest.TEST_CHANNEL, text);
-			client.inGameHud.setOverlayMessage(text, true);
+			LOGGER.info("Received text from {} which says {}.", NetworkingPlayPacketTest.TEST_CHANNEL, text.text());
+			client.inGameHud.setOverlayMessage(Text.literal(text.text()), true);
 		});
 	}
 }

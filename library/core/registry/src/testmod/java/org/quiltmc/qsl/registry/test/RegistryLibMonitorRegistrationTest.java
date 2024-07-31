@@ -40,8 +40,8 @@ import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 public class RegistryLibMonitorRegistrationTest implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Registry Lib Monitor Registration Test");
 
-	private static final Identifier TEST_BLOCK_A_ID = new Identifier("quilt_registry_test_monitors_registration", "test_block_a");
-	private static final Identifier TEST_BLOCK_B_ID = new Identifier("quilt_registry_test_monitors_registration", "test_block_b");
+	private static final Identifier TEST_BLOCK_A_ID = Identifier.of("quilt_registry_test_monitors_registration", "test_block_a");
+	private static final Identifier TEST_BLOCK_B_ID = Identifier.of("quilt_registry_test_monitors_registration", "test_block_b");
 
 	@Override
 	public void onInitialize(ModContainer mod) {

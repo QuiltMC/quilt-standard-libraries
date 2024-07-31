@@ -35,7 +35,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecycleEvents.Starting {
 	public static final String NAMESPACE = "quilt_block_entity";
 	public static final String BLOCK_ENTITY_FREEZING_PHASE = "block_entity_freezing";
-	public static final Identifier BLOCK_ENTITY_FREEZING_PHASE_ID = new Identifier(NAMESPACE, BLOCK_ENTITY_FREEZING_PHASE);
+	public static final Identifier BLOCK_ENTITY_FREEZING_PHASE_ID = Identifier.of(NAMESPACE, BLOCK_ENTITY_FREEZING_PHASE);
 	public static final QuiltBlockEntityImpl INSTANCE = new QuiltBlockEntityImpl();
 	private boolean frozen = false;
 

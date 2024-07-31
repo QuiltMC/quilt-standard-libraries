@@ -19,6 +19,7 @@ package org.quiltmc.qsl.item.content.registry.api;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.item.Item;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -46,9 +47,10 @@ public class ItemContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIMES = RegistryEntryAttachment
 			.builder(Registries.ITEM,
-					new Identifier(NAMESPACE, "fuel_times"),
+					Identifier.of(NAMESPACE, "fuel_times"),
 					Integer.class,
-					Codec.intRange(0, Integer.MAX_VALUE))
+					Codec.intRange(0, Integer.MAX_VALUE),
+					PacketCodecs.INT.cast())
 			.build();
 
 	/**
@@ -58,9 +60,10 @@ public class ItemContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCES = RegistryEntryAttachment
 			.builder(Registries.ITEM,
-					new Identifier(NAMESPACE, "compost_chances"),
+					Identifier.of(NAMESPACE, "compost_chances"),
 					Float.class,
-					Codec.floatRange(0, 1))
+					Codec.floatRange(0, 1),
+					PacketCodecs.FLOAT.cast())
 			.build();
 }
 

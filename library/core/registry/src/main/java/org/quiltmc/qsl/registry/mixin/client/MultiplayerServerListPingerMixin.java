@@ -23,10 +23,10 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import net.minecraft.client.network.MultiplayerServerListPinger;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.listener.ClientQueryPacketListener;
 import net.minecraft.network.packet.s2c.query.QueryPongS2CPacket;
 import net.minecraft.network.packet.s2c.query.ServerMetadataS2CPacket;
-import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
@@ -34,10 +34,10 @@ import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
 @ClientOnly
 @Mixin(MultiplayerServerListPinger.class)
 public class MultiplayerServerListPingerMixin {
-	@ModifyArgs(method = "add", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;setPacketListener(Lnet/minecraft/network/listener/PacketListener;)V"))
-	private void quilt$attachModProtocol(Args args, ServerInfo entry, Runnable pinger) {
-		var queryPacketListener = (ClientQueryPacketListener) args.get(0);
-		args.set(0, new ClientQueryPacketListener() {
+	@ModifyArgs(method = "add", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;connect(Ljava/lang/String;ILnet/minecraft/network/listener/ClientQueryPacketListener;)V"))
+	private void quilt$attachModProtocol(Args args, ServerInfo entry, Runnable pinger, Runnable runnable) {
+		var queryPacketListener = (ClientQueryPacketListener) args.get(2);
+		args.set(2, new ClientQueryPacketListener() {
 			@Override
 			public void onServerMetadata(ServerMetadataS2CPacket packet) {
 				if (packet.status().version().isPresent()) {
@@ -49,13 +49,13 @@ public class MultiplayerServerListPingerMixin {
 			}
 
 			@Override
-			public void onPong(QueryPongS2CPacket packet) {
-				queryPacketListener.onPong(packet);
+			public void onQueryPong(QueryPongS2CPacket packet) {
+				queryPacketListener.onQueryPong(packet);
 			}
 
 			@Override
-			public void onDisconnected(Text reason) {
-				queryPacketListener.onDisconnected(reason);
+			public void onDisconnected(DisconnectionDetails details) {
+				queryPacketListener.onDisconnected(details);
 			}
 
 			@Override

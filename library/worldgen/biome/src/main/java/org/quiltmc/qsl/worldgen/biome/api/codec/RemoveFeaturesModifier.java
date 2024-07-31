@@ -47,7 +47,7 @@ public record RemoveFeaturesModifier(
 		List<RegistryKey<PlacedFeature>> features,
 		List<GenerationStep.Feature> steps
 ) implements BiomeModifier {
-	public static final Identifier CODEC_ID = new Identifier("quilt", "remove_features");
+	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveFeaturesModifier::selector),
 			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),

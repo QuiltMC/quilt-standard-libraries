@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.tag.mixin.client;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -31,7 +32,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 @Mixin(DynamicRegistrySync.class)
 public interface DynamicRegistrySyncAccessor {
 	@Accessor("SYNCED_CODECS")
-	static Map<RegistryKey<? extends Registry<?>>, ?> quilt$getSyncableRegistries() {
+	static Set<RegistryKey<? extends Registry<?>>> quilt$getSyncableRegistries() {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 }

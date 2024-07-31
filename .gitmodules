@@ -1,0 +1,3 @@
+[submodule "qfapi/fabric"]
+	path = qfapi/fabric
+	url = https://github.com/FabricMC/fabric.git

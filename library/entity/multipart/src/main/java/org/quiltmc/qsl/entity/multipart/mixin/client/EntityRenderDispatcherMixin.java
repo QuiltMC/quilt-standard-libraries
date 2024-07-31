@@ -53,7 +53,7 @@ public class EntityRenderDispatcherMixin {
 					shift = At.Shift.AFTER
 			)
 	)
-	private static void renderMultipartHitboxes(MatrixStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo ci) {
+	private static void renderMultipartHitboxes(MatrixStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, float red, float green, float blue, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			double entityX = -MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
 			double entityY = -MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
