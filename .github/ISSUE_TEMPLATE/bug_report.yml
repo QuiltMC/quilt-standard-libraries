@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking your time to report this bug! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
+        Thanks for taking your time to report this issue! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
   - type: textarea
     id: description
     attributes:
