@@ -1,0 +1,56 @@
+name: Bug Report
+description: Create a bug report to help us fix issues with Quilt Standard Libraries.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "## Welcome!"
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking your time to report this bug! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
+        Make sure you are running the latest version of Architecture Extensions before reporting.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: "Describe the issue as clearly as possible. More info means the issue can be fixed faster."
+    validations:
+      required: true
+  - type: dropdown
+    id: side
+    attributes:
+      label: Which side have you encountered the issue on?
+      options:
+        - Client
+        - Server
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: |
+        How do you trigger this issue? Please walk us through it step by step.
+        If applicable, add screenshots to help explain your problem.
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: input
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        If applicable (crash, error output in console), please provide your crash report or latest.log
+        To upload logs, use [MCLogs](https://mclo.gs/) to upload your crashlog or latest.log.
+        Crash reports without a crashlog or a latest.log file will be marked as invalid. Crashes are hard to fix without the crashlogs or latest.log file(s).
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: "Add any other context about the problem here, such as the modpack you're playing or other mods that might be causing this issue."

@@ -1,0 +1,22 @@
+name: Feature Suggestion
+description: Create a feature suggestion to help expand the features Architecture Extensions has to offer.
+labels: [suggestion]
+body:
+  - type: markdown
+    attributes:
+      value: "## Welcome!"
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking your time to create your feature suggestion! If you want to discuss your feature request, join us on [Discord](https://discord.quiltmc.org).
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe how your feature(s) will work if applicable.
+      description: "Describe the suggestion as clearly as possible. More info means your feature request is more likely to be accepted."
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: "Add any other context about your feature request here."
