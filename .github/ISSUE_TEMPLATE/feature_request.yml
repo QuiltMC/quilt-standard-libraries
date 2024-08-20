@@ -1,5 +1,5 @@
 name: Feature Suggestion
-description: Create a feature suggestion to help expand the features Architecture Extensions has to offer.
+description: Create a feature request for Quilt Standard Libraries.
 labels: [suggestion]
 body:
   - type: markdown
