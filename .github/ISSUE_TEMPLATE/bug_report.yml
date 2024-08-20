@@ -9,7 +9,6 @@ body:
     attributes:
       value: |
         Thanks for taking your time to report this bug! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
-        Make sure you are running the latest version of Architecture Extensions before reporting.
   - type: textarea
     id: description
     attributes:
