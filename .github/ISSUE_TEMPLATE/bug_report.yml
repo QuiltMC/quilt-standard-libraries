@@ -19,7 +19,7 @@ body:
   - type: dropdown
     id: side
     attributes:
-      label: Which side have you encountered the issue on?
+      label: Which environment crashed?
       options:
         - Client
         - Server
