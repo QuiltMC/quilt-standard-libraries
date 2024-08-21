@@ -4,9 +4,6 @@ labels: [suggestion]
 body:
   - type: markdown
     attributes:
-      value: "## Welcome!"
-  - type: markdown
-    attributes:
       value: |
         Thanks for taking your time to create your feature suggestion! If you want to discuss your feature request, join us on [Discord](https://discord.quiltmc.org).
   - type: textarea

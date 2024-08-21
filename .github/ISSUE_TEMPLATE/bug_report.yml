@@ -4,9 +4,6 @@ labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: "## Welcome!"
-  - type: markdown
-    attributes:
       value: |
         Thanks for taking your time to report this crash! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
   - type: textarea
