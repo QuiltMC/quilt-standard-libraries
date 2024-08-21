@@ -26,20 +26,6 @@ body:
         - Both
     validations:
       required: true
-  - type: textarea
-    id: repro
-    attributes:
-      label: Steps to reproduce
-      description: |
-        How do you trigger this issue? Please walk us through it step by step.
-        If applicable, add screenshots to help explain your problem.
-      value: |
-        1.
-        2.
-        3.
-        ...
-    validations:
-      required: true
   - type: input
     id: logs
     attributes:
