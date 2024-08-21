@@ -13,7 +13,7 @@ body:
     id: description
     attributes:
       label: Describe the bug
-      description: "Describe the issue as clearly as possible. More info means the issue can be fixed faster."
+      description: "Describe the crash as clearly as possible. The more detail you provide means the sooner you can get back to your game! This includes: steps to reproduce or situation right before the crash, recent changes you made to your mods list, or any additional context that could be helpful."
     validations:
       required: true
   - type: dropdown
