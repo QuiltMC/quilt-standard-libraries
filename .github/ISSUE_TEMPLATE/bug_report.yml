@@ -16,7 +16,7 @@ body:
       required: true
 
   - type: dropdown
-    id: side
+    id: environment
     attributes:
       label: Which environment did you encounter this bug in?
       options:
