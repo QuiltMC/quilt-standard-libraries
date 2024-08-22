@@ -1,6 +1,6 @@
-name: Bug Report
-description: Create a bug report to help us fix issues with Quilt Standard Libraries.
-labels: [bug]
+name: Crash Report
+description: Create a crash report to help us fix crashes involving Quilt Standard Libraries.
+labels: [crash]
 body:
   - type: markdown
     attributes:
