@@ -1,19 +1,30 @@
-name: Feature Request
-description: Create a feature request for Quilt Standard Libraries.
+name: API Request
+description: Create an API request for Quilt Standard Libraries.
 labels: [suggestion]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking your time to create your feature suggestion! If you want to discuss your feature request, join us on [Discord](https://discord.quiltmc.org).
+        Thanks for taking your time to create your API request! If you want to discuss your feature request, join us on [Discord](https://discord.quiltmc.org).
+
   - type: textarea
     id: description
     attributes:
       label: Describe how your feature(s) will work if applicable.
-      description: "Describe the suggestion as clearly as possible. More info means your feature request is more likely to be accepted."
+      description: "Describe what you want QSL to implement as clearly as possible. More info means your request is more likely to be accepted."
+
+  - type: textarea
+    id: library
+    attributes:
+      label: Which QSL library should your request be implemented in.
+
+  - type: textarea
+    id: module
+    attributes:
+      label: Which QSL module should your request be implemented in.
 
   - type: textarea
     id: context
     attributes:
       label: Additional context
-      description: "Add any other context about your feature request here."
+      description: "Add any other context about your API request here."
