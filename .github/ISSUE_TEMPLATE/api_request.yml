@@ -19,7 +19,7 @@ body:
       label: Where does your API fit into QSL's structure? Which library and module? Does this add a new library or module?
 
   - type: textarea
-    id: context
+    id: additional-info
     attributes:
-      label: Additional context
-      description: "Add any other context about your API request here."
+      label: Additional Information
+      description: "Add any other information about your API request here."
