@@ -14,14 +14,9 @@ body:
       description: "Describe what you want QSL to implement as clearly as possible. More info means your request is more likely to be accepted."
 
   - type: textarea
-    id: library
+    id: library-or-module
     attributes:
-      label: Which QSL library should your request be implemented in.
-
-  - type: textarea
-    id: module
-    attributes:
-      label: Which QSL module should your request be implemented in.
+      label: Where does your API fit into QSL's structure? Which library and module? Does this add a new library or module?
 
   - type: textarea
     id: context
