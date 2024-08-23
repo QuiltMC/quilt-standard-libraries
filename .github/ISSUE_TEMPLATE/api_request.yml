@@ -1,6 +1,6 @@
 name: API Request
 description: Create an API request for Quilt Standard Libraries.
-labels: [suggestion]
+labels: [enhancement]
 body:
   - type: markdown
     attributes:

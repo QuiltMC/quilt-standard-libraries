@@ -1,6 +1,6 @@
 name: Game Issue Report
 description: Create a "game issue" report to help us fix in-game issues caused by Quilt Standard Libraries.
-labels: [game-issue]
+labels: [bug]
 body:
   - type: markdown
     attributes:
