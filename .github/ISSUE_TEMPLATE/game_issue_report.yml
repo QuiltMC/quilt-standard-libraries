@@ -31,5 +31,5 @@ body:
     attributes:
       label: Logs
       description: |
-        If applicable, please provide your crash report or latest.log
+        If applicable, please provide your latest.log
         To upload logs, use [MCLogs](https://mclo.gs/) to upload your latest.log. If you are unsure of how to obtain a log, read [here](https://minecraft.wiki/w/Tutorials/Obtaining_a_crash_report).
