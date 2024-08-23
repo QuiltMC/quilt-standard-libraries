@@ -1,0 +1,35 @@
+name: Game Issue Report
+description: Create a "game issue" report to help us fix in-game issues caused by Quilt Standard Libraries.
+labels: [game-issue]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking your time to report the game issue you encountered! If you need real-time help, join us on [Discord](https://discord.quiltmc.org).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: "Describe the issue as clearly as possible. The more detail you provide means the sooner the issue can be fixed! This includes: steps to reproduce or situation you encountered the issue in, recent changes you made to your mods list, or any additional context that could be helpful."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Which environment did you encounter this issue in?
+      options:
+        - Client
+        - Server
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        If applicable, please provide your crash report or latest.log
+        To upload logs, use [MCLogs](https://mclo.gs/) to upload your latest.log. If you are unsure of how to obtain a log, read [here](https://minecraft.wiki/w/Tutorials/Obtaining_a_crash_report).
