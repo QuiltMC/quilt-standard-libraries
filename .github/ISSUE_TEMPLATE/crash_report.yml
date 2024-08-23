@@ -1,6 +1,6 @@
 name: Crash Report
 description: Create a crash report to receive support for a breaking issue.
-labels: [bug]
+labels: [support, crash]
 body:
   - type: markdown
     attributes:
