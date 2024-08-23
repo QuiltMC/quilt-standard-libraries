@@ -1,5 +1,5 @@
 name: Crash Report
-description: Create a crash report to help us fix crashes involving Quilt Standard Libraries.
+description: Create a crash report to receive support for a breaking issue.
 labels: [bug]
 body:
   - type: markdown
