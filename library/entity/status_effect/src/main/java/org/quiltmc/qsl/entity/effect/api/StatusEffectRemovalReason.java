@@ -49,7 +49,7 @@ public class StatusEffectRemovalReason {
 	public static final StatusEffectRemovalReason GENERIC_ALL = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("generic.all"));
 
 	/**
-	 * Used when an effect is removed via the vanilla {@link LivingEntity#removeStatusEffect(StatusEffect)} method.
+	 * Used when an effect is removed via the vanilla {@link LivingEntity#removeStatusEffect(net.minecraft.registry.Holder) LivingEntity#removeStatusEffect(Holder&lt;StatusEffect&gt;)} method.
 	 */
 	public static final StatusEffectRemovalReason GENERIC_ONE = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("generic.one"));
 
