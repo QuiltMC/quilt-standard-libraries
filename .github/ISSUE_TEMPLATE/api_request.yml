@@ -5,12 +5,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking your time to create your API request! If you want to discuss your feature request, join us on [Discord](https://discord.quiltmc.org).
+        Thanks for taking your time to create your API request! If you want to discuss your request, join us on [Discord](https://discord.quiltmc.org).
 
   - type: textarea
     id: description
     attributes:
-      label: Describe what API(s) you want. 
+      label: Describe what API(s) you want.
       description: "Describe what API you believe QSL should implement. What does the API do? Is there a similar implementation, and if so how should QSL differ from it? The more detailed your request is the easier it will be for people to begin implementation of the API."
 
   - type: textarea
