@@ -18,8 +18,8 @@ body:
   - type: textarea
     id: where-in-qsl
     attributes:
-      label: Where in QSL did this bug occur?
-      description: "Ideally, a github link to where the QSL bug occurs is best but at least describe what part of QSL you found the bug in."
+      label: How did QSL break?
+      description: "What part of the game broke? Which QSL modules were in the stack trace? Is it possible to provide a GitHub link to the section of QSL that is broken?"
     validations:
       required: true
 
