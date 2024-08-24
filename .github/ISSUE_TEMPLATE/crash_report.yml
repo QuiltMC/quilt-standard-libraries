@@ -34,4 +34,5 @@ body:
         If applicable (crash, error output in console), please provide your crash report or latest.log
         To upload logs, use [MCLogs](https://mclo.gs/) to upload your crashlog or latest.log. If you are unsure of how to obtain a crash report, read [here](https://minecraft.wiki/w/Tutorials/Obtaining_a_crash_report).
         Crash reports without a crashlog or a latest.log file will be marked as invalid. Crashes are hard to fix without the crashlogs or latest.log file(s).
-        - required: true
+    validations:
+      required: true

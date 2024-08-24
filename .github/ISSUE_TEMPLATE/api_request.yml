@@ -12,11 +12,15 @@ body:
     attributes:
       label: Describe what API(s) you want.
       description: "Describe what API you believe QSL should implement. What does the API do? Is there a similar implementation, and if so how should QSL differ from it? The more detailed your request is the easier it will be for people to begin implementation of the API."
+    validations:
+      required: true
 
   - type: textarea
     id: library-or-module
     attributes:
       label: Where does your API fit into QSL's structure? Which library and module? Does this add a new library or module?
+    validations:
+      required: true
 
   - type: textarea
     id: additional-info
