@@ -46,7 +46,7 @@ import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-// We want to make sure that our wrap operations are put before other mods, so that we wrap the vanilla call and not a mods call.
+// We want to make sure that our wrap operations are put before other mods, so that we wrap the vanilla call and not a mod's call.
 // This is because we do not call the vanilla method, so any mod adding something will not be called.
 @Mixin(value = LivingEntity.class, priority = 500)
 public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
