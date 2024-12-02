@@ -48,7 +48,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // We want to make sure that our wrap operations are put before other mods, so that we wrap the vanilla call and not a mod's call.
 // This is because we do not call the vanilla method, so any mod adding something will not be called.
-@Mixin(value = LivingEntity.class, priority = 500)
+@Mixin(value = LivingEntity.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
 	@SuppressWarnings("ConstantConditions")
 	public LivingEntityMixin() {

@@ -25,9 +25,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.MilkBucketItem;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
 // See LivingEntityMixin
-@Mixin(value = MilkBucketItem.class, priority = 500)
+@Mixin(value = MilkBucketItem.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class MilkBucketItemMixin {
 	@WrapOperation(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z"))
 	private boolean quilt$addRemovalReason(LivingEntity instance, Operation<Boolean> original) {

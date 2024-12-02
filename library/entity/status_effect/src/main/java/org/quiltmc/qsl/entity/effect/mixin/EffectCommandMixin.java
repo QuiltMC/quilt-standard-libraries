@@ -27,9 +27,10 @@ import net.minecraft.server.command.EffectCommand;
 import net.minecraft.registry.Holder;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
 // See LivingEntityMixin
-@Mixin(value = EffectCommand.class, priority = 500)
+@Mixin(value = EffectCommand.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class EffectCommandMixin {
 	@WrapOperation(
 			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;)I",
