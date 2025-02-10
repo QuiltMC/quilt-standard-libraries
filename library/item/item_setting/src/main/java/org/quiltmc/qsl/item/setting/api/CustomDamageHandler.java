@@ -21,6 +21,9 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+
+import java.util.function.Consumer;
 
 /**
  * Allows an item to run custom logic when {@link ItemStack#method_7970(int, LivingEntity, EquipmentSlot)} is called.
@@ -39,7 +42,7 @@ public interface CustomDamageHandler {
 	 * @param amount        the amount of damage originally requested
 	 * @param entity        the {@link LivingEntity} whose item is being damaged
 	 * @param slot          the {@link EquipmentSlot} for the item stack
-	 * @param breakCallback callback when the stack reaches zero damage. See {@link ItemStack#method_7956(int, net.minecraft.util.random.RandomGenerator, ServerPlayerEntity, Runnable)} and its callsites for more information.
+	 * @param breakCallback callback when the stack reaches zero damage. See {@link ItemStack#damageEquipment(int, ServerWorld, ServerPlayerEntity, Consumer)} and its callsites for more information.
 	 * @return the amount of damage to pass to vanilla's logic
 	 */
 	int damage(ItemStack stack, int amount, LivingEntity entity, EquipmentSlot slot, Runnable breakCallback);

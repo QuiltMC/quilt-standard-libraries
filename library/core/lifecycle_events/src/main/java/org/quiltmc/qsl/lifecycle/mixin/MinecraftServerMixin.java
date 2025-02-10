@@ -86,8 +86,8 @@ abstract class MinecraftServerMixin {
 	// Loading/unloading worlds
 
 	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-	private void loadWorld(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, @Local ServerWorld world) {
-		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, (ServerWorld) world);
+	private void loadWorld(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, @Local(ordinal = 0) ServerWorld world) {
+		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, world);
 	}
 
 	@Inject(
