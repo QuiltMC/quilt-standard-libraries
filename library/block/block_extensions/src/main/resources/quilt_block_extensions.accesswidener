@@ -16,7 +16,7 @@ transitive-accessible method net/minecraft/block/CakeBlock <init> (Lnet/minecraf
 transitive-accessible method net/minecraft/block/CandleCakeBlock <init> (Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CartographyTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CarvedPumpkinBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/ChestBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Ljava/util/function/Supplier;)V
+transitive-accessible method net/minecraft/block/ChestBlock <init> (Ljava/util/function/Supplier;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/ChorusFlowerBlock <init> (Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/ChorusPlantBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CopperDoorBlock <init> (Lnet/minecraft/block/BlockSetType;Lnet/minecraft/block/Oxidizable$OxidizationLevel;Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -39,7 +39,6 @@ transitive-accessible method net/minecraft/block/EndGatewayBlock <init> (Lnet/mi
 transitive-accessible method net/minecraft/block/EndPortalBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EndRodBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EnderChestBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/EquippableCarvedPumpkinBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/FarmlandBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/FletchingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/FluidBlock <init> (Lnet/minecraft/fluid/FlowableFluid;Lnet/minecraft/block/AbstractBlock$Settings;)V
