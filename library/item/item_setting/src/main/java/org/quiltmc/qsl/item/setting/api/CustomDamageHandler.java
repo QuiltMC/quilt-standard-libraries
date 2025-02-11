@@ -26,7 +26,7 @@ import net.minecraft.server.world.ServerWorld;
 import java.util.function.Consumer;
 
 /**
- * Allows an item to run custom logic when {@link ItemStack#method_7970(int, LivingEntity, EquipmentSlot)} is called.
+ * Allows an item to run custom logic when {@link ItemStack#damageEquipment(int, LivingEntity, EquipmentSlot)} (int, LivingEntity, EquipmentSlot)} is called.
  * This is useful for items that, for example, may drain durability from some other source before damaging
  * the stack itself.
  * <p>
