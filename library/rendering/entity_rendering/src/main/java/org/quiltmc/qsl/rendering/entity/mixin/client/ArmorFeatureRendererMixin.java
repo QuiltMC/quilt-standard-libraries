@@ -19,6 +19,7 @@ package org.quiltmc.qsl.rendering.entity.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.class_10034;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +46,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
 @Mixin(ArmorFeatureRenderer.class)
-public abstract class ArmorFeatureRendererMixin {
+public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> {
 	@Unique
 	private LivingEntity quilt$capturedEntity;
 	@Unique
@@ -67,11 +68,11 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
-	private void quilt$getArmorModel(EquipmentSlot slot, CallbackInfoReturnable<BipedEntityModel<LivingEntity>> cir) {
+	private void quilt$getArmorModel(S arg, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);
 
-		BipedEntityModel<LivingEntity> model = cir.getReturnValue();
-		model = ArmorRenderingRegistryImpl.getArmorModel(model, this.quilt$capturedEntity, stack, slot);
+		A model = cir.getReturnValue();
+		model = ArmorRenderingRegistryImpl.getArmorModel((BipedEntityModel<LivingEntity>) model, this.quilt$capturedEntity, stack, slot);
 		cir.setReturnValue(model);
 	}
 

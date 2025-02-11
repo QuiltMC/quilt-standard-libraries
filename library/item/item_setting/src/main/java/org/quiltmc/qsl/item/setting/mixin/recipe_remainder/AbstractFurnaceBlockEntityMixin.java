@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,12 +79,12 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	// prevent additional smelting if remainder item overflow would have no location to be dropped into the world
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
-	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable RecipeHolder<?> recipeHolder, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
+	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, RecipeHolder<? extends AbstractCookingRecipe> recipe, SingleRecipeInput singleRecipeInput, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValue() && quilt$THREAD_LOCAL_BLOCK_ENTITY.get() == null) {
-			ItemStack original = inventory.get(INPUT_SLOT).copy();
+			ItemStack original = slots.get(INPUT_SLOT).copy();
 
 			if (!original.isEmpty()) {
-				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipeHolder.value(), RecipeRemainderLocation.FURNACE_INGREDIENT).copy();
+				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe.value(), RecipeRemainderLocation.FURNACE_INGREDIENT).copy();
 				original.decrement(1);
 
 				if (!remainder.isEmpty() && ItemStack.itemsAndComponentsMatch(original, remainder)) {
@@ -96,10 +98,13 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 			}
 		}
 	}
+	//FIXME: i only really made the params into locals; gotta look into this again
+	// likewise for every other "fix me" annotation below
+	// (might also require patching the locals)
 
-	@SuppressWarnings("ConstantConditions")
+	@SuppressWarnings({"ConstantConditions", "UnreachableCode"})
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setFuelRemainder(ItemStack fuelStack, int amount, World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
+	private static void setFuelRemainder(ItemStack instance, int amount, @Local(argsOnly = true) ServerWorld world, @Local BlockPos pos, @Local BlockState state, @Local AbstractFurnaceBlockEntity blockEntity) {
 		AbstractFurnaceBlockEntityMixin cast = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
 
 		Recipe<?> recipe;
@@ -110,7 +115,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		}
 
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				fuelStack,
+				instance,
 				amount,
 				recipe,
 				RecipeRemainderLocation.FURNACE_FUEL,
@@ -126,8 +131,9 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		return element;
 	}
 
+	//FIXME
 	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setInputRemainder(ItemStack inputStack, int amount, DynamicRegistryManager registryManager, @Nullable RecipeHolder<?> recipeHolder, DefaultedList<ItemStack> inventory, int count) {
+	private static void setInputRemainder(ItemStack inputStack, int amount, @Local DynamicRegistryManager registryManager, @Local @Nullable RecipeHolder<?> recipeHolder, @Local DefaultedList<ItemStack> inventory, @Local int count) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
 				amount,
@@ -145,7 +151,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@Inject(method = "tick", at = @At("RETURN"))
-	private static void resetThreadLocalBlockEntity(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
+	private static void resetThreadLocalBlockEntity(ServerWorld world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
 		quilt$THREAD_LOCAL_BLOCK_ENTITY.remove();
 	}
 }
