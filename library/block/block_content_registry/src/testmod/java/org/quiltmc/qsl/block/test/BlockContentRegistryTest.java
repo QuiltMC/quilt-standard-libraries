@@ -83,7 +83,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			Registries.BLOCK.getTagOrThrow(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.getValue(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
 			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
 			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);

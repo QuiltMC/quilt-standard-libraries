@@ -39,6 +39,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -125,7 +126,7 @@ public abstract class InMemoryPack implements MutablePack {
 	}
 
 	@Override
-	public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
+	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metadataSectionType) throws IOException {
 		if (!this.root.containsKey(ResourcePack.PACK_METADATA_NAME)) {
 			var json = new JsonObject();
 			var packJson = new JsonObject();
@@ -133,7 +134,7 @@ public abstract class InMemoryPack implements MutablePack {
 			packJson.addProperty("pack_format", 5); // This is like, not read by any significant system when invisible to users.
 			json.add("pack", packJson);
 
-			if (!json.has(metaReader.getKey())) {
+			if (!json.has(metadataSectionType.getKey())) {
 				return null;
 			} else {
 				try {

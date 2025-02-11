@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -37,7 +38,6 @@ import net.minecraft.resource.pack.CompositeResourcePack;
 import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -200,8 +200,8 @@ public abstract class GroupPack implements ResourcePack {
 		}
 
 		@Override
-		public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
-			return this.basePack.parseMetadata(metaReader);
+		public <T> @Nullable T parseMetadata(MetadataSectionType<T> metadataSectionType) throws IOException {
+			return this.basePack.parseMetadata(metadataSectionType);
 		}
 
 		@Override

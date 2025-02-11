@@ -19,6 +19,8 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.Locale;
 
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.resource.ResourceReloader;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
