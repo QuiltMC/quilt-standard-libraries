@@ -16,19 +16,18 @@
 
 package org.quiltmc.qsl.block.entity.api;
 
+import com.mojang.datafixers.types.Type;
+import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.mojang.datafixers.types.Type;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-
 /**
- * Provides a way to build {@link BlockEntityType} with more features than {@link BlockEntityType.Builder}.
+ * Provides a way to build {@link BlockEntityType} with more features than {@link BlockEntityType.BlockEntityFactory}.
  *
  * @param <BE> the block entity Java type
  */
@@ -79,6 +78,8 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 		return this;
 	}
 
+	// FIXME: BlockEntityType$Builder is now a FunctionalInterface named BlockEntityType$BlockEntityFactory
+
 	/**
 	 * Builds the block entity type.
 	 *
@@ -86,10 +87,15 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	 * @return the built block entity type
 	 * @see #build() build without any care for datafixers
 	 */
-	public BlockEntityType<BE> build(@Nullable Type<?> type) {
-		return BlockEntityType.Builder.<BE>create(this.factory, this.supportedBlocks.toArray(Block[]::new))
-				.build(type);
+
+
+	 public BlockEntityType<BE> build(@Nullable Type<?> type) {
+		// return BlockEntityType.Builder.<BE>create(this.factory, this.supportedBlocks.toArray(Block[]::new))
+		 return null;
 	}
+
+
+	// FIXME: uhm. what
 
 	/**
 	 * Builds the block entity type.
@@ -97,6 +103,7 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	 * @return the built block entity type
 	 */
 	public BlockEntityType<BE> build() {
-		return this.build(null);
+		// return this.build(null);
+		return null;
 	}
 }

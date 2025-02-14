@@ -254,13 +254,13 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		void setMusic(Optional<MusicSound> sound);
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		default void setMusic(@NotNull MusicSound sound) {
 			this.setMusic(Optional.of(sound));
@@ -268,13 +268,14 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		default void clearMusic() {
 			this.setMusic(Optional.empty());
 		}
 	}
 
+	// FIXME: enum GenerationStep$Carver (1.21) no longer exists
 	interface GenerationSettingsContext {
 		/**
 		 * Removes a feature from one of this biomes generation steps, and returns if any features were removed.

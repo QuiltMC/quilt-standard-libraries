@@ -24,7 +24,7 @@ import net.minecraft.network.configuration.ConfigurationTask;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
- * An injected interface for {@link net.minecraft.network.server.ServerConfigurationPacketHandler} that exposes the task system.
+ * An injected interface for {@link ServerConfigurationNetworkHandler} that exposes the task system.
  */
 @InjectedInterface(ServerConfigurationNetworkHandler.class)
 public interface ServerConfigurationTaskManager {

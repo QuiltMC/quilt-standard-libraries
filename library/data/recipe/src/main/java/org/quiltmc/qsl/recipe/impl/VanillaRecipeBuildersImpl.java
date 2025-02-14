@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.impl;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
+import net.minecraft.item.Items;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,11 @@ public final class VanillaRecipeBuildersImpl {
 	private VanillaRecipeBuildersImpl() {
 		throw new UnsupportedOperationException("VanillaRecipeBuildersImpl only contains static definitions.");
 	}
+
+	// FIXME:
+	// 	- Ingredient.EMPTY no longer exists
+	//  - Ingredients should be returned as List<Optional<Ingredient>>
+	//  placing
 
 	public static DefaultedList<Ingredient> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
 		DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(width * height, Ingredient.EMPTY);

@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-
-import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.render.item.ItemRenderer;
+import org.spongepowered.asm.mixin.Mixin;
+
+
+// FIXME: item colors are now handled directly with BakedQuads, cutting out the middle man (ItemColor)
 
 /**
  * Allows for {@link ItemColors} to be resynchronised with the registry, fixing the bug
@@ -30,8 +30,9 @@ import net.minecraft.client.render.item.ItemRenderer;
  * @author KJP12
  * @since 3.0.0
  */
+
 @Mixin(ItemRenderer.class)
 public interface ItemRendererAccessor {
-	@Accessor
-	ItemColors getColors();
+	// @Accessor
+	// ItemColors getColors();
 }

@@ -97,7 +97,7 @@ public final class ClientConfigurationNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(CustomPayload.Id)} to unregister the existing handler.
 	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(CustomPayload.Id, ClientLoginNetworking.QueryRequestReceiver)}
+	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerReceiver(net.minecraft.util.Identifier, ClientLoginNetworking.QueryRequestReceiver)}
 	 * login query has been received, you should use {@link ClientConfigurationConnectionEvents#INIT} to register the channel handler.
 	 *
 	 * @param channelName the identifier of the channel

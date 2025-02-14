@@ -16,23 +16,21 @@
 
 package org.quiltmc.qsl.networking.api.server;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
-
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.networking.api.LoginPacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Offers access to login stage server-side networking functionalities.
@@ -68,8 +66,8 @@ public final class ServerLoginNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerLoginNetworking#registerGlobalReceiver(CustomPayload.Id, QueryResponseReceiver)
-	 * @see ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, CustomPayload.Id)
+	 * @see ServerLoginNetworking#registerGlobalReceiver(Identifier, QueryResponseReceiver)
+	 * @see ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, Identifier)
 	 */
 	@Nullable
 	public static ServerLoginNetworking.QueryResponseReceiver unregisterGlobalReceiver(Identifier channelName) {
@@ -90,7 +88,7 @@ public final class ServerLoginNetworking {
 	 * Registers a handler to a query response channel.
 	 * <p>
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
-	 * Use {@link #unregisterReceiver(ServerLoginNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
+	 * Use {@link ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, Identifier)} to unregister the existing handler.
 	 *
 	 * @param networkHandler  the handler
 	 * @param channelName     the identifier of the channel

@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.api.builder;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -26,6 +27,7 @@ import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.registry.HolderSet;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -70,7 +72,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @param tag the item tag as ingredient
 	 * @return this builder
 	 * @see #ingredient(Ingredient)
-	 * @see Ingredient#ofTag(TagKey) (TagKey)
+	 * @see Ingredient#ofItems(HolderSet)
 	 */
 	public ShapelessRecipeBuilder ingredient(TagKey<Item> tag) {
 		return this.ingredient(Ingredient.ofTag(tag));
@@ -82,7 +84,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @param stacks the item stacks as ingredient
 	 * @return this builder
 	 * @see #ingredient(Ingredient)
-	 * @see Ingredient#ofStacks(ItemStack...)
+	 * @see Ingredient#ofStacks(Stream)
 	 */
 	public ShapelessRecipeBuilder ingredient(ItemStack... stacks) {
 		return this.ingredient(Ingredient.ofStacks(stacks));

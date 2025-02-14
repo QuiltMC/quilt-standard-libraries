@@ -1,6 +1,9 @@
 # Gradle
 .gradle
 
+# self
+sources
+
 # Eclipse
 .checkstyle
 .classpath
@@ -39,3 +42,4 @@ $RECYCLE.BIN/
 
 # QFAPI
 qfapi/quilt
+!/sources/

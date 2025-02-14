@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.recipe.api.builder;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
@@ -24,11 +26,13 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.ShapedRecipePattern;
+import net.minecraft.registry.HolderSet;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -43,6 +47,8 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	private final Char2ObjectMap<Ingredient> ingredients = new Char2ObjectOpenHashMap<>();
 	private CraftingCategory category = CraftingCategory.MISC;
 
+	// FIXME: Ingredient.EMPTY no longer exists
+	//  i'm throwing in "air" as a placeholder
 	/**
 	 * Creates a new shaped recipe builder.
 	 *
@@ -53,7 +59,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 		this.pattern = pattern;
 		this.width = pattern[0].length();
 		this.height = pattern.length;
-		this.ingredients.put(' ', Ingredient.EMPTY); // By default, space is an empty ingredient.
+		this.ingredients.put(' ', Ingredient.ofItems(Items.AIR)); // By default, space is an empty ingredient.
 	}
 
 	/**
@@ -108,10 +114,10 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @param tag the item tag as ingredient
 	 * @return this builder
 	 * @see #ingredient(char, Ingredient)
-	 * @see Ingredient#ofTag(TagKey) (TagKey)
+	 * @see Ingredient#ofItems(HolderSet)
 	 */
-	public ShapedRecipeBuilder ingredient(char key, TagKey<Item> tag) {
-		return this.ingredient(key, Ingredient.ofTag(tag));
+	public ShapedRecipeBuilder ingredient(char key, HolderSet<Item> tag) {
+		return this.ingredient(key, Ingredient.ofItems(tag));
 	}
 
 	/**
@@ -121,10 +127,11 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @param stacks the item stacks as ingredient
 	 * @return this builder
 	 * @see #ingredient(char, Ingredient)
-	 * @see Ingredient#ofStacks(ItemStack...)
+	 * @see Ingredient#ofStacks(Stream)
 	 */
 	public ShapedRecipeBuilder ingredient(char key, ItemStack... stacks) {
-		return this.ingredient(key, Ingredient.ofStacks(stacks));
+		// return this.ingredient(key, Ingredient.ofStacks(stacks));
+		return this.ingredient(key, Ingredient.ofStacks(Arrays.stream(stacks).map(ItemStack::getItem)));
 	}
 
 	/**

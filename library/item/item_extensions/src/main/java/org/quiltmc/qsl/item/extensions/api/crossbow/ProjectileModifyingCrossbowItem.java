@@ -16,18 +16,16 @@
 
 package org.quiltmc.qsl.item.extensions.api.crossbow;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This is the default implementation for {@link CrossbowExtensions}, allowing for the easy creation of new crossbows with no new modded functionality.
  * <p>
- * This crossbow automatically registers itself to modify its projectiles with {@link ProjectileModifyingCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, PersistentProjectileEntity)}
+ * This crossbow automatically registers itself to modify its projectiles with {@link ProjectileModifyingCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, ProjectileEntity)}
  */
 public class ProjectileModifyingCrossbowItem extends CrossbowItem implements CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow {
 	public ProjectileModifyingCrossbowItem(Settings settings) {

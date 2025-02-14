@@ -54,7 +54,7 @@ public final class ClientConfigurationConnectionEvents {
 
 	/**
 	 * An event for notification when the client play network handler has been configured and has received the {@link net.minecraft.network.packet.s2c.configuration.FinishConfigurationS2CPacket FinishConfigurationS2CPacket}.
-	 * Called right before switching to the {@link net.minecraft.network.NetworkState#PLAY PLAY} stage.
+	 * Called right before switching to the {@link net.minecraft.network.NetworkPhase#PLAY PLAY} stage.
 	 * <p>
 	 * No packets should be sent when this event is invoked.
 	 */

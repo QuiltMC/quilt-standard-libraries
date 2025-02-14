@@ -18,8 +18,10 @@
 package org.quiltmc.qsl.item.setting.api;
 
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+
+// ArmorItem#getArmorSlot() no longer exists
+// suggesting requiring users to resort to the QuiltItemSettings method instead
 
 /**
  * A provider for the {@link EquipmentSlot} that an item stack is able to be placed into.
@@ -27,10 +29,8 @@ import net.minecraft.item.ItemStack;
  * an armor slot that they can go in.
  * <p>
  * {@link EquipmentSlotProvider} can be set with {@link QuiltItemSettings#equipmentSlot(EquipmentSlotProvider)}.
- * <p>
- * Note that items extending {@link net.minecraft.item.ArmorItem} should
- * use {@link ArmorItem#getArmorSlot()} instead.
  */
+
 @FunctionalInterface
 public interface EquipmentSlotProvider {
 	/**

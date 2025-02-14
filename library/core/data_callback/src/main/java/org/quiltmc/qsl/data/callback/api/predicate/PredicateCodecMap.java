@@ -16,16 +16,13 @@
 
 package org.quiltmc.qsl.data.callback.api.predicate;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
-
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
-
 import org.quiltmc.qsl.data.callback.api.CodecMap;
+
+import java.util.Map;
 
 /**
  * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codecs created by shared providers. This class
@@ -47,6 +44,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	private final Codec<CodecAwarePredicate<T>> predicateCodec;
 	private volatile boolean cached = false;
 
+	// FIXME: createLazy no longer exists, and hasn't since... 1.20.5? .6? i really have no clue where this reference comes from
 	/**
 	 * Create a new predicate codec map based off of the provided general predicate codec. The provided codec should
 	 * likely be created with {@link Codecs#createLazy(Supplier)} so that it can itself delegate to the constructed map.

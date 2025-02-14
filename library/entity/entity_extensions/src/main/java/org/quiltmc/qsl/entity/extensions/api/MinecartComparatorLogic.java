@@ -23,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
+// should the DetectorRailBlock#getComparatorOutput reference error here??
+
 /**
  * Provides custom comparator output for minecarts resting on detector rails.
  */

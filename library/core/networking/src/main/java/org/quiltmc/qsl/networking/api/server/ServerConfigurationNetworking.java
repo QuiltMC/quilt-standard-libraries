@@ -16,23 +16,23 @@
 
 package org.quiltmc.qsl.networking.api.server;
 
-import java.util.Objects;
-import java.util.Set;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.server.network.ServerConfigurationNetworkHandler;
 import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-
+import net.minecraft.server.network.ServerConfigurationNetworkHandler;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
 import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
+
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Offers access to configuration stage server-side networking functionalities.
@@ -95,7 +95,7 @@ public final class ServerConfigurationNetworking {
 	 * This method differs from {@link ServerConfigurationNetworking#registerGlobalReceiver(CustomPayload.Id, CustomChannelReceiver)} since
 	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationNetworkHandler}.
 	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(CustomPayload.Id, ServerLoginNetworking.QueryResponseReceiver)}
+	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)}
 	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT} to register the channel handler.
 	 * <p>
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.

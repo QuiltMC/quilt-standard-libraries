@@ -62,7 +62,7 @@ public final class RegistryEvents {
 	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 	 * contain the registry, as this event is invoked for each layer of
 	 * the combined registry manager, and each layer holds different registries.
-	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+	 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.
 	 */
 	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(DynamicRegistrySetupCallback.class,
 			callbacks -> context -> {
@@ -81,7 +81,7 @@ public final class RegistryEvents {
 	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 	 * contain the registry, as this event is invoked for each layer of
 	 * the combined registry manager, and each layer holds different registries.
-	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+	 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.
 	 */
 	public static final Event<DynamicRegistryLoadedCallback> DYNAMIC_REGISTRY_LOADED = Event.create(DynamicRegistryLoadedCallback.class,
 			callbacks -> registryManager -> {
@@ -117,7 +117,7 @@ public final class RegistryEvents {
 		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of
 		 * the combined registry manager, and each layer holds different registries.
-		 * Use {@link DynamicRegistryManager#getOptional} or other utility methods provided by the context object to prevent crashes.
+		 * Use {@link DynamicRegistryManager#getLookup} or other utility methods provided by the context object to prevent crashes.
 		 *
 		 * @param context the dynamic registry manager setup context
 		 */
@@ -133,7 +133,7 @@ public final class RegistryEvents {
 		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of
 		 * the combined registry manager, and each layer holds different registries.
-		 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+		 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.
 		 *
 		 * @param registryManager the registry manager
 		 */
