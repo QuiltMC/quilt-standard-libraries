@@ -27,12 +27,13 @@ import net.minecraft.entity.LivingEntity;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // See LivingEntityMixin
 @Mixin(value = ClearAllEffectsComponent.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class ClearAllEffectsComponentMixin {
 	@Inject(method = "apply", at = @At(value = "HEAD"))
-	private boolean quilt$addRemovalReason(World world, ItemStack stack, LivingEntity instance) {
-		return instance.clearStatusEffects(StatusEffectRemovalReason.DRANK_MILK) > 0;
+	private void quilt$addRemovalReason(World world, ItemStack stack, LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
+		entity.clearStatusEffects(StatusEffectRemovalReason.DRANK_MILK);
 	}
 }

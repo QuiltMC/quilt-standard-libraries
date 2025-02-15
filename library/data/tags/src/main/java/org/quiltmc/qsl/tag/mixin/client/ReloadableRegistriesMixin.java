@@ -17,28 +17,27 @@
 package org.quiltmc.qsl.tag.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.registry.*;
+import net.minecraft.resource.ResourceManager;
+import org.quiltmc.qsl.tag.impl.client.ClientRegistryStatus;
+import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.LayeredRegistryManager;
-import net.minecraft.registry.ReloadableRegistries;
-import net.minecraft.registry.ServerRegistryLayer;
-import net.minecraft.resource.ResourceManager;
-
-import org.quiltmc.qsl.tag.impl.client.ClientRegistryStatus;
-import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
-
 @Mixin(ReloadableRegistries.class)
 public abstract class ReloadableRegistriesMixin {
+	// FIXME: injection point was "INVOKE", changed to "TAIL" to appease the compiler
+	//  additionally, frozen registry reference no longer exists
+	//  mahjong refactoring yet another uncompressed metric shit cube of code. go figure
 
-	@Inject(method = "reload", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/ReloadableRegistries$TagAwareLookupWrapper;<init>(Lnet/minecraft/registry/DynamicRegistryManager;)V"))
-	private static void onLoad(LayeredRegistryManager<ServerRegistryLayer> registryManager, ResourceManager resourceManager, Executor executor, CallbackInfoReturnable<CompletableFuture<LayeredRegistryManager<ServerRegistryLayer>>> cir, @Local DynamicRegistryManager.Frozen registry){
+	@Inject(method = "reload", at = @At(value = "TAIL", target = "Lnet/minecraft/registry/ReloadableRegistries$TagAwareLookupWrapper;<init>(Lnet/minecraft/registry/DynamicRegistryManager;)V"))
+	private static void onLoad(LayeredRegistryManager<ServerRegistryLayer> registryManager, List<Registry.PendingTags<?>> pendingTags, ResourceManager resourceManager, Executor executor, CallbackInfoReturnable<CompletableFuture<ReloadableRegistries.LoadResult>> cir){
 		ClientTagRegistryManager.applyAll(registry, ClientRegistryStatus.LOCAL);
 	}
 }

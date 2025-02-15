@@ -47,7 +47,7 @@ public final class StatusEffectUtils {
 	public static boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
 		TriState eventResult = StatusEffectEvents.SHOULD_REMOVE.invoker().shouldRemove(entity, effect, reason);
 		if (eventResult == TriState.DEFAULT) {
-			return effect.getEffectType().value().shouldRemove(entity, effect, reason);
+			return effect.getEffectType().getValue().shouldRemove(entity, effect, reason);
 		} else {
 			return eventResult.toBooleanOrElse(false);
 		}

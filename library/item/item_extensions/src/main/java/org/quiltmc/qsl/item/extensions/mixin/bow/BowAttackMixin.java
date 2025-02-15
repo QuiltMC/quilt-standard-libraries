@@ -16,13 +16,13 @@
 
 package org.quiltmc.qsl.item.extensions.mixin.bow;
 
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.IllusionerEntity;
@@ -42,8 +42,16 @@ public abstract class BowAttackMixin extends MobEntity implements RangedAttackMo
 		super(entityType, world);
 	}
 
-	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
-	public boolean modifyShotProjectile(World world, Entity persistentProjectileEntity, LivingEntity target, float pullProgress) {
+	// fixed target reference & method signature
+	// beyond that i'm not touching this one either
+	// FIXME: return type is now <T extends ProjectileEntity> and targets
+	//  ProjectileEntity#spawn as opposed to world#spawnEntity
+	//  furthermore, pullProgress is no longer a thing, so uhm.
+	//  good luck sorting that out
+
+
+	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileEntity;spawn(Lnet/minecraft/entity/projectile/ProjectileEntity;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;DDDFF)Lnet/minecraft/entity/projectile/ProjectileEntity;"))
+	public <T extends ProjectileEntity> T modifyShotProjectile(T projectileEntity, ServerWorld world, ItemStack stack, double x, double y, double z, float power, float divergence) {
 		ItemStack bowStack = this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW));
 		ItemStack arrowStack = this.getArrowType(bowStack);
 

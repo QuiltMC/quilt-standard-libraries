@@ -16,28 +16,27 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.registry.LayeredRegistryManager;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.ServerRegistryLayer;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.command.CommandManager;
-
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(ServerReloadableResources.class)
 public class ServerReloadableResourcesMixin {
@@ -51,13 +50,17 @@ public class ServerReloadableResourcesMixin {
 	}
 
 	@Inject(method = "loadResources", at = @At("HEAD"))
-	private static void onLoadResources(ResourceManager resources,
-										LayeredRegistryManager<ServerRegistryLayer> registryManager,
-										FeatureFlagBitSet featureFlags,
-										CommandManager.RegistrationEnvironment environment,
-										int level, Executor prepareExecutor,
-										Executor applyExecutor,
-										CallbackInfoReturnable<CompletableFuture<ServerReloadableResources>> cir) {
+	private static void onLoadResources(
+								ResourceManager resources,
+								LayeredRegistryManager<ServerRegistryLayer> registryManager,
+								List<Registry.PendingTags<?>> pendingTags,
+								FeatureFlagBitSet featureFlags,
+								CommandManager.RegistrationEnvironment environment,
+								int level,
+								Executor prepareExecutor,
+								Executor applyExecutor,
+								CallbackInfoReturnable<CompletableFuture<ServerReloadableResources>> cir) {
+
 		if (resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
 			hooks.quilt$appendTopPacks();
 		}

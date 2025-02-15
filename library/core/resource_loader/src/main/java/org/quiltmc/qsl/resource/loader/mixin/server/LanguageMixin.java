@@ -30,6 +30,11 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 @DedicatedServerOnly
 @Mixin(Language.class)
 public class LanguageMixin {
+
+	// yeah after 15 minutes of fiddling around with this i decided that
+	// the wisest decision would be not to touch this and let the pros
+	// handle it instead
+
 	@Redirect(
 			method = "create",
 			at = @At(

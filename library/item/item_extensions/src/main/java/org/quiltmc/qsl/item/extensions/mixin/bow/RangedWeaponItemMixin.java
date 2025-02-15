@@ -42,6 +42,8 @@ public abstract class RangedWeaponItemMixin {
 	@Unique
 	private final ThreadLocal<PersistentProjectileEntity> quilt$onStoppedUsing$shotProjectile = new ThreadLocal<>();
 
+	// see BowAttackMixin's leading comment
+
 	// Allows custom bows to modify the projectile shot by bows
 	// Two mixins are needed for this in order to capture the locals
 	@Inject(
@@ -50,11 +52,7 @@ public abstract class RangedWeaponItemMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	public void onStoppedUsing_modifyArrow(
-			ServerWorld world, LivingEntity user, Hand hand, ItemStack bowStack,
-			List<ItemStack> list, float pullProgress, float g, boolean bl,
-			LivingEntity livingEntity2, CallbackInfo ci, float h, float i,
-			float j, float k, int l, ItemStack arrowStack,
-			float m, ProjectileEntity projectileEntity) {
+		ServerWorld world, LivingEntity arrow, Hand hand, ItemStack stack, List<ItemStack> items, float speed, float divergence, boolean isCritical, LivingEntity target, CallbackInfo ci, float h, float i, float j, float k, int l, ItemStack arrowStack, float m, ProjectileEntity projectileEntity) {
 		RangedWeaponItem self = (RangedWeaponItem) (Object) this;
 		if ((self instanceof BowItem)) {
 			this.quilt$onStoppedUsing$shotProjectile.set(BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress / 3f, (PersistentProjectileEntity) projectileEntity));
@@ -70,6 +68,8 @@ public abstract class RangedWeaponItemMixin {
 	public ProjectileEntity onStoppedUsing_replaceArrow(ProjectileEntity persistentProjectileEntity) {
 		return this.quilt$onStoppedUsing$shotProjectile.get();
 	}
+
+	// see BowAttackMixin's leading comment
 
 	// Removes the pointer to the shot projectile for GC
 	@Inject(
