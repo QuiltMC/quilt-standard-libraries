@@ -16,8 +16,12 @@
 
 package org.quiltmc.qsl.item.content.registry.mixin;
 
-import java.util.Map;
-
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.tag.TagKey;
+import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,13 +29,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.HolderLookup;
-import net.minecraft.registry.tag.TagKey;
+import java.util.Map;
 
-import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
+// the target mixin class suffers from multiple unmapped keywords that fallback to intermediary
+// i suspect that's the cause of most of these issues
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
