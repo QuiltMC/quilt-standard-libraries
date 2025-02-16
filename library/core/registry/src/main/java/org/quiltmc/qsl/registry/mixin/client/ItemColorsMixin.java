@@ -37,10 +37,16 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 
+// TODO: delete this mixin - ItemColors is no longer a thing
+// 	i'm not doing it myself so as to allow
+//  other maintainers to adapt the code to
+//  other parts
+
 @ClientOnly
-@Mixin(ItemColors.class)
-public class ItemColorsMixin implements RebuildableIdModelHolder {
-	@Final
+// @Mixin(ItemColors.class)
+
+public class ItemColorsMixin /* implements RebuildableIdModelHolder */ {
+/*	@Final
 	@Shadow
 	private IdList<ItemColorProvider> providers;
 
@@ -62,4 +68,6 @@ public class ItemColorsMixin implements RebuildableIdModelHolder {
 			this.providers.set(entry.getValue(), Item.getRawId(entry.getKey()));
 		}
 	}
+
+ */
 }

@@ -34,7 +34,9 @@ public class LoomOutputSlotMixin extends Slot {
 		super(inventory, i, j, k);
 	}
 
-	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+	// can't seem to properly target this + intellij refuses to show me the bytecode for the anonymous class, so...
+
+	@Redirect(method = "onTakeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack resultStack) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,

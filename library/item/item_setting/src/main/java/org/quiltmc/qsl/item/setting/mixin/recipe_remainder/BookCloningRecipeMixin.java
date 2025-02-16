@@ -32,7 +32,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @Mixin(BookCloningRecipe.class)
 public abstract class BookCloningRecipeMixin implements Recipe<CraftingRecipeInput> {
-	@Inject(method = "getRemainder(Lnet/minecraft/recipe/CraftingRecipeInput;)Lnet/minecraft/util/collection/DefaultedList;", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
+	@Inject(method = "getRecipeRemainders", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	private void interceptGetRemainingStacks(CraftingRecipeInput input, CallbackInfoReturnable<DefaultedList<ItemStack>> cir) {
 		cir.setReturnValue(
 				RecipeRemainderProvider.getRemainingStacks(input, this, RecipeRemainderLocation.CRAFTING, cir.getReturnValue())

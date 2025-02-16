@@ -32,10 +32,15 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @Mixin(Recipe.class)
 public interface RecipeMixin<T extends RecipeInput> {
+
+	// FIXME: gone? as well? wtf
+	/*
 	@Inject(method = "getRemainder", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	private void interceptGetRemainingStacks(T input, CallbackInfoReturnable<DefaultedList<ItemStack>> cir) {
 		cir.setReturnValue(
 				RecipeRemainderProvider.getRemainingStacks(input, (Recipe<?>) this, RecipeRemainderLocation.CRAFTING, cir.getReturnValue())
 		);
 	}
+
+	 */
 }

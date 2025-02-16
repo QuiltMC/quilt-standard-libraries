@@ -32,9 +32,10 @@ import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 @ClientOnly
 @Mixin(Keyboard.class)
 abstract class KeyboardMixin {
+
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
-	@WrapOperation(method = "method_1454", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"))
-	private static boolean onKeyPressed(Screen screen, int key, int scancode, int modifiers, Operation<Boolean> original) {
+	@WrapOperation(method = "onKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"))
+	private boolean onKeyPressed(Screen screen, int key, int scancode, int modifiers, Operation<Boolean> original) {
 		if (ScreenKeyboardEvents.ALLOW_KEY_PRESS.invoker().allowKeyPress(screen, key, scancode, modifiers) == TriState.FALSE) {
 			return true;
 		}
@@ -46,9 +47,10 @@ abstract class KeyboardMixin {
 		return result;
 	}
 
+
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
-	@WrapOperation(method = "method_1454", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"))
-	private static boolean onKeyReleased(Screen screen, int key, int scancode, int modifiers, Operation<Boolean> original) {
+	@WrapOperation(method = "onKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"))
+	private boolean onKeyReleased(Screen screen, int key, int scancode, int modifiers, Operation<Boolean> original) {
 		if (ScreenKeyboardEvents.ALLOW_KEY_RELEASE.invoker().allowKeyRelease(screen, key, scancode, modifiers) == TriState.FALSE) {
 			return true;
 		}

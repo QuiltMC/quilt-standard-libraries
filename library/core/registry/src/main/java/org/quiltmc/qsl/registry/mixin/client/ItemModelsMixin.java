@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.render.item.ItemModels;
 import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.registry.Registries;
@@ -34,9 +33,12 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedInt2ObjectMap;
 
+// TODO: delete this class - same reason as listed in ItemColorMixin
+
 @ClientOnly
-@Mixin(ItemModels.class)
-public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
+// @Mixin(ItemModels.class)
+public abstract class ItemModelsMixin /* implements RebuildableIdModelHolder */ {
+	/*
 	@Mutable
 	@Final
 	@Shadow
@@ -51,4 +53,5 @@ public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
 	public void quilt$rebuildIds() {
 		SynchronizedInt2ObjectMap.attemptRebuildIds(this.modelIds);
 	}
+	 */
 }

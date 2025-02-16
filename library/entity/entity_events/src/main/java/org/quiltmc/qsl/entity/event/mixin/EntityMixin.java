@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.PositionFlag;
+import net.minecraft.world.entity.TeleportTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,17 +30,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.DimensionTransition;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-	@Shadow public World world;
+	@Shadow
+	private World world;
 
-	@Inject(method = "moveToWorld", at = @At("RETURN"))
-	private void quilt$afterWorldChanged(DimensionTransition transition, CallbackInfoReturnable<Entity> cir) {
+	@Inject(method = "teleport(Lnet/minecraft/world/entity/TeleportTarget;)Lnet/minecraft/entity/Entity;", at = @At("RETURN"))
+	private void quilt$afterWorldChanged(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
 		// Ret will only have an entity if the teleport worked (entity not removed, teleportTarget was valid, entity was successfully created)
 		Entity ret = cir.getReturnValue();
 
@@ -48,11 +49,14 @@ public abstract class EntityMixin {
 		}
 	}
 
+	// this targetted method no longer contains a "removal reason" functionality
+	// to account for this, i'm temporarily going to change the injection point to TAIL
+	// until reviewed in the final PRs
+
 	@Inject(
-			method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDLjava/util/Set;FF)Z",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V")
-	)
-	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<PositionFlag> relativeMovements, float yaw, float pitch, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) Entity newEntity) {
-		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), destination);
+			method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDLjava/util/Set;FFZ)Z",
+			at = @At("TAIL"))
+	private void quilt$afterWorldChangedByTeleport(ServerWorld world, double x, double y, double z, Set<PositionFlag> relatives, float yaw, float a, boolean resetCamera, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0, argsOnly = true) Entity newEntity) {
+		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), world);
 	}
 }

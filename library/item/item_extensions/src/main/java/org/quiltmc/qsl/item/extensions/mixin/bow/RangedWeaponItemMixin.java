@@ -42,7 +42,7 @@ public abstract class RangedWeaponItemMixin {
 	@Unique
 	private final ThreadLocal<PersistentProjectileEntity> quilt$onStoppedUsing$shotProjectile = new ThreadLocal<>();
 
-	// see BowAttackMixin's leading comment
+	// FIXME: see BowAttackMixin's leading comment
 
 	// Allows custom bows to modify the projectile shot by bows
 	// Two mixins are needed for this in order to capture the locals
@@ -69,7 +69,7 @@ public abstract class RangedWeaponItemMixin {
 		return this.quilt$onStoppedUsing$shotProjectile.get();
 	}
 
-	// see BowAttackMixin's leading comment
+	// FIXME: see BowAttackMixin's leading comment
 
 	// Removes the pointer to the shot projectile for GC
 	@Inject(

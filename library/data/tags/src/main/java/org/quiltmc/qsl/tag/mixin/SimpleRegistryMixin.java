@@ -32,8 +32,13 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 
 @Mixin(SimpleRegistry.class)
 public class SimpleRegistryMixin {
-	@Inject(method = "bindTags", at = @At("HEAD"))
-	private void onPopulateTags(Map<TagKey<?>, List<Holder<?>>> map, CallbackInfo ci) {
-		TagRegistryImpl.populateTags(map);
+
+	// FIXME:
+	//  bindTags replaced by bindTag.
+	//  fixing this mixin requires
+	//  refactoring TagRegistryImpl#populateTags
+	@Inject(method = "bindTag", at = @At("HEAD"))
+	private void onPopulateTags(TagKey<?> tag, List<Holder<?>> list, CallbackInfo ci) {
+		// TagRegistryImpl.populateTags(map);
 	}
 }

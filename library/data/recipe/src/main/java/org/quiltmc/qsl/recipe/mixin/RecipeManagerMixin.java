@@ -44,12 +44,15 @@ import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
-	@Shadow
-	private Multimap<RecipeType<?>, RecipeHolder<?>> recipesByType;
 
 	@Shadow
 	private Map<Identifier, RecipeHolder<?>> recipes;
 
+	// FIXME: the entire meat and bones of this method is just GONE
+	//  so i'm not really sure what to do about this.
+
+
+	/*
 	@Inject(
 			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
@@ -118,4 +121,6 @@ public class RecipeManagerMixin {
 
 		this.recipes = Collections.unmodifiableMap(globalRecipes);
 	}
+
+	 */
 }

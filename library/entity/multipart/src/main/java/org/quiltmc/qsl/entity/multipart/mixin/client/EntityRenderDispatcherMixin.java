@@ -48,7 +48,7 @@ public class EntityRenderDispatcherMixin {
 			method = "renderHitbox",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/WorldRenderer;drawBox(Lnet/minecraft/client/util/math/MatrixStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/util/math/Box;FFFF)V",
+					target = "Lnet/minecraft/client/render/ShapeRenderer;renderOutline(Lnet/minecraft/client/util/math/MatrixStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/util/math/Box;FFFF)V",
 					ordinal = 0,
 					shift = At.Shift.AFTER
 			)

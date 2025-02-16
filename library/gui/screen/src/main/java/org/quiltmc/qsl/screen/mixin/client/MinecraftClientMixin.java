@@ -49,9 +49,8 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.REMOVE.invoker().onRemove(this.currentScreen);
 	}
 
-	// Synthetic method method_1572()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
 	// This injection should be caught by "Screen#wrapScreenError" if anything fails in an event and then rethrown in the crash report
-	@WrapOperation(method = "method_1572()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
 	private void wrapTick(Screen instance, Operation<Void> original) {
 		ScreenEvents.BEFORE_TICK.invoker().beforeTick(instance);
 		original.call(instance);

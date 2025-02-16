@@ -28,6 +28,11 @@ import org.quiltmc.qsl.item.extensions.api.bow.BowExtensions;
 
 @Mixin(SkeletonEntityModel.class)
 public abstract class SkeletonEntityModelMixin {
+
+
+	// FIXME: this behavior is no longer handled in this class
+
+
 	// Allows Skeletons to visually shoot custom bows by returning true
 	@Redirect(
 			method = "animateModel(Lnet/minecraft/entity/mob/MobEntity;FFF)V",
@@ -45,4 +50,6 @@ public abstract class SkeletonEntityModelMixin {
 	private boolean setAngles(ItemStack heldItemStack, Item item) {
 		return heldItemStack.getItem() instanceof BowExtensions;
 	}
+
+
 }

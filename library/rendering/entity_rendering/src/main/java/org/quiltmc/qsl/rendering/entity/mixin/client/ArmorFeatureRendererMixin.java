@@ -54,6 +54,8 @@ public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends
 	@Unique
 	private Identifier quilt$capturedArmorTexture;
 
+	// FIXME: ArmorFeatureRenderer now relies on EntityRenderState (yarn) instead of LivingEntity
+	//  atm it's unmapped, but intermediary is class_10034
 	@Inject(
 			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
 			at = @At("HEAD")
@@ -62,11 +64,15 @@ public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends
 		this.quilt$capturedEntity = livingEntity;
 	}
 
-	@Inject(method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", at = @At("HEAD"))
-	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel<?> bipedEntityModel, CallbackInfo ci) {
-		this.quilt$capturedSlot = slot;
+	@Inject(method = "renderArmor", at = @At("HEAD"))
+	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
+		this.quilt$capturedSlot = armorSlot;
 	}
 
+
+	// FIXME: there's MULTIPLE LivingEntity -> class_10034 refactors needed here,
+	//  but the rabbit hole goes *very* deep, so i'm leaving this for last
+	
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
 	private void quilt$getArmorModel(S arg, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);
