@@ -18,16 +18,15 @@ package org.quiltmc.qsl.entity.multipart.mixin;
 
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.server.world.ThreadedChunkManager;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(ThreadedChunkManager.class)
 public class ThreadedChunkManagerMixin {
-	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class, ordinal = 0))
-	// FIXME: targetRef no longer exists
+	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class))
 	private Class cancelEnderDragonCheck(Class constant) {
-		// return targetRef instanceof EntityPart;
-		return null;
+		return EntityPart.class;
 	}
 }
