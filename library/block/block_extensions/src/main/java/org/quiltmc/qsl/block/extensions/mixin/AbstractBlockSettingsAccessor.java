@@ -18,12 +18,14 @@
 package org.quiltmc.qsl.block.extensions.mixin;
 
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.loot.LootTable;
+import net.minecraft.registry.KeyDerivation;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.unmapped.C_vhpmxtfv;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
@@ -70,10 +73,8 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	boolean getDynamicBounds();
 
-	// "cannot find field" ??
-
 	@Accessor
-	RegistryKey<LootTable> getLootTableId();
+	KeyDerivation<Block, Optional<RegistryKey<LootTable>>> getLootTableId();
 
 	@Accessor
 	boolean getOpaque();
@@ -143,7 +144,7 @@ public interface AbstractBlockSettingsAccessor {
 	void setRandomTicks(boolean ticksRandomly);
 	// ...
 	@Accessor
-	void setLootTableId(RegistryKey<LootTable> lootTableId);
+	void setLootTableId(KeyDerivation<Block, Optional<RegistryKey<LootTable>>> lootTableId);
 
 	@Accessor
 	void setOpaque(boolean opaque);
