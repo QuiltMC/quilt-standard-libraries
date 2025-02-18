@@ -82,11 +82,11 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 
 	@Inject(method = "readNbtImpl", at = @At("TAIL"))
 	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		this.field_55574 = nbt.getInt("BurnTime");
+		this.field_55574 = nbt.getInt("lit_time_remaining");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		nbt.putInt("BurnTime", this.field_55574);
+		nbt.putInt("lit_time_remaining", this.field_55574);
 	}
 }
