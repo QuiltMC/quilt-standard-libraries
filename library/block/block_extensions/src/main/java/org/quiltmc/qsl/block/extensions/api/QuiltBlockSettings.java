@@ -17,16 +17,17 @@
 
 package org.quiltmc.qsl.block.extensions.api;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+import net.minecraft.unmapped.C_vhpmxtfv;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
@@ -82,7 +83,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 		// also copy other stuff Vanilla doesn't bother with
 		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
-		this.drops(otherAccessor.getLootTableId());
+		((AbstractBlockSettingsAccessor) this).setLootTableId(otherAccessor.getLootTableId());
 		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
 		this.solidBlock(otherAccessor.getSolidBlockPredicate());
 		this.suffocates(otherAccessor.getSuffocationPredicate());
@@ -190,12 +191,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings dropsLike(Block source) {
-		super.dropsLike(source);
-		return this;
-	}
-
-	@Override
 	public QuiltBlockSettings lavaIgnitable() {
 		super.lavaIgnitable();
 		return this;
@@ -281,14 +276,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings mapColor(MapColor color) {
+	public QuiltBlockSettings mapColor(C_vhpmxtfv color) {
 		super.mapColor(color);
 		return this;
 	}
 
 	@Override
 	@Contract("_->this")
-	public QuiltBlockSettings mapColor(Function<BlockState, MapColor> function) {
+	public QuiltBlockSettings mapColor(Function<BlockState, C_vhpmxtfv> function) {
 		super.mapColor(function);
 		return this;
 	}
@@ -336,6 +331,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		super.replaceable();
 		return this;
 	}
+
+	@Override
+	public QuiltBlockSettings method_63502(Optional<RegistryKey<LootTable>> value) {
+		super.method_63502(value);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings key(RegistryKey<Block> key) {
+		super.key(key);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings method_63501(String value) {
+		super.method_63501(value);
+		return this;
+	}
+
 
 	// region Added by Quilt
 
@@ -414,8 +428,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings drops(RegistryKey<LootTable> dropTableId) {
-		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
-		return this;
+		return this.method_63502(Optional.of(dropTableId));
 	}
 
 	public QuiltBlockSettings spawnsDustParticles(boolean spawnsDustParticles) {

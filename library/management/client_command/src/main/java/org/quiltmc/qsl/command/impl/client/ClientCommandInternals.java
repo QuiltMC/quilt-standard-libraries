@@ -39,6 +39,7 @@ import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.unmapped.C_xuophqnt;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -95,7 +96,7 @@ public final class ClientCommandInternals {
 		// noinspection ConstantConditions
 		var commandSource = client.getNetworkHandler().getCommandSource();
 
-		client.getProfiler().push(message);
+		C_xuophqnt.method_64146().push(message);
 
 		try {
 			// Only run client commands if there are no matching server-side commands.
@@ -129,7 +130,7 @@ public final class ClientCommandInternals {
 			commandSource.sendError(Text.of(e.getMessage()));
 			return true;
 		} finally {
-			client.getProfiler().pop();
+			C_xuophqnt.method_64146().pop();
 		}
 	}
 
@@ -178,7 +179,7 @@ public final class ClientCommandInternals {
 	 * @return the error message as a {@link Text}
 	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
-		Text message = Texts.toText(e.getRawMessage());
+		Text message = Text.of(e.getRawMessage());
 		String context = e.getContext();
 
 		return context != null ? Text.translatable("command.context.parse_error", message, context) : message;
