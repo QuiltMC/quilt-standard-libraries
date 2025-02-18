@@ -53,6 +53,11 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
 	int field_55574;
 
+	// Uhh... Based on the old target and what this does, I *assume* that this replaces
+	// the initial "fuelTimeMap" with quilt's registry.
+	// Possible Fix:
+	// - Change the target of this mixin or create another which targets FuelTimes.
+	// - @ModifyArg(method = "<init>", at = @At(value = "STORE", ordinal = 0)
 	@Inject(method = "createFuelTimeMap", at = @At("HEAD"), cancellable = true)
 	private static void returnCachedMap(CallbackInfoReturnable<Map<Item, Integer>> cir) {
 		if (!ItemContentRegistriesInitializer.FUEL_MAP.isEmpty()) {
@@ -60,6 +65,10 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 		}
 	}
 
+	// Note: I don't remember if you need to make a separate mixin to target an inner class
+	//       but assuming the mixin is targeting `FuelTimes$Builder`
+	// Possible Fix:
+	// - Inject(method = "Lnet/minecraft/block/entity/FuelTimes$Builder;add(Lnet/minecraft/registry/tag/TagKey;I)Lnet/minecraft/block/entity/FuelTimes$Builder;", at = @At("HEAD"), cancellable = true)
 	@Inject(method = "addFuel(Ljava/util/Map;Lnet/minecraft/registry/tag/TagKey;I)V", at = @At("HEAD"), cancellable = true)
 	private static void collectInitialTags(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime, CallbackInfo ci) {
 		if (ItemContentRegistriesInitializer.shouldCollectInitialTags()) {
