@@ -34,6 +34,20 @@ import java.util.Map;
 // the target mixin class suffers from multiple unmapped keywords that fallback to intermediary
 // i suspect that's the cause of most of these issues
 
+// Note: I Couldn't get the `genSources` task to work and linkie is acting wierd.
+// I'll attempt to provide the intermediary mappings in parentheses and use QM whenever possible.
+
+// Mixin: AbstractFurnaceBlockEntityMixin
+// Target: net.minecraft.block.entity.AbstractFurnaceBlockEntityMixin
+// Kind: Accessor-like
+// What it seems to do:
+//   - Allows for reading and modifying the "fuelTimeMap"
+//   - (De)Serializes the "BurnTime" nbt field from/to Int
+// Reason for breakage:
+// Mojang refactored this code since 1.21.2 (last instance of `net.minecraft.class_2609.method_11196`)
+// Migrating it to a global registry under net.minecraft.block.entity.FuelTimes (`net.minecraft.class_9895`)
+// See also: net.minecraft.class_2609.method_11200
+
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
