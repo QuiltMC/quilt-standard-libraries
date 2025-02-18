@@ -22,8 +22,6 @@
     "client.BlockColorMapMixin",
     "client.ConnectScreenMixin",
     "client.DisconnectedScreenMixin",
-    "client.ItemColorsMixin",
-    "client.ItemModelsMixin",
     "client.ItemRendererAccessor",
     "client.MinecraftClientMixin",
     "client.MultiplayerServerListPingerMixin",

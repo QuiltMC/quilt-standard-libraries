@@ -17,9 +17,13 @@
 package org.quiltmc.qsl.resource.loader.mixin.server;
 
 import com.google.common.collect.ImmutableMap;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.jcip.annotations.Immutable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.util.Language;
@@ -27,27 +31,23 @@ import net.minecraft.util.Language;
 import org.quiltmc.loader.api.minecraft.DedicatedServerOnly;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
+import java.util.Map;
+
 @DedicatedServerOnly
 @Mixin(Language.class)
 public class LanguageMixin {
 
-	// yeah after 15 minutes of fiddling around with this i decided that
-	// the wisest decision would be not to touch this and let the pros
-	// handle it instead
-
-	// oh right FIXME
-
-	@Redirect(
+	@ModifyArg(
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;",
+					target = "Ljava/util/Map;copyOf(Ljava/util/Map;)Ljava/util/Map;",
 					remap = false
 			)
 	)
-	private static ImmutableMap<String, String> create(ImmutableMap.Builder<String, String> builder) {
-		var map = new Object2ObjectOpenHashMap<>(builder.buildOrThrow());
+	private static Map<String, String> appendEntriesToResourceLoader(Map<String, String> map) {
 		ResourceLoaderImpl.appendLanguageEntries(map);
-		return ImmutableMap.copyOf(map);
+		return map;
 	}
+
 }

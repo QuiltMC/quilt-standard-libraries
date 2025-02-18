@@ -19,6 +19,7 @@ package org.quiltmc.qsl.worldgen.biome.mixin;
 
 import java.util.function.Function;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,10 +31,15 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
-@Mixin(targets = "net/minecraft/world/biome/util/MultiNoiseBiomeSourceParameterList$Preset$SourceProvider")
-public abstract class C_cnkaoojoMixin {
-	@Inject(method = "apply", at = @At(value = "RETURN"), cancellable = true, remap = false)
-	public <T> void modifyNetherPreset(Function<RegistryKey<Biome>, T> par1, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<T>> cir) {
-		cir.setReturnValue(NetherBiomeData.withModdedBiomeEntries(cir.getReturnValue(), par1));
+@Mixin(targets = "net/minecraft/world/biome/util/MultiNoiseBiomeSourceParameterList$Preset$C_cnkaoojo")
+public abstract class NetherBiomeSourceParameterMixin {
+
+	// double check kindly
+
+	@ModifyReturnValue(method = "apply", at = @At("RETURN"))
+	public <T> MultiNoiseUtil.ParameterRangeList<T> modifyNetherPreset(Function<RegistryKey<Biome>, T> par1, MultiNoiseUtil.ParameterRangeList<T> original){
+		return NetherBiomeData.withModdedBiomeEntries(original, par1);
 	}
+
+
 }

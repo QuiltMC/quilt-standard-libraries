@@ -37,7 +37,7 @@ import java.util.Map;
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
-	int burnTime;
+	int field_55574;
 
 	@Inject(method = "createFuelTimeMap", at = @At("HEAD"), cancellable = true)
 	private static void returnCachedMap(CallbackInfoReturnable<Map<Item, Integer>> cir) {
@@ -59,11 +59,11 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 
 	@Inject(method = "readNbtImpl", at = @At("TAIL"))
 	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		this.burnTime = nbt.getInt("BurnTime");
+		this.field_55574 = nbt.getInt("BurnTime");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		nbt.putInt("BurnTime", this.burnTime);
+		nbt.putInt("BurnTime", this.field_55574);
 	}
 }

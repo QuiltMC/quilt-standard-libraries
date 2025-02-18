@@ -55,7 +55,8 @@ public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends
 	private Identifier quilt$capturedArmorTexture;
 
 	// FIXME: ArmorFeatureRenderer now relies on EntityRenderState (yarn) instead of LivingEntity
-	//  atm it's unmapped, but intermediary is class_10034
+	//  atm it's unmapped, but intermediary is class_10017
+	//  for class_10034, see BipedEntityRenderState (yarn)
 	@Inject(
 			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
 			at = @At("HEAD")
@@ -70,9 +71,9 @@ public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends
 	}
 
 
-	// FIXME: there's MULTIPLE LivingEntity -> class_10034 refactors needed here,
+	// FIXME: there's MULTIPLE LivingEntity -> class_10034 substitutions needed here,
 	//  but the rabbit hole goes *very* deep, so i'm leaving this for last
-	
+
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
 	private void quilt$getArmorModel(S arg, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);

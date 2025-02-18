@@ -19,13 +19,13 @@ package org.quiltmc.qsl.item.setting.api;
 
 import java.util.Map;
 
+import net.minecraft.component.type.FoodComponent;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.component.DataComponentType;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.feature_flags.FeatureFlag;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.JukeboxSong;
