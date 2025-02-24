@@ -23,11 +23,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 
+import net.minecraft.text.TextUtil;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -51,8 +51,8 @@ public class RegistrySyncText {
 		var namespaceText = entryList(namespacesList, Text::literal).formatted(Formatting.GRAY);
 
 		return Text.translatableWithFallback("quilt.core.registry_sync.missing_entries", "Missing required entries in registry '%s' for namespaces:\n%s",
-				Text.literal(registryId.toString()).formatted(Formatting.YELLOW),
-				namespaceText
+			Text.literal(registryId.toString()).formatted(Formatting.YELLOW),
+			namespaceText
 		);
 	}
 
@@ -99,9 +99,9 @@ public class RegistrySyncText {
 
 	public static Text mismatchedStateIds(Identifier registryId, @Nullable Identifier expectedBlockId, @Nullable Identifier foundBlockId) {
 		return Text.translatableWithFallback("quilt.core.registry_sync.incorrect_state", "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
-				expectedBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
-				Text.literal(registryId.toString()).formatted(Formatting.GRAY),
-				foundBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(foundBlockId.toString())
+			expectedBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
+			Text.literal(registryId.toString()).formatted(Formatting.GRAY),
+			foundBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(foundBlockId.toString())
 		);
 	}
 
@@ -112,15 +112,15 @@ public class RegistrySyncText {
 	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {
 		if (missingPrioritized != null && !missingPrioritized.versions().isEmpty()) {
 			var x = Text.translatableWithFallback("quilt.core.registry_sync.require_modpack_protocol", "This server requires %s with protocol version of %s!",
-					Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
-					missingPrioritized.versions().getInt(0)
+				Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
+				missingPrioritized.versions().getInt(0)
 			);
 
 			if (ModProtocolImpl.enabled && ModProtocolImpl.modpackDef != null) {
 				x.append("\n").append(
-						Text.translatableWithFallback("quilt.core.registry_sync.modpack_protocol", "You are on %s with protocol version of %s.",
-								Text.literal(ModProtocolImpl.modpackDef.displayName()).formatted(Formatting.GOLD), ModProtocolImpl.modpackDef.versions().getInt(0)
-						)
+					Text.translatableWithFallback("quilt.core.registry_sync.modpack_protocol", "You are on %s with protocol version of %s.",
+						Text.literal(ModProtocolImpl.modpackDef.displayName()).formatted(Formatting.GOLD), ModProtocolImpl.modpackDef.versions().getInt(0)
+					)
 				);
 			}
 
@@ -132,7 +132,7 @@ public class RegistrySyncText {
 			var namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText).formatted(Formatting.GRAY);
 
 			return Text.translatableWithFallback("quilt.core.registry_sync.unsupported_mod_protocol", "Unsupported mod protocol versions for:\n%s",
-					namespaceText
+				namespaceText
 			);
 		}
 	}
@@ -145,9 +145,9 @@ public class RegistrySyncText {
 		} else if (x.size() == 1) {
 			version = Text.literal("" + x.getInt(0));
 		} else {
-			version = (MutableText) Texts.join(x.subList(0, Math.min(x.size(), 4)), n -> Text.literal(n.toString()));
+			version = (MutableText) TextUtil.join(x.subList(0, Math.min(x.size(), 4)), n -> Text.literal(n.toString()));
 			if (x.size() > 4) {
-				version = version.append(Texts.GRAY_DEFAULT_SEPARATOR).append("...");
+				version = version.append(TextUtil.GRAY_DEFAULT_SEPARATOR).append("...");
 			}
 		}
 

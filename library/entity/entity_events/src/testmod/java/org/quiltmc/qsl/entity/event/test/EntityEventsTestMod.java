@@ -44,14 +44,14 @@ import org.quiltmc.qsl.entity.event.api.ServerEntityTickCallback;
 import org.quiltmc.qsl.entity.event.api.ServerPlayerEntityCopyCallback;
 
 public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
-		EntityReviveEvents.TryReviveBeforeTotem,
-		LivingEntityDeathCallback,
-		ServerEntityLoadEvents.AfterLoad,
-		ServerEntityLoadEvents.AfterUnload,
-		EntityWorldChangeEvents.AfterPlayerWorldChange,
-		EntityWorldChangeEvents.AfterEntityWorldChange,
-		ServerPlayerEntityCopyCallback,
-		ServerEntityTickCallback {
+	EntityReviveEvents.TryReviveBeforeTotem,
+	LivingEntityDeathCallback,
+	ServerEntityLoadEvents.AfterLoad,
+	ServerEntityLoadEvents.AfterUnload,
+	EntityWorldChangeEvents.AfterPlayerWorldChange,
+	EntityWorldChangeEvents.AfterEntityWorldChange,
+	ServerPlayerEntityCopyCallback,
+	ServerEntityTickCallback {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
 	// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be
@@ -109,8 +109,8 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// Entities going to the end are named 'end traveller'
 	@Override
 	public void afterWorldChange(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(RegistryKeys.DIMENSION_TYPE)
-				.get(DimensionTypes.THE_END)) {
+		if (destination.getDimension() == destination.getServer().getRegistryManager().getLookupOrThrow(RegistryKeys.DIMENSION_TYPE)
+			.get(DimensionTypes.THE_END)) {
 			newEntity.setCustomName(Text.literal("End Traveller"));
 		}
 	}

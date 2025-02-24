@@ -19,6 +19,7 @@ package org.quiltmc.qsl.screen.test.client;
 
 import java.util.List;
 
+import net.minecraft.client.render.RenderLayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +51,9 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
-					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
-							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
-							.build()
+				ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
+					.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
+					.build()
 			);
 
 			this.actualScreen = screen;
@@ -64,7 +65,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			graphics.drawGuiTexture(ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
+			graphics.method_52706(RenderLayer::getGuiTextured, ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
 		}
 	}
 }
