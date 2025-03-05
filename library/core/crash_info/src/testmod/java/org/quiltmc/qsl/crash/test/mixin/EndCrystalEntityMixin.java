@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.crash.test.mixin;
 
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,8 +36,8 @@ public abstract class EndCrystalEntityMixin extends Entity {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	void crashOnTick(CallbackInfo ci) {
-		if (this.getWorld().getBlockState(this.getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
-			this.kill();
+		if (this.getWorld() instanceof ServerWorld world && world.getBlockState(this.getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
+			this.kill(world);
 			throw new RuntimeException("Crash Test!");
 		}
 	}
