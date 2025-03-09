@@ -51,9 +51,9 @@ public interface RecipeRemainderLogicHandler {
 	 */
 	static ItemStack getRemainder(ItemStack original, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
 		Map<RecipeRemainderLocation, RecipeRemainderProvider> providers = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER
-				.get(original.getItem());
+			.get(original.getItem());
 
-		RecipeRemainderProvider provider = (_original, _recipe) -> _original.getItem().hasRecipeRemainder() ? _original.getItem().getRecipeRemainder().getDefaultStack() : ItemStack.EMPTY;
+		RecipeRemainderProvider provider = (_original, _recipe) -> _original.getItem().getRecipeRemainder();
 
 		if (RecipeRemainderLogicHandlerImpl.DEFAULT_LOCATIONS.contains(location) && providers.containsKey(RecipeRemainderLocation.DEFAULT_LOCATIONS)) {
 			provider = providers.get(RecipeRemainderLocation.DEFAULT_LOCATIONS);
@@ -68,9 +68,9 @@ public interface RecipeRemainderLogicHandler {
 		}
 
 		ItemStack remainder = provider.getRecipeRemainder(
-					original,
-					recipe
-				);
+			original,
+			recipe
+		);
 
 		return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
 	}

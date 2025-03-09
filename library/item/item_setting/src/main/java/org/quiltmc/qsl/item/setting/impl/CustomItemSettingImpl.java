@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.Item;
@@ -44,7 +45,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>> RECIPE_REMAINDER_PROVIDER = new CustomItemSettingImpl<>(HashMap::new) {
 		@Override
 		public void apply(Item.Settings settings, Item item) {
-			if (item.hasRecipeRemainder()) {
+			if (item.getRecipeRemainder() != ItemStack.EMPTY) {
 				throw new IllegalArgumentException("Item cannot have a standard recipe remainder and a custom recipe remainder");
 			}
 

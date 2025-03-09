@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity.multipart.test;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
 import org.quiltmc.qsl.entity.multipart.api.AbstractEntityPart;
@@ -29,7 +30,7 @@ public class SecretCreeperPart extends AbstractEntityPart<CreeperEntity> {
 		this.setPivot(relativePivot);
 	}
 
-	public boolean damage(DamageSource source, float amount) {
-		return super.damage(source, amount * 10);
+	public boolean damage(ServerWorld world, DamageSource source, float amount) {
+		return super.damage(world, source, amount * 10);
 	}
 }

@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
+import net.minecraft.recipe.RecipeHolder;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +35,7 @@ import net.minecraft.screen.slot.Slot;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
-@Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
+@Mixin(targets = {"net/minecraft/screen/StonecutterScreenHandler$C_biccipxg"})
 public class StonecutterOutputSlotMixin extends Slot {
 	@Shadow
 	@Dynamic
@@ -43,21 +45,37 @@ public class StonecutterOutputSlotMixin extends Slot {
 		super(inventory, i, j, k);
 	}
 
-	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+	@Redirect(method = "onTakeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		int selectedRecipe = this.field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe).value() : null;
+		Recipe<?> recipe = this.getRecipe();
 		Item inputItem = slot.getStack().getItem();
 		int inputCount = slot.getStack().getCount();
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
-				slot,
-				amount,
-				recipe,
-				RecipeRemainderLocation.STONECUTTER_INPUT,
-				player
+			slot,
+			amount,
+			recipe,
+			RecipeRemainderLocation.STONECUTTER_INPUT,
+			player
 		);
 
 		return new ItemStack(inputItem, Math.min(amount, inputCount));
+	}
+
+	private @Nullable Recipe<?> getRecipe() {
+		int selectedRecipe = this.field_17639.getSelectedRecipe();
+
+		if (selectedRecipe == -1) {
+			return null;
+		}
+
+		var recipe = this.field_17639
+			.method_17863()
+			.entries()
+			.get(selectedRecipe)
+			.recipe()
+			.recipe();
+
+		return recipe.map(RecipeHolder::value).orElse(null);
 	}
 }

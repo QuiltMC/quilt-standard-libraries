@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity.multipart.api;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.minecraft.client.render.ShapeRenderer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -39,12 +40,13 @@ public interface EntityPart<E extends Entity> {
 	 * Renders the hitbox for the entity part.
 	 * <p>
 	 * Should normally not be overridden unless it is to more accurately draw non-standard hitboxes.
-	 * @param matrices the {@link MatrixStack matrix stack} used for rendering
-	 * @param vertices the {@link VertexConsumer vertex consumer} used for rendering
-	 * @param ownerX the {@link #getOwner() owner's} rendered X coordinate
-	 * @param ownerY the {@link #getOwner() owner's} rendered Y coordinate
-	 * @param ownerZ the {@link #getOwner() owner's} rendered Z coordinate
-	 * @param owner the {@link #getOwner() owner}
+	 *
+	 * @param matrices  the {@link MatrixStack matrix stack} used for rendering
+	 * @param vertices  the {@link VertexConsumer vertex consumer} used for rendering
+	 * @param ownerX    the {@link #getOwner() owner's} rendered X coordinate
+	 * @param ownerY    the {@link #getOwner() owner's} rendered Y coordinate
+	 * @param ownerZ    the {@link #getOwner() owner's} rendered Z coordinate
+	 * @param owner     the {@link #getOwner() owner}
 	 * @param tickDelta progress for linearly interpolating between the previous and current game state
 	 */
 	@ClientOnly
@@ -55,7 +57,7 @@ public interface EntityPart<E extends Entity> {
 			double entityPartY = ownerY + MathHelper.lerp(tickDelta, entityPart.lastRenderY, entityPart.getY());
 			double entityPartZ = ownerZ + MathHelper.lerp(tickDelta, entityPart.lastRenderZ, entityPart.getZ());
 			matrices.translate(entityPartX, entityPartY, entityPartZ);
-			WorldRenderer.drawBox(matrices, vertices, entityPart.getBounds().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
+			ShapeRenderer.renderOutline(matrices, vertices, entityPart.getBounds().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
 			matrices.pop();
 		}
 	}

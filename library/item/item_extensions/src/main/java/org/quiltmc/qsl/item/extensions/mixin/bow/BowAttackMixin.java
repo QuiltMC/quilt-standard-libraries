@@ -16,11 +16,10 @@
 
 package org.quiltmc.qsl.item.extensions.mixin.bow;
 
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.server.world.ServerWorld;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.RangedAttackMob;
@@ -34,6 +33,7 @@ import net.minecraft.item.Items;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 // Will need to be updated if more bow-attacking mobs are added
 @Mixin({AbstractSkeletonEntity.class, IllusionerEntity.class})
@@ -50,14 +50,16 @@ public abstract class BowAttackMixin extends MobEntity implements RangedAttackMo
 	//  good luck sorting that out
 
 
-	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileEntity;spawn(Lnet/minecraft/entity/projectile/ProjectileEntity;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;DDDFF)Lnet/minecraft/entity/projectile/ProjectileEntity;"))
-	public <T extends ProjectileEntity> T modifyShotProjectile(T projectileEntity, ServerWorld world, ItemStack stack, double x, double y, double z, float power, float divergence) {
+	@ModifyExpressionValue(
+		method = "attack",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileUtil;createArrowProjectile(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;FLnet/minecraft/item/ItemStack;)Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"))
+	public PersistentProjectileEntity modifyShotProjectile(PersistentProjectileEntity projectileEntity, LivingEntity entity, float pullProgress) {
 		ItemStack bowStack = this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW));
 		ItemStack arrowStack = this.getArrowType(bowStack);
 
-		PersistentProjectileEntity replacedPersistentProjectileEntity = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, this, pullProgress, (PersistentProjectileEntity) persistentProjectileEntity);
+		PersistentProjectileEntity replacedPersistentProjectileEntity = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, this, pullProgress, (PersistentProjectileEntity) projectileEntity);
 		BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, this, pullProgress, replacedPersistentProjectileEntity);
 
-		return world.spawnEntity(replacedPersistentProjectileEntity);
+		return replacedPersistentProjectileEntity;
 	}
 }

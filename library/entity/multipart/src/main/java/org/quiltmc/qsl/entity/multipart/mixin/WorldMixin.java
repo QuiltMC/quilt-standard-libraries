@@ -16,13 +16,16 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.unmapped.C_xuophqnt;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,26 +55,23 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
 	@Shadow
-	public abstract Profiler getProfiler();
-
-	@Shadow
 	protected abstract EntityLookup<Entity> getEntityLookup();
 
 	/**
-	 * Cancels the Vanilla entity multipart checks in the {@link World#getOtherEntities(Entity, Box, Predicate)} method,
-	 * which is an instanceof with the {@link EnderDragonEntity ender dragon}.
+	 * Cancels the Vanilla entity multipart tracking in the {@link World#getOtherEntities(Entity, Box, Predicate)} method,
+	 * which is only for the {@link EnderDragonEntity ender dragon}.
 	 *
-	 * @param targetObject the entity object we're performing the instanceof on
-	 * @param classValue   the class the entity is supposed to match
-	 * @return {@code false}
+	 * @param instance the world object we're skipping tracking on
+	 * @param original the original call
+	 * @return an empty immutable list
 	 */
 	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@ModifyConstant(
-			method = "method_31593(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
-			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
+	@WrapOperation(
+		method = "getOtherEntities",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_65097()Ljava/util/Collection;")
 	)
-	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
-		return false;
+	private static Collection<EnderDragonPart> cancelEnderDragonCheck(World instance, Operation<Collection<EnderDragonPart>> original) {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 				continue;
 			}
 
-			if (part != except && part.getVisibilityBoundingBox().intersects(box) && predicate.test(part)) {
+			if (part != except && part.getBounds().intersects(box) && predicate.test(part)) {
 				list.add(part);
 			}
 		}
@@ -116,8 +116,9 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 */
 	@Overwrite
 	public <T extends Entity> void collectEntities(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
-			List<? super T> collection, int maxEntities) {
-		this.getProfiler().visit("getEntities");
+												   List<? super T> collection, int maxEntities) {
+		C_xuophqnt.method_64146().visit("getEntities");
+
 		this.getEntityLookup().forEachIntersecting(filter, box, entity -> {
 			if (predicate.test(entity)) {
 				collection.add(entity);
@@ -140,7 +141,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 					continue;
 				}
 
-				if (downcastPart.getVisibilityBoundingBox().intersects(box) && predicate.test(downcastPart)) {
+				if (downcastPart.getBounds().intersects(box) && predicate.test(downcastPart)) {
 					collection.add(downcastPart);
 
 					if (collection.size() >= maxEntities) {

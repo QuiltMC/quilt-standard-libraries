@@ -29,7 +29,6 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -38,14 +37,13 @@ import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World implements EntityPartTracker {
-	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryKey, DynamicRegistryManager registryManager,
-			Holder<DimensionType> dimension, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long l, int i) {
-		super(properties, registryKey, registryManager, dimension, profiler, isClient, debugWorld, l, i);
+	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryKey, DynamicRegistryManager registryManager, Holder<DimensionType> dimension, boolean isClient, boolean debugWorld, long l, int i) {
+		super(properties, registryKey, registryManager, dimension, isClient, debugWorld, l, i);
 	}
 
 	@Redirect(
-			method = "getEntityOrDragonPart(I)Lnet/minecraft/entity/Entity;",
-			at = @At(value = "FIELD", target = "Lnet/minecraft/server/world/ServerWorld;dragonParts:Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;", opcode = Opcodes.GETFIELD)
+		method = "getEntityOrDragonPart(I)Lnet/minecraft/entity/Entity;",
+		at = @At(value = "FIELD", target = "Lnet/minecraft/server/world/ServerWorld;dragonParts:Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;", opcode = Opcodes.GETFIELD)
 	)
 	private Int2ObjectMap<Entity> quilt$getPart(ServerWorld world) {
 		return this.quilt$getEntityParts();

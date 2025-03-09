@@ -16,7 +16,11 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
+import net.minecraft.inventory.CraftingResultInventory;
+import net.minecraft.recipe.CraftingHandler;
+import net.minecraft.screen.slot.ItemCombinationSlotManager;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,28 +44,25 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 @Mixin(SmithingScreenHandler.class)
 public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable RecipeHolder<SmithingRecipe> currentRecipe;
-
-	@Shadow
 	public abstract void updateResult();
 
-	public SmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
-		super(screenHandlerType, i, playerInventory, screenHandlerContext);
+	public SmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, ItemCombinationSlotManager itemCombinationSlotManager) {
+		super(type, syncId, playerInventory, context, itemCombinationSlotManager);
 	}
 
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainderToIngredient(SmithingScreenHandler instance, int slot) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
-				this.getSlot(slot),
-				1,
-				this.currentRecipe.value(),
-				switch (slot) {
-					case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
-					case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
-					case SmithingScreenHandler.ADDITIONAL_SLOT -> RecipeRemainderLocation.SMITHING_INGREDIENT;
-					default -> throw new IllegalStateException("Unexpected value: " + slot);
-				},
-				this.player
+			this.getSlot(slot),
+			1,
+			this.result.getLastRecipe().value(),
+			switch (slot) {
+				case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
+				case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
+				case SmithingScreenHandler.ADDITIONAL_SLOT -> RecipeRemainderLocation.SMITHING_INGREDIENT;
+				default -> throw new IllegalStateException("Unexpected value: " + slot);
+			},
+			this.player
 		);
 	}
 
