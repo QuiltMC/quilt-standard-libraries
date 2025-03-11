@@ -39,6 +39,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackSource;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -69,7 +69,7 @@ public abstract class InMemoryPack implements MutablePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final ExecutorService EXECUTOR_SERVICE;
 	private static final boolean DUMP = TriState.fromProperty("quilt.resource_loader.debug.pack.dump_from_in_memory")
-			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+		.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final String VIRTUAL_ASYNC_THREADS_PROPERTY = "quilt.resource_loader.pack.virtual_async_threads";
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
@@ -108,25 +108,25 @@ public abstract class InMemoryPack implements MutablePack {
 	@Override
 	public void listResources(ResourceType type, String namespace, String startingPath, ResourceConsumer consumer) {
 		this.getResourceMap(type).entrySet().stream()
-				.filter(entry -> entry.getKey().getNamespace().equals(namespace) && entry.getKey().getPath().startsWith(startingPath))
-				.forEach(entry -> {
-					byte[] bytes = entry.getValue().get();
+			.filter(entry -> entry.getKey().getNamespace().equals(namespace) && entry.getKey().getPath().startsWith(startingPath))
+			.forEach(entry -> {
+				byte[] bytes = entry.getValue().get();
 
-					if (bytes != null) {
-						consumer.accept(entry.getKey(), () -> new ByteArrayInputStream(bytes));
-					}
-				});
+				if (bytes != null) {
+					consumer.accept(entry.getKey(), () -> new ByteArrayInputStream(bytes));
+				}
+			});
 	}
 
 	@Override
 	public @Unmodifiable Set<String> getNamespaces(ResourceType type) {
 		return this.getResourceMap(type).keySet().stream()
-				.map(Identifier::getNamespace)
-				.collect(Collectors.toUnmodifiableSet());
+			.map(Identifier::getNamespace)
+			.collect(Collectors.toUnmodifiableSet());
 	}
 
 	@Override
-	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metadataSectionType) throws IOException {
+	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
 		if (!this.root.containsKey(ResourcePack.PACK_METADATA_NAME)) {
 			var json = new JsonObject();
 			var packJson = new JsonObject();
@@ -134,13 +134,15 @@ public abstract class InMemoryPack implements MutablePack {
 			packJson.addProperty("pack_format", 5); // This is like, not read by any significant system when invisible to users.
 			json.add("pack", packJson);
 
-			if (!json.has(metadataSectionType.getKey())) {
+			var key = metaSectionType.name();
+
+			if (!json.has(key)) {
 				return null;
 			} else {
 				try {
-					return metaReader.fromJson(JsonHelper.getObject(json, metaReader.getKey()));
+					return ResourceLoaderImpl.fromJson(metaSectionType, json);
 				} catch (Exception e) {
-					LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), this.getName(), e);
+					LOGGER.error("Couldn't load {} metadata from pack \"{}\":", key, this.getName(), e);
 					return null;
 				}
 			}
@@ -150,7 +152,7 @@ public abstract class InMemoryPack implements MutablePack {
 		if (resource == null) return null;
 
 		try (var stream = resource.get()) {
-			return ResourceLoaderImpl.parseMetadata(metaReader, this, stream);
+			return ResourceLoaderImpl.parseMetadata(metaSectionType, this, stream);
 		}
 	}
 
@@ -183,7 +185,7 @@ public abstract class InMemoryPack implements MutablePack {
 
 	@Override
 	public @NotNull Future<byte[]> putResourceAsync(@NotNull String fileName,
-			@NotNull Function<@NotNull String, byte @NotNull []> resourceFactory) {
+													@NotNull Function<@NotNull String, byte @NotNull []> resourceFactory) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(fileName));
 		this.putResource(fileName, () -> {
 			try {
@@ -197,7 +199,7 @@ public abstract class InMemoryPack implements MutablePack {
 
 	@Override
 	public @NotNull Future<byte[]> putResourceAsync(@NotNull ResourceType type, @NotNull Identifier id,
-			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory) {
+													@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory) {
 		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(id));
 		this.putResource(type, id, () -> {
 			try {
@@ -238,9 +240,9 @@ public abstract class InMemoryPack implements MutablePack {
 
 			this.root.forEach((p, resource) -> this.dumpResource(path, p, resource.get()));
 			this.assets.forEach((p, resource) ->
-					this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.CLIENT_RESOURCES, p), resource.get()));
+				this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.CLIENT_RESOURCES, p), resource.get()));
 			this.data.forEach((p, resource) ->
-					this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.SERVER_DATA, p), resource.get()));
+				this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.SERVER_DATA, p), resource.get()));
 			this.overlays.forEach((overlay, pack) -> {
 				if (pack instanceof InMemoryPack imp) {
 					imp.dumpTo(path.resolve(overlay));
@@ -263,7 +265,7 @@ public abstract class InMemoryPack implements MutablePack {
 			var p = parentPath.resolve(resourcePath);
 			Files.createDirectories(p.getParent());
 			Files.write(p, resource, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-					StandardOpenOption.TRUNCATE_EXISTING);
+				StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			LOGGER.error("Failed to write resource pack dump from pack {}.", this.getName(), e);
 		}
@@ -289,8 +291,8 @@ public abstract class InMemoryPack implements MutablePack {
 		}
 
 		EXECUTOR_SERVICE = Executors.newFixedThreadPool(
-				threads,
-				new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Quilt-Resource-Loader-Virtual-Pack-Worker-%s").build()
+			threads,
+			new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Quilt-Resource-Loader-Virtual-Pack-Worker-%s").build()
 		);
 	}
 

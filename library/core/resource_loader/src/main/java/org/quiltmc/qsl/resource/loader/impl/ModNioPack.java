@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,11 +37,8 @@ import org.slf4j.Logger;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.resource.pack.KnownPack;
 import net.minecraft.resource.pack.PackLocationInfo;
-import net.minecraft.resource.pack.PackSource;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -76,18 +74,18 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	static ModNioPack ofMod(ModMetadata modInfo, Path path, ResourceType type) {
 		return new ModNioPack(
-				null, modInfo, null, PackActivationType.ALWAYS_ENABLED,
-				path, type, null
+			null, modInfo, null, PackActivationType.ALWAYS_ENABLED,
+			path, type, null
 		);
 	}
 
 	public ModNioPack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
 					  Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(new PackLocationInfo(
-				name,
-				displayName,
-				new QuiltBuiltinPackProfile.BuiltinPackSource(modInfo, activationType),
-				Optional.empty()
+			name,
+			displayName,
+			new QuiltBuiltinPackProfile.BuiltinPackSource(modInfo, activationType),
+			Optional.empty()
 		));
 
 		/* Metadata */
@@ -151,22 +149,22 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 			if (searchEntry != null) {
 				try (var stream = Files.walk(searchEntry.path())) {
 					stream.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
-							.forEach(p -> {
-								String idPath = namespaceEntry.path().relativize(p).toString()
-										.replace(this.io.getSeparator(), "/");
-								Identifier id = Identifier.tryValidate(namespace, idPath);
+						.forEach(p -> {
+							String idPath = namespaceEntry.path().relativize(p).toString()
+								.replace(this.io.getSeparator(), "/");
+							Identifier id = Identifier.tryValidate(namespace, idPath);
 
-								if (id == null) {
-									Util.logAndPause(String.format(Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
-											this.getName(), this.modInfo.id(), namespace, idPath
-									));
-								} else {
-									consumer.accept(id, ResourceIoSupplier.create(p));
-								}
-							});
+							if (id == null) {
+								Util.logAndPause(String.format(Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
+									this.getName(), this.modInfo.id(), namespace, idPath
+								));
+							} else {
+								consumer.accept(id, ResourceIoSupplier.create(p));
+							}
+						});
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
-							+ ", mod " + this.modInfo.id() + " failed!", e);
+						+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
 		}
@@ -189,14 +187,14 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	}
 
 	@Override
-	public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
+	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
 		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
 
 		if (resource == null) {
 			return null;
 		} else {
 			try (InputStream stream = resource.get()) {
-				return ResourceLoaderImpl.parseMetadata(metaReader, this, stream);
+				return ResourceLoaderImpl.parseMetadata(metaSectionType, this, stream);
 			}
 		}
 	}
