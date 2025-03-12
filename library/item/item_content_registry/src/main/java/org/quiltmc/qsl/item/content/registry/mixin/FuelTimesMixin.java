@@ -6,12 +6,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntSortedMap;
 import net.minecraft.block.entity.FuelTimes;
 import net.minecraft.item.Item;
 import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(targets = {"net.minecraft.block.entity.FuelTimes"})
-@Debug(export = true)
 public abstract class FuelTimesMixin {
 	@WrapOperation(method = "<init>", at = @At(value = "FIELD", target = "net/minecraft/block/entity/FuelTimes.fuelTimes : Lit/unimi/dsi/fastutil/objects/Object2IntSortedMap;"))
 	private void returnCachedMap(FuelTimes instance, Object2IntSortedMap<Item> value, Operation<Void> original) {
