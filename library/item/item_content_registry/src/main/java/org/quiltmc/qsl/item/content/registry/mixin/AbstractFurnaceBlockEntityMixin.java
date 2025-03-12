@@ -17,53 +17,29 @@
 package org.quiltmc.qsl.item.content.registry.mixin;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.HolderLookup;
-import net.minecraft.registry.tag.TagKey;
-import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Map;
-
-// the target mixin class suffers from multiple unmapped keywords that fallback to intermediary
-// i suspect that's the cause of most of these issues
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
 	int field_55574;
 
-	@Inject(method = "createFuelTimeMap", at = @At("HEAD"), cancellable = true)
-	private static void returnCachedMap(CallbackInfoReturnable<Map<Item, Integer>> cir) {
-		if (!ItemContentRegistriesInitializer.FUEL_MAP.isEmpty()) {
-			cir.setReturnValue(ItemContentRegistriesInitializer.FUEL_MAP);
-		}
-	}
-
-	@Inject(method = "addFuel(Ljava/util/Map;Lnet/minecraft/registry/tag/TagKey;I)V", at = @At("HEAD"), cancellable = true)
-	private static void collectInitialTags(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime, CallbackInfo ci) {
-		if (ItemContentRegistriesInitializer.shouldCollectInitialTags()) {
-			ItemContentRegistriesInitializer.INITIAL_FUEL_TAG_MAP.put(tag, fuelTime);
-			ci.cancel();
-		}
-	}
-
 	// Serializes burn time as an integer instead of a short.
 	// Should not cause any desyncs as BE sync packets are now NBT.
 
 	@Inject(method = "readNbtImpl", at = @At("TAIL"))
 	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		this.field_55574 = nbt.getInt("BurnTime");
+		this.field_55574 = nbt.getInt("lit_time_remaining");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		nbt.putInt("BurnTime", this.field_55574);
+		nbt.putInt("lit_time_remaining", this.field_55574);
 	}
 }
