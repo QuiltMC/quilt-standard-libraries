@@ -102,37 +102,37 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 		this.quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 		this.quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
-				callbacks -> context -> {
-					Identifier id = context.id();
-					V value = context.value();
-					int rawId = context.rawId();
+			callbacks -> context -> {
+				Identifier id = context.id();
+				V value = context.value();
+				int rawId = context.rawId();
 
-					for (var callback : callbacks) {
-						// This is done because some events may create recursion, which would corrupt the context for future queued events.
-						// Storing the values on this stack is much faster than instancing a new context every time.
-						if (context instanceof MutableRegistryEntryContextImpl<V> mutable) {
-							mutable.set(id, value, rawId);
-						}
-
-						callback.onAdded(context);
+				for (var callback : callbacks) {
+					// This is done because some events may create recursion, which would corrupt the context for future queued events.
+					// Storing the values on this stack is much faster than instancing a new context every time.
+					if (context instanceof MutableRegistryEntryContextImpl<V> mutable) {
+						mutable.set(id, value, rawId);
 					}
-				});
+
+					callback.onAdded(context);
+				}
+			});
 	}
 
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
-			method = "register",
-			slice = @Slice(
-					from = @At(
-							value = "INVOKE",
-							target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
-							remap = false
-					)
-			),
-			at = @At(
-					value = "STORE",
-					ordinal = 0
+		method = "register",
+		slice = @Slice(
+			from = @At(
+				value = "INVOKE",
+				target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
+				remap = false
 			)
+		),
+		at = @At(
+			value = "STORE",
+			ordinal = 0
+		)
 	)
 	private Holder.Reference<V> quilt$eagerFillReference(Holder.Reference<V> reference, RegistryKey<V> key, V entry, RegistrationInfo lifecycle) {
 		reference.setValue(entry);
@@ -144,8 +144,8 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	 */
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Inject(
-			method = "register",
-			at = @At("RETURN")
+		method = "register",
+		at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(RegistryKey<V> key, V entry, RegistrationInfo info, CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, getRawId(entry));
@@ -175,8 +175,8 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 				if (!RegistryFlag.isSkipped(flag)) {
 					map.computeIfAbsent(
-							identifier.getNamespace(),
-							(n) -> new ArrayList<>()
+						identifier.getNamespace(),
+						(n) -> new ArrayList<>()
 					).add(new SyncEntry(identifier.getPath(), key, this.quilt$entryToFlag.getOrDefault(entry, flag)));
 				}
 			});
@@ -197,7 +197,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 				var namespace = entry.getRegistryKey().getValue().getNamespace();
 				if (!ServerRegistrySync.isNamespaceVanilla(namespace)) {
-					var flag = this.quilt$entryToFlag.getOrDefault(entry.value(), (byte) 0);
+					var flag = this.quilt$entryToFlag.getOrDefault(entry.getValue(), (byte) 0);
 					if (!RegistryFlag.isSkipped(flag)) {
 						if (RegistryFlag.isOptional(flag)) {
 							status = Status.OPTIONAL;
@@ -238,7 +238,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 				var holder = this.byId.get(identifier);
 
 				if (holder != null) {
-					this.entryToRawId.put(holder.value(), idEntry.rawId());
+					this.entryToRawId.put(holder.getValue(), idEntry.rawId());
 
 					while (this.rawIdToEntry.size() <= idEntry.rawId()) {
 						this.rawIdToEntry.add(null);
@@ -262,7 +262,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			if (holder == null) continue;
 
 			var id = ++currentId;
-			this.entryToRawId.put(holder.value(), id);
+			this.entryToRawId.put(holder.getValue(), id);
 			this.rawIdToEntry.set(id, holder);
 		}
 
@@ -314,7 +314,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			for (int i = 0; i < size; i++) {
 				var entry = this.rawIdToEntry.get(i);
 				if (entry != null) {
-					this.entryToRawId.put(entry.value(), i);
+					this.entryToRawId.put(entry.getValue(), i);
 				}
 			}
 

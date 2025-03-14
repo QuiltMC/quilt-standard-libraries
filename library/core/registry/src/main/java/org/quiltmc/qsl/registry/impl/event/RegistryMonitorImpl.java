@@ -58,8 +58,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
 		var context = new MutableRegistryEntryContextImpl<>(delayed);
 
-		this.registry.holders().forEach(entry -> {
-			context.set(entry.getRegistryKey().getValue(), entry.value());
+		this.registry.streamHolders().forEach(entry -> {
+			context.set(entry.getRegistryKey().getValue(), entry.getValue());
 
 			if (this.testFilter(context)) {
 				callback.onAdded(context);

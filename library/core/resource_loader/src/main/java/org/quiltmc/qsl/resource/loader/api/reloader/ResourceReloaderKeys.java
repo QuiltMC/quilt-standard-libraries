@@ -48,7 +48,6 @@ public final class ResourceReloaderKeys {
 	public static final class Client {
 		public static final Identifier BLOCK_ENTITY_RENDERERS = id("block_entity_renderers");
 		public static final Identifier BLOCK_RENDER_MANAGER = id("block_render_manager");
-		public static final Identifier BUILTIN_ITEM_MODELS = id("builtin_item_models");
 		public static final Identifier ENTITY_MODELS = id("entity_models");
 		public static final Identifier ENTITY_RENDERERS = id("entity_renderers");
 		public static final Identifier FOLIAGE_COLORMAP = id("foliage_colormap");

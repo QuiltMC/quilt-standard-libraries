@@ -59,7 +59,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetLoaded(QuiltTestContext ctx) {
-		var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
+		var greetingsRegistry = ctx.getWorld().getRegistryManager().getLookupOrThrow(Greetings.REGISTRY_KEY);
 
 		ctx.succeedIf(() -> {
 			ctx.assertTrue(DynamicRegistryFlag.isOptional(Greetings.REGISTRY_KEY.getValue()), "Registry should always have the OPTIONAL flag enabled");
@@ -83,12 +83,12 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 		ctx.failIf(() -> ctx.assertTrue(tagValuesSet.isEmpty(), "tagValuesSet should always be populated with at least 1 object"));
 
 		ctx.succeedIf(() -> ctx.assertTrue(tagValuesSet.stream().anyMatch(tagValues -> {
-			var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
-			var greetingsA = greetingsRegistry.getOrEmpty(GREETING_A_ID).orElse(null);
+			var greetingsRegistry = ctx.getWorld().getRegistryManager().getLookupOrThrow(Greetings.REGISTRY_KEY);
+			var greetingsA = greetingsRegistry.get(GREETING_A_ID);
 
 			ctx.assertTrue(Objects.nonNull(greetingsRegistry.get(GREETING_A_ID)), "Registry should contain modded data value from datapack");
 
-			var heldIds = tagValues.values().stream().map(Holder::value).collect(Collectors.toSet());
+			var heldIds = tagValues.values().stream().map(Holder::getValue).collect(Collectors.toSet());
 			return tagValues.key().equals(GREETING_TEST_TAG) && heldIds.contains(greetingsA);
 		}), "tagValuesSet should always contain a tag loaded from tags/quilt_registry_testmod/greetings/test_tag.json, and said tag should contain a value pointing to GREETING_A"));
 	}
@@ -99,7 +99,8 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 			try {
 				DynamicMetaRegistry.register(RegistryKey.ofRegistry(id("a")), Codec.INT);
 				throw new GameTestException("DynamicMetaRegistry should not allow registration after init");
-			} catch (IllegalStateException ignored) {}
+			} catch (IllegalStateException ignored) {
+			}
 		});
 	}
 }

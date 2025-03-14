@@ -16,18 +16,18 @@
 
 package org.quiltmc.qsl.registry.impl.event;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
+import net.minecraft.registry.tag.TagGroupLoader;
+import net.minecraft.util.collection.IndexedIterable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,13 +79,23 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Lifecycle getLifecycle() {
-		return this.wrapped.getLifecycle();
+	public Optional<T> getOrEmpty(@Nullable Identifier id) {
+		return this.wrapped.getOrEmpty(id);
 	}
 
 	@Override
-	public Optional<Reference<T>> getAny() {
-		return this.wrapped.getAny();
+	public Optional<T> getOrEmpty(@Nullable RegistryKey<T> key) {
+		return this.wrapped.getOrEmpty(key);
+	}
+
+	@Override
+	public Optional<Reference<T>> findAny() {
+		return this.wrapped.findAny();
+	}
+
+	@Override
+	public T getOrThrow(RegistryKey<T> key) {
+		return this.wrapped.getOrThrow(key);
 	}
 
 	@Override
@@ -106,6 +116,11 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	@Override
 	public Optional<Reference<T>> getRandom(RandomGenerator random) {
 		return this.wrapped.getRandom(random);
+	}
+
+	@Override
+	public Stream<T> stream() {
+		return this.wrapped.stream();
 	}
 
 	@Override
@@ -130,13 +145,13 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Reference<T>> getHolder(int index) {
-		return this.wrapped.getHolder(index);
+	public Optional<Reference<T>> find(int i) {
+		return this.wrapped.find(i);
 	}
 
 	@Override
-	public Optional<Reference<T>> getHolder(Identifier id) {
-		return this.wrapped.getHolder(id);
+	public Optional<Reference<T>> find(Identifier id) {
+		return this.wrapped.find(id);
 	}
 
 	@Override
@@ -145,13 +160,38 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
+	public Reference<T> getHolderOrThrow(RegistryKey<T> key) {
+		return this.wrapped.getHolderOrThrow(key);
+	}
+
+	@Override
 	public Holder<T> wrapAsHolder(T object) {
 		return this.wrapped.wrapAsHolder(object);
 	}
 
 	@Override
-	public Stream<Reference<T>> holders() {
-		return this.wrapped.holders();
+	public Iterable<Holder<T>> getTagOrEmpty(TagKey<T> tag) {
+		return this.wrapped.getTagOrEmpty(tag);
+	}
+
+	@Override
+	public Optional<Holder<T>> getRandomElement(TagKey<T> tag, RandomGenerator random) {
+		return this.wrapped.getRandomElement(tag, random);
+	}
+
+	@Override
+	public Stream<NamedSet<T>> streamBoundTags() {
+		return this.wrapped.streamBoundTags();
+	}
+
+	@Override
+	public IndexedIterable<Holder<T>> asHolderIdMap() {
+		return this.wrapped.asHolderIdMap();
+	}
+
+	@Override
+	public PendingTags<T> startTagReload(TagGroupLoader.RegistryTags<T> registryTags) {
+		return this.wrapped.startTagReload(registryTags);
 	}
 
 	@Override
@@ -160,38 +200,8 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public NamedSet<T> getOrCreateTag(TagKey<T> key) {
-		return this.wrapped.getOrCreateTag(key);
-	}
-
-	@Override
-	public Stream<Pair<TagKey<T>, NamedSet<T>>> getTags() {
-		return this.wrapped.getTags();
-	}
-
-	@Override
-	public Stream<TagKey<T>> getTagKeys() {
-		return this.wrapped.getTagKeys();
-	}
-
-	@Override
-	public void resetTags() {
-		throw new UnsupportedOperationException("DelayedRegistry does not support resetTags.");
-	}
-
-	@Override
-	public void bindTags(Map<TagKey<T>, List<Holder<T>>> tags) {
-		throw new UnsupportedOperationException("DelayedRegistry does not support bindTags.");
-	}
-
-	@Override
-	public HolderOwner<T> asHolderOwner() {
-		return this.wrapped.asHolderOwner();
-	}
-
-	@Override
-	public RegistryLookup<T> asLookup() {
-		return this.wrapped.asLookup();
+	public NamedSet<T> getTagOrThrow(TagKey<T> tagKey) {
+		return this.wrapped.getTagOrThrow(tagKey);
 	}
 
 	@Override
@@ -200,8 +210,28 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
+	public void forEach(Consumer<? super T> action) {
+		this.wrapped.forEach(action);
+	}
+
+	@Override
+	public Spliterator<T> spliterator() {
+		return this.wrapped.spliterator();
+	}
+
+	@Override
 	public @Nullable T get(int index) {
 		return this.wrapped.get(index);
+	}
+
+	@Override
+	public T getOrThrow(int index) {
+		return this.wrapped.getOrThrow(index);
+	}
+
+	@Override
+	public int getRawIdOrThrow(T value) {
+		return this.wrapped.getRawIdOrThrow(value);
 	}
 
 	@Override
@@ -210,14 +240,48 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
+	public Codec<T> getCodec() {
+		return this.wrapped.getCodec();
+	}
+
+	@Override
+	public Codec<Holder<T>> holderByNameCodec() {
+		return this.wrapped.holderByNameCodec();
+	}
+
+	@Override
+	public <U> Stream<U> keys(DynamicOps<U> dynamicOps) {
+		return this.wrapped.keys(dynamicOps);
+	}
+
+	@Override
+	public Lifecycle getRegistryLifecycle() {
+		return this.wrapped.getRegistryLifecycle();
+	}
+
+	@Override
+	public RegistryLookup<T> enabledIn(FeatureFlagBitSet featureFlags) {
+		return this.wrapped.enabledIn(featureFlags);
+	}
+
+	@Override
+	public RegistryLookup<T> withFilter(Predicate<T> predicate) {
+		return this.wrapped.withFilter(predicate);
+	}
+
+	@Override
 	public int size() {
 		return this.wrapped.size();
 	}
 
 	@Override
-	public Reference<T> register(RegistryKey<T> key, T entry, RegistrationInfo info) {
-		this.delayedEntries.add(new DelayedEntry<>(key, entry, info));
-		return Holder.Reference.create(this.wrapped.asHolderOwner(), key);
+	public Reference<T> register(RegistryKey<T> registryKey, T object, RegistrationInfo registrationInfo) {
+		return this.wrapped.register(registryKey, object, registrationInfo);
+	}
+
+	@Override
+	public void bindTag(TagKey<T> tag, List<Holder<T>> list) {
+		this.wrapped.bindTag(tag, list);
 	}
 
 	@Override
@@ -238,5 +302,31 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 		}
 	}
 
-	record DelayedEntry<T>(RegistryKey<T> key, T entry, RegistrationInfo info) {}
+	@Override
+	public Stream<Reference<T>> streamHolders() {
+		return this.wrapped.streamHolders();
+	}
+
+	@Override
+	public Stream<RegistryKey<T>> streamElementKeys() {
+		return this.wrapped.streamElementKeys();
+	}
+
+	@Override
+	public Stream<NamedSet<T>> streamTags() {
+		return this.wrapped.streamTags();
+	}
+
+	@Override
+	public Stream<TagKey<T>> streamTagKeys() {
+		return this.wrapped.streamTagKeys();
+	}
+
+	@Override
+	public boolean isSame(HolderOwner<T> owner) {
+		return this.wrapped.isSame(owner);
+	}
+
+	record DelayedEntry<T>(RegistryKey<T> key, T entry, RegistrationInfo info) {
+	}
 }

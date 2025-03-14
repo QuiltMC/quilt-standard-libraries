@@ -43,47 +43,47 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 public abstract class CreateWorldScreenMixin {
 	@Dynamic
 	@Inject(
-			method = "method_41851(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$WorldCreationSettings;)Lnet/minecraft/client/world/WorldCreationContext;",
-			at = @At("HEAD")
+		method = "method_64245",
+		at = @At("HEAD")
 	)
 	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
+												LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
-				resourceManager, layeredRegistryManager.getCompositeManager(), Optional.empty()
+			resourceManager, layeredRegistryManager.getCompositeManager(), Optional.empty()
 		));
 	}
 
-	// Lambda method in CreateWorldScreen#method_45679, search for a resource manager being closed.
+	// Lambda method in CreateWorldScreen#validateDataPacks, search for a resource manager being closed.
 	// Inject before closing the resource manager.
 	@Dynamic
 	@Inject(
-			method = "method_45681(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$WorldCreationSettings;)Lnet/minecraft/client/world/WorldCreationContext;",
-			at = @At("HEAD")
+		method = "method_45681",
+		at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
+												LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
-				resourceManager, layeredRegistryManager.getCompositeManager(), Optional.empty()
+			resourceManager, layeredRegistryManager.getCompositeManager(), Optional.empty()
 		));
 	}
 
-	// Lambda method in CreateWorldScreen#method_45679, passed CompletableFuture#handle.
+	// Lambda method in CreateWorldScreen#validateDataPacks, passed CompletableFuture#handle.
 	// Take Void and Throwable parameters.
 	@Inject(
-			slice = @Slice(to = @At(value = "CONSTANT", args = "stringValue=dataPack.validation.failed")),
-			method = "method_49629",
-			at = @At(
-					value = "INVOKE",
-					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
-					shift = At.Shift.AFTER,
-					remap = false
-			)
+		slice = @Slice(to = @At(value = "CONSTANT", args = "stringValue=dataPack.validation.failed")),
+		method = "method_49629",
+		at = @At(
+			value = "INVOKE",
+			target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
+			shift = At.Shift.AFTER,
+			remap = false
+		)
 	)
 	private void onFailDataPackLoading(
-			Consumer<FeatureAndDataSettings> consumer, Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir
+		Consumer<FeatureAndDataSettings> consumer, Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir
 	) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
-				null, null, Optional.of(throwable)
+			null, null, Optional.of(throwable)
 		));
 	}
 }

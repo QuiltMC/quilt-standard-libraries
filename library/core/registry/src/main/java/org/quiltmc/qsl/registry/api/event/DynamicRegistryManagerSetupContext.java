@@ -64,15 +64,15 @@ public interface DynamicRegistryManagerSetupContext {
 	 * @return the optional game object, if the registry is present then the optional is filled, or empty otherwise
 	 */
 	default <V> @NotNull Optional<V> register(@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id,
-			@NotNull Supplier<V> gameObjectSupplier) {
-		return this.registryManager().getOptional(registryKey)
-				.map(registry -> {
-					if (registry.containsId(id)) {
-						return registry.get(id);
-					} else {
-						return Registry.register(registry, id, gameObjectSupplier.get());
-					}
-				});
+											  @NotNull Supplier<V> gameObjectSupplier) {
+		return this.registryManager().getLookup(registryKey)
+			.map(registry -> {
+				if (registry.containsId(id)) {
+					return registry.get(id);
+				} else {
+					return Registry.register(registry, id, gameObjectSupplier.get());
+				}
+			});
 	}
 
 	/**
@@ -85,12 +85,13 @@ public interface DynamicRegistryManagerSetupContext {
 	 */
 	@Contract(pure = true)
 	default @Nullable RegistryMap getRegistries(@NotNull Set<RegistryKey<? extends Registry<?>>> registryKeys) {
-		if (registryKeys.size() == 0) throw new IllegalArgumentException("Please provide at least one registry to gather.");
+		if (registryKeys.size() == 0)
+			throw new IllegalArgumentException("Please provide at least one registry to gather.");
 
 		Map<RegistryKey<? extends Registry<?>>, Registry<?>> foundRegistries = null;
 
 		for (var key : registryKeys) {
-			var maybe = this.registryManager().getOptional(key);
+			var maybe = this.registryManager().getLookup(key);
 
 			if (maybe.isPresent()) {
 				if (foundRegistries == null) {
@@ -130,7 +131,7 @@ public interface DynamicRegistryManagerSetupContext {
 	 * @param <V>         the type of values held in the registry
 	 */
 	default <V> void monitor(RegistryKey<? extends Registry<V>> registryKey, Consumer<RegistryMonitor<V>> action) {
-		this.registryManager().getOptional(registryKey).ifPresent(registry -> {
+		this.registryManager().getLookup(registryKey).ifPresent(registry -> {
 			action.accept(RegistryMonitor.create(registry));
 		});
 	}
@@ -164,7 +165,7 @@ public interface DynamicRegistryManagerSetupContext {
 		 * @return the game object
 		 */
 		public <V> @NotNull V register(@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id,
-				@NotNull V gameObject) {
+									   @NotNull V gameObject) {
 			return Registry.register(this.get(registryKey), id, gameObject);
 		}
 	}
