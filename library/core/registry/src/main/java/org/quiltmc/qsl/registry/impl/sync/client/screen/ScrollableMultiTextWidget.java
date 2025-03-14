@@ -16,116 +16,34 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client.screen;
 
-import java.util.List;
 import java.util.function.DoubleConsumer;
 
+import net.minecraft.client.gui.widget.MultilineScrollableWidget;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.client.gui.widget.SpacerWidget;
-import net.minecraft.client.gui.widget.layout.GridWidget;
-import net.minecraft.client.gui.widget.layout.LayoutSettings;
-import net.minecraft.client.gui.widget.text.MultilineTextWidget;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.client.LogBuilder;
 
-// TODO - Keep a watch on {@code C_qnehaoor}, it is almost equivalent to this widget
+// TODO: When MultilineScrollableWidget's parent classes are mapped, discuss re-doing this
 @ApiStatus.Internal
 @ClientOnly
-public class ScrollableMultiTextWidget extends ScrollableWidget {
-	private final GridWidget.AdditionHelper helper;
-	private final LayoutSettings headerSettings;
+public class ScrollableMultiTextWidget extends MultilineScrollableWidget {
 	private final DoubleConsumer scrollUpdater;
-	private GridWidget grid;
-	private MutableText narration = Text.empty();
 
-	public ScrollableMultiTextWidget(MinecraftClient client, int x, int y, int width, int height, List<LogBuilder.Section> sectionList, double scrollAmount, DoubleConsumer scroll) {
-		super(x, y, width, height, Text.empty());
+	public ScrollableMultiTextWidget(int x, int y, int width, int height, Text text, TextRenderer textRenderer, double scroll, DoubleConsumer scrollUpdater) {
+		super(x, y, width, height, text, textRenderer);
+		this.scrollUpdater = scrollUpdater;
 
-		this.grid = new GridWidget();
-		this.grid.setRowSpacing(2);
-		this.grid.getDefaultSettings().alignHorizontallyLeft();
-		this.helper = this.grid.createAdditionHelper(1);
-		this.helper.add(SpacerWidget.withWidth(width));
-		this.headerSettings = this.helper.copyDefaultSettings().alignHorizontallyCenter().setHorizontalPadding(32);
-
-		for (var section : sectionList) {
-			this.appendHeader(client.textRenderer, section.title());
-			for (var text : section.entries()) {
-				this.appendLine(client.textRenderer, text);
-			}
-
-			this.appendSpacer(10);
-		}
-
-		this.grid.arrangeElements();
-		this.scrollUpdater = scroll;
-		this.setScrollAmount(scrollAmount);
+		this.method_44382(scroll);
 	}
 
+
+	// Originally setScrollAmount
 	@Override
-	protected void setScrollAmount(double scrollAmount) {
-		super.setScrollAmount(scrollAmount);
+	public void method_44382(double scrollAmount) {
+		super.method_44382(scrollAmount);
 		this.scrollUpdater.accept(scrollAmount);
 	}
-
-	public void appendLine(TextRenderer textRenderer, Text text) {
-		this.appendLine(textRenderer, text, 0);
-	}
-
-	public void appendLine(TextRenderer renderer, Text text, int bottomPadding) {
-		this.helper.add((new MultilineTextWidget(text, renderer)).setMaxWidth(this.width), this.helper.copyDefaultSettings().setBottomPadding(bottomPadding));
-		this.narration.append(text).append("\n");
-	}
-
-	public void appendHeader(TextRenderer renderer, Text text) {
-		this.helper.add((new MultilineTextWidget(text, renderer)).setMaxWidth(this.width - 64).setCentered(true), this.headerSettings);
-		this.narration.append(text).append("\n");
-	}
-
-	public void appendSpacer(int height) {
-		this.helper.add(SpacerWidget.withHeight(height));
-	}
-
-	@Override
-	protected int getContentHeight() {
-		return this.grid.getHeight();
-	}
-
-	@Override
-	protected boolean isOverflowing() {
-		return this.getContentHeight() > this.height;
-	}
-
-	@Override
-	protected double getScrollRate() {
-		return 9.0D;
-	}
-
-	@Override
-	protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-		int x = this.getX() + this.getInnerPadding();
-		int y = this.getY() + this.getInnerPadding();
-		int scrollPixels = (int) this.getScrollAmount();
-		int higherBound = scrollPixels + this.getHeight() + 10;
-		int lowerBound = scrollPixels - 10;
-		graphics.getMatrices().push();
-		graphics.getMatrices().translate(x, y, 0.0D);
-		this.grid.visitWidgets((clickableWidget) -> {
-			if (clickableWidget.getY() < higherBound && clickableWidget.getY() + clickableWidget.getHeight() > lowerBound) {
-				clickableWidget.render(graphics, mouseX, mouseY, delta);
-			}
-		});
-		graphics.getMatrices().pop();
-	}
-
-	@Override
-	protected void updateNarration(NarrationMessageBuilder builder) {}
 }
