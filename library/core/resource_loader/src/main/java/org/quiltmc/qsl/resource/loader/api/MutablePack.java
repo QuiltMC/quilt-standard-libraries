@@ -19,7 +19,6 @@ package org.quiltmc.qsl.resource.loader.api;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,6 +31,7 @@ import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.resource.loader.impl.NativeImageUtil;
 
 /**
  * Represents a resource pack whose resources are mutable.
@@ -196,7 +196,7 @@ public interface MutablePack extends ResourcePack {
 	 */
 	@ClientOnly
 	default void putImage(String fileName, NativeImage image) throws IOException {
-		this.putResource(fileName, image.getBytes());
+		this.putResource(fileName, NativeImageUtil.getBytes(image));
 	}
 
 	/**
@@ -210,7 +210,7 @@ public interface MutablePack extends ResourcePack {
 	 */
 	@ClientOnly
 	default void putImage(Identifier id, NativeImage image) throws IOException {
-		this.putResource(ResourceType.CLIENT_RESOURCES, id, image.getBytes());
+		this.putResource(ResourceType.CLIENT_RESOURCES, id, NativeImageUtil.getBytes(image));
 	}
 
 	/**
@@ -226,7 +226,7 @@ public interface MutablePack extends ResourcePack {
 	default void putImage(String fileName, Supplier<NativeImage> imageSupplier) {
 		this.putResource(fileName, () -> {
 			try (var image = imageSupplier.get()) {
-				return image.getBytes();
+				return NativeImageUtil.getBytes(image);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -246,7 +246,7 @@ public interface MutablePack extends ResourcePack {
 	default void putImage(Identifier id, Supplier<NativeImage> imageSupplier) {
 		this.putResource(ResourceType.CLIENT_RESOURCES, id, () -> {
 			try (var image = imageSupplier.get()) {
-				return image.getBytes();
+				return NativeImageUtil.getBytes(image);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -266,7 +266,7 @@ public interface MutablePack extends ResourcePack {
 	default @NotNull Future<byte[]> putImageAsync(@NotNull String fileName, @NotNull Function<@NotNull String, @NotNull NativeImage> imageFactory) {
 		return this.putResourceAsync(fileName, imageFactory.andThen(image -> {
 			try (image) {
-				return image.getBytes();
+				return NativeImageUtil.getBytes(image);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -287,7 +287,7 @@ public interface MutablePack extends ResourcePack {
 	default @NotNull Future<byte[]> putImageAsync(@NotNull Identifier id, @NotNull Function<@NotNull Identifier, @NotNull NativeImage> imageFactory) {
 		return this.putResourceAsync(ResourceType.CLIENT_RESOURCES, id, imageFactory.andThen(image -> {
 			try (image) {
-				return image.getBytes();
+				return NativeImageUtil.getBytes(image);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

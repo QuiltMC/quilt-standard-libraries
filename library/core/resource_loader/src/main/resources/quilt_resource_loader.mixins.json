@@ -29,8 +29,7 @@
     "client.MinecraftClientMixin",
     "client.PackScreenAccessor",
     "client.ReloadableResourceManagerMixin",
-    "client.ResourcePackEntryAccessor",
-    "client.ShaderResourceReloadListenerMixin"
+    "client.ResourcePackEntryAccessor"
   ],
   "server": [
     "server.LanguageMixin"

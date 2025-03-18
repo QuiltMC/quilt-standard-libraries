@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.test.client;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.util.ArgbHelper;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.texture.NativeImage;
@@ -46,14 +47,14 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerPackProfileProvider((profileAdder) -> {
 			var pack = new TestPack();
 			profileAdder.accept(PackProfile.of(
-					pack.getLocationInfo(),
-					QuiltPackProfile.wrapToFactory(pack),
-					ResourceType.CLIENT_RESOURCES,
-					new PackPosition(
-						true,
-						PackProfile.InsertionPosition.TOP,
-						true
-					)));
+				pack.getLocationInfo(),
+				QuiltPackProfile.wrapToFactory(pack),
+				ResourceType.CLIENT_RESOURCES,
+				new PackPosition(
+					true,
+					PackProfile.InsertionPosition.TOP,
+					true
+				)));
 		});
 	}
 
@@ -63,9 +64,9 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 		TestPack() {
 			this.putText("pack.mcmeta", String.format("""
-							{"pack":{"pack_format":%d,"description":"Just testing."}}
-							""",
-					SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
+					{"pack":{"pack_format":%d,"description":"Just testing."}}
+					""",
+				SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
 			this.putImage("pack.png", this::createRandomImage);
 			this.putImage(DIRT_IDENTIFIER, this::createRandomImage);
 		}
@@ -80,7 +81,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 				color |= this.random.nextInt(256) << 8;
 				color |= this.random.nextInt(256);
 				for (int x = 0; x < 16; x++) {
-					image.setPixelColor(t ? x : y, t ? y : x, color);
+					image.method_61941(t ? x : y, t ? y : x, color);
 				}
 			}
 

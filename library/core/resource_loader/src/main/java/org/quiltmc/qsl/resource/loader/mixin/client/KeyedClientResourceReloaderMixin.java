@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Locale;
 
+import net.minecraft.unmapped.C_fpwiwmrb;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -57,7 +58,7 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 	EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class, FoliageColormapResourceSupplier.class,
 	FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
 	StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
-	SpriteAtlasHolder.class,
+	SpriteAtlasHolder.class, C_fpwiwmrb.class,
 	/* private */
 	GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class,
 })
@@ -81,6 +82,8 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 				this.quilt$id = ResourceReloaderKeys.Client.ENTITY_MODELS;
 			} else if (self instanceof EntityRenderDispatcher) {
 				this.quilt$id = ResourceReloaderKeys.Client.ENTITY_RENDERERS;
+			} else if (self instanceof C_fpwiwmrb) {
+				this.quilt$id = ResourceReloaderKeys.Client.SHADERS;
 			} else if (self instanceof StatusEffectSpriteManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.STATUS_EFFECTS;
 			} else if (self instanceof SoundManager) {
