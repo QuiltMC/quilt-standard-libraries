@@ -17,14 +17,10 @@
 package org.quiltmc.qsl.block.entity.test;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.block.*;
+import net.minecraft.unmapped.C_vhpmxtfv;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -50,12 +46,12 @@ public class AngyBlock extends BlockWithEntity {
 			if (player.isSneaking()) {
 				blockEntity.rollColor();
 				player.sendMessage(Text.literal("Argh! Why did you dance!")
-						.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())), false);
+					.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())), false);
 			} else {
 				player.sendMessage(Text.literal("I'm am angy block!! But I like the color #")
-								.append(Integer.toHexString(blockEntity.getColor())).append("!")
-								.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())),
-						false
+						.append(Integer.toHexString(blockEntity.getColor())).append("!")
+						.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())),
+					false
 				);
 			}
 		}

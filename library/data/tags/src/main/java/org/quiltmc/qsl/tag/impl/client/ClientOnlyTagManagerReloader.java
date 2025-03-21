@@ -44,7 +44,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 	}
 
 	@Override
-	public CompletableFuture<List<Entry>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<List<Entry>> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
 			var entries = new ArrayList<Entry>();
 
@@ -57,13 +57,13 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(List<Entry> data, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(List<Entry> data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			data.forEach(entry -> entry.manager().setSerializedTags(entry.serializedTags()));
 		}, executor);
 	}
 
 	protected record Entry(ClientTagRegistryManager<?> manager,
-	                       Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
+						   Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 	}
 }

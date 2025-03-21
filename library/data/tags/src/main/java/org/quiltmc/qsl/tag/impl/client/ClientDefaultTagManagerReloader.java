@@ -55,17 +55,17 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 		this.resourcePackManager = new PackManager((profileAdder) -> {
 			profileAdder.accept(PackProfile.of(
 				new PackLocationInfo(
-						"vanilla",
-						pack.getDisplayName(),
-						null,
-						pack.getKnownPackInfo()),
-					QuiltPackProfile.wrapToFactory(pack),
-					ResourceType.SERVER_DATA,
-					new PackPosition(
-						true,
-						PackProfile.InsertionPosition.BOTTOM,
-						true
-					)
+					"vanilla",
+					pack.getDisplayName(),
+					null,
+					pack.getKnownPackInfo()),
+				QuiltPackProfile.wrapToFactory(pack),
+				ResourceType.SERVER_DATA,
+				new PackPosition(
+					true,
+					PackProfile.InsertionPosition.BOTTOM,
+					true
+				)
 			));
 		}, ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER);
 	}
@@ -89,18 +89,18 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	}
 
 	@Override
-	public CompletableFuture<List<Entry>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<List<Entry>> load(ResourceManager manager, Executor executor) {
 		// First we need to transform the resource manager into one with the type SERVER_DATA,
 		// then we can continue as normal.
 		return CompletableFuture.supplyAsync(this::getServerDataResourceManager, executor)
-				.thenComposeAsync(resourceManager -> super.load(resourceManager, profiler, executor)
-								.whenComplete((entries, throwable) -> resourceManager.close()),
-						executor
-				);
+			.thenComposeAsync(resourceManager -> super.load(resourceManager, executor)
+					.whenComplete((entries, throwable) -> resourceManager.close()),
+				executor
+			);
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(List<Entry> data, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(List<Entry> data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			data.forEach(entry -> entry.manager().setFallbackSerializedTags(entry.serializedTags()));
 		}, executor);

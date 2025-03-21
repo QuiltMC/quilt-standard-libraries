@@ -53,7 +53,8 @@ public class DataCallbackTests implements ModInitializer {
 		}
 	}, BEFORE_PHASE, Event.DEFAULT_PHASE, AFTER_PHASE);
 
-	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {});
+	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {
+	});
 	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(Identifier.of("quilt_data_callback_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
 		for (ServerJoin callback : callbacks.get()) {
 			callback.onPlayReady(handler, sender, server);
@@ -65,7 +66,7 @@ public class DataCallbackTests implements ModInitializer {
 		JOIN_SERVER_CODECS.register(ServerJoinChat.CODEC_ID, ServerJoinChat.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
-				SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
+			SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
 
 		JOIN_SERVER_DATA.register(Identifier.of(mod.metadata().id(), "after"), new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE);
 		// This callback is overridden by data and should not fire.
@@ -103,7 +104,7 @@ public class DataCallbackTests implements ModInitializer {
 		@Override
 		public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server) {
 			Text text = Text.literal(text()).setStyle(style());
-			handler.player.sendSystemMessage(text);
+			handler.player.sendSystemMessage(text, true);
 		}
 	}
 }

@@ -38,15 +38,16 @@ public final class StatusEffectTest implements ModInitializer {
 	public static final StatusEffectRemovalReason DRANK_PASTEURIZED_MILK = new StatusEffectRemovalReason(id("action.drank_pasteurized_milk")) {
 		@Override
 		public boolean removesEffect(StatusEffectInstance effect) {
-			return effect.getEffectType().value().getType() == StatusEffectType.HARMFUL;
+			return effect.getEffectType().getValue().getType() == StatusEffectType.HARMFUL;
 		}
 	};
 
 	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registries.ITEM, id("pasteurized_milk_bucket"),
-			new PasteurizedMilkBucketItem(new Item.Settings()
-					.recipeRemainder(Items.BUCKET)
-					.maxCount(1)));
+		new PasteurizedMilkBucketItem(new Item.Settings()
+			.recipeRemainder(Items.BUCKET)
+			.maxCount(1)));
 
 	@Override
-	public void onInitialize(ModContainer mod) {}
+	public void onInitialize(ModContainer mod) {
+	}
 }

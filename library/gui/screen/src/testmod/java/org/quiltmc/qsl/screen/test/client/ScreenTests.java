@@ -65,7 +65,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			graphics.method_52706(RenderLayer::getGuiTextured, ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
+			graphics.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
 		}
 	}
 }

@@ -20,6 +20,7 @@ package org.quiltmc.qsl.block.extensions.mixin;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
@@ -28,7 +29,6 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.registry.KeyDerivation;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.unmapped.C_vhpmxtfv;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -56,7 +56,7 @@ public interface AbstractBlockSettingsAccessor {
 	ToIntFunction<BlockState> getLuminance();
 
 	@Accessor
-	Function<BlockState, C_vhpmxtfv> getMapColorGetter();
+	Function<BlockState, MapColor> getMapColorGetter();
 
 	@Accessor
 	BlockSoundGroup getSoundGroup();

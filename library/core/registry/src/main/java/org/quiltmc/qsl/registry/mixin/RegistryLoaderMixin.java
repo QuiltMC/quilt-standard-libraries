@@ -60,21 +60,21 @@ public abstract class RegistryLoaderMixin {
 		at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = At.Shift.AFTER)
 	)
 	private static void onBeforeLoad(
-		RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups, List<RegistryLoader.DecodingData<?>> registryDatas, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir, @Local(ordinal = 2) List list) {
+		RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups, List<RegistryLoader.DecodingData<?>> registryDatas, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir, @Local(ordinal = 2) List<RegistryLoader.ContentLoader<?>> list) {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
-				new DynamicRegistryManagerSetupContextImpl(cachedResourceManager.get(), list.stream().map(RegistryLoader.ContentLoader::registry))
+			new DynamicRegistryManagerSetupContextImpl(cachedResourceManager.get(), list.stream().map(RegistryLoader.ContentLoader::registry))
 		);
 		cachedResourceManager.remove();
 	}
 
 	@Inject(
-			method = "load",
-			at = @At(
-					value = "INVOKE",
-					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
-					ordinal = 1,
-					shift = At.Shift.AFTER
-			)
+		method = "load",
+		at = @At(
+			value = "INVOKE",
+			target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
+			ordinal = 1,
+			shift = At.Shift.AFTER
+		)
 	)
 	private static void onAfterLoad(RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups, List<RegistryLoader.DecodingData<?>> registryDatas, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
 		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);

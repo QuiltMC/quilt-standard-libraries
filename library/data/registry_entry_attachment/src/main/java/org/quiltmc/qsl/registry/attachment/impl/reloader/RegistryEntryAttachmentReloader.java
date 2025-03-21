@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.unmapped.C_xuophqnt;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -81,8 +82,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
+			var profiler = C_xuophqnt.method_64146();
+
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : Registries.ROOT.getEntries()) {
@@ -91,7 +94,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				profiler.push(this.id + "/finding_resources/" + path);
 
 				Map<Identifier, List<Resource>> resources = manager.findAllResources("attachments/" + path,
-						s -> s.getPath().endsWith(".json"));
+					s -> s.getPath().endsWith(".json"));
 				if (resources.isEmpty()) {
 					profiler.pop();
 					continue;
@@ -108,8 +111,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private void processResources(Profiler profiler,
-			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
-			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
+								  Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
+								  Map<Identifier, List<Resource>> resources, Registry<?> registry) {
 		for (var entry : resources.entrySet()) {
 			Identifier attachmentId = this.getAttachmentId(entry.getKey());
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
@@ -120,7 +123,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			if (!attachment.side().shouldLoad(this.source)) {
 				LOGGER.warn("Ignoring attachment {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attachmentId, entry, attachment.side().getSource(), this.source);
+					attachmentId, entry, attachment.side().getSource(), this.source);
 				continue;
 			}
 
@@ -138,8 +141,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
+			var profiler = C_xuophqnt.method_64146();
+
 			data.apply(profiler);
 			if (this.source == ResourceType.SERVER_DATA) {
 				RegistryEntryAttachmentSync.clearEncodedValuesCache();
@@ -172,7 +177,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			for (var entry : Registries.ROOT.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
-						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
+					.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {

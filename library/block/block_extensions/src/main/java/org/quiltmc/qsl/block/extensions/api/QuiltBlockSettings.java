@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
-import net.minecraft.unmapped.C_vhpmxtfv;
+import net.minecraft.block.MapColor;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.block.AbstractBlock;
@@ -276,14 +276,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings mapColor(C_vhpmxtfv color) {
+	public QuiltBlockSettings mapColor(MapColor color) {
 		super.mapColor(color);
 		return this;
 	}
 
 	@Override
 	@Contract("_->this")
-	public QuiltBlockSettings mapColor(Function<BlockState, C_vhpmxtfv> function) {
+	public QuiltBlockSettings mapColor(Function<BlockState, MapColor> function) {
 		super.mapColor(function);
 		return this;
 	}

@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.registry.*;
 import net.minecraft.resource.ResourceManager;
@@ -32,12 +33,10 @@ import java.util.concurrent.Executor;
 
 @Mixin(ReloadableRegistries.class)
 public abstract class ReloadableRegistriesMixin {
-	// FIXME: injection point was "INVOKE", changed to "TAIL" to appease the compiler
-	//  additionally, frozen registry reference no longer exists
-	//  mahjong refactoring yet another uncompressed metric shit cube of code. go figure
-
-	@Inject(method = "reload", at = @At(value = "TAIL", target = "Lnet/minecraft/registry/ReloadableRegistries$TagAwareLookupWrapper;<init>(Lnet/minecraft/registry/DynamicRegistryManager;)V"))
-	private static void onLoad(LayeredRegistryManager<ServerRegistryLayer> registryManager, List<Registry.PendingTags<?>> pendingTags, ResourceManager resourceManager, Executor executor, CallbackInfoReturnable<CompletableFuture<ReloadableRegistries.LoadResult>> cir){
+	@ModifyExpressionValue(method = "reload", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/LayeredRegistryManager;getCompositeUntil(Ljava/lang/Object;)Lnet/minecraft/registry/DynamicRegistryManager$Frozen;"))
+	private static DynamicRegistryManager.Frozen onLoad(DynamicRegistryManager.Frozen registry) {
 		ClientTagRegistryManager.applyAll(registry, ClientRegistryStatus.LOCAL);
+
+		return registry;
 	}
 }
