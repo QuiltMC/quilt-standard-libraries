@@ -69,14 +69,9 @@ public abstract class RegistryLoaderMixin {
 
 	@Inject(
 		method = "load",
-		at = @At(
-			value = "INVOKE",
-			target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
-			ordinal = 1,
-			shift = At.Shift.AFTER
-		)
+		at = @At(value = "RETURN")
 	)
 	private static void onAfterLoad(RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups, List<RegistryLoader.DecodingData<?>> registryDatas, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
-		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);
+		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(cir.getReturnValue());
 	}
 }

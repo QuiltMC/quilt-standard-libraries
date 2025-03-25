@@ -46,7 +46,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.DependencySorter;
 import net.minecraft.util.Identifier;
@@ -68,7 +67,7 @@ import org.quiltmc.qsl.tag.mixin.client.DynamicRegistrySyncAccessor;
 @ApiStatus.Internal
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
-			new WeakHashMap<>();
+		new WeakHashMap<>();
 	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.ROOT);
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
@@ -164,8 +163,8 @@ public final class ClientTagRegistryManager<T> {
 
 	public Stream<TagRegistry.TagValues<T>> streamFallbackTags(Predicate<Map.Entry<TagKey<T>, Collection<Holder<T>>>> filter) {
 		return this.clientOnlyValues.entrySet().stream()
-				.filter(filter)
-				.map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
+			.filter(filter)
+			.map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
 	@ClientOnly
@@ -267,7 +266,7 @@ public final class ClientTagRegistryManager<T> {
 	@SuppressWarnings("unchecked")
 	public static <T> ClientTagRegistryManager<T> get(RegistryKey<? extends Registry<T>> registryKey) {
 		return (ClientTagRegistryManager<T>) TAG_GROUP_MANAGERS.computeIfAbsent(registryKey,
-				key -> new ClientTagRegistryManager<>(registryKey, RegistryKeys.getTagDirectory(key))
+			key -> new ClientTagRegistryManager<>(registryKey, RegistryKeys.getTagDirectory(key))
 		);
 	}
 
@@ -307,7 +306,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		@Override
-		public @Nullable Holder<T> getElement(Identifier id) {
+		public @Nullable Holder<T> getElement(Identifier id, boolean required) {
 			return ClientTagRegistryManager.this.registryFetcher.apply(id).orElse(null);
 		}
 
@@ -318,8 +317,8 @@ public final class ClientTagRegistryManager<T> {
 
 		public BiConsumer<Identifier, TagGroupLoader.SortingEntry> getCollector() {
 			return (tagId, builder) -> this.tags.put(
-					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
-					this.buildLenientTag(builder.entries())
+				QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
+				this.buildLenientTag(builder.entries())
 			);
 		}
 
@@ -336,7 +335,8 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
-	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {}
+	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {
+	}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {
 		private final RegistryLookup<T> cached;
@@ -373,7 +373,7 @@ public final class ClientTagRegistryManager<T> {
 
 				if (this.lastLookupProvider != null) {
 					this.cached = this.lastLookupProvider.getLookup(ClientTagRegistryManager.this.registryKey)
-							.orElse(null);
+						.orElse(null);
 					this.firstCall = false;
 				}
 			}

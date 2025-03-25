@@ -67,7 +67,7 @@ public class DynamicMetaRegistryImpl {
 
 		RegistryLoader.SYNCED_REGISTRIES.add(new RegistryLoader.DecodingData<>(ref, syncCodec, false));
 
-		if (!(DynamicRegistrySyncAccessor.SYNCED_CODECS instanceof HashSet<RegistryKey<? extends Registry<?>>>)) {
+		if (!(DynamicRegistrySync.SYNCED_CODECS instanceof HashSet<RegistryKey<? extends Registry<?>>>)) {
 			DynamicRegistrySync.SYNCED_CODECS = new HashSet<>(DynamicRegistrySync.SYNCED_CODECS);
 		}
 

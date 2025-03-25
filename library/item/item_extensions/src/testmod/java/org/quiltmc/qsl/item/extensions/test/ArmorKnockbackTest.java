@@ -18,11 +18,11 @@ package org.quiltmc.qsl.item.extensions.test;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 
 import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorItem.ArmorSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,37 +30,36 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
-import net.minecraft.util.Util;
+import net.minecraft.unmapped.C_cebksdnb;
+import net.minecraft.util.*;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class ArmorKnockbackTest implements ModInitializer {
-	private static final Holder<ArmorMaterial> KNOCKBACK_RESISTANCE_ARMOR = Registry.registerHolder(
-			Registries.ARMOR_MATERIAL,
-			Identifier.of("quilt-item-extension-testmod", "knockback_armor"),
-			new ArmorMaterial(
-				Util.make(new EnumMap<>(ArmorItem.ArmorSlot.class), (map) -> {
-					map.put(ArmorSlot.BOOTS, 0);
-					map.put(ArmorSlot.LEGGINGS, 0);
-					map.put(ArmorSlot.CHESTPLATE, 0);
-					map.put(ArmorSlot.HELMET, 0);
-					map.put(ArmorSlot.BODY, 0);
-				}),
-				0,
-				Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
-					() -> Ingredient.EMPTY,
-				List.of(new ArmorMaterial.Layer(Identifier.of("quilt-item-extension-testmod", "knockback_armor"))),
-				0.0F, 200.0F)
-		);
+	private static final ArmorMaterial KNOCKBACK_RESISTANCE_ARMOR = new ArmorMaterial(
+		1000,
+		Map.of(
+			C_cebksdnb.BOOTS, 0,
+			C_cebksdnb.LEGGINGS, 0,
+			C_cebksdnb.CHESTPLATE, 0,
+			C_cebksdnb.HELMET, 0,
+			C_cebksdnb.BODY, 0
+		),
+		0,
+		Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
+		0.0f,
+		200.0F,
+		ItemTags.WOOL,
+		RegistryKey.of(EquipmentAssets.REGISTRY, Identifier.of("quilt-item-extension-testmod", "knockback_armor")));
 
 	private static final ArmorItem KNOCKBACK_RESISTANCE_CHESTPLATE = new ArmorItem(
 			KNOCKBACK_RESISTANCE_ARMOR,
-			ArmorSlot.CHESTPLATE,
+			C_cebksdnb.CHESTPLATE,
 			new Item.Settings().rarity(Rarity.RARE)
 	) {
 		@Override

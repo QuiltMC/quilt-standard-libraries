@@ -63,13 +63,13 @@ public class DynamicRegistryManagerSetupContextImpl implements DynamicRegistryMa
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public <E> Optional<Registry<E>> getOptional(RegistryKey<? extends Registry<? extends E>> key) {
+	public <E> Optional<Registry<E>> getLookup(RegistryKey<? extends Registry<? extends E>> key) {
 		return Optional.ofNullable((Registry) this.registries.get(key)).map(registry -> registry);
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public Stream<RegistryEntry<?>> registries() {
+	public Stream<RegistryEntry<?>> streamRegistries() {
 		return this.registries.entrySet().stream().map(entry -> new RegistryEntry<>((RegistryKey) entry.getKey(), entry.getValue()));
 	}
 }

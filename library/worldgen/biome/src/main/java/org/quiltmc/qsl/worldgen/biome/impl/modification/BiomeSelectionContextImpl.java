@@ -112,6 +112,6 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public <T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey) {
-		return this.dynamicRegistries.getOptional(registryKey).map(registry -> registry.contains(entryKey)).orElse(false);
+		return this.dynamicRegistries.getLookup(registryKey).map(registry -> registry.contains(entryKey)).orElse(false);
 	}
 }

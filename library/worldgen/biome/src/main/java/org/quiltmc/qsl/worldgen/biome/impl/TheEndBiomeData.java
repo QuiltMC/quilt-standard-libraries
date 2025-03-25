@@ -108,7 +108,7 @@ public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoad
 
 	@Override
 	public void onDynamicRegistryLoaded(@NotNull DynamicRegistryManager registryManager) {
-		registryManager.getOptional(RegistryKeys.BIOME).ifPresent(registry -> biomeRegistry = registry.asLookup());
+		registryManager.getLookup(RegistryKeys.BIOME).ifPresent(registry -> biomeRegistry = registry);
 	}
 
 	/**
@@ -202,7 +202,7 @@ public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoad
 			// This Optional#get is safe - if a has key, b should also have key
 			// given a.getType() != b.getType() check above
 			// noinspection OptionalGetWithoutIsPresent
-			return a.unwrap().map(key -> b.getKey().get() == key, b.value()::equals);
+			return a.unwrap().map(key -> b.getKey().get() == key, b.getValue()::equals);
 		}
 
 		@Override
