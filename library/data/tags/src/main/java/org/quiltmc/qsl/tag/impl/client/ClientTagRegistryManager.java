@@ -248,7 +248,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		var boundTags = new IdentityHashMap<Holder.Reference<T>, List<TagKey<T>>>();
-		registry.get().holders().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
+		registry.get().streamHolders().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
 
 		map.forEach((tagKey, tag) -> {
 			for (var holder : tag) {
@@ -307,7 +307,7 @@ public final class ClientTagRegistryManager<T> {
 
 		@Override
 		public @Nullable Holder<T> getElement(Identifier id, boolean required) {
-			return ClientTagRegistryManager.this.registryFetcher.apply(id).orElse(null);
+			return ClientTagRegistryManager.this.registryFetcher.get(id, required).orElse(null);
 		}
 
 		@Override
@@ -335,7 +335,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
-	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {
+	private abstract class RegistryFetcher implements TagGroupLoader.C_utvitygd<Holder<T>> {
 	}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {
@@ -347,7 +347,7 @@ public final class ClientTagRegistryManager<T> {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Optional<? extends Holder<T>> apply(Identifier id) {
+		public Optional<? extends Holder<T>> get(Identifier id, boolean required) {
 			return this.cached.getHolder(RegistryKey.of((RegistryKey<? extends Registry<T>>) this.cached.getKey(), id));
 		}
 	}
@@ -367,7 +367,7 @@ public final class ClientTagRegistryManager<T> {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Optional<? extends Holder<T>> apply(Identifier id) {
+		public Optional<? extends Holder<T>> get(Identifier id, boolean required) {
 			if (this.firstCall || ClientTagRegistryManager.this.lookupProvider != this.lastLookupProvider) {
 				this.lastLookupProvider = ClientTagRegistryManager.this.lookupProvider;
 

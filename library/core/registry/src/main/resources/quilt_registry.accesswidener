@@ -5,4 +5,5 @@ accessible method net/minecraft/registry/Holder$Reference setValue (Ljava/lang/O
 accessible class net/minecraft/registry/RegistryLoader$ContentLoader
 accessible class net/minecraft/registry/RegistryLoader$LoadingFunction
 mutable field net/minecraft/registry/RegistryLoader SYNCED_REGISTRIES Ljava/util/List;
+accessible field net/minecraft/registry/DynamicRegistrySync SYNCED_CODECS Ljava/util/Set;
 mutable field net/minecraft/registry/DynamicRegistrySync SYNCED_CODECS Ljava/util/Set;
