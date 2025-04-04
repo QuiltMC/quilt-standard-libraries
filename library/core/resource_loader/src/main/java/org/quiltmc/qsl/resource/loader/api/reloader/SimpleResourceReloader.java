@@ -47,8 +47,7 @@ import net.minecraft.util.profiler.Profiler;
 public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader {
 	@Override
 	default CompletableFuture<Void> reload(ResourceReloader.Synchronizer helper, ResourceManager manager, Executor loadExecutor, Executor applyExecutor) {
-
-		return this.load(manager, loadExecutor).thenCompose(helper::whenPrepared)
+		return this.load(manager, loadExecutor).thenCompose(helper::wait)
 			.thenCompose(o -> this.apply(o, manager, applyExecutor));
 	}
 

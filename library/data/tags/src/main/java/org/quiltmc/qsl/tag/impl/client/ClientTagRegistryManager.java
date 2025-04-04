@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -335,7 +334,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
-	private abstract class RegistryFetcher implements TagGroupLoader.C_utvitygd<Holder<T>> {
+	private abstract class RegistryFetcher implements TagGroupLoader.EntryGetter<Holder<T>> {
 	}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {

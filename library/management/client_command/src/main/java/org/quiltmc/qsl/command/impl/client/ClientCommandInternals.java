@@ -39,7 +39,7 @@ import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.unmapped.C_xuophqnt;
+import net.minecraft.util.profiler.ProfilerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public final class ClientCommandInternals {
 		// noinspection ConstantConditions
 		var commandSource = client.getNetworkHandler().getCommandSource();
 
-		C_xuophqnt.method_64146().push(message);
+		ProfilerManager.get().push(message);
 
 		try {
 			// Only run client commands if there are no matching server-side commands.
@@ -130,7 +130,7 @@ public final class ClientCommandInternals {
 			commandSource.sendError(Text.of(e.getMessage()));
 			return true;
 		} finally {
-			C_xuophqnt.method_64146().pop();
+			ProfilerManager.get().pop();
 		}
 	}
 

@@ -10,6 +10,7 @@ transitive-accessible method net/minecraft/block/BarrierBlock <init> (Lnet/minec
 transitive-accessible method net/minecraft/block/BigDripleafBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/BigDripleafStemBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/BlastFurnaceBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/BushBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/ButtonBlock <init> (Lnet/minecraft/block/BlockSetType;ILnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CactusBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CakeBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -26,15 +27,17 @@ transitive-accessible method net/minecraft/block/CoralBlock <init> (Lnet/minecra
 transitive-accessible method net/minecraft/block/CoralFanBlock <init> (Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CoralWallFanBlock <init> (Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CraftingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/CreakingHeartBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/CropBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/DeadBushBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DeadCoralBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DeadCoralFanBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DeadCoralWallFanBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DecoratedPotBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DirtPathBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DoorBlock <init> (Lnet/minecraft/block/BlockSetType;Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/DryPlantBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DyedCarpetBlock <init> (Lnet/minecraft/util/DyeColor;Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/EnchantingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EndGatewayBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EndPortalBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EndRodBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -75,6 +78,7 @@ transitive-accessible method net/minecraft/block/RootsBlock <init> (Lnet/minecra
 transitive-accessible method net/minecraft/block/ScaffoldingBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SeaPickleBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SeagrassBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/ShortDryGrassBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SkullBlock <init> (Lnet/minecraft/block/SkullBlock$SkullType;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SmithingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SmokerBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -87,6 +91,7 @@ transitive-accessible method net/minecraft/block/StemBlock <init> (Lnet/minecraf
 transitive-accessible method net/minecraft/block/StructureBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/StructureVoidBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SugarCaneBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/TallDryGrassBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/TorchBlock <init> (Lnet/minecraft/particle/DefaultParticleType;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/TransparentBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/TrapdoorBlock <init> (Lnet/minecraft/block/BlockSetType;Lnet/minecraft/block/AbstractBlock$Settings;)V

@@ -19,21 +19,18 @@ package org.quiltmc.qsl.entity.multipart.mixin;
 import java.util.*;
 import java.util.function.Predicate;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import net.minecraft.unmapped.C_xuophqnt;
+import net.minecraft.util.profiler.ProfilerManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
@@ -41,7 +38,6 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.function.AbortableIterationConsumer;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.entity.EntityLookup;
@@ -117,7 +113,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Overwrite
 	public <T extends Entity> void collectEntities(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
 												   List<? super T> collection, int maxEntities) {
-		C_xuophqnt.method_64146().visit("getEntities");
+		ProfilerManager.get().visit("getEntities");
 
 		this.getEntityLookup().forEachIntersecting(filter, box, entity -> {
 			if (predicate.test(entity)) {

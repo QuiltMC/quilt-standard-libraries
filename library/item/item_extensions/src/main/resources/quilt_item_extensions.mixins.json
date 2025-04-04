@@ -15,7 +15,7 @@
     "crossbow.EntityUseCrossbowMixin"
   ],
   "client": [
-    "bow.client.C_gurxrznlMixin",
+    "bow.client.AbstractSkeletonEntityRendererMixin",
     "client.HeldItemRendererMixin",
     "crossbow.client.PlayerEntityRendererMixin"
   ],
