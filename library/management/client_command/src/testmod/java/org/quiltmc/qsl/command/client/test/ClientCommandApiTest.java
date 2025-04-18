@@ -39,7 +39,7 @@ public class ClientCommandApiTest implements ClientCommandRegistrationCallback {
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(Text.literal("It works!")
 									.styled(style -> style.withClickEvent(
-											new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/test_client_command with_arg minecraft:dirt")
+											new ClickEvent.C_hyxxomqo("/test_client_command with_arg minecraft:dirt")
 									))
 							);
 							return 0;

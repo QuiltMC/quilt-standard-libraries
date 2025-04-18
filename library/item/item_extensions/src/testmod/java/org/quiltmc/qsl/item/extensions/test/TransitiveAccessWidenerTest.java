@@ -17,10 +17,8 @@
 package org.quiltmc.qsl.item.extensions.test;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.unmapped.C_bemqmqey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -29,12 +27,12 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class TransitiveAccessWidenerTest implements ModInitializer {
-	public static final Item MODDED_MINING_TOOL = new MiningToolItem(
-			C_bemqmqey.INCORRECT_FOR_DIAMOND_TOOL,
-			BlockTags.CORAL_BLOCKS,
-			1.0F,
-			-2.8F,
-			new Item.Settings().maxCount(1).rarity(Rarity.RARE)
+	public static final Item MODDED_MINING_TOOL = new Item(
+			new Item.Settings().maxCount(1).method_66330(
+				C_bemqmqey.INCORRECT_FOR_DIAMOND_TOOL,
+				1.0F,
+				-2.8F)
+			.rarity(Rarity.RARE)
 	);
 
 	@Override

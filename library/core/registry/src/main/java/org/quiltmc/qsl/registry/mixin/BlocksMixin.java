@@ -36,7 +36,6 @@ public abstract class BlocksMixin {
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
 		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
-			context.value().getLootTableId();
 			context.value().getStateManager().getStates().forEach((state) -> {
 				if (Block.STATE_IDS.getRawId(state) == -1) {
 					Block.STATE_IDS.add(state);

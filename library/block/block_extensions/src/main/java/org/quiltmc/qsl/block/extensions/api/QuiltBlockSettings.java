@@ -83,7 +83,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 		// also copy other stuff Vanilla doesn't bother with
 		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
-		((AbstractBlockSettingsAccessor) this).setLootTableId(otherAccessor.getLootTableId());
+		((AbstractBlockSettingsAccessor) this).setLootTable(otherAccessor.getLootTable());
 		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
 		this.solidBlock(otherAccessor.getSolidBlockPredicate());
 		this.suffocates(otherAccessor.getSuffocationPredicate());
