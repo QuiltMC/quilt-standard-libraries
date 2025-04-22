@@ -25,7 +25,6 @@ import net.minecraft.block.MapColor;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.NoteBlockInstrument;
@@ -333,20 +332,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings method_63502(Optional<RegistryKey<LootTable>> value) {
-		super.method_63502(value);
-		return this;
-	}
-
-	@Override
 	public QuiltBlockSettings key(RegistryKey<Block> key) {
 		super.key(key);
-		return this;
-	}
-
-	@Override
-	public QuiltBlockSettings method_63501(String value) {
-		super.method_63501(value);
 		return this;
 	}
 
@@ -428,7 +415,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings drops(RegistryKey<LootTable> dropTableId) {
-		return this.method_63502(Optional.of(dropTableId));
+		return this.lootTable(Optional.of(dropTableId));
 	}
 
 	public QuiltBlockSettings spawnsDustParticles(boolean spawnsDustParticles) {
@@ -436,13 +423,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	public Settings requiredFlags(FeatureFlagBitSet flags) {
-		((AbstractBlockSettingsAccessor) this).setRequiredFlags(flags);
+	public QuiltBlockSettings requiredFlags(FeatureFlagBitSet flags) {
+		((AbstractBlockSettingsAccessor) (Object) this).setRequiredFlags(flags);
 		return this;
 	}
 
 	public QuiltBlockSettings replaceable(boolean replaceable) {
-		((AbstractBlockSettingsAccessor) this).setReplaceable(replaceable);
+		((AbstractBlockSettingsAccessor) (Object) this).setReplaceable(replaceable);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings lootTable(Optional<RegistryKey<LootTable>> value) {
+		super.lootTable(value);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings translationKey(String translationKey) {
+		super.translationKey(translationKey);
 		return this;
 	}
 

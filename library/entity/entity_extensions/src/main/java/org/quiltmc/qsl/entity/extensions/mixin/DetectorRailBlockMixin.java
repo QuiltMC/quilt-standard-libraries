@@ -43,7 +43,7 @@ public abstract class DetectorRailBlockMixin {
 
 	@Inject(at = @At("HEAD"), method = "getComparatorOutput", cancellable = true)
 	private void getCustomComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-		if (state.get(DetectorRailBlock.POWERED)) {
+		if (state.getOrDefault(DetectorRailBlock.POWERED, false)) {
 			List<AbstractMinecartEntity> carts = this.getCarts(world, pos, AbstractMinecartEntity.class,
 					cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0);
 

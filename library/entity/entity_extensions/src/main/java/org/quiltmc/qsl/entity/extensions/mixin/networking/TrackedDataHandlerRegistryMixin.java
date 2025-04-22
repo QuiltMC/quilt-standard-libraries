@@ -99,8 +99,16 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_block_pos";
 		} else if (handler == TrackedDataHandlerRegistry.DIRECTION) {
 			id = "direction";
-		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_UUID) {
+		} else if (handler == TrackedDataHandlerRegistry.field_55584) {
 			id = "optional_uuid";
+		} else if (handler == TrackedDataHandlerRegistry.field_56523) {
+			id = "chicken_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_56413) {
+			id = "cow_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_57073) {
+			id = "wolf_sound_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_55583) {
+			id = "pig_variant";
 		} else if (handler == TrackedDataHandlerRegistry.BLOCK_STATE) {
 			id = "block_state";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {

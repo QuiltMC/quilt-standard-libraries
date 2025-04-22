@@ -33,21 +33,21 @@ import org.quiltmc.qsl.entity.extensions.api.QuiltEntityTypeBuilder;
 
 // This test is intentionally not an entrypoint; it only verifies the generics of the entity type builder propagate properly
 final class EntityTypeBuilderGenericsTest {
-	static EntityType<Entity> ENTITY_1 = QuiltEntityTypeBuilder.create().build();
-	static EntityType<LivingEntity> LIVING_ENTITY_1 = QuiltEntityTypeBuilder.createLiving().build();
-	static EntityType<TestEntity> TEST_ENTITY_1 = QuiltEntityTypeBuilder.createLiving()
+	static EntityType<Entity> ENTITY_1 = QuiltEntityTypeBuilder.create("quilt.entity_1").build();
+	static EntityType<LivingEntity> LIVING_ENTITY_1 = QuiltEntityTypeBuilder.createLiving("quilt.living_entity_1").build();
+	static EntityType<TestEntity> TEST_ENTITY_1 = QuiltEntityTypeBuilder.createLiving("quilt.test_entity_1")
 			.entityFactory(TestEntity::new)
 			.spawnGroup(SpawnGroup.CREATURE)
 			.build();
-	static EntityType<TestEntity> OLD_TEST = QuiltEntityTypeBuilder.<TestEntity>createLiving()
+	static EntityType<TestEntity> OLD_TEST = QuiltEntityTypeBuilder.<TestEntity>createLiving("quilt.old_test")
 			.entityFactory(TestEntity::new)
 			.spawnGroup(SpawnGroup.CREATURE)
 			.build();
-	static EntityType<TestMob> OLD_MOB = QuiltEntityTypeBuilder.<TestMob>createMob()
+	static EntityType<TestMob> OLD_MOB = QuiltEntityTypeBuilder.<TestMob>createMob("quilt.old_mob")
 			.disableSaving()
 			.entityFactory(TestMob::new)
 			.build();
-	static EntityType<TestMob> MOB_TEST = QuiltEntityTypeBuilder.createMob()
+	static EntityType<TestMob> MOB_TEST = QuiltEntityTypeBuilder.createMob("quilt.mob_test")
 			.disableSaving()
 			.entityFactory(TestMob::new)
 			.build();
@@ -55,11 +55,6 @@ final class EntityTypeBuilderGenericsTest {
 	private static class TestEntity extends LivingEntity {
 		protected TestEntity(EntityType<? extends LivingEntity> entityType, World world) {
 			super(entityType, world);
-		}
-
-		@Override
-		public Iterable<ItemStack> getArmorItems() {
-			return Collections.emptyList();
 		}
 
 		@Override

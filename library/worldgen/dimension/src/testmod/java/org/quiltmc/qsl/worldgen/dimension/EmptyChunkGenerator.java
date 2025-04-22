@@ -28,7 +28,6 @@ import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.Biome;
@@ -36,7 +35,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.FixedBiomeSource;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.chunk.ChunkRegion;
 import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -44,7 +43,7 @@ import net.minecraft.world.gen.chunk.VerticalBlockSample;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
 	public static final MapCodec<EmptyChunkGenerator> CODEC =
-			RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.retrieveElement(Biomes.PLAINS)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
+			RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.createElementVerifier(Biomes.PLAINS)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	public EmptyChunkGenerator(Holder.Reference<Biome> biomeReference) {
 		super(new FixedBiomeSource(biomeReference));
@@ -56,7 +55,7 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk, GenerationStep.Carver generationStep) {}
+	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk) {}
 
 	@Override
 	public void buildSurface(ChunkRegion region, StructureManager structureManager, RandomState randomState, Chunk chunk) {}

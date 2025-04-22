@@ -18,8 +18,11 @@
 package org.quiltmc.qsl.entity.extensions.api;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.loot.LootTable;
+import net.minecraft.registry.RegistryKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +37,7 @@ import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.entity.extensions.impl.QuiltEntityType;
 
 /**
@@ -45,6 +49,7 @@ import org.quiltmc.qsl.entity.extensions.impl.QuiltEntityType;
 public class QuiltEntityTypeBuilder<T extends Entity> {
 	private EntityType.EntityFactory<T> factory;
 	private @NotNull SpawnGroup spawnGroup;
+	private @NotNull String translationKey;
 	private ImmutableSet<Block> canSpawnInside = ImmutableSet.of();
 	private boolean saveable = true;
 	private boolean summonable = true;
@@ -56,8 +61,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	private Boolean alwaysUpdateVelocity = null;
 	private EntityDimensions dimensions = EntityDimensions.changing(0.6F, 1.8F);
 	private float spawnDimensionsScale = 1.0f;
+	@Nullable private RegistryKey<LootTable> lootTable;
 
-	protected QuiltEntityTypeBuilder(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory) {
+	protected QuiltEntityTypeBuilder(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory, String translationKey) {
 		this.spawnGroup = spawnGroup;
 		this.factory = factory;
 		this.spawnableFarFromPlayer = spawnGroup == SpawnGroup.CREATURE || spawnGroup == SpawnGroup.MISC;
@@ -71,8 +77,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create() {
-		return create(SpawnGroup.MISC);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull String translationKey) {
+		return create(SpawnGroup.MISC, translationKey);
 	}
 
 	/**
@@ -82,8 +88,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup) {
-		return create(spawnGroup, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull String translationKey) {
+		return create(spawnGroup, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -94,8 +100,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory) {
-		return new QuiltEntityTypeBuilder<>(spawnGroup, factory);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory, @NotNull String translationKey) {
+		return new QuiltEntityTypeBuilder<>(spawnGroup, factory, translationKey);
 	}
 
 	/**
@@ -106,8 +112,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new living entity type builder
 	 */
-	public static <T extends LivingEntity> QuiltEntityTypeBuilder.Living<T> createLiving() {
-		return new QuiltEntityTypeBuilder.Living<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends LivingEntity> QuiltEntityTypeBuilder.Living<T> createLiving(String translationKey) {
+		return new QuiltEntityTypeBuilder.Living<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -116,8 +122,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new mob entity type builder
 	 */
-	public static <T extends MobEntity> QuiltEntityTypeBuilder.Mob<T> createMob() {
-		return new QuiltEntityTypeBuilder.Mob<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends MobEntity> QuiltEntityTypeBuilder.Mob<T> createMob(String translationKey) {
+		return new QuiltEntityTypeBuilder.Mob<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -303,7 +309,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 			// TODO: Implement once DataFixer API is available.
 		}
 
-		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.spawnDimensionsScale, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity, this.requiredFlags);
+		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.spawnDimensionsScale, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity, this.translationKey, Optional.ofNullable(this.lootTable), this.requiredFlags);
 	}
 
 	/**
@@ -314,8 +320,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	public static class Living<T extends LivingEntity> extends QuiltEntityTypeBuilder<T> {
 		private DefaultAttributeContainer.Builder defaultAttributeBuilder;
 
-		protected Living(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function) {
-			super(spawnGroup, function);
+		protected Living(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function, String translationKey) {
+			super(spawnGroup, function, translationKey);
 		}
 
 		/**
@@ -447,8 +453,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		private Heightmap.Type restrictionHeightmap;
 		private SpawnRestriction.SpawnPredicate<T> spawnPredicate;
 
-		protected Mob(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function) {
-			super(spawnGroup, function);
+		protected Mob(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function, String translationKey) {
+			super(spawnGroup, function, translationKey);
 		}
 
 		@Override

@@ -26,6 +26,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -40,10 +41,10 @@ import net.minecraft.test.TestServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DimensionTransition;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptions;
 
+import net.minecraft.world.entity.TeleportTarget;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
@@ -75,20 +76,20 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			throw new AssertionError("Test world somehow doesn't exist.");
 		}
 
-		CowEntity cow = EntityType.COW.create(overworld);
+		CowEntity cow = EntityType.COW.create(overworld, SpawnReason.MOB_SUMMONED);
 
 		if (!cow.getWorld().getRegistryKey().equals(World.OVERWORLD)) {
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
 		}
 
-		var transition = new DimensionTransition(targetWorld, Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f, DimensionTransition.NO_OP);
+		var transition = new TeleportTarget(targetWorld, Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f, TeleportTarget.NO_OP);
 		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, transition);
 
 		if (teleportedEntity == null || !teleportedEntity.getWorld().getRegistryKey().equals(WORLD_KEY)) {
 			throw new AssertionError("Cow was not teleported correctly.");
 		}
 
-		if (!teleportedEntity.getPos().equals(transition.pos())) {
+		if (!teleportedEntity.getPos().equals(transition.position())) {
 			throw new AssertionError("Cow was moved to different world, but not to the correct location.");
 		}
 	}
@@ -109,14 +110,14 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		}
 
 		if (serverWorld != modWorld) {
-			var transition = new DimensionTransition(modWorld, new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0, DimensionTransition.NO_OP);
+			var transition = new TeleportTarget(modWorld, new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0, TeleportTarget.NO_OP);
 			QuiltDimensions.teleport(player, transition);
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());
 		} else {
-			var transition = new DimensionTransition(context.getSource().getServer().getWorld(World.END), new Vec3d(0, 100, 0), Vec3d.ZERO,
-					(float) Math.random() * 360 - 180, (float) Math.random() * 360 - 180, DimensionTransition.NO_OP);
+			var transition = new TeleportTarget(context.getSource().getServer().getWorld(World.END), new Vec3d(0, 100, 0), Vec3d.ZERO,
+					(float) Math.random() * 360 - 180, (float) Math.random() * 360 - 180, TeleportTarget.NO_OP);
 			QuiltDimensions.teleport(player, transition);
 		}
 

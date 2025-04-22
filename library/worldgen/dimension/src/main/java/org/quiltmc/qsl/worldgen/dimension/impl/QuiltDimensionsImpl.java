@@ -42,7 +42,7 @@ public class QuiltDimensionsImpl {
 			if (entity instanceof ServerPlayerEntity serverPlayerEntity) {
 				serverPlayerEntity.networkHandler.requestTeleport(target.position().x, target.position().y, target.position().z, target.yaw(), entity.getPitch());
 			} else {
-				entity.refreshPositionAndAngles(target.position().x, target.position().y, target.position().z, target.yaw(), entity.getPitch());
+				entity.setPosAndAngles(target.position().x, target.position().y, target.position().z, target.yaw(), entity.getPitch());
 			}
 
 			entity.setVelocity(target.deltaMovement());

@@ -60,7 +60,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(literal("biome_tag_test")
 				.then(literal("registry").executes(context -> {
-					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
+					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().getLookupOrThrow(RegistryKeys.BIOME),
 							context.getSource());
 
 					return 1;
@@ -69,7 +69,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 					TagRegistry.stream(RegistryKeys.BIOME).forEach((entry) -> {
 						displayTag(
 								entry.key(), entry.values(),
-								context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
+								context.getSource().getRegistryManager().getLookupOrThrow(RegistryKeys.BIOME),
 								msg -> context.getSource().sendSystemMessage(msg)
 						);
 					});
@@ -83,7 +83,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	public void readyServer(MinecraftServer server) {
 		// Asserts the existence of the tag.
 		LOGGER.info("Tag content: {}", TagRegistry.getTag(TEST_BLOCK_TAG).stream()
-				.map(Holder::value)
+				.map(Holder::getValue)
 				.map(Registries.BLOCK::getId)
 				.map(Identifier::toString)
 				.collect(Collectors.joining(", "))
@@ -102,7 +102,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 		feedbackConsumer.accept(Text.literal(tagKey.id() + ":").formatted(Formatting.GREEN));
 
 		for (var value : tag) {
-			Identifier id = registry.getId(value.value());
+			Identifier id = registry.getId(value.getValue());
 			feedbackConsumer.accept(Text.literal(" - ")
 					.append(Text.literal(id.toString()).formatted(Formatting.GOLD)));
 		}

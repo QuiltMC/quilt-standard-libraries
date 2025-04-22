@@ -66,7 +66,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	private static DynamicRegistryManager currentRegistryManager;
 
 	public static void registerStaticRecipe(RecipeHolder<?> recipeHolder) {
-		if (STATIC_RECIPES.putIfAbsent(recipeHolder.id(), recipeHolder) != null) {
+		if (STATIC_RECIPES.putIfAbsent(recipeHolder.id().getValue(), recipeHolder) != null) {
 			throw new IllegalArgumentException("Cannot register " + recipeHolder.id()
 					+ " as another recipe with the same identifier already exists.");
 		}

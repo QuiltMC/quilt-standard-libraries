@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin.client;
 
 import java.util.List;
 
+import net.minecraft.network.DisconnectionDetails;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,8 +50,8 @@ public class DisconnectedScreenMixin extends Screen {
 		super(title);
 	}
 
-	@Inject(method = "<init>*", at = @At("TAIL"))
-	private void quilt$storeLogs(Screen parent, Text title, Text reason, CallbackInfo ci) {
+	@Inject(method = "<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/text/Text;Lnet/minecraft/network/DisconnectionDetails;Lnet/minecraft/text/Text;)V", at = @At("TAIL"))
+	private void quilt$storeLogs(Screen parent, Text title, DisconnectionDetails details, Text reason, CallbackInfo ci) {
 		this.quilt$extraLogs = ClientRegistrySync.getAndClearCurrentSyncLogs();
 	}
 

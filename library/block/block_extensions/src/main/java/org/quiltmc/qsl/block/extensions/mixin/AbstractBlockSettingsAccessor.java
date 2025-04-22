@@ -74,7 +74,7 @@ public interface AbstractBlockSettingsAccessor {
 	boolean getDynamicBounds();
 
 	@Accessor
-	KeyDerivation<Block, Optional<RegistryKey<LootTable>>> getLootTableId();
+	KeyDerivation<Block, Optional<RegistryKey<LootTable>>> getLootTable();
 
 	@Accessor
 	boolean getOpaque();
@@ -144,7 +144,7 @@ public interface AbstractBlockSettingsAccessor {
 	void setRandomTicks(boolean ticksRandomly);
 
 	@Accessor
-	void setLootTableId(KeyDerivation<Block, Optional<RegistryKey<LootTable>>> lootTableId);
+	void setLootTable(KeyDerivation<Block, Optional<RegistryKey<LootTable>>> lootTableId);
 
 	@Accessor
 	void setOpaque(boolean opaque);

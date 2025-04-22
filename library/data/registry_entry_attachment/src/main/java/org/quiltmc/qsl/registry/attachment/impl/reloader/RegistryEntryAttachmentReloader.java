@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.unmapped.C_xuophqnt;
+import net.minecraft.util.profiler.ProfilerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			var profiler = C_xuophqnt.method_64146();
+			var profiler = ProfilerManager.get();
 
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
@@ -143,7 +143,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			var profiler = C_xuophqnt.method_64146();
+			var profiler = ProfilerManager.get();
 
 			data.apply(profiler);
 			if (this.source == ResourceType.SERVER_DATA) {

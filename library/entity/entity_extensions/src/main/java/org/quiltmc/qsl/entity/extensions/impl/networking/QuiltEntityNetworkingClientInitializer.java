@@ -38,7 +38,7 @@ public final class QuiltEntityNetworkingClientInitializer implements ClientModIn
 				(client, handler, payload, sender) -> {
 					client.execute(() -> {
 						try {
-							var entity = client.world.getEntityById(payload.entityId());
+							var entity = client.world.method_8469(payload.entityId());
 							if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
 								extended.readAdditionalSpawnData(payload.data());
 							} else {

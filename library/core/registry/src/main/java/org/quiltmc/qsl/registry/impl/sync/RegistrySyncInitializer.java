@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import net.minecraft.registry.RegistryKeys;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.Registries;
@@ -25,6 +26,8 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationConnectionEvents;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
+import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
@@ -40,14 +43,12 @@ public class RegistrySyncInitializer implements ModInitializer {
 		SynchronizedRegistry.markForSync(
 			Registries.BLOCK,
 			Registries.BLOCK_ENTITY_TYPE,
-			Registries.CAT_VARIANT,
 			Registries.COMMAND_ARGUMENT_TYPE,
 			Registries.CUSTOM_STAT,
 			Registries.DATA_COMPONENT_TYPE,
 			Registries.ENTITY_ATTRIBUTE,
 			Registries.ENTITY_TYPE,
 			Registries.FLUID,
-			Registries.FROG_VARIANT,
 			Registries.GAME_EVENT,
 			Registries.ITEM,
 			Registries.NUMBER_FORMAT_TYPE,
@@ -63,6 +64,8 @@ public class RegistrySyncInitializer implements ModInitializer {
 			Registries.VILLAGER_TYPE,
 			Registries.VILLAGER_PROFESSION
 		);
+
+		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(this::markDynamicRegistriesForSync);
 
 		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
 			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
@@ -85,5 +88,14 @@ public class RegistrySyncInitializer implements ModInitializer {
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.UnknownEntry.ID, ClientPackets.UnknownEntry.CODEC);
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.ModProtocol.ID, ClientPackets.ModProtocol.CODEC);
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.End.ID, ClientPackets.End.CODEC);
+	}
+
+	private void markDynamicRegistriesForSync(DynamicRegistryManagerSetupContext event) {
+		var registryManager = event.registryManager();
+
+		SynchronizedRegistry.markForSync(
+			registryManager.getLookupOrThrow(RegistryKeys.CAT_VARIANT),
+			registryManager.getLookupOrThrow(RegistryKeys.FROG_VARIANT)
+		);
 	}
 }

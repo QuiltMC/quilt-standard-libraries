@@ -183,7 +183,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
 		var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
-		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
+		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {

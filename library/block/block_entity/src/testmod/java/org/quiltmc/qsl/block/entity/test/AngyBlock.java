@@ -18,7 +18,6 @@ package org.quiltmc.qsl.block.entity.test;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
-import net.minecraft.unmapped.C_vhpmxtfv;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.entity.BlockEntity;

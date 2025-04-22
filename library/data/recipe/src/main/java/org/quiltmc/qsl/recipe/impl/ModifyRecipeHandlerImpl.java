@@ -48,12 +48,12 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 		}
 
 		type.add(recipeHolder);
-		this.globalRecipes.put(recipeHolder.id(), recipeHolder);
+		this.globalRecipes.put(recipeHolder.id().getValue(), recipeHolder);
 	}
 
 	@Override
 	public void replace(RecipeHolder<?> recipeHolder) {
-		RecipeType<?> oldType = this.getTypeOf(recipeHolder.id());
+		RecipeType<?> oldType = this.getTypeOf(recipeHolder.id().getValue());
 
 		if (oldType == null) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
@@ -67,7 +67,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 			}
 
 			this.recipes.get(oldType).add(recipeHolder);
-			this.globalRecipes.put(recipeHolder.id(), recipeHolder);
+			this.globalRecipes.put(recipeHolder.id().getValue(), recipeHolder);
 		} else {
 			if (RecipeManagerImpl.DEBUG_MODE) {
 				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.", recipeHolder.id(), recipeHolder.value().getType(), oldType);
