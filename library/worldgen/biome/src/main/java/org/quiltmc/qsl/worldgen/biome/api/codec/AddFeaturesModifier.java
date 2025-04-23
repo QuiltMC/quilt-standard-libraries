@@ -49,7 +49,7 @@ public record AddFeaturesModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_features");
 	public static final Codec<AddFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddFeaturesModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(AddFeaturesModifier::features),
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(AddFeaturesModifier::features),
 			GenerationStep.Feature.CODEC.fieldOf("step").forGetter(AddFeaturesModifier::step)
 	).apply(instance, AddFeaturesModifier::new));
 

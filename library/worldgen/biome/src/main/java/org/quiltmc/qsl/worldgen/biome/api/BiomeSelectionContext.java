@@ -59,7 +59,7 @@ public interface BiomeSelectionContext {
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (featureSupplier.value().getDecoratedFeatures().anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)) {
+				if (featureSupplier.getValue().getDecoratedFeatures().anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)) {
 					return true;
 				}
 			}
@@ -76,7 +76,7 @@ public interface BiomeSelectionContext {
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (this.getPlacedFeatureKey(featureSupplier.value()).orElse(null) == key) {
+				if (this.getPlacedFeatureKey(featureSupplier.getValue()).orElse(null) == key) {
 					return true;
 				}
 			}

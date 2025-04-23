@@ -39,19 +39,16 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * <p>
  * The biome modifier identifier is {@code quilt:remove_carvers}.
  *
- * @param steps   the carver generation steps to remove the carvers from
  * @param carvers registry keys for the carvers to remove
  */
 public record RemoveCarversModifier(
 		CodecAwarePredicate<BiomeSelectionContext> selector,
-		List<RegistryKey<ConfiguredCarver<?>>> carvers,
-		List<GenerationStep.Carver> steps
+		List<RegistryKey<ConfiguredCarver<?>>> carvers
 ) implements BiomeModifier {
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_carvers");
 	public static final Codec<RemoveCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveCarversModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(RemoveCarversModifier::carvers),
-			CodecHelpers.listOrValue(GenerationStep.Carver.CODEC).optionalFieldOf("steps", Arrays.asList(GenerationStep.Carver.values())).forGetter(RemoveCarversModifier::steps)
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(RemoveCarversModifier::carvers)
 	).apply(instance, RemoveCarversModifier::new));
 
 	@Override
@@ -62,9 +59,7 @@ public record RemoveCarversModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		for (var carver : this.carvers) {
-			for (var step : this.steps) {
-				modificationContext.getGenerationSettings().removeCarver(step, carver);
-			}
+			modificationContext.getGenerationSettings().removeCarver(carver);
 		}
 	}
 

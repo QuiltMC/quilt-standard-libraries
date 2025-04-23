@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import net.minecraft.unmapped.C_zugbgokk;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +47,7 @@ public abstract class CreateWorldScreenMixin {
 		method = "method_64245",
 		at = @At("HEAD")
 	)
-	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
+	private static void onEndDataPackLoadOnOpen(@Coerce Object something, AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
 												LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
 			resourceManager, layeredRegistryManager.getCompositeManager(), Optional.empty()

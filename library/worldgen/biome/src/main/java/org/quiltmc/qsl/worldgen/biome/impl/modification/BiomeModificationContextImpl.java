@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.util.collection.WeightedEntry;
+import net.minecraft.util.collection.WeightedList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +50,6 @@ import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.collection.Pool;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeParticleConfig;
@@ -126,7 +127,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		if (entry == null) {
 			// Entry is missing. Check if it exists in the built-in registries and warn modders
 			// about the world-gen changing to JSON-only.
-			Registry<T> builtInRegistry = BUILTIN_REGISTRIES.get().get(registry.getKey());
+			Registry<T> builtInRegistry = BUILTIN_REGISTRIES.get().getLookupOrThrow(registry.getKey());
 
 			if (builtInRegistry.contains(key)) {
 				throw new IllegalArgumentException("Entry " + key + " only exists in the built-in registry "
@@ -226,13 +227,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void setMusic(Optional<MusicSound> sound) {
-			this.effects.music = Objects.requireNonNull(sound);
+			this.effects.music = Objects.requireNonNull(sound.map(WeightedList::of));
 		}
 	}
 
 	private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-		private final Registry<ConfiguredCarver<?>> carvers = BiomeModificationContextImpl.this.registries.get(RegistryKeys.CONFIGURED_CARVER);
-		private final Registry<PlacedFeature> features = BiomeModificationContextImpl.this.registries.get(RegistryKeys.PLACED_FEATURE);
+		private final Registry<ConfiguredCarver<?>> carvers = BiomeModificationContextImpl.this.registries.getLookupOrThrow(RegistryKeys.CONFIGURED_CARVER);
+		private final Registry<PlacedFeature> features = BiomeModificationContextImpl.this.registries.getLookupOrThrow(RegistryKeys.PLACED_FEATURE);
 		private final GenerationSettings generationSettings = BiomeModificationContextImpl.this.biome.getGenerationSettings();
 
 		private boolean rebuildFlowerFeatures;
@@ -242,17 +243,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		 * possible step if they're dense lists.
 		 */
 		GenerationSettingsContextImpl() {
-			this.unfreezeCarvers();
 			this.unfreezeFeatures();
 
 			this.rebuildFlowerFeatures = false;
-		}
-
-		private void unfreezeCarvers() {
-			var carversByStep = new EnumMap<GenerationStep.Carver, HolderSet<ConfiguredCarver<?>>>(GenerationStep.Carver.class);
-			carversByStep.putAll(this.generationSettings.carvers);
-
-			this.generationSettings.carvers = carversByStep;
 		}
 
 		private void unfreezeFeatures() {
@@ -263,7 +256,6 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		 * Re-freeze the lists in the generation settings to immutable variants, also fixes the flower features.
 		 */
 		public void freeze() {
-			this.freezeCarvers();
 			this.freezeFeatures();
 
 			if (this.rebuildFlowerFeatures) {
@@ -271,16 +263,12 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			}
 		}
 
-		private void freezeCarvers() {
-			this.generationSettings.carvers = ImmutableMap.copyOf(this.generationSettings.carvers);
-		}
-
 		private void freezeFeatures() {
 			this.generationSettings.features = ImmutableList.copyOf(this.generationSettings.features);
 			// Replace the supplier to force a rebuild next time its called.
 			this.generationSettings.allowedFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
 					.flatMap(HolderSet::stream)
-					.map(Holder::value)
+					.map(Holder::getValue)
 					.collect(Collectors.toSet()));
 		}
 
@@ -288,7 +276,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			// Replace the supplier to force a rebuild next time its called.
 			this.generationSettings.flowerFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
 					.flatMap(HolderSet::stream)
-					.map(Holder::value)
+					.map(Holder::getValue)
 					.flatMap(PlacedFeature::getDecoratedFeatures)
 					.filter((configuredFeature) -> configuredFeature.getFeature() == Feature.FLOWER)
 					.collect(ImmutableList.toImmutableList()));
@@ -296,7 +284,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public boolean removeFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey) {
-			PlacedFeature placedFeature = getHolder(this.features, placedFeatureKey).value();
+			PlacedFeature placedFeature = getHolder(this.features, placedFeatureKey).getValue();
 
 			int stepIndex = step.ordinal();
 			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
@@ -308,7 +296,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			HolderSet<PlacedFeature> featuresInStep = featureSteps.get(stepIndex);
 			List<Holder<PlacedFeature>> features = new ArrayList<>(featuresInStep.stream().toList());
 
-			if (features.removeIf(feature -> feature.value() == placedFeature)) {
+			if (features.removeIf(feature -> feature.getValue() == placedFeature)) {
 				featureSteps.set(stepIndex, HolderSet.createDirect(features));
 				this.rebuildFlowerFeatures = true;
 
@@ -335,28 +323,19 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		@Override
-		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
+		public void addCarver(RegistryKey<ConfiguredCarver<?>> entry) {
 			// We do not need to delay evaluation of this since the registries are already fully built.
-			var oldCarvers = this.generationSettings.carvers.get(step);
-			var newCarvers = oldCarvers == null
-					? HolderSet.createDirect(Collections.singletonList(getHolder(this.carvers, entry)))
-					: this.plus(oldCarvers, getHolder(this.carvers, entry));
-			this.generationSettings.carvers.put(step, newCarvers);
+			this.generationSettings.carvers = this.plus(this.generationSettings.carvers, getHolder(this.carvers, entry));
 		}
 
 		@Override
-		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
-			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).value();
-			var oldCarvers = this.generationSettings.carvers.get(step);
+		public boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
+			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).getValue();
 
-			if (oldCarvers == null) {
-				return false;
-			}
+			var genCarvers = new ArrayList<>(this.generationSettings.carvers.stream().toList());
 
-			var genCarvers = new ArrayList<>(oldCarvers.stream().toList());
-
-			if (genCarvers.removeIf(entry -> entry.value() == carver)) {
-				this.generationSettings.carvers.put(step, HolderSet.createDirect(genCarvers));
+			if (genCarvers.removeIf(entry -> entry.getValue() == carver)) {
+				this.generationSettings.carvers = HolderSet.createDirect(genCarvers);
 				return true;
 			}
 
@@ -372,7 +351,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 	private class SpawnSettingsContextImpl implements SpawnSettingsContext {
 		private final SpawnSettings spawnSettings = BiomeModificationContextImpl.this.biome.getSpawnSettings();
-		private final EnumMap<SpawnGroup, List<SpawnSettings.SpawnEntry>> quiltSpawners = new EnumMap<>(SpawnGroup.class);
+		private final EnumMap<SpawnGroup, List<WeightedEntry<SpawnSettings.SpawnEntry>>> quiltSpawners = new EnumMap<>(SpawnGroup.class);
 
 		SpawnSettingsContextImpl() {
 			this.unfreezeSpawners();
@@ -383,7 +362,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			this.quiltSpawners.clear();
 
 			for (SpawnGroup spawnGroup : SpawnGroup.values()) {
-				Pool<SpawnSettings.SpawnEntry> entries = this.spawnSettings.spawners.get(spawnGroup);
+				WeightedList<SpawnSettings.SpawnEntry> entries = this.spawnSettings.spawners.get(spawnGroup);
 
 				if (entries != null) {
 					this.quiltSpawners.put(spawnGroup, new ArrayList<>(entries.getEntries()));
@@ -403,13 +382,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void freezeSpawners() {
-			Map<SpawnGroup, Pool<SpawnSettings.SpawnEntry>> spawners = new HashMap<>(this.spawnSettings.spawners);
+			Map<SpawnGroup, WeightedList<SpawnSettings.SpawnEntry>> spawners = new HashMap<>(this.spawnSettings.spawners);
 
-			for (Map.Entry<SpawnGroup, List<SpawnSettings.SpawnEntry>> entry : this.quiltSpawners.entrySet()) {
+			for (var entry : this.quiltSpawners.entrySet()) {
 				if (entry.getValue().isEmpty()) {
-					spawners.put(entry.getKey(), Pool.empty());
+					spawners.put(entry.getKey(), WeightedList.empty());
 				} else {
-					spawners.put(entry.getKey(), Pool.of(entry.getValue()));
+					spawners.put(entry.getKey(), WeightedList.of(entry.getValue()));
 				}
 			}
 
@@ -426,11 +405,11 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		@Override
-		public void addSpawn(SpawnGroup spawnGroup, SpawnSettings.SpawnEntry spawnEntry) {
+		public void addSpawn(SpawnGroup spawnGroup, SpawnSettings.SpawnEntry spawnEntry, int weight) {
 			Objects.requireNonNull(spawnGroup);
 			Objects.requireNonNull(spawnEntry);
 
-			this.quiltSpawners.get(spawnGroup).add(spawnEntry);
+			this.quiltSpawners.get(spawnGroup).add(new WeightedEntry<>(spawnEntry, weight));
 		}
 
 		@Override
@@ -438,7 +417,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			boolean anyRemoved = false;
 
 			for (SpawnGroup group : SpawnGroup.values()) {
-				if (this.quiltSpawners.get(group).removeIf(entry -> predicate.test(group, entry))) {
+				if (this.quiltSpawners.get(group).removeIf(entry -> predicate.test(group, entry.value()))) {
 					anyRemoved = true;
 				}
 			}

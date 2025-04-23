@@ -172,7 +172,7 @@ public class BiomeModificationImpl {
 		var modificationTracker = (BiomeModificationMarker) impl;
 		modificationTracker.quilt$markModified();
 
-		Registry<Biome> biomes = impl.get(RegistryKeys.BIOME);
+		Registry<Biome> biomes = impl.getLookupOrThrow(RegistryKeys.BIOME);
 
 		// Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
 		// someone does something stupid.

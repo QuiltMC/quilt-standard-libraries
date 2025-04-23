@@ -68,7 +68,7 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	 */
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void modifyCodec(CallbackInfo ci) {
-		CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME))
+		CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(RegistryOps.createRegistryVerifier(RegistryKeys.BIOME))
 			.apply(instance, instance.stable(TheEndBiomeSource::create)));
 	}
 

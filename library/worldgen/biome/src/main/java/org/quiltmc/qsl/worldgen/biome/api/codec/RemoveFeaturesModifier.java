@@ -50,7 +50,7 @@ public record RemoveFeaturesModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveFeaturesModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),
 			CodecHelpers.listOrValue(GenerationStep.Feature.CODEC).optionalFieldOf("steps", Arrays.asList(GenerationStep.Feature.values())).forGetter(RemoveFeaturesModifier::steps)
 	).apply(instance, RemoveFeaturesModifier::new));
 

@@ -63,7 +63,7 @@ public record RemoveSpawnersModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		modificationContext.getSpawnSettings().removeSpawns((group, entry) ->
-				this.groups.contains(group) && this.entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type)));
+				this.groups.contains(group) && this.entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type())));
 	}
 
 	@Override

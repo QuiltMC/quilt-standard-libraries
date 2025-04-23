@@ -49,7 +49,7 @@ public record AddSpawnersModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_spawners");
 	public static final Codec<AddSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddSpawnersModifier::selector),
-			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
+			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC.codec()).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
 			SpawnGroup.CODEC.optionalFieldOf("group").forGetter(AddSpawnersModifier::group)
 	).apply(instance, AddSpawnersModifier::new));
 
@@ -61,7 +61,7 @@ public record AddSpawnersModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		for (SpawnSettings.SpawnEntry spawner : this.spawners) {
-			modificationContext.getSpawnSettings().addSpawn(this.group.orElseGet(spawner.type::getSpawnGroup), spawner);
+			modificationContext.getSpawnSettings().addSpawn(this.group.orElseGet(spawner.type()::getSpawnGroup), spawner);
 		}
 	}
 

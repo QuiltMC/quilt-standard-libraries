@@ -38,19 +38,16 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * <p>
  * The biome modifier identifier is {@code quilt:add_carvers}.
  *
- * @param step    the carver generation step to add the carvers to
  * @param carvers registry keys for the carvers to add
  */
 public record AddCarversModifier(
 		CodecAwarePredicate<BiomeSelectionContext> selector,
-		List<RegistryKey<ConfiguredCarver<?>>> carvers,
-		GenerationStep.Carver step
+		List<RegistryKey<ConfiguredCarver<?>>> carvers
 ) implements BiomeModifier {
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_carvers");
 	public static final Codec<AddCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddCarversModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(AddCarversModifier::carvers),
-			GenerationStep.Carver.CODEC.fieldOf("step").forGetter(AddCarversModifier::step)
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(AddCarversModifier::carvers)
 	).apply(instance, AddCarversModifier::new));
 
 	@Override
@@ -61,7 +58,7 @@ public record AddCarversModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		for (var carver : this.carvers) {
-			modificationContext.getGenerationSettings().addCarver(this.step, carver);
+			modificationContext.getGenerationSettings().addCarver(carver);
 		}
 	}
 
