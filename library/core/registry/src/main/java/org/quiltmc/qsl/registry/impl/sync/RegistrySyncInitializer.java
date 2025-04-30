@@ -26,8 +26,6 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationConnectionEvents;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
-import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
@@ -65,8 +63,6 @@ public class RegistrySyncInitializer implements ModInitializer {
 			Registries.VILLAGER_PROFESSION
 		);
 
-		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(this::markDynamicRegistriesForSync);
-
 		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
 			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
 		});
@@ -88,14 +84,5 @@ public class RegistrySyncInitializer implements ModInitializer {
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.UnknownEntry.ID, ClientPackets.UnknownEntry.CODEC);
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.ModProtocol.ID, ClientPackets.ModProtocol.CODEC);
 		PayloadTypeRegistry.configurationC2S().register(ClientPackets.End.ID, ClientPackets.End.CODEC);
-	}
-
-	private void markDynamicRegistriesForSync(DynamicRegistryManagerSetupContext event) {
-		var registryManager = event.registryManager();
-
-		SynchronizedRegistry.markForSync(
-			registryManager.getLookupOrThrow(RegistryKeys.CAT_VARIANT),
-			registryManager.getLookupOrThrow(RegistryKeys.FROG_VARIANT)
-		);
 	}
 }

@@ -62,7 +62,6 @@ import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
-import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -272,8 +271,6 @@ public final class ClientRegistrySync {
 			rebuildBlocks(client);
 		} else if (reg == Registries.FLUID) {
 			rebuildFluidStates();
-		} else if (reg == Registries.ITEM) {
-			rebuildItems(client);
 		} else if (reg == Registries.PARTICLE_TYPE) {
 			rebuildParticles(client);
 		}
@@ -329,16 +326,6 @@ public final class ClientRegistrySync {
 		syncMap = null;
 	}
 
-	private static void rebuildItems(MinecraftClient client) {
-		var models = client.getItemRenderer().getModels();
-
-		((RebuildableIdModelHolder) models).quilt$rebuildIds();
-		models.reloadModels();
-
-		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getColors();
-		((RebuildableIdModelHolder) itemColors).quilt$rebuildIds();
-	}
-
 	private static void rebuildParticles(MinecraftClient client) {
 		((RebuildableIdModelHolder) client.particleManager).quilt$rebuildIds();
 	}
@@ -364,7 +351,6 @@ public final class ClientRegistrySync {
 	public static void rebuildEverything(MinecraftClient client) {
 		rebuildBlocks(client);
 		rebuildFluidStates();
-		rebuildItems(client);
 		rebuildParticles(client);
 	}
 
@@ -413,10 +399,12 @@ public final class ClientRegistrySync {
 
 	private static void handleRestorePacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.RegistryRestore restore, PacketSender<CustomPayload> sender) {
 		restoreSnapshot(client);
+		System.out.println("handle restore packet called!");
 		createSnapshot();
 	}
 
 	public static void createSnapshot() {
+		System.out.println("create snapshot called!");
 		for (var reg : Registries.ROOT) {
 			if (reg instanceof SynchronizedRegistry<?> registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$createIdSnapshot();
