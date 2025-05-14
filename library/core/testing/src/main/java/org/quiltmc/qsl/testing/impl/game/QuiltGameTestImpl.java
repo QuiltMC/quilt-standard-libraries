@@ -21,29 +21,25 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.minecraft.registry.*;
+import net.minecraft.test.*;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.pack.PackManager;
-import net.minecraft.test.GameTest;
-import net.minecraft.test.StructureTestUtil;
-import net.minecraft.test.TestContext;
-import net.minecraft.test.TestFailureLogger;
-import net.minecraft.test.TestFunction;
-import net.minecraft.test.TestFunctions;
-import net.minecraft.test.TestServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.storage.WorldSaveStorage;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -62,6 +58,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	public static final boolean ENABLED = TriState.fromProperty("quilt.game_test").toBooleanOrElse(false);
 	public static final boolean COMMAND_ENABLED = TriState.fromProperty("quilt.game_test.command").toBooleanOrElse(ENABLED);
 	private static final Map<Class<?>, GameTestData> GAME_TESTS = new Reference2ObjectOpenHashMap<>();
+	public static final Map<Identifier, QuiltTestInstance> QUILT_TESTS = new HashMap<>();
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	/**
@@ -75,7 +72,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		LOGGER.info("By starting a Minecraft server you agree to its EULA.");
 
 		try (var server = TestServer.startServer(
-				thread -> TestServer.create(thread, storageSession, resourcePackManager, getTestFunctions(), BlockPos.ORIGIN)
+				thread -> TestServer.create(thread, storageSession, resourcePackManager, Optional.empty(), false)
 		)) {
 			// Server runs.
 			server.getThread().join();
@@ -84,12 +81,12 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 	}
 
-	private static Collection<TestFunction> getTestFunctions() {
-		return TestFunctions.getTestFunctions();
-	}
-
 	public static GameTestData getDataForTestClass(Class<?> declaringClass) {
 		return GAME_TESTS.get(declaringClass);
+	}
+
+	public static QuiltTestInstance getQuiltTest(Identifier id) {
+		return QUILT_TESTS.get(id);
 	}
 
 	/**
@@ -98,7 +95,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @param method the method that executes the test
 	 * @return the test function
 	 */
-	public static @NotNull TestFunction getTestFunction(@NotNull Method method) {
+	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, Identifier id) {
 		var data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
 		var gameTest = method.getAnnotation(GameTest.class);
@@ -116,19 +113,21 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		return new QuiltTestFunction(
-				gameTest.batchId(),
-				testCaseName,
-				structureName,
-				StructureTestUtil.getRotation(gameTest.rotation()),
-				gameTest.timeout(),
-				gameTest.startDelay(),
-				gameTest.required(),
-				gameTest.method_57962(),
-				gameTest.requiredSuccesses(),
-				gameTest.maxAttempts(),
-				gameTest.method_57098(),
+		return new QuiltTestInstance(
+				new TestData<>(
+					Holder.createDirect(new TestEnvironmentDefinition.AllOf(List.of())),
+					Identifier.parse(structureName),
+					gameTest.timeout(),
+					(int) gameTest.startDelay(),
+					gameTest.required(),
+					gameTest.rotation(),
+					gameTest.manualOnly(),
+					gameTest.maxAttempts(),
+					gameTest.requiredSuccesses(),
+					gameTest.skyAccess()
+				),
 				QuiltGameTestImpl.getTestMethodInvoker(data, method),
+				id,
 				method.getDeclaringClass()
 		);
 	}
@@ -201,7 +200,12 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 
 		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
-		TestFunctions.register(testClass);
+		Stream.of(testClass.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(method -> {
+			var methodName = method.getName().toLowerCase(Locale.ROOT);
+			var test = QuiltGameTestImpl.getTestFunction(method, Identifier.of(modId, methodName));
+
+			QUILT_TESTS.put(test.id(), test);
+		});
 
 		LOGGER.debug("Registered test class {} for mod {}", testClass.getCanonicalName(), modId);
 
@@ -226,11 +230,19 @@ public final class QuiltGameTestImpl implements ModInitializer {
 				QuiltGameTest.ENTRYPOINT_KEY, Object.class
 		);
 
+		Registry.register(Registries.TEST_INSTANCE_TYPE, Identifier.of("quilt", "test_instance"), QuiltTestInstance.CODEC);
+
 		for (var container : entrypointContainers) {
 			var entrypoint = container.getEntrypoint();
 			Class<?> testClass = entrypoint.getClass();
 
 			registerTestClass(container.getProvider(), testClass, entrypoint instanceof QuiltGameTest gameTest ? gameTest : null);
 		}
+
+		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(event -> {
+			for (var quiltTest : QUILT_TESTS.values()) {
+				event.register(RegistryKeys.TEST_INSTANCE, quiltTest.id(), () -> quiltTest);
+			}
+		});
 	}
 }

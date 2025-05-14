@@ -21,7 +21,7 @@ package org.quiltmc.qsl.testing.api.game;
  */
 public interface QuiltGameTest {
 	/**
-	 * Use in {@link net.minecraft.test.GameTest} structureName to use an empty 8x8 structure for the test.
+	 * Use in {@link org.quiltmc.qsl.testing.api.game.annotation.GameTest} structureName to use an empty 8x8 structure for the test.
 	 */
 	String EMPTY_STRUCTURE = "quilt:empty";
 

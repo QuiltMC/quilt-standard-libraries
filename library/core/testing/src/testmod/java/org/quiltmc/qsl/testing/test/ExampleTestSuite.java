@@ -18,12 +18,13 @@
 package org.quiltmc.qsl.testing.test;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.test.GameTest;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 import org.quiltmc.qsl.testing.api.game.TestStructureNamePrefix;
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 
 @TestStructureNamePrefix("quilt:")
 public class ExampleTestSuite implements QuiltGameTest {
@@ -35,7 +36,7 @@ public class ExampleTestSuite implements QuiltGameTest {
 				context.checkBlock(
 					new BlockPos(0, 2, 0),
 					(block) -> block == Blocks.DIAMOND_BLOCK,
-					"Expected block to be diamond"
+					(block) -> Text.literal("Expected block to be diamond")
 				)
 		);
 	}

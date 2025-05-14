@@ -12,6 +12,7 @@ qslModule {
 			api("qsl_base")
 			api("lifecycle_events")
 			api("registry")
+			impl("resource_loader")
 		}
 		management {
 			testmodOnly("command")

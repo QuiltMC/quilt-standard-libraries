@@ -41,7 +41,7 @@ public final class QuiltTestCommand {
 	public static int executeExport(ServerCommandSource source) {
 		BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
 		ServerWorld world = source.getWorld();
-		BlockPos nearestStructureBlockPos = StructureTestUtil.findNearestStructureBlock(currentPos, 15, world).orElse(null);
+		BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
 
 		if (nearestStructureBlockPos == null) {
 			source.sendError(Text.literal("Couldn't find any structure block within 15 blocks radius."));
@@ -53,10 +53,10 @@ public final class QuiltTestCommand {
 	}
 
 	public static int executeExport(ServerCommandSource source, String structure) {
-		Path directoryPath = Paths.get(StructureTestUtil.testStructuresDirectoryName);
+		Path directoryPath = StructureTestUtil.testStructuresDirectoryName;
 		var structureId = Identifier.parse(structure);
 
-		Path structurePath = source.getWorld().getStructureTemplateManager().method_15085(structureId, ".nbt");
+		Path structurePath = source.getWorld().getStructureTemplateManager().exportStructure(structureId, ".nbt");
 		Path exportedPath = NbtProvider.convertNbtToSnbt(DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath);
 
 		if (exportedPath == null) {
@@ -79,8 +79,8 @@ public final class QuiltTestCommand {
 					.append(" [")
 					.append(Text.literal("Open Directory")
 							.styled(style -> style.withColor(Formatting.GREEN)
-									.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, directoryPath.toAbsolutePath().toString()))
-									.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to open.")))
+									.withClickEvent(new ClickEvent.C_hlzhmnqc(directoryPath.toAbsolutePath().toString()))
+									.withHoverEvent(new HoverEvent.C_ildyfwon(Text.literal("Click to open.")))
 							)
 					)
 					.append("]")

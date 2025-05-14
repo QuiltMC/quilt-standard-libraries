@@ -46,7 +46,7 @@ public abstract class CommandManagerMixin {
 	private void construct(CommandManager.RegistrationEnvironment environment, CommandBuildContext context, CallbackInfo info) {
 		// Registered by vanilla when isDevelopment is enabled.
 		if (!SharedConstants.isDevelopment && QuiltGameTestImpl.COMMAND_ENABLED) {
-			TestCommand.register(this.dispatcher);
+			TestCommand.register(this.dispatcher, context);
 		}
 	}
 }
