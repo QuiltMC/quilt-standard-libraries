@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.test;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -54,7 +54,7 @@ public class DispatchedAttachmentTest implements ModInitializer,
 		}
 
 		@Override
-		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		public ActionResult use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient()) {
 				ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.get(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
@@ -62,7 +62,7 @@ public class DispatchedAttachmentTest implements ModInitializer,
 								.formatted(Formatting.RED), true));
 			}
 
-			return TypedActionResult.pass(user.getStackInHand(hand));
+			return ActionResult.PASS;
 		}
 	}
 

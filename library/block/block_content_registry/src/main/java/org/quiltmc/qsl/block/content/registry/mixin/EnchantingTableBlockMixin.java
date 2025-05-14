@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.block.content.registry.mixin;
 
+import net.minecraft.block.EnchantingTableBlock;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.unmapped.C_dicxqeuf;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 
-@Mixin(C_dicxqeuf.class)
+@Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
 	@Dynamic("method_40445: isValidForBookshelf")
 	@Inject(method = "method_40445", at = @At("HEAD"), cancellable = true)

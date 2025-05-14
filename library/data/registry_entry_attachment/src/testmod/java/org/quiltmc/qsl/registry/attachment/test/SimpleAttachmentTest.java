@@ -18,12 +18,11 @@ package org.quiltmc.qsl.registry.attachment.test;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -54,7 +53,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 		}
 
 		@Override
-		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		public ActionResult use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
 				int one = TEST_ATTACHMENT.get(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTACHMENT + " not set via datapack!"));
@@ -63,7 +62,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}
 
-			return TypedActionResult.pass(user.getStackInHand(hand));
+			return ActionResult.PASS;
 		}
 	}
 }
