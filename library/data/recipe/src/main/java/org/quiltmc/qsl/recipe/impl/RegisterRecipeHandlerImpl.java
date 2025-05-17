@@ -54,7 +54,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	private void register(RecipeHolder<?> recipeHolder) {
 		Recipe<?> recipe = recipeHolder.value();
 		this.builderMap.put(recipeHolder.value().getType(), recipeHolder);
-		this.globalRecipeMapBuilder.put(recipeHolder.id(), recipeHolder);
+		this.globalRecipeMapBuilder.put(recipeHolder.id().getValue(), recipeHolder);
 		this.registered++;
 
 		if (RecipeManagerImpl.DEBUG_MODE) {
@@ -63,7 +63,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	}
 
 	void tryRegister(RecipeHolder<?> recipeHolder) {
-		if (!this.resourceMap.containsKey(recipeHolder.id())) {
+		if (!this.resourceMap.containsKey(recipeHolder.id().getValue())) {
 			this.register(recipeHolder);
 		}
 	}
@@ -74,7 +74,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 		if (!this.resourceMap.containsKey(id)) {
 			var recipeHolder = factory.apply(id);
 
-			if (!id.equals(recipeHolder.id())) {
+			if (!id.equals(recipeHolder.id().getValue())) {
 				throw new IllegalStateException("The recipe " + recipeHolder.id() + " tried to be registered as " + id);
 			}
 

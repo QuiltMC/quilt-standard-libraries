@@ -18,7 +18,8 @@ package org.quiltmc.qsl.recipe.impl;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
-import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.ItemStack;
@@ -33,19 +34,17 @@ import net.minecraft.recipe.StonecuttingRecipe;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.util.List;
+import java.util.Optional;
+
 @ApiStatus.Internal
 public final class VanillaRecipeBuildersImpl {
 	private VanillaRecipeBuildersImpl() {
 		throw new UnsupportedOperationException("VanillaRecipeBuildersImpl only contains static definitions.");
 	}
 
-	// FIXME:
-	// 	- Ingredient.EMPTY no longer exists
-	//  - Ingredients should be returned as List<Optional<Ingredient>>
-	//  placing
-
-	public static DefaultedList<Ingredient> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
-		DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(width * height, Ingredient.EMPTY);
+	public static List<Optional<Ingredient>> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
+		List<Optional<Ingredient>> ingredients = DefaultedList.ofSize(width * height, Optional.empty());
 		var unusedKeys = new CharArraySet(keys.keySet());
 		unusedKeys.remove(' ');
 
@@ -59,7 +58,7 @@ public final class VanillaRecipeBuildersImpl {
 				}
 
 				unusedKeys.remove(key);
-				ingredients.set(j + width * i, ingredient);
+				ingredients.set(j + width * i, Optional.of(ingredient));
 			}
 		}
 
@@ -71,37 +70,31 @@ public final class VanillaRecipeBuildersImpl {
 	}
 
 	public static RecipeHolder<StonecuttingRecipe> stonecuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
-
-		return new RecipeHolder<>(id, new StonecuttingRecipe(group, input, output));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new StonecuttingRecipe(group, input, output));
 	}
 
 	public static RecipeHolder<SmeltingRecipe> smeltingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new RecipeHolder<>(id, new SmeltingRecipe(group, category, input, output, experience, cookTime));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new SmeltingRecipe(group, category, input, output, experience, cookTime));
 	}
 
 	public static RecipeHolder<BlastingRecipe> blastingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new RecipeHolder<>(id, new BlastingRecipe(group, category, input, output, experience, cookTime));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new BlastingRecipe(group, category, input, output, experience, cookTime));
 	}
 
 	public static RecipeHolder<SmokingRecipe> smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new RecipeHolder<>(id, new SmokingRecipe(group, category, input, output, experience, cookTime));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new SmokingRecipe(group, category, input, output, experience, cookTime));
 	}
 
 	public static RecipeHolder<CampfireCookingRecipe> campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new RecipeHolder<>(id, new CampfireCookingRecipe(group, category, input, output, experience, cookTime));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new CampfireCookingRecipe(group, category, input, output, experience, cookTime));
 	}
 }
