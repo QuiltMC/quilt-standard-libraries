@@ -23,6 +23,8 @@ import net.fabricmc.api.EnvType;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerConfigurationNetworkHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.packet.Packet;
@@ -49,8 +51,15 @@ import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
 public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServerModInitializer, ClientModInitializer {
 	private static final CustomPayload.Id<TestPayload> PACKET_ID = new CustomPayload.Id<>(Identifier.of("quilt", "reg_sync_order_packet"));
 	private static final PacketCodec<PacketByteBuf, TestPayload> PACKET_CODEC = CustomPayload.create(TestPayload::write, TestPayload::new);
-	public static Item ITEM_A = new Item(new Item.Settings());
-	public static Item ITEM_B = new Item(new Item.Settings());
+
+	private static RegistryKey<Item> ITEM_A_KEY =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_a"));
+	private static RegistryKey<Item> ITEM_B_KEY =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_b"));
+
+	public static Item ITEM_A = new Item(new Item.Settings().key(ITEM_A_KEY));
+	public static Item ITEM_B = new Item(new Item.Settings().key(ITEM_B_KEY));
+
 	private static final Identifier EARLY_PHASE = Identifier.of("quilt", "reg_sync_order_early");
 
 	record TestPayload(boolean early, int a, int b) implements CustomPayload {
@@ -73,11 +82,11 @@ public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServer
 	@Override
 	public void onInitialize(ModContainer mod) {
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
-			Registry.register(Registries.ITEM, Identifier.of("quilt", "reg_sync_order_a"), ITEM_A);
-			Registry.register(Registries.ITEM, Identifier.of("quilt", "reg_sync_order_b"), ITEM_B);
+			Registry.register(Registries.ITEM, ITEM_A_KEY.getValue(), ITEM_A);
+			Registry.register(Registries.ITEM, ITEM_B_KEY.getValue(), ITEM_B);
 		} else {
-			Registry.register(Registries.ITEM, Identifier.of("quilt", "reg_sync_order_b"), ITEM_B);
-			Registry.register(Registries.ITEM, Identifier.of("quilt", "reg_sync_order_a"), ITEM_A);
+			Registry.register(Registries.ITEM, ITEM_B_KEY.getValue(), ITEM_B);
+			Registry.register(Registries.ITEM, ITEM_A_KEY.getValue(), ITEM_A);
 		}
 
 		PayloadTypeRegistry.configurationS2C().register(PACKET_ID, PACKET_CODEC);
