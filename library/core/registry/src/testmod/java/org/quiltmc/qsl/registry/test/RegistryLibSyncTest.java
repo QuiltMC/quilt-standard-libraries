@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 
@@ -118,11 +119,16 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
-		var id = Identifier.of(NAMESPACE, "entry_" + i);
-		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK));
+		final Identifier id = Identifier.of(NAMESPACE, "entry_" + i);
+        final Block block = new Block(
+			AbstractBlock.Settings.copy(Blocks.STONE)
+				.mapColor(MapColor.BLACK)
+				.key(RegistryKey.of(RegistryKeys.BLOCK, id))
+		);
+		final BlockItem item = new BlockItem(block, new Item.Settings().key(RegistryKey.of(RegistryKeys.ITEM, id)));
 
 		Registry.register(Registries.BLOCK, id, block);
-		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
+		Registry.register(Registries.ITEM, id, item);
 		RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, id);
 		return id;
 	}
