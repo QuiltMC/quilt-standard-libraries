@@ -102,7 +102,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Override
-	public Collection<CustomPayload.Id<?>> getPendingChannelsNames(NetworkPhase state) {
+	public Collection<CustomPayload.Id<?>> quilt$getPendingChannelsNames(NetworkPhase state) {
 		return this.playChannels.computeIfAbsent(state, (s) -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
 	}
 }

@@ -78,7 +78,7 @@ public final class NetworkingImpl {
 			ids.add(new CustomPayload.Id<>(buf.readIdentifier()));
 		}
 
-		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames(NetworkPhase.LOGIN).addAll(ids);
+		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).quilt$getPendingChannelsNames(NetworkPhase.LOGIN).addAll(ids);
 		NetworkingImpl.LOGGER.debug("Received accepted channels from the client for \"{}\"", handler.getConnectionInfo());
 	}
 }

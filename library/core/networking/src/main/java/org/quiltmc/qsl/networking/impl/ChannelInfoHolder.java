@@ -28,5 +28,5 @@ public interface ChannelInfoHolder {
 	/**
 	 * @return Channels which are declared as receivable by the other side but have not been declared yet.
 	 */
-	Collection<CustomPayload.Id<?>> getPendingChannelsNames(NetworkPhase state);
+	Collection<CustomPayload.Id<?>> quilt$getPendingChannelsNames(NetworkPhase state);
 }

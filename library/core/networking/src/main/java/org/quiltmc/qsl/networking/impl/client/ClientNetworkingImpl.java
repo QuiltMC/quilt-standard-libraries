@@ -159,7 +159,7 @@ public final class ClientNetworkingImpl {
 				throw new IllegalStateException("Negotiated common packet version: %d but received packet with version: %d".formatted(addon.getNegotiatedVersion(), payload.version()));
 			}
 
-			addon.getChannelInfoHolder().getPendingChannelsNames(NetworkPhase.PLAY).addAll(payload.channels());
+			addon.getChannelInfoHolder().quilt$getPendingChannelsNames(NetworkPhase.PLAY).addAll(payload.channels());
 			NetworkingImpl.LOGGER.debug("Received accepted channels from the server");
 			sender.sendPayload(new CommonRegisterPayload(addon.getNegotiatedVersion(), CommonRegisterPayload.PLAY_PHASE, ClientPlayNetworking.getGlobalReceivers()));
 		} else {
