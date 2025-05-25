@@ -49,6 +49,10 @@ import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+
 @ClientOnly
 @Mixin(IntegratedServerLoader.class)
 public abstract class IntegratedServerLoaderMixin {
@@ -90,22 +94,23 @@ public abstract class IntegratedServerLoaderMixin {
 		return exception; // noop
 	}
 
-	@Inject(
-			method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;Lnet/minecraft/server/WorldStem;Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup(Lnet/minecraft/world/storage/WorldSaveStorage$Session;ZLjava/lang/Runnable;Ljava/lang/Runnable;)V"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
-			cancellable = true
+	@WrapOperation(
+		method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;Lnet/minecraft/server/WorldStem;" +
+			"Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup(Lnet/minecraft/world/storage/WorldSaveStorage$Session;ZLjava/lang/Runnable;Ljava/lang/Runnable;)V"
+		)
 	)
-	private void onBackupExperimentalWarning(WorldSaveStorage.Session session, WorldStem worldStem, PackManager packManager, Runnable runnable, CallbackInfo ci, SaveProperties saveProperties, boolean legacyCustomized, boolean unstable) {
+	private void onBackupExperimentalWarning(
+		IntegratedServerLoader instance, WorldSaveStorage.Session session, boolean legacyCustomized,
+		Runnable onProceeded, Runnable onCancelled,
+		Operation<Void> original
+	) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && !legacyCustomized) {
-			// Copied from the second lambda in askForBackup
-			worldStem.close();
-			session.method_54532();
-			runnable.run();
-			ci.cancel();
+			onCancelled.run();
+		} else {
+			original.call(instance, session, legacyCustomized, onProceeded, onCancelled);
 		}
 	}
 
