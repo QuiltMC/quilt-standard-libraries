@@ -29,7 +29,8 @@ import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 @ClientOnly
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
+	// method_18096 is disconnect(Screen, boolean), disconnect overloads delegate to it
+	@Inject(method = "method_18096", at = @At("TAIL"))
 	private void quilt$restoreRegistries(CallbackInfo ci) {
 		ClientRegistrySync.disconnectCleanup((MinecraftClient) (Object) this);
 	}

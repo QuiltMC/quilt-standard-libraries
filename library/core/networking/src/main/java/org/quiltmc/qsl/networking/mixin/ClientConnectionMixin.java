@@ -57,11 +57,11 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	public abstract void disconnect(Text disconnectReason);
 
 	@Unique
-	private Map<NetworkPhase, Collection<CustomPayload.Id<?>>> playChannels;
+	private Map<NetworkPhase, Collection<CustomPayload.Id<?>>> pendingChannels;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddedFields(NetworkSide side, CallbackInfo ci) {
-		this.playChannels = new HashMap<>();
+		this.pendingChannels = new HashMap<>();
 	}
 
 	// Must be fully qualified due to mixin not working in production without it
@@ -102,7 +102,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Override
-	public Collection<CustomPayload.Id<?>> getPendingChannelsNames(NetworkPhase state) {
-		return this.playChannels.computeIfAbsent(state, (s) -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
+	public Collection<CustomPayload.Id<?>> quilt$getPendingChannelsNames(NetworkPhase state) {
+		return this.pendingChannels.computeIfAbsent(state, (s) -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
 	}
 }

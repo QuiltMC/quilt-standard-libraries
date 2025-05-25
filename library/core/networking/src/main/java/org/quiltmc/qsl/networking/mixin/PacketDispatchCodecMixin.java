@@ -34,7 +34,13 @@ import net.minecraft.network.phase.PacketDispatchCodec;
 @Mixin(PacketDispatchCodec.class)
 public abstract class PacketDispatchCodecMixin<B extends ByteBuf, V, T> implements PacketCodec<B, V> {
 	// Add the custom payload id to the error message
-	@Inject(method = "encode(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V", at = @At(value = "NEW", target = "(Ljava/lang/String;)Lio/netty/handler/codec/EncoderException;"))
+	@Inject(
+		method = "encode(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V",
+		at = @At(
+			value = "NEW", remap = false,
+			target = "(Ljava/lang/String;)Lio/netty/handler/codec/EncoderException;"
+		)
+	)
 	public void unknownFailure(B byteBuf, V packet, CallbackInfo ci, @Local(ordinal = 1) T packetId) {
 		CustomPayload payload = null;
 
@@ -49,7 +55,13 @@ public abstract class PacketDispatchCodecMixin<B extends ByteBuf, V, T> implemen
 		}
 	}
 
-	@Inject(method = "encode(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V", at = @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/EncoderException;"))
+	@Inject(
+		method = "encode(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V",
+		at = @At(
+			value = "NEW", remap = false,
+			target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/EncoderException;"
+		)
+	)
 	public void encodeFailure(B byteBuf, V packet, CallbackInfo ci, @Local(ordinal = 1) T packetId, @Local Exception e) {
 		CustomPayload payload = null;
 

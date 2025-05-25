@@ -95,17 +95,16 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @param method the method that executes the test
 	 * @return the test function
 	 */
-	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, Identifier id) {
+	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, GameTest annotation, Identifier id) {
 		var data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
-		var gameTest = method.getAnnotation(GameTest.class);
 		String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
 		var testCaseName = data.namespace() + ':' + testSuiteName + '/' + method.getName().toLowerCase(Locale.ROOT);
 
 		var structureName = testCaseName;
 
-		if (!gameTest.structureName().isEmpty()) {
-			structureName = gameTest.structureName();
+		if (!annotation.structureName().isEmpty()) {
+			structureName = annotation.structureName();
 
 			var structurePrefix = method.getDeclaringClass().getAnnotation(TestStructureNamePrefix.class);
 			if (structurePrefix != null) {
@@ -117,14 +116,14 @@ public final class QuiltGameTestImpl implements ModInitializer {
 				new TestData<>(
 					Holder.createDirect(new TestEnvironmentDefinition.AllOf(List.of())),
 					Identifier.parse(structureName),
-					gameTest.timeout(),
-					(int) gameTest.startDelay(),
-					gameTest.required(),
-					gameTest.rotation(),
-					gameTest.manualOnly(),
-					gameTest.maxAttempts(),
-					gameTest.requiredSuccesses(),
-					gameTest.skyAccess()
+					annotation.timeout(),
+					(int) annotation.startDelay(),
+					annotation.required(),
+					annotation.rotation(),
+					annotation.manualOnly(),
+					annotation.maxAttempts(),
+					annotation.requiredSuccesses(),
+					annotation.skyAccess()
 				),
 				QuiltGameTestImpl.getTestMethodInvoker(data, method),
 				id,
@@ -201,10 +200,15 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
 		Stream.of(testClass.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(method -> {
-			var methodName = method.getName().toLowerCase(Locale.ROOT);
-			var test = QuiltGameTestImpl.getTestFunction(method, Identifier.of(modId, methodName));
+			final GameTest annotation = method.getAnnotation(GameTest.class);
+			// only consider annotated methods
+			if (annotation != null) {
+                final String methodName = method.getName().toLowerCase(Locale.ROOT);
+                final QuiltTestInstance test =
+					QuiltGameTestImpl.getTestFunction(method, annotation, Identifier.of(modId, methodName));
 
-			QUILT_TESTS.put(test.id(), test);
+				QUILT_TESTS.put(test.id(), test);
+			}
 		});
 
 		LOGGER.debug("Registered test class {} for mod {}", testClass.getCanonicalName(), modId);
