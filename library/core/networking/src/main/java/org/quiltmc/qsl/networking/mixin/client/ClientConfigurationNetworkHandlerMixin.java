@@ -50,7 +50,6 @@ abstract class ClientConfigurationNetworkHandlerMixin extends AbstractClientNetw
 		this.addon = new ClientConfigurationNetworkAddon((ClientConfigurationNetworkHandler) (Object) this, this.client);
 		// A bit of a hack but it allows the field above to be set in case someone registers handlers during INIT event which refers to said field
 		ClientNetworkingImpl.setClientConfigurationAddon(this.addon);
-		this.addon.lateInit();
 	}
 
 	@Inject(method = "onFinishConfiguration", at = @At(value = "NEW", target = "(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/network/ClientConnection;Lnet/minecraft/client/network/ClientConnectionState;)Lnet/minecraft/client/network/ClientPlayNetworkHandler;"))
