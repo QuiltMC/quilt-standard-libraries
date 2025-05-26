@@ -20,6 +20,7 @@ package org.quiltmc.qsl.worldgen.dimension.mixin;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtException;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -34,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * After removing a dimension mod or a dimension data pack, Minecraft may fail to enter
@@ -56,7 +58,8 @@ public class WorldSaveStorageBugfixMixin {
 	) {
 		NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
 
-		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound("WorldGenSettings");
+		final String key = "WorldGenSettings";
+		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		quilt$removeNonVanillaDimensionsFromNbt(worldGenSettings);
 	}
@@ -71,7 +74,8 @@ public class WorldSaveStorageBugfixMixin {
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		NbtCompound dimensions = worldGenSettings.getCompound("dimensions");
+		final String key = "dimensions";
+		NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {
 			var newDimensions = new NbtCompound();
@@ -79,12 +83,18 @@ public class WorldSaveStorageBugfixMixin {
 			for (var dimId : BASE_DIMENSIONS) {
 				var strId = dimId.getValue().toString();
 
-				if (dimensions.contains(strId)) {
-					newDimensions.put(strId, dimensions.getCompound(strId));
+				// method_10545 is containsKey
+				if (dimensions.method_10545(strId)) {
+					newDimensions.put(strId, dimensions.getCompound(strId).orElseThrow());
 				}
 			}
 
-			worldGenSettings.put("dimensions", newDimensions);
+			worldGenSettings.put(key, newDimensions);
 		}
+	}
+
+	@Unique
+	private static Supplier<NbtException> supplyNbtMissingException(String key) {
+		return () -> new NbtException("missing " + key);
 	}
 }
