@@ -34,8 +34,7 @@ import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 
 @Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
-	@Dynamic("method_40445: isValidForBookshelf")
-	@Inject(method = "method_40445", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "powerProvidedFrom", at = @At("HEAD"), cancellable = true)
 	private static void quilt$hasEnchantmentPower(World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir) {
 		var blockPos = pos.add(offset);
 		var state = world.getBlockState(blockPos);
@@ -58,7 +57,7 @@ public class EnchantingTableBlockMixin {
 			method = "randomDisplayTick",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_dicxqeuf;method_40445(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"
+					target = "Lnet/minecraft/block/EnchantingTableBlock;powerProvidedFrom(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"
 			)
 	)
 	private boolean quilt$changeParticleChance(

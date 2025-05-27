@@ -23,14 +23,9 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.block.*;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.unmapped.C_dicxqeuf;
-import net.minecraft.block.FireBlock;
-import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
@@ -137,7 +132,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	public static float calculateBookshelfCount(World world, BlockPos pos) {
 		float count = 0;
 
-		for (BlockPos offset : C_dicxqeuf.field_36535) {
+		for (BlockPos offset : EnchantingTableBlock.POWER_SEARCH_OFFSETS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
 				var blockPos = pos.add(offset);
 				var state = world.getBlockState(blockPos);
