@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Range;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -68,7 +69,8 @@ public final class BowShotProjectileEvents {
 		 * @param bowStack     the item stack for the {@link net.minecraft.item.BowItem}
 		 * @param arrowStack   the item stack for the arrows
 		 * @param user         the user of the bow
-		 * @param pullProgress the pull progress of the bow from {@code 0.0} to {@code 1.0}
+		 * @param pullProgress the {@linkplain BowItem#getPullProgress(int) pull progress}
+		 *                     of the bow from {@code 0.0} to {@code 1.0}
 		 * @param projectile   the arrow entity to be spawned
 		 * @return the arrow entity, either new or {@code null} to signify no changes occurred
 		 */

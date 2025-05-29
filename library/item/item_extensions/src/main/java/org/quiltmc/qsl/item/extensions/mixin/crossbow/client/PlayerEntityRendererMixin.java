@@ -33,12 +33,21 @@ import org.quiltmc.qsl.item.extensions.api.crossbow.CrossbowExtensions;
 
 @Mixin(PlayerEntityRenderer.class)
 public class PlayerEntityRendererMixin {
-	// method_4210 -> getArmPose (entirely missing in qm)
-	@Inject(method = "method_4210", at = @At("HEAD"), cancellable = true)
-	private static void getArmPose(PlayerEntity player, ItemStack stack, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir) {
+	@Inject(
+		method = "getArmPose(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;" +
+			"Lnet/minecraft/util/Hand;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;",
+		at = @At("HEAD"), cancellable = true
+	)
+	private static void getArmPose(
+		PlayerEntity player, ItemStack stack, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir
+	) {
 		ItemStack stackInHand = player.getStackInHand(hand);
 
-		if (!player.handSwinging && stackInHand.getItem() instanceof CrossbowExtensions && CrossbowItem.isCharged(stackInHand)) {
+		if (
+			!player.handSwinging
+				&& stackInHand.getItem() instanceof CrossbowExtensions
+				&& CrossbowItem.isCharged(stackInHand)
+		) {
 			cir.setReturnValue(BipedEntityModel.ArmPose.CROSSBOW_HOLD);
 		}
 	}
