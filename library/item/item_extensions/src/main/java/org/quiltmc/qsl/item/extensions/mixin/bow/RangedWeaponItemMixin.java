@@ -34,9 +34,31 @@ public abstract class RangedWeaponItemMixin {
 	// Allows custom bows to modify the projectile shot by bows
 	@ModifyExpressionValue(
 		method = "shootAll",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/RangedWeaponItem;getProjectile(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/projectile/ProjectileEntity;")
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/item/RangedWeaponItem;getProjectile(Lnet/minecraft/world/World;" +
+				"Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Z)" +
+				"Lnet/minecraft/entity/projectile/ProjectileEntity;"
+		)
 	)
-	public ProjectileEntity replaceArrow(ProjectileEntity persistentProjectileEntity, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack, @Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user, @Local(ordinal = 0, argsOnly = true) float pullProgress) {
-		return BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress / 3f, (PersistentProjectileEntity) persistentProjectileEntity);
+	public ProjectileEntity modifyArrow(ProjectileEntity original, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack, @Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user, @Local(ordinal = 0, argsOnly = true) float speed) {
+		if (original instanceof PersistentProjectileEntity persistentProjectile) {
+			// speed is calculated from pullProgress * 3 in BowItem::onStoppedUsing
+			final float pullProgress = speed / 3f;
+
+			final PersistentProjectileEntity projectile = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker()
+				.replaceProjectileShot(
+					bowStack, arrowStack, user, pullProgress,
+					persistentProjectile
+				);
+
+			BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(
+				bowStack, arrowStack, user, pullProgress, persistentProjectile
+			);
+
+			return projectile;
+		} else {
+			return original;
+		}
 	}
 }
