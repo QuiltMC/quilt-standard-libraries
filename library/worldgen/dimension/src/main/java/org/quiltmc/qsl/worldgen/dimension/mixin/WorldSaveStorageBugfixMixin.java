@@ -50,7 +50,7 @@ import java.util.function.Supplier;
  * With this Mixin, custom dimensions will be removed when its data pack is removed.
  */
 @Mixin(WorldSaveStorage.class)
-public class WorldSaveStorageBugfixMixin {
+abstract class WorldSaveStorageBugfixMixin {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "method_54523", at = @At("HEAD"))
 	private static void onReadGeneratorProperties(

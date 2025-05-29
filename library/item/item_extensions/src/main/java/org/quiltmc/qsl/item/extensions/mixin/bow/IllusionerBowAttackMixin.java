@@ -33,11 +33,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-// Will need to be updated if more bow-attacking mobs are added
 @Mixin(IllusionerEntity.class)
-public abstract class IllusionerBowAttackMixin extends MobEntity implements RangedAttackMob {
-	protected IllusionerBowAttackMixin(EntityType<? extends MobEntity> entityType, World world) {
+abstract class IllusionerBowAttackMixin extends MobEntity implements RangedAttackMob {
+	private IllusionerBowAttackMixin(EntityType<? extends MobEntity> entityType, World world) {
 		super(entityType, world);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	@WrapOperation(
@@ -49,7 +49,7 @@ public abstract class IllusionerBowAttackMixin extends MobEntity implements Rang
 				"Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
 		)
 	)
-	public PersistentProjectileEntity modifyShotProjectile(
+	private PersistentProjectileEntity modifyShotProjectile(
 		LivingEntity owner, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
 		Operation<PersistentProjectileEntity> original
 	) {

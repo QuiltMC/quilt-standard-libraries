@@ -32,7 +32,7 @@ import net.minecraft.util.Hand;
 import org.quiltmc.qsl.item.extensions.api.crossbow.CrossbowExtensions;
 
 @Mixin(PlayerEntityRenderer.class)
-public class PlayerEntityRendererMixin {
+abstract class PlayerEntityRendererMixin {
 	@Inject(
 		method = "getArmPose(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;" +
 			"Lnet/minecraft/util/Hand;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;",

@@ -34,11 +34,11 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
 import org.quiltmc.qsl.item.extensions.impl.BowAttackModificationImpl;
 
-// Will need to be updated if more bow-attacking mobs are added
 @Mixin(AbstractSkeletonEntity.class)
-public abstract class SkeletonBowAttackMixin extends MobEntity implements RangedAttackMob {
-	protected SkeletonBowAttackMixin(EntityType<? extends MobEntity> entityType, World world) {
+abstract class SkeletonBowAttackMixin extends MobEntity implements RangedAttackMob {
+	private SkeletonBowAttackMixin(EntityType<? extends MobEntity> entityType, World world) {
 		super(entityType, world);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	@WrapOperation(
@@ -50,11 +50,10 @@ public abstract class SkeletonBowAttackMixin extends MobEntity implements Ranged
 				"Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
 		)
 	)
-	public PersistentProjectileEntity modifyShotProjectile(
+	private PersistentProjectileEntity modifyShotProjectile(
 		AbstractSkeletonEntity instance, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
 		Operation<PersistentProjectileEntity> original
 	) {
-
         return BowAttackModificationImpl.modifyShotProjectile(
 			original.call(instance, arrowStack, pullProgress, bowStack),
 			arrowStack, pullProgress, bowStack, this
