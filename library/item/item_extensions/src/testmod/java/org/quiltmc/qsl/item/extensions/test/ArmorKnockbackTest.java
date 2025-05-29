@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.item.extensions.test;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 
@@ -26,8 +25,6 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ArmorType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.Holder;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -35,12 +32,16 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.unmapped.C_idvlscju;
-import net.minecraft.util.*;
+import net.minecraft.util.EquipmentAssets;
+import net.minecraft.util.Rarity;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createId;
+
 public class ArmorKnockbackTest implements ModInitializer {
+
 	private static final ArmorMaterial KNOCKBACK_RESISTANCE_ARMOR = new ArmorMaterial(
 		1000,
 		Map.of(
@@ -50,15 +51,22 @@ public class ArmorKnockbackTest implements ModInitializer {
 			ArmorType.HELMET, 0,
 			ArmorType.BODY, 0
 		),
-		0,
+		// this must be greater than 0
+		1,
 		Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
 		0.0f,
 		200.0F,
 		ItemTags.WOOL,
-		RegistryKey.of(EquipmentAssets.REGISTRY, Identifier.of("quilt-item-extension-testmod", "knockback_armor")));
+		RegistryKey.of(EquipmentAssets.REGISTRY, createId("knockback_armor"))
+	);
+
+	private static final RegistryKey<Item> KNOCKBACK_RESISTANCE_CHESTPLATE_KEY =
+		ItemExtensionTestUtil.createItemKey("knockback_resistance_chestplate");
 
 	private static final Item KNOCKBACK_RESISTANCE_CHESTPLATE = new Item(
-			new Item.Settings().rarity(Rarity.RARE).method_66332(KNOCKBACK_RESISTANCE_ARMOR, ArmorType.CHESTPLATE)
+			new Item.Settings().rarity(Rarity.RARE)
+				.key(KNOCKBACK_RESISTANCE_CHESTPLATE_KEY)
+				.method_66332(KNOCKBACK_RESISTANCE_ARMOR, ArmorType.CHESTPLATE)
 	) {
 		@Override
 		public void appendTooltip(ItemStack stack, TooltipContext context, C_idvlscju c_idvlscju, Consumer<Text> consumer, TooltipConfig config) {
@@ -69,9 +77,9 @@ public class ArmorKnockbackTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(
-				Registries.ITEM,
-				Identifier.of(mod.metadata().id(), "knockback_resistance_chestplate"),
-				KNOCKBACK_RESISTANCE_CHESTPLATE
+			Registries.ITEM,
+			KNOCKBACK_RESISTANCE_CHESTPLATE_KEY,
+			KNOCKBACK_RESISTANCE_CHESTPLATE
 		);
 	}
 }

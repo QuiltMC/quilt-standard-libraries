@@ -26,31 +26,50 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.extensions.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extensions.api.crossbow.ProjectileModifyingCrossbowItem;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
+
 public class BowsTest implements ModInitializer {
-	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().maxCount(1)) {
+	private static final RegistryKey<Item> TEST_BOW_KEY = createItemKey("test_bow");
+
+	private static final RegistryKey<Item> TEST_CROSSBOW_KEY = createItemKey("test_crossbow");
+
+	public static final Item TEST_BOW = new ProjectileModifyingBowItem(
+		new Item.Settings()
+			.key(TEST_BOW_KEY)
+			.maxCount(1)
+	) {
 		@Override
 		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
 			projectile.setCritical(true);
 		}
 	};
 
-	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings().maxCount(1)) {
+	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(
+		new Item.Settings()
+			.key(TEST_CROSSBOW_KEY)
+			.maxCount(1)
+	) {
 		@Override
-		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull ProjectileEntity projectileEntity) {
+		public void onProjectileShot(
+			ItemStack crossbowStack, ItemStack projectileStack,
+			LivingEntity entity, @NotNull ProjectileEntity projectileEntity
+		) {
 			if (projectileEntity instanceof PersistentProjectileEntity persistentProjectileEntity) {
 				persistentProjectileEntity.setDamage(1000);
 			}
 		}
 
 		@Override
-		public float getProjectileSpeed(@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity) {
+		public float getProjectileSpeed(
+			@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity
+		) {
 			return 10f;
 		}
 	};
@@ -58,8 +77,8 @@ public class BowsTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Registers a custom bow.
-		Registry.register(Registries.ITEM, Identifier.of(mod.metadata().id(), "test_bow"), TEST_BOW);
+		Registry.register(Registries.ITEM, TEST_BOW_KEY, TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(Registries.ITEM, Identifier.of(mod.metadata().id(), "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(Registries.ITEM, TEST_CROSSBOW_KEY, TEST_CROSSBOW);
 	}
 }
