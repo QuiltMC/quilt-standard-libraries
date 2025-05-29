@@ -30,8 +30,8 @@ import net.minecraft.item.RangedWeaponItem;
 import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
 
 @Mixin(RangedWeaponItem.class)
-public abstract class RangedWeaponItemMixin {
-	// Allows custom bows to modify the projectile shot by bows
+abstract class RangedWeaponItemMixin {
+	// stub handler to be overriden by BowItemMixin
 	@ModifyExpressionValue(
 		method = "shootAll",
 		at = @At(
@@ -41,24 +41,11 @@ public abstract class RangedWeaponItemMixin {
 				"Lnet/minecraft/entity/projectile/ProjectileEntity;"
 		)
 	)
-	public ProjectileEntity modifyArrow(ProjectileEntity original, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack, @Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user, @Local(ordinal = 0, argsOnly = true) float speed) {
-		if (original instanceof PersistentProjectileEntity persistentProjectile) {
-			// speed is calculated from pullProgress * 3 in BowItem::onStoppedUsing
-			final float pullProgress = speed / 3f;
-
-			final PersistentProjectileEntity projectile = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker()
-				.replaceProjectileShot(
-					bowStack, arrowStack, user, pullProgress,
-					persistentProjectile
-				);
-
-			BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(
-				bowStack, arrowStack, user, pullProgress, persistentProjectile
-			);
-
-			return projectile;
-		} else {
-			return original;
-		}
+	protected ProjectileEntity modifyArrow(
+		ProjectileEntity original, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack,
+		@Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user,
+		@Local(ordinal = 0, argsOnly = true) float speed
+	) {
+		return original;
 	}
 }
