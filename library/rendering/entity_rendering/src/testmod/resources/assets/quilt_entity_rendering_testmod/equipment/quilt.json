@@ -1,0 +1,19 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "texture": "quilt:models/armor/quilt_layer_1"
+      }
+    ],
+    "humanoid": [
+      {
+        "texture": "quilt:models/armor/quilt_layer_1"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "quilt:models/armor/quilt_layer_1"
+      }
+    ]
+  }
+}

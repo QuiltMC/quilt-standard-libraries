@@ -17,12 +17,13 @@
 package org.quiltmc.qsl.rendering.entity.test.client;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.render.entity.state.BipedRenderState;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.EquipmentAsset;
+import net.minecraft.util.EquipmentAssets;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -38,14 +39,17 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.registerTextureProvider(this, EntityRenderingTestmod.QUILT_LEGGINGS);
 	}
 
-	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("textures/models/armor/overpowered_pants_of_queerness.png");
+	private static final RegistryKey<EquipmentAsset> LEGGINGS_KEY =
+		EntityRenderingTestmod.createAssetKey("textures/models/armor/overpowered_pants_of_queerness.png");
 
 	@Override
-	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
-			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer) {
+	public @NotNull RegistryKey<EquipmentAsset> getArmorTexture(
+		@NotNull RegistryKey<EquipmentAsset> texture, @NotNull BipedRenderState state,
+		@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer
+	) {
 		if (slot == EquipmentSlot.LEGS) {
 			// redirect leggings texture, because it has a non-standard name
-			return LEGGINGS_TEXTURE_ID;
+			return LEGGINGS_KEY;
 		}
 
 		return texture;

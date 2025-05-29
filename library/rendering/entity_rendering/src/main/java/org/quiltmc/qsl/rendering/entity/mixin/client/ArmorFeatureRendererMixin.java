@@ -17,138 +17,158 @@
 
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.class_10034;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EquipmentRenderer;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.render.entity.state.BipedRenderState;
+import net.minecraft.client.resource.model.EquipmentModelData;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.trim.ArmorTrimPermutation;
-import net.minecraft.registry.Holder;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.EquipmentAsset;
 
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderLayerContext;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
+import org.quiltmc.qsl.rendering.entity.impl.client.EquipmentRendererExtensions;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
 
 @Mixin(ArmorFeatureRenderer.class)
-public abstract class ArmorFeatureRendererMixin<S extends class_10034, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> {
-	@Unique
-	private LivingEntity quilt$capturedEntity;
-	@Unique
-	private EquipmentSlot quilt$capturedSlot;
-	@Unique
-	private Identifier quilt$capturedArmorTexture;
+public abstract class ArmorFeatureRendererMixin<S extends BipedRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> extends FeatureRenderer<S, M> {
+	@Shadow @Final private EquipmentRenderer equipmentRenderer;
 
-	// FIXME: ArmorFeatureRenderer now relies on EntityRenderState (yarn) instead of LivingEntity
-	//  atm it's unmapped, but intermediary is class_10017
-	//  for class_10034, see BipedEntityRenderState (yarn)
+    @Unique
+	private S quilt$capturedState;
+
+	private ArmorFeatureRendererMixin(FeatureRendererContext<S, M> context) {
+		super(context);
+		throw new AssertionError("dummy constructor called");
+	}
+
 	@Inject(
-			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-			at = @At("HEAD")
+		method = "render(Lnet/minecraft/client/util/math/MatrixStack;" +
+			"Lnet/minecraft/client/render/VertexConsumerProvider;I" +
+			"Lnet/minecraft/client/render/entity/state/BipedRenderState;FF)V",
+		at = @At("HEAD")
 	)
-	private void quilt$captureEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		this.quilt$capturedEntity = livingEntity;
+	private void captureState(
+		MatrixStack matrices, VertexConsumerProvider vertexConsumers, int i, S state, float f, float g, CallbackInfo ci
+	) {
+		this.quilt$capturedState = state;
 	}
 
 	@Inject(method = "renderArmor", at = @At("HEAD"))
 	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
-		this.quilt$capturedSlot = armorSlot;
-	}
-
-
-	// FIXME: there's MULTIPLE LivingEntity -> class_10034 substitutions needed here,
-	//  but the rabbit hole goes *very* deep, so i'm leaving this for last
+    }
 
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
-	private void quilt$getArmorModel(S arg, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
-		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);
+	private void quilt$getArmorModel(S state, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
+		@Nullable
+		final ItemStack equippedStack = switch (slot) {
+			case FEET -> state.feetEquipment;
+			case LEGS -> state.legsEquipment;
+			case CHEST -> state.chestEquipment;
+			case HEAD -> state.headEquipment;
+			default -> null;
+		};
 
-		A model = cir.getReturnValue();
-		model = ArmorRenderingRegistryImpl.getArmorModel((BipedEntityModel<LivingEntity>) model, this.quilt$capturedEntity, stack, slot);
-		cir.setReturnValue(model);
+		if (equippedStack != null) {
+			A model = cir.getReturnValue();
+			final BipedEntityModel<BipedRenderState> modifiedModel = ArmorRenderingRegistryImpl
+				.getArmorModel((BipedEntityModel<BipedRenderState>) model, state, equippedStack, slot);
+
+			if (modifiedModel != model) {
+				// FIXME type safety
+				try {
+					cir.setReturnValue((A) modifiedModel);
+				} catch (ClassCastException e) {
+					LOGGER.error("Invalid model", e);
+				}
+			}
+		}
 	}
 
 	@WrapOperation(
-			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
-			)
+		method = "renderArmor",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/render/entity/EquipmentRenderer;render(" +
+				"Lnet/minecraft/client/resource/model/EquipmentModelData$LayerType;" +
+				"Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/item/ItemStack;" +
+				"Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"
+		)
 	)
-	private Sprite quilt$getArmorTexture(SpriteAtlasTexture instance, Identifier texture, Operation<Sprite> original, Holder<ArmorMaterial> material, MatrixStack matrices, VertexConsumerProvider verticies, int i, ArmorTrimPermutation trimPermutation, BipedEntityModel<?> model, boolean hasGlint) {
-		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
-		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot, hasGlint);
-
-		return original.call(instance, texture);
+	private void quilt$modifyRenderLayer(
+		EquipmentRenderer instance, EquipmentModelData.LayerType layerType, RegistryKey<EquipmentAsset> armorAsset,
+		Model model, ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
+		Operation<Void> original,
+		MatrixStack matrices2, VertexConsumerProvider vertexConsumers2, ItemStack stack2, EquipmentSlot armorSlot
+	) {
+		final EquipmentRendererExtensions extendedEquipmentRenderer =
+			(EquipmentRendererExtensions) this.equipmentRenderer;
+		try {
+			extendedEquipmentRenderer.quilt$setArmorRenderLayerContext(new ArmorRenderLayerContext(
+				this.quilt$capturedState, stack, armorSlot, armorAsset
+			));
+		} finally {
+			extendedEquipmentRenderer.quilt$clearArmorRenderLayerContext();
+		}
 	}
 
-	@ModifyArg(
-			method = "renderArmorParts",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-			),
-			index = 0
+	@SuppressWarnings("unchecked")
+    @ModifyExpressionValue(
+		method = "renderArmor",
+		slice = @Slice(from = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/component/type/EquippableComponent;assetKey()Ljava/util/Optional;"
+		)),
+		at = @At(
+			value = "INVOKE", remap = false, ordinal = 0,
+			target = "Ljava/util/Optional;orElseThrow()Ljava/lang/Object;"
+		)
 	)
-	private RenderLayer quilt$modifyArmorRenderLayer(RenderLayer layer) {
-		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
-				this.quilt$capturedEntity,
-				this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot),
-				this.quilt$capturedSlot,
-				this.quilt$capturedArmorTexture);
-	}
+	private Object quilt$modifyArmorTrimTexture(
+		Object original,
+		MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
+		EquipmentSlot slot, int light, A model
+	) {
+		original = ArmorRenderingRegistryImpl.getArmorAsset(
+			(RegistryKey<EquipmentAsset>) original, this.quilt$capturedState,
+			stack, slot, stack.hasGlint()
+		);
 
-	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
-			),
-			index = 0
-	)
-	private Identifier quilt$modifyArmorTrimTexture(Identifier texture) {
-		// TODO
-		return this.quilt$capturedArmorTexture = texture;
-	}
+		// TODO trim modification, likely has to go in EquipmentRendererMixin
 
-	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/registry/Holder;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-			),
-			index = 0
-	)
-	private RenderLayer quilt$modifyArmorTrimRenderLayer(RenderLayer layer) {
-		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
-				this.quilt$capturedEntity,
-				this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot),
-				this.quilt$capturedSlot,
-				this.quilt$capturedArmorTexture);
+		return original;
 	}
 
 	@Inject(
-			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-			at = @At("RETURN")
+		method = "render(Lnet/minecraft/client/util/math/MatrixStack;" +
+			"Lnet/minecraft/client/render/VertexConsumerProvider;I" +
+			"Lnet/minecraft/client/render/entity/state/BipedRenderState;FF)V",
+		at = @At("RETURN")
 	)
-	private void quilt$uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		this.quilt$capturedEntity = null;
-		this.quilt$capturedSlot = null;
-		this.quilt$capturedArmorTexture = null;
-	}
+	private void quilt$uncapture(CallbackInfo ci) {
+		this.quilt$capturedState = null;
+    }
 }
