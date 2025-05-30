@@ -12,6 +12,11 @@ qslModule {
 			api("qsl_base")
 			testmodOnly("resource_loader")
 		}
+		gui {
+			// FIXME this shouldn't be necessary since resource_loader already depends on it,
+			//  but it's not actually present for the testmod for some reason
+			testmodOnly("screen")
+		}
 	}
 	accessWidener()
 	injectedInterface("net/minecraft/class_1753") {
