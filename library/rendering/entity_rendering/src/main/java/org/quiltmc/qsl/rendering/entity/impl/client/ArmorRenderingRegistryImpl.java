@@ -140,14 +140,16 @@ public final class ArmorRenderingRegistryImpl {
 		return e.invoker().getArmorModel(model, state, stack, slot);
 	}
 
-	public static @Nullable RenderLayer getArmorRenderLayer(@NotNull RenderLayer layer,
-			@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-			@NotNull RegistryKey<EquipmentAsset> armorAsset) {
-		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
-		if (e == null) {
-			return null;
+	public static @NotNull RenderLayer getArmorRenderLayer(
+		@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
+		@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
+	) {
+        final Event<ArmorRenderingRegistry.RenderLayerProvider> event =
+			((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
+		if (event == null) {
+			return layer;
 		}
 
-		return e.invoker().getArmorRenderLayer(layer, state, stack, slot, armorAsset);
+		return event.invoker().getArmorRenderLayer(layer, state, stack, slot, armorAsset);
 	}
 }

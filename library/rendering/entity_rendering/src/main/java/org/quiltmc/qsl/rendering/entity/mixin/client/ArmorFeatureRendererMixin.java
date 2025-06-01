@@ -54,7 +54,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
 
 @Mixin(ArmorFeatureRenderer.class)
-public abstract class ArmorFeatureRendererMixin<S extends BipedRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> extends FeatureRenderer<S, M> {
+abstract class ArmorFeatureRendererMixin<
+	S extends BipedRenderState, M extends BipedEntityModel<S>,
+	A extends BipedEntityModel<S>> extends FeatureRenderer<S, M
+> {
 	@Shadow @Final private EquipmentRenderer equipmentRenderer;
 
     @Unique
@@ -93,7 +96,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedRenderState, M ex
 		};
 
 		if (equippedStack != null) {
-			A model = cir.getReturnValue();
+			final A model = cir.getReturnValue();
 			final BipedEntityModel<BipedRenderState> modifiedModel = ArmorRenderingRegistryImpl
 				.getArmorModel((BipedEntityModel<BipedRenderState>) model, state, equippedStack, slot);
 
@@ -126,10 +129,13 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedRenderState, M ex
 	) {
 		final EquipmentRendererExtensions extendedEquipmentRenderer =
 			(EquipmentRendererExtensions) this.equipmentRenderer;
+
 		try {
 			extendedEquipmentRenderer.quilt$setArmorRenderLayerContext(new ArmorRenderLayerContext(
 				this.quilt$capturedState, stack, armorSlot, armorAsset
 			));
+
+			original.call(instance, layerType, armorAsset, model, stack, matrices, vertexConsumers, light);
 		} finally {
 			extendedEquipmentRenderer.quilt$clearArmorRenderLayerContext();
 		}
@@ -168,7 +174,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedRenderState, M ex
 			"Lnet/minecraft/client/render/entity/state/BipedRenderState;FF)V",
 		at = @At("RETURN")
 	)
-	private void quilt$uncapture(CallbackInfo ci) {
+	private void quilt$clearCaptures(CallbackInfo ci) {
 		this.quilt$capturedState = null;
     }
 }
