@@ -153,19 +153,19 @@ abstract class ArmorFeatureRendererMixin<
 			target = "Ljava/util/Optional;orElseThrow()Ljava/lang/Object;"
 		)
 	)
-	private Object quilt$modifyArmorTrimTexture(
-		Object original,
+	private Object quilt$modifyArmorTexture(
+		Object assetKey,
 		MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
 		EquipmentSlot slot, int light, A model
 	) {
-		original = ArmorRenderingRegistryImpl.getArmorAsset(
-			(RegistryKey<EquipmentAsset>) original, this.quilt$capturedState,
+		assetKey = ArmorRenderingRegistryImpl.getArmorAsset(
+			(RegistryKey<EquipmentAsset>) assetKey, this.quilt$capturedState,
 			stack, slot, stack.hasGlint()
 		);
 
 		// TODO trim modification, likely has to go in EquipmentRendererMixin
 
-		return original;
+		return assetKey;
 	}
 
 	@Inject(
