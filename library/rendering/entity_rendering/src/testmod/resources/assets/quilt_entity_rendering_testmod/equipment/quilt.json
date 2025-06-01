@@ -2,17 +2,17 @@
   "layers": {
     "horse_body": [
       {
-        "texture": "quilt:models/armor/quilt_layer_1"
+        "texture": "quilt_entity_rendering_testmod:models/armor/quilt_layer_1"
       }
     ],
     "humanoid": [
       {
-        "texture": "quilt:models/armor/quilt_layer_1"
+        "texture": "quilt_entity_rendering_testmod:models/armor/quilt_layer_1"
       }
     ],
     "humanoid_leggings": [
       {
-        "texture": "quilt:models/armor/quilt_layer_1"
+        "texture": "quilt_entity_rendering_testmod:models/armor/overpowered_pants_of_queerness"
       }
     ]
   }

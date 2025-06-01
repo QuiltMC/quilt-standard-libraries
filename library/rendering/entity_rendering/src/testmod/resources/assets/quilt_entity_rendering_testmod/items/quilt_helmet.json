@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "quilt_entity_rendering_testmod:item/quilt_helmet"
+  }
+}
