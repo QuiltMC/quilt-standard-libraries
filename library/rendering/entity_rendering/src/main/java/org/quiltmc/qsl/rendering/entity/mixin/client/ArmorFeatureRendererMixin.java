@@ -80,10 +80,6 @@ abstract class ArmorFeatureRendererMixin<
 		this.quilt$capturedState = state;
 	}
 
-	@Inject(method = "renderArmor", at = @At("HEAD"))
-	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
-    }
-
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
 	private void quilt$getArmorModel(S state, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
 		@Nullable
