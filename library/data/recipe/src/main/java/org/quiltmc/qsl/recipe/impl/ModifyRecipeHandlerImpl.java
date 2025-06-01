@@ -22,38 +22,46 @@ import java.util.Map;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 @ApiStatus.Internal
-final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler {
+final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
+	RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler
+{
 	int counter = 0;
 
-	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Multimap<RecipeType<?>, RecipeHolder<?>> recipes,
-							Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
-		super(recipeManager, recipes, globalRecipes, registryManager);
+	ModifyRecipeHandlerImpl(
+		RecipeManager recipeManager,
+		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+		DynamicRegistryManager registryManager
+	) {
+		super(recipeManager, byType, byKey, registryManager);
 	}
 
 	private void add(RecipeHolder<?> recipeHolder) {
-		Collection<RecipeHolder<?>> type = this.recipes.get(recipeHolder.value().getType());
+		final RecipeType<? extends Recipe<?>> type = recipeHolder.value().getType();
+		final Collection<RecipeHolder<?>> typedRecipes = this.byType.get(type);
 
-		if (type.isEmpty()) {
+		if (typedRecipes.isEmpty()) {
 			throw new IllegalStateException("The given recipe " + recipeHolder.id()
 					+ " does not have its recipe type " + type + " in the recipe manager.");
 		}
 
-		type.add(recipeHolder);
-		this.globalRecipes.put(recipeHolder.id().getValue(), recipeHolder);
+		typedRecipes.add(recipeHolder);
+		this.byKey.put(recipeHolder.id(), recipeHolder);
 	}
 
 	@Override
 	public void replace(RecipeHolder<?> recipeHolder) {
-		RecipeType<?> oldType = this.getTypeOf(recipeHolder.id().getValue());
+		final RecipeType<?> oldType = this.getTypeOf(recipeHolder.id().getValue());
 
 		if (oldType == null) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
@@ -66,14 +74,14 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipeHolder.id(), recipeHolder.value().getType());
 			}
 
-			this.recipes.get(oldType).add(recipeHolder);
-			this.globalRecipes.put(recipeHolder.id().getValue(), recipeHolder);
+			this.byType.get(oldType).add(recipeHolder);
+			this.byKey.put(recipeHolder.id(), recipeHolder);
 		} else {
 			if (RecipeManagerImpl.DEBUG_MODE) {
 				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.", recipeHolder.id(), recipeHolder.value().getType(), oldType);
 			}
 
-			this.recipes.get(oldType).remove(recipeHolder);
+			this.byType.get(oldType).remove(recipeHolder);
 			this.add(recipeHolder);
 		}
 

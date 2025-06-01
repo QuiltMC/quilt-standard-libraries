@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.recipe.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "accessor.RecipeMapAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

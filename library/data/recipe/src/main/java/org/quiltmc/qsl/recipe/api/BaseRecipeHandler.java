@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.RecipeInput;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;

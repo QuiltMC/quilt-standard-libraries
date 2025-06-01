@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,32 +31,44 @@ import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 @ApiStatus.Internal
-final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler {
+final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
+	RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler
+{
 	int counter = 0;
 
-	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Multimap<RecipeType<?>, RecipeHolder<?>> recipes,
-							Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
-		super(recipeManager, recipes, globalRecipes, registryManager);
+	RemoveRecipeHandlerImpl(
+		RecipeManager recipeManager,
+		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+		DynamicRegistryManager registryManager
+	) {
+		super(recipeManager, byType, byKey, registryManager);
 	}
 
 	@Override
 	public void remove(Identifier id) {
-		RecipeType<?> recipeType = this.getTypeOf(id);
+		final RecipeType<?> recipeType = this.getTypeOf(id);
 
 		if (recipeType == null) {
 			return;
 		}
 
-		if (this.recipes.get(recipeType).removeIf(holder -> holder.id().equals(id))) {
-			this.globalRecipes.remove(id);
+		final RegistryKey<Recipe<?>> key = RegistryKey.of(RegistryKeys.RECIPE, id);
+		if (this.byType.get(recipeType).removeIf(holder -> holder.id().equals(key))) {
+			this.byKey.remove(key);
 
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", id, recipeType);
+				RecipeManagerImpl.LOGGER.info(
+					"Remove recipe {} with type {} in removal phase.",
+					id, recipeType
+				);
 			}
 
 			this.counter++;
@@ -64,9 +77,11 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate) {
+	public <T extends Recipe<?>> void removeIf(
+		RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
+	) {
 		this.removeIfInternal(
-				this.recipes
+				this.byType
 					.get(recipeType)
 					.stream()
 					.map(holder -> (RecipeHolder<T>) holder)
@@ -77,25 +92,32 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 
 	@Override
 	public void removeIf(Predicate<RecipeHolder<?>> recipeRemovalPredicate) {
-		for (var entry : this.getRecipes().asMap().entrySet()) {
+		for (final Map.Entry<RecipeType<?>, Collection<RecipeHolder<?>>> entry : this.byType.asMap().entrySet()) {
 			this.removeIfInternal(entry.getValue(), recipeRemovalPredicate);
 		}
 	}
 
-	private <T extends RecipeHolder<?>> void removeIfInternal(Collection<T> recipeMap, Predicate<T> recipeRemovalPredicate) {
-		if (recipeMap == null) return;
+	private <T extends RecipeHolder<?>> void removeIfInternal(
+		Collection<T> recipeMap, Predicate<T> recipeRemovalPredicate
+	) {
+		if (recipeMap == null) {
+            return;
+        }
 
-		var it = recipeMap.iterator();
+		final Iterator<T> it = recipeMap.iterator();
 
 		while (it.hasNext()) {
-			var entry = it.next();
+            final T entry = it.next();
 
 			if (recipeRemovalPredicate.test(entry)) {
 				if (RecipeManagerImpl.DEBUG_MODE) {
-					RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", entry.id(), entry.value().getType());
+					RecipeManagerImpl.LOGGER.info(
+						"Remove recipe matching predicate {} with type {} in removal phase.",
+						entry.id(), entry.value().getType()
+					);
 				}
 
-				this.globalRecipes.remove(entry.id());
+				this.byKey.remove(entry.id());
 				it.remove();
 				this.counter++;
 			}
