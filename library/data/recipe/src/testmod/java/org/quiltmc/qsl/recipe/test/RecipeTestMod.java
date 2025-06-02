@@ -54,11 +54,14 @@ public class RecipeTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		// Recipe with stick -> diamond
+		// coal/charcoal -> diamond
 		RecipeManagerHelper.registerStaticRecipe(
-				VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.DIAMOND))
-						.ingredient(Items.STICK)
-						.build(Identifier.of(NAMESPACE, "test1"), ""));
+			VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.DIAMOND))
+				// It's important to test a tag ingredient in a static recipe
+				// to make sure we don't resolve the tag early.
+				.ingredient(ItemTags.COALS)
+				.build(Identifier.of(NAMESPACE, "test1"), "")
+		);
 
 		RecipeManagerHelper.addRecipes(handler -> {
 			handler.register(Identifier.of(NAMESPACE, "test2"),

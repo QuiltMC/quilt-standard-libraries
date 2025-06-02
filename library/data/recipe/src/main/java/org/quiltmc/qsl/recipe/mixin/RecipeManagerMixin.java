@@ -41,9 +41,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
-	// FIXME: the entire meat and bones of this method is just GONE
-	//  so i'm not really sure what to do about this.
-
 	@ModifyArg(
 			method = "prepare(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)" +
 				"Lnet/minecraft/recipe/RecipeMap;",

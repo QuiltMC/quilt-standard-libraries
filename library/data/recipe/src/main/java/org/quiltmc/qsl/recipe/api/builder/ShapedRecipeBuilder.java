@@ -46,6 +46,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	private final String[] pattern;
 	private final int width;
 	private final int height;
+	// TODO make this Char2ObjectMap<Optional<Ingredient>> to match ShapedRecipe
 	private final Char2ObjectMap<Ingredient> ingredients = new Char2ObjectOpenHashMap<>();
 	private CraftingCategory category = CraftingCategory.MISC;
 
