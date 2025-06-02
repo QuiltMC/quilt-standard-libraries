@@ -17,18 +17,18 @@
 package org.quiltmc.qsl.rendering.entity.test;
 
 import java.util.EnumMap;
-import java.util.List;
 
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorItem.ArmorSlot;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ArmorType;
 import net.minecraft.item.Item;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.Holder;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.EquipmentAsset;
+import net.minecraft.util.EquipmentAssets;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -38,38 +38,55 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 public final class EntityRenderingTestmod implements ModInitializer {
 	public static final String NAMESPACE = "quilt_entity_rendering_testmod";
 
-	public static Identifier id(String path) {
-		return Identifier.of(NAMESPACE, path);
-	}
+	public static final RegistryKey<Item> QUILT_HELMET_KEY = createItemKey("quilt_helmet");
+	public static final RegistryKey<Item> QUILT_CHESTPLATE_KEY = createItemKey("quilt_chestplate");
+	public static final RegistryKey<Item> QUILT_LEGGINGS_KEY = createItemKey("quilt_leggings");
+	public static final RegistryKey<Item> QUILT_BOOTS_KEY = createItemKey("quilt_boots");
 
-	private static final Holder<ArmorMaterial> QUILT_ARMOR_MATERIAL = Registry.registerHolder(
-			Registries.ARMOR_MATERIAL,
-			id("armor_material"),
+	private static final ArmorMaterial QUILT_ARMOR_MATERIAL =
 			new ArmorMaterial(
-				Util.make(new EnumMap<>(ArmorItem.ArmorSlot.class), (map) -> {
-					map.put(ArmorSlot.BOOTS, 3);
-					map.put(ArmorSlot.LEGGINGS, 6);
-					map.put(ArmorSlot.CHESTPLATE, 8);
-					map.put(ArmorSlot.HELMET, 3);
-					map.put(ArmorSlot.BODY, 9);
+				3,
+				Util.make(new EnumMap<>(ArmorType.class), (map) -> {
+					map.put(ArmorType.BOOTS, 3);
+					map.put(ArmorType.LEGGINGS, 6);
+					map.put(ArmorType.CHESTPLATE, 8);
+					map.put(ArmorType.HELMET, 3);
+					map.put(ArmorType.BODY, 9);
 				}),
 				25,
 				SoundEvents.ITEM_ARMOR_EQUIP_TURTLE,
-					() -> Ingredient.ofTag(ItemTags.WOOL),
-				List.of(new ArmorMaterial.Layer(id("armor_material"))),
-				4.0F, 0.15F)
-	);
+				4.0F, 0.15F,
+				ItemTags.WOOL,
+				createAssetKey("quilt")
+			);
 
-	public static final ArmorItem QUILT_HELMET = new ArmorItem(QUILT_ARMOR_MATERIAL, ArmorSlot.HELMET, new Item.Settings());
-	public static final ArmorItem QUILT_CHESTPLATE = new ArmorItem(QUILT_ARMOR_MATERIAL, ArmorSlot.CHESTPLATE, new Item.Settings());
-	public static final ArmorItem QUILT_LEGGINGS = new ArmorItem(QUILT_ARMOR_MATERIAL, ArmorSlot.LEGGINGS, new Item.Settings());
-	public static final ArmorItem QUILT_BOOTS = new ArmorItem(QUILT_ARMOR_MATERIAL, ArmorSlot.BOOTS, new Item.Settings());
+	public static final Item QUILT_HELMET = new Item(createQuiltArmorSettings(QUILT_HELMET_KEY, ArmorType.HELMET));
+	public static final Item QUILT_CHESTPLATE = new Item(createQuiltArmorSettings(QUILT_CHESTPLATE_KEY, ArmorType.CHESTPLATE));
+	public static final Item QUILT_LEGGINGS = new Item(createQuiltArmorSettings(QUILT_LEGGINGS_KEY, ArmorType.LEGGINGS));
+	public static final Item QUILT_BOOTS = new Item(createQuiltArmorSettings(QUILT_BOOTS_KEY, ArmorType.BOOTS));
+
+	public static Identifier createId(String path) {
+		return Identifier.of(NAMESPACE, path);
+	}
+
+	public static RegistryKey<EquipmentAsset> createAssetKey(String path) {
+		return RegistryKey.of(EquipmentAssets.REGISTRY, createId(path));
+	}
+
+	private static RegistryKey<Item> createItemKey(String path) {
+		return RegistryKey.of(RegistryKeys.ITEM, createId(path));
+	}
+
+	private static Item.Settings createQuiltArmorSettings(RegistryKey<Item> key, ArmorType type) {
+		// method_66332 is armor
+		return new Item.Settings().key(key).method_66332(QUILT_ARMOR_MATERIAL, type);
+	}
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ITEM, id("quilt_helmet"), QUILT_HELMET);
-		Registry.register(Registries.ITEM, id("quilt_chestplate"), QUILT_CHESTPLATE);
-		Registry.register(Registries.ITEM, id("quilt_leggings"), QUILT_LEGGINGS);
-		Registry.register(Registries.ITEM, id("quilt_boots"), QUILT_BOOTS);
+		Registry.register(Registries.ITEM, QUILT_HELMET_KEY, QUILT_HELMET);
+		Registry.register(Registries.ITEM, QUILT_CHESTPLATE_KEY, QUILT_CHESTPLATE);
+		Registry.register(Registries.ITEM, QUILT_LEGGINGS_KEY, QUILT_LEGGINGS);
+		Registry.register(Registries.ITEM, QUILT_BOOTS_KEY, QUILT_BOOTS);
 	}
 }

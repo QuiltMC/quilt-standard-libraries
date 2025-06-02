@@ -21,10 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.state.BipedRenderState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.EquipmentAsset;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -124,8 +127,8 @@ public final class ArmorRenderingRegistry {
 	 * @param model the model
 	 * @param items the items to register for
 	 */
-	public static void registerModel(@NotNull BipedEntityModel<LivingEntity> model, @NotNull ItemConvertible... items) {
-		registerModelProvider(Event.DEFAULT_PHASE, (modelx, entity, stack, slot) -> model, items);
+	public static void registerModel(@NotNull BipedEntityModel<BipedRenderState> model, @NotNull ItemConvertible... items) {
+		registerModelProvider(Event.DEFAULT_PHASE, (modelx, state, stack, slot) -> model, items);
 	}
 
 	/**
@@ -174,7 +177,7 @@ public final class ArmorRenderingRegistry {
 	 * @param items the items to register for
 	 */
 	public static void registerRenderLayer(@NotNull RenderLayer layer, @NotNull ItemConvertible... items) {
-		registerRenderLayerProvider(Event.DEFAULT_PHASE, (layerx, entity, stack, slot, texture) -> layer, items);
+		registerRenderLayerProvider(Event.DEFAULT_PHASE, (layerx, state, stack, slot, texture) -> layer, items);
 	}
 
 	/**
@@ -185,16 +188,16 @@ public final class ArmorRenderingRegistry {
 		/**
 		 * Modifies the armor texture.
 		 *
-		 * @param texture        the <em>current</em> armor texture
-		 * @param entity         the entity wearing the armor
+		 * @param asset        	 the <em>current</em> armor asset
+		 * @param state          the render state of the entity wearing the armor
 		 * @param stack          the item stack representing the worn armor
 		 * @param slot           the equipment slot the armor is being worn in
 		 * @param useSecondLayer {@code true} to use inner armor (leggings) texture, or {@code false} to use outer armor texture
 		 * @return the new armor texture, or {@code texture} if the texture should not be changed
 		 */
-		@NotNull Identifier getArmorTexture(
-				@NotNull Identifier texture,
-				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+		@NotNull RegistryKey<EquipmentAsset> getArmorTexture(
+				@NotNull RegistryKey<EquipmentAsset> asset,
+				@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
 				boolean useSecondLayer
 		);
 	}
@@ -208,14 +211,14 @@ public final class ArmorRenderingRegistry {
 		 * Modifies the armor model.
 		 *
 		 * @param model  the <em>current</em> armor model
-		 * @param entity the entity wearing the armor
+		 * @param state the render state of the entity wearing the armor
 		 * @param stack  the item stack representing the worn armor
 		 * @param slot   the equipment slot the armor is being worn in
 		 * @return the new armor model, or {@code model} if the model should not be changed
 		 */
-		@NotNull BipedEntityModel<LivingEntity> getArmorModel(
-				@NotNull BipedEntityModel<LivingEntity> model,
-				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot
+		@NotNull BipedEntityModel<BipedRenderState> getArmorModel(
+				@NotNull BipedEntityModel<BipedRenderState> model,
+				@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot
 		);
 	}
 
@@ -227,17 +230,17 @@ public final class ArmorRenderingRegistry {
 		/**
 		 * Modifies the armor render layer.
 		 *
-		 * @param layer   the <em>current</em> render layer
-		 * @param entity  the entity wearing the armor
-		 * @param stack   the item stack representing the worn armor
-		 * @param slot    the equipment slot the armor is being worn in
-		 * @param texture the texture used to render the armor
+		 * @param layer   		the <em>current</em> render layer
+		 * @param state   		the render state of the entity wearing the armor
+		 * @param stack   		the item stack representing the worn armor
+		 * @param slot    		the equipment slot the armor is being worn in
+		 * @param armorAsset 	the asset used to render the armor
 		 * @return the new armor render layer, or {@code layer} if the layer should not be changed
 		 */
 		@NotNull RenderLayer getArmorRenderLayer(
 				@NotNull RenderLayer layer,
-				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-				@NotNull Identifier texture
+				@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+				@NotNull RegistryKey<EquipmentAsset> armorAsset
 		);
 	}
 }

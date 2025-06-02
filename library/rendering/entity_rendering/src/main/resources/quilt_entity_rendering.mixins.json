@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.ArmorFeatureRendererMixin",
+    "client.EquipmentRendererMixin",
     "client.ItemMixin"
   ],
   "injectors": {

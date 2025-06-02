@@ -25,10 +25,13 @@ import org.slf4j.Logger;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.state.BipedRenderState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.EquipmentAsset;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -71,9 +74,9 @@ public final class ArmorRenderingRegistryImpl {
 	@Contract("-> new")
 	public static @NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> createRenderLayerProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.RenderLayerProvider.class,
-				listeners -> (layer, entity, stack, slot, texture) -> {
+				listeners -> (layer, state, stack, slot, texture) -> {
 					for (var listener : listeners) {
-						layer = listener.getArmorRenderLayer(layer, entity, stack, slot, texture);
+						layer = listener.getArmorRenderLayer(layer, state, stack, slot, texture);
 					}
 
 					return layer;
@@ -110,35 +113,43 @@ public final class ArmorRenderingRegistryImpl {
 		((ItemArmorRenderingExtensions) item).quilt$getOrCreateRenderLayerProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
 	}
 
-	public static @NotNull Identifier getArmorTexture(@NotNull Identifier texture,
-			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-			boolean useSecondTexture) {
+	public static @NotNull RegistryKey<EquipmentAsset> getArmorAsset(
+		@NotNull RegistryKey<EquipmentAsset> asset,
+		@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+		boolean useSecondTexture
+	) {
 		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
 		if (e == null) {
-			return texture;
+			return asset;
 		}
 
-		return e.invoker().getArmorTexture(texture, entity, stack, slot, useSecondTexture);
+		return e.invoker().getArmorTexture(asset, state, stack, slot, useSecondTexture);
 	}
 
-	public static @NotNull BipedEntityModel<LivingEntity> getArmorModel(@NotNull BipedEntityModel<LivingEntity> model,
-			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot) {
+	public static @NotNull BipedEntityModel<BipedRenderState> getArmorModel(
+		@NotNull BipedEntityModel<BipedRenderState> model,
+		@NotNull BipedRenderState state,
+		@NotNull ItemStack stack,
+		@NotNull EquipmentSlot slot
+	) {
 		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
 		if (e == null) {
 			return model;
 		}
 
-		return e.invoker().getArmorModel(model, entity, stack, slot);
+		return e.invoker().getArmorModel(model, state, stack, slot);
 	}
 
-	public static @NotNull RenderLayer getArmorRenderLayer(@NotNull RenderLayer layer,
-			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-			@NotNull Identifier texture) {
-		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
-		if (e == null) {
+	public static @NotNull RenderLayer getArmorRenderLayer(
+		@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
+		@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
+	) {
+        final Event<ArmorRenderingRegistry.RenderLayerProvider> event =
+			((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
+		if (event == null) {
 			return layer;
 		}
 
-		return e.invoker().getArmorRenderLayer(layer, entity, stack, slot, texture);
+		return event.invoker().getArmorRenderLayer(layer, state, stack, slot, armorAsset);
 	}
 }
