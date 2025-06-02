@@ -2,6 +2,7 @@ package org.quiltmc.qsl.recipe.api.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,47 +44,69 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     private final int width;
     private final int height;
 
-    public ShapedRecipeData(
+    public static ShapedRecipeData of(
+        @NotNull
         String group,
+        @NotNull
         CraftingCategory category,
+        @NotNull
         ImmutableList<String> pattern,
+        @NotNull
         ImmutableMap<Character, Either<Item, TagKey<Item>>> key,
+        @NotNull
         ItemStack result,
         boolean showNotification
     ) {
-        requireNonNull(pattern, "pattern must not be null");
-        requireNonNull(key, "key must not be null");
+        requireSpecified(pattern, "pattern");
+        requireSpecified(key, "key");
 
-        this.height = pattern.size();
-        if (this.height < MIN_HEIGHT || this.height > MAX_HEIGHT) {
+        final Dimensions patternDimensions = verifyPattern(pattern, key);
+
+        return new ShapedRecipeData(
+            requireSpecified(group, "group"),
+            requireSpecified(category, "category"),
+            pattern,
+            patternDimensions.width, patternDimensions.height,
+            key,
+            requireSpecified(result, "result"),
+            showNotification
+        );
+    }
+
+    private static Dimensions verifyPattern(
+        ImmutableList<String> pattern,
+        ImmutableMap<Character, Either<Item, TagKey<Item>>> key
+    ) {
+        final int height = pattern.size();
+        if (height < MIN_HEIGHT || height > MAX_HEIGHT) {
             throw new IllegalArgumentException(
                 "pattern height must be between %s and %s; was %s"
-                    .formatted(MIN_HEIGHT, MAX_HEIGHT, this.height)
+                    .formatted(MIN_HEIGHT, MAX_HEIGHT, height)
             );
         }
 
         final Iterator<String> rowItr = pattern.iterator();
-        this.width = rowItr.next().length();
-        if (this.width < MIN_WIDTH || this.width > MAX_WIDTH) {
+        final int width = rowItr.next().length();
+        if (width < MIN_WIDTH || width > MAX_WIDTH) {
             throw new IllegalArgumentException(
                 "pattern width must be between %s and %s; was %s"
-                    .formatted(MIN_WIDTH, MAX_WIDTH, this.width)
+                    .formatted(MIN_WIDTH, MAX_WIDTH, width)
             );
         }
 
         while (rowItr.hasNext()) {
             final int currentWidth = rowItr.next().length();
-            if (currentWidth != this.width) {
+            if (currentWidth != width) {
                 throw new IllegalArgumentException(
                     "all pattern rows must have the same width; found both %s and %s"
-                        .formatted(this.width, currentWidth)
+                        .formatted(width, currentWidth)
                 );
             }
         }
 
         final Set<Character> patternSymbols = new HashSet<>();
-        for (int col = 0; col < this.height; col++) {
-            for (int row = 0; row < this.width; row++) {
+        for (int col = 0; col < height; col++) {
+            for (int row = 0; row < width; row++) {
                 final char symbol = pattern.get(col).charAt(row);
                 if (symbol != ShapedRecipePattern.EMPTY_SLOT && !key.containsKey(symbol)) {
                     throw new IllegalArgumentException("key has no mapping for " + symbol);
@@ -94,23 +117,52 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         }
 
         for (final Character keySymbol : key.keySet()) {
-            if (keySymbol == ShapedRecipePattern.EMPTY_SLOT) {
-                throw new IllegalArgumentException(
-                    "key must not map '%1$s'; '%1$s' is reserved for empty slots"
-                        .formatted(ShapedRecipePattern.EMPTY_SLOT)
-                );
-            } else if (!patternSymbols.contains(keySymbol)) {
+            if (!patternSymbols.contains(requireValidSymbol(keySymbol))) {
                 throw new IllegalArgumentException(
                     "key contains extra mapping that doesn't appear in pattern: " + keySymbol
                 );
             }
         }
 
-        this.group = requireNonNull(group, "group must not be null");
-        this.category = requireNonNull(category, "category must not be null");
+        return new Dimensions(width, height);
+    }
+
+    private static char requireValidSymbol(char symbol) {
+        if (symbol == ShapedRecipePattern.EMPTY_SLOT) {
+            throw new IllegalArgumentException(
+                "key must not map '%1$s'; '%1$s' is reserved for empty slots"
+                    .formatted(ShapedRecipePattern.EMPTY_SLOT)
+            );
+        }
+
+        return symbol;
+    }
+
+    private static <T> T requireSpecified(T value, String name) {
+        return requireNonNull(value, name + " must be specified");
+    }
+
+    private ShapedRecipeData(
+        @NotNull
+        String group,
+        @NotNull
+        CraftingCategory category,
+        @NotNull
+        ImmutableList<String> pattern,
+        int width, int height,
+        @NotNull
+        ImmutableMap<Character, Either<Item, TagKey<Item>>> key,
+        @NotNull
+        ItemStack result,
+        boolean showNotification
+    ) {
+        this.group = group;
+        this.category = category;
         this.pattern = pattern;
+        this.width = width;
+        this.height = height;
         this.key = key;
-        this.result = requireNonNull(result, "result must not be null");
+        this.result = result;
         this.showNotification = showNotification;
     }
 
@@ -124,7 +176,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
                 if (symbol == ShapedRecipePattern.EMPTY_SLOT) {
                     return DataResult.success(Optional.empty());
                 } else {
-                    //noinspection DataFlowIssue; the contructor verifies this is safe
+                    //noinspection DataFlowIssue; verifyPattern ensures this is safe
                     return this.key.get(symbol).map(
                         item -> DataResult.success(Optional.of(Ingredient.ofItem(item))),
                         tag -> items.getTag(tag)
@@ -162,4 +214,64 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
             this.showNotification
         ));
     }
+
+    public static final class Builder {
+        private String group = "";
+        private CraftingCategory category = CraftingCategory.MISC;
+        private ImmutableList<String> pattern;
+        private final ImmutableMap.Builder<Character, Either<Item, TagKey<Item>>> key = ImmutableMap.builder();
+        private ItemStack result;
+        private boolean showNotification = true;
+
+        public Builder group(@NotNull String group) {
+            this.group = requireNonNull(group);
+            return this;
+        }
+
+        public Builder category(@NotNull CraftingCategory category) {
+            this.category = requireNonNull(category);
+            return this;
+        }
+
+        public Builder pattern(@NotNull Iterable<String> pattern) {
+            this.pattern = ImmutableList.copyOf(requireNonNull(pattern));
+            return this;
+        }
+
+        public Builder pattern(@NotNull String... pattern) {
+            this.pattern = ImmutableList.copyOf(requireNonNull(pattern));
+            return this;
+        }
+
+        public Builder ingredient(char symbol, @NotNull Item item) {
+            this.key.put(requireValidSymbol(symbol), Either.left(requireNonNull(item)));
+            return this;
+        }
+
+        public Builder ingredient(char symbol, @NotNull TagKey<Item> tag) {
+            this.key.put(requireValidSymbol(symbol), Either.right(requireNonNull(tag)));
+            return this;
+        }
+
+        public Builder result(@NotNull ItemStack result) {
+            this.result = requireNonNull(result);
+            return this;
+        }
+
+        public Builder showNotification(boolean show) {
+            this.showNotification = show;
+            return this;
+        }
+
+        public ShapedRecipeData build() {
+            return ShapedRecipeData.of(
+                this.group, this.category,
+                this.pattern, this.key.build(),
+                this.result,
+                this.showNotification
+            );
+        }
+    }
+
+    private record Dimensions(int width, int height) { }
 }
