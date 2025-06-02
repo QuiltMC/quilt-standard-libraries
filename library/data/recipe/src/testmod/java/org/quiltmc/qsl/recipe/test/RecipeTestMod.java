@@ -25,10 +25,17 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.CraftingRecipeInput;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.ItemMapper;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.display.SlotDisplay;
+import net.minecraft.recipe.display.SlotDisplayContext;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
+import net.minecraft.util.context.ContextKeySet;
+import net.minecraft.util.context.ContextMap;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
@@ -77,8 +84,16 @@ public class RecipeTestMod implements ModInitializer {
 
 		RecipeManagerHelper.removeRecipes(handler -> {
 			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-				return craftingRecipe.value().getResult(handler.getRegistryManager()).getItem() instanceof BlockItem blockItem
-						&& blockItem.getBlock() instanceof PressurePlateBlock;
+				return craftingRecipe
+					.value()
+					.getDisplays()
+					.stream()
+					.flatMap(recipeDisplay -> recipeDisplay
+						.result()
+						.resolveItems(new ContextMap.Builder().build(SlotDisplayContext.CONTEXT), SlotDisplay.ItemStackMapper.INSTANCE))
+					.map(ItemStack::getItem)
+					.anyMatch(item -> item instanceof BlockItem blockItem
+						&& blockItem.getBlock() instanceof PressurePlateBlock);
 			});
 		});
 	}

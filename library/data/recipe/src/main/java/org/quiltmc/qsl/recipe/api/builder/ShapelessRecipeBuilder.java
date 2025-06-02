@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.recipe.api.builder;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -27,10 +28,9 @@ import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapelessRecipe;
-import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.*;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
 
 /**
  * Builder to build shapeless crafting recipes.
@@ -75,7 +75,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @see Ingredient#ofItems(HolderSet)
 	 */
 	public ShapelessRecipeBuilder ingredient(TagKey<Item> tag) {
-		return this.ingredient(Ingredient.ofTag(tag));
+		return this.ingredient(Ingredient.ofItems(Registries.ITEM.getTagOrThrow(tag)));
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @see Ingredient#ofStacks(Stream)
 	 */
 	public ShapelessRecipeBuilder ingredient(ItemStack... stacks) {
-		return this.ingredient(Ingredient.ofStacks(stacks));
+		return this.ingredient(Ingredient.ofStacks(Arrays.stream(stacks).map(ItemStack::getItem)));
 	}
 
 	/**
@@ -115,14 +115,6 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 
 		if (this.ingredients.size() == 0) throw new IllegalStateException("Cannot build a recipe without ingredients.");
 
-		DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(this.ingredients.size(), Ingredient.EMPTY);
-		int i = 0;
-
-		for (var ingredient : this.ingredients) {
-			ingredients.set(i, ingredient);
-			i++;
-		}
-
-		return new RecipeHolder<>(id, new ShapelessRecipe(group, this.category, this.output, ingredients));
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new ShapelessRecipe(group, this.category, this.output, this.ingredients.stream().toList()));
 	}
 }

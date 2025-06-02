@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.api.builder;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BlastingRecipe;
 import net.minecraft.recipe.CampfireCookingRecipe;
@@ -27,10 +28,15 @@ import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
 import org.quiltmc.qsl.recipe.impl.VanillaRecipeBuildersImpl;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides some recipe builders for Vanilla recipes.
@@ -50,7 +56,7 @@ public final class VanillaRecipeBuilders {
 	 * @return the ingredients
 	 * @throws IllegalStateException if a key has no assigned ingredient or if there is an ingredient but no assigned key
 	 */
-	public static DefaultedList<Ingredient> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
+	public static List<Optional<Ingredient>> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
 		return VanillaRecipeBuildersImpl.getIngredients(pattern, keys, width, height);
 	}
 

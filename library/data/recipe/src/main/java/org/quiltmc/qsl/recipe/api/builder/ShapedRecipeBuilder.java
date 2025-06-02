@@ -33,9 +33,11 @@ import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.ShapedRecipePattern;
 import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
 
 /**
  * Builder to build shaped crafting recipes.
@@ -47,8 +49,6 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	private final Char2ObjectMap<Ingredient> ingredients = new Char2ObjectOpenHashMap<>();
 	private CraftingCategory category = CraftingCategory.MISC;
 
-	// FIXME: Ingredient.EMPTY no longer exists
-	//  i'm throwing in "air" as a placeholder
 	/**
 	 * Creates a new shaped recipe builder.
 	 *
@@ -116,8 +116,8 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @see #ingredient(char, Ingredient)
 	 * @see Ingredient#ofItems(HolderSet)
 	 */
-	public ShapedRecipeBuilder ingredient(char key, HolderSet<Item> tag) {
-		return this.ingredient(key, Ingredient.ofItems(tag));
+	public ShapedRecipeBuilder ingredient(char key, TagKey<Item> tag) {
+		return this.ingredient(key, Ingredient.ofItems(Registries.ITEM.getTagOrThrow(tag)));
 	}
 
 	/**
@@ -130,7 +130,6 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @see Ingredient#ofStacks(Stream)
 	 */
 	public ShapedRecipeBuilder ingredient(char key, ItemStack... stacks) {
-		// return this.ingredient(key, Ingredient.ofStacks(stacks));
 		return this.ingredient(key, Ingredient.ofStacks(Arrays.stream(stacks).map(ItemStack::getItem)));
 	}
 
@@ -157,7 +156,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	@Override
 	public RecipeHolder<ShapedRecipe> build(Identifier id, String group) {
 		this.checkOutputItem();
-		DefaultedList<Ingredient> ingredients = VanillaRecipeBuilders.getIngredients(this.pattern, this.ingredients, this.width, this.height);
-		return new RecipeHolder<>(id, new ShapedRecipe(group, this.category, new ShapedRecipePattern(this.width, this.height, ingredients, Optional.empty()), this.output));
+		var ingredients = VanillaRecipeBuilders.getIngredients(this.pattern, this.ingredients, this.width, this.height);
+		return new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), new ShapedRecipe(group, this.category, new ShapedRecipePattern(this.width, this.height, ingredients, Optional.empty()), this.output));
 	}
 }
