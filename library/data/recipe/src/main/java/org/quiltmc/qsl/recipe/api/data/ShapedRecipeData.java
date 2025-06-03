@@ -28,6 +28,9 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Represents a shaped crafting recipe.
+ */
 public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, ShapedRecipe> {
     private static final int MIN_WIDTH = 1;
     private static final int MAX_WIDTH = 3;
@@ -37,13 +40,18 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     private final String group;
     private final CraftingCategory category;
     private final ImmutableList<String> pattern;
-    private final ImmutableMap<Character, Either<Item, TagKey<Item>>> key;
+    private final ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key;
     private final ItemStack result;
     private final boolean showNotification;
 
     private final int width;
     private final int height;
 
+    /**
+     * Creates a new recipe data instance.
+     *
+     * @see #builder()
+     */
     public static ShapedRecipeData of(
         @NotNull
         String group,
@@ -52,7 +60,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         @NotNull
         ImmutableList<String> pattern,
         @NotNull
-        ImmutableMap<Character, Either<Item, TagKey<Item>>> key,
+        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key,
         @NotNull
         ItemStack result,
         boolean showNotification
@@ -73,9 +81,18 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         );
     }
 
+    /**
+     * Creates a {@link Builder} for creating recipe data instances.
+     *
+     * @return the builder
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
     private static Dimensions verifyPattern(
         ImmutableList<String> pattern,
-        ImmutableMap<Character, Either<Item, TagKey<Item>>> key
+        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key
     ) {
         final int height = pattern.size();
         if (height < MIN_HEIGHT || height > MAX_HEIGHT) {
@@ -142,6 +159,14 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         return requireNonNull(value, name + " must be specified");
     }
 
+    private static <T> Iterable<T> requireNonEmpty(Iterable<T> iterable, String name) {
+        if (!requireNonNull(iterable).iterator().hasNext()) {
+            throw new IllegalArgumentException(name + " must not be empty");
+        }
+
+        return iterable;
+    }
+
     private ShapedRecipeData(
         @NotNull
         String group,
@@ -151,7 +176,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         ImmutableList<String> pattern,
         int width, int height,
         @NotNull
-        ImmutableMap<Character, Either<Item, TagKey<Item>>> key,
+        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key,
         @NotNull
         ItemStack result,
         boolean showNotification
@@ -168,7 +193,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
 
     @Override
     public DataResult<ShapedRecipe> createRecipe(HolderLookup.Provider registries) {
-        final HolderLookup.RegistryLookup<Item> items = registries.getLookup(RegistryKeys.ITEM).orElseThrow();
+        final HolderLookup.RegistryLookup<Item> itemLookup = registries.getLookup(RegistryKeys.ITEM).orElseThrow();
 
         final ImmutableList<DataResult<Optional<Ingredient>>> ingredientResults = this.pattern.stream()
             .flatMap(row -> row.chars().mapToObj(c -> (char)c))
@@ -178,8 +203,8 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
                 } else {
                     //noinspection DataFlowIssue; verifyPattern ensures this is safe
                     return this.key.get(symbol).map(
-                        item -> DataResult.success(Optional.of(Ingredient.ofItem(item))),
-                        tag -> items.getTag(tag)
+                        items -> DataResult.success(Optional.of(Ingredient.ofItems(items.toArray(Item[]::new)))),
+                        tag -> itemLookup.getTag(tag)
                             .map(Ingredient::ofItems)
                             .map(Optional::of)
                             .map(DataResult::success)
@@ -215,54 +240,159 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         ));
     }
 
+    /**
+     * Convenience class for creating {@link ShapedRecipeData} instances.
+     */
     public static final class Builder {
         private String group = "";
         private CraftingCategory category = CraftingCategory.MISC;
         private ImmutableList<String> pattern;
-        private final ImmutableMap.Builder<Character, Either<Item, TagKey<Item>>> key = ImmutableMap.builder();
+        private final ImmutableMap.Builder<Character, Either<ImmutableList<Item>, TagKey<Item>>> key = ImmutableMap.builder();
         private ItemStack result;
         private boolean showNotification = true;
 
+        /**
+         * Sets the recipe's group.
+         * <p>
+         * The default value is {@code ""}.
+         *
+         * @param group the group
+         *
+         * @return this builder
+         */
         public Builder group(@NotNull String group) {
             this.group = requireNonNull(group);
             return this;
         }
 
+        /**
+         * Sets the recipe's category.
+         * <p>
+         * The default value is {@link CraftingCategory#MISC}.
+         *
+         * @param category the category
+         *
+         * @return this builder
+         */
         public Builder category(@NotNull CraftingCategory category) {
             this.category = requireNonNull(category);
             return this;
         }
 
+        /**
+         * Sets the recipe's pattern.
+         * <p>
+         * There is no default value; a pattern must be specified before {@linkplain #build() building}.
+         * <p>
+         * The pattern represents how ingredients must be arranged in a crafting grid, with each string being a row
+         * and each character being a symbol representing a slot within that row. A space represents an empty slot,
+         * while other symbols represent ingredients which must be specified using one of the
+         * {@link #ingredient(char, Iterable) ingredient} methods.<br>
+         * There must be between {@value MIN_HEIGHT} and {@value MAX_HEIGHT} rows (strings), and each row mush be
+         * between {@value MIN_WIDTH} and {@value MAX_WIDTH} symbols long. All rows must have the same length.
+         *
+         * @param pattern the pattern
+         *
+         * @return this builder
+         */
         public Builder pattern(@NotNull Iterable<String> pattern) {
-            this.pattern = ImmutableList.copyOf(requireNonNull(pattern));
+            this.pattern = ImmutableList.copyOf(requireNonEmpty(pattern, "pattern"));
             return this;
         }
 
+        /**
+         * @see #pattern(Iterable)
+         */
         public Builder pattern(@NotNull String... pattern) {
-            this.pattern = ImmutableList.copyOf(requireNonNull(pattern));
+            return this.pattern(ImmutableList.copyOf(requireNonNull(pattern)));
+        }
+
+        /**
+         * Associates the passed {@code symbol} with an ingredient accepting the passed {@code items}.
+         * <p>
+         * Space is a reserved symbol representing an empty slot, it cannot be associated with an ingredient.<br>
+         * Each non-space symbol in the {@link #pattern(Iterable) pattern} must be mapped using this or one of the other
+         * {@code ingredient} methods.
+         *
+         * @param symbol the symbol to associate an ingredient with
+         * @param items the items the ingredient will accept
+         *
+         * @return this builder
+         *
+         * @see #ingredient(char, Item...)
+         * @see #ingredient(char, TagKey)
+         */
+        public Builder ingredient(char symbol, @NotNull Iterable<Item> items) {
+            this.key.put(
+                requireValidSymbol(symbol),
+                Either.left(ImmutableList.copyOf(requireNonEmpty(items, "ingredient")))
+            );
             return this;
         }
 
-        public Builder ingredient(char symbol, @NotNull Item item) {
-            this.key.put(requireValidSymbol(symbol), Either.left(requireNonNull(item)));
-            return this;
+        /**
+         * @see #ingredient(char, Iterable)
+         * @see #ingredient(char, TagKey)
+         */
+        public Builder ingredient(char symbol, @NotNull Item... items) {
+            return this.ingredient(symbol, ImmutableList.copyOf(requireNonNull(items)));
         }
 
+        /**
+         * Associates the passed {@code symbol} with an ingredient accepting items in the passed {@code tag}.
+         * <p>
+         * Similar to {@link #ingredient(char, Iterable)}, except that acceptable items are defined in the passed
+         * {@code tag} instead.
+         *
+         * @param symbol the symbol to associate an ingredient with
+         * @param tag the tag containing items the ingredient will accept
+         *
+         * @return this builder
+         *
+         * @see #ingredient(char, Iterable)
+         * @see #ingredient(char, Item...)
+         */
         public Builder ingredient(char symbol, @NotNull TagKey<Item> tag) {
             this.key.put(requireValidSymbol(symbol), Either.right(requireNonNull(tag)));
             return this;
         }
 
+        /**
+         * Sets the recipe's result.
+         * <p>
+         * There is no default value; a result must be specified before {@linkplain #build() building}.
+         *
+         * @param result the result
+         *
+         * @return this builder
+         */
         public Builder result(@NotNull ItemStack result) {
             this.result = requireNonNull(result);
             return this;
         }
 
+        /**
+         * Sets whether the recipe should show a notification when it's unlocked.
+         * <p>
+         * The default value is {@code true}.
+         *
+         * @param show whether a notification should be shown when the recipe is unlocked
+         *
+         * @return this builder
+         */
         public Builder showNotification(boolean show) {
             this.showNotification = show;
             return this;
         }
 
+        /**
+         * Creates a new {@link ShapedRecipeData} instance as specified by this builder.
+         * <p>
+         * A {@linkplain #result(ItemStack) result} and a {@linkplain #pattern(Iterable) pattern} with all of its
+         * symbols mapped to {@linkplain #ingredient(char, Iterable) ingredients} must be specified before building.
+         *
+         * @return the recipe data
+         */
         public ShapedRecipeData build() {
             return ShapedRecipeData.of(
                 this.group, this.category,
