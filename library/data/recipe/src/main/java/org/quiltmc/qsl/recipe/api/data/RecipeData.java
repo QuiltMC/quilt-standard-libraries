@@ -27,8 +27,8 @@ public interface RecipeData<I extends RecipeInput, R extends Recipe<I>> {
      * reflected in the recipe.
      *
      * @param registries access to the game's registries; provides safe access to dynamic content
-     * @return the result of attempting to creating recipe this data represents;
-     * may be an {@linkplain DataResult.Error error} if required content is not present
+     * @return the result of attempting to create the recipe this data represents;
+     * may be an {@linkplain DataResult.Error error} if required content is missing
      */
     DataResult<R> createRecipe(HolderLookup.Provider registries);
 }
