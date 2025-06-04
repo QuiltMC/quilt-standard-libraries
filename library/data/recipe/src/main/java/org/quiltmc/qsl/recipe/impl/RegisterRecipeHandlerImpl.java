@@ -25,24 +25,27 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, Recipe<?>> resourceMap;
 	private final ImmutableList.Builder<RecipeHolder<?>> recipes;
-	private final HolderLookup.Provider registryManager;
+	private final HolderLookup.Provider registries;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(
 		Map<Identifier, Recipe<?>> resourceMap,
-		HolderLookup.Provider registryManager
+		HolderLookup.Provider registries
 	) {
 		this.resourceMap = resourceMap;
 		this.recipes = ImmutableList.builder();
-		this.registryManager = registryManager;
+		this.registries = registries;
 	}
 
 	private void register(RecipeHolder<?> recipeHolder) {
@@ -64,22 +67,19 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	}
 
 	@Override
-	public void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory) {
+	public void register(Identifier id, Function<Identifier, RecipeData<?, ?>> factory) {
 		// Add the recipe only if nothing already provides the recipe.
 		if (!this.resourceMap.containsKey(id)) {
-			final RecipeHolder<?> recipeHolder = factory.apply(id);
-
-			if (!id.equals(recipeHolder.id().getValue())) {
-				throw new IllegalStateException("The recipe " + recipeHolder.id() + " tried to be registered as " + id);
-			}
-
-			this.register(recipeHolder);
+			factory.apply(id).createRecipe(this.registries)
+				.resultOrPartial(error -> RecipeManagerImpl.LOGGER.error("Error creating recipe {}: [{}]", id, error))
+				.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
+				.ifPresent(this::register);
 		}
 	}
 
 	@Override
 	public @NotNull HolderLookup.Provider getRegistries() {
-		return this.registryManager;
+		return this.registries;
 	}
 
 	public Collection<RecipeHolder<?>> buildRecipes() {

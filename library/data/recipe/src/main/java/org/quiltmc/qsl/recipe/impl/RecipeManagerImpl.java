@@ -64,7 +64,7 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @ApiStatus.Internal
-public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLoadedCallback {
+public final class RecipeManagerImpl {
 	/**
 	 * Stores the static recipes which are added to the {@link net.minecraft.recipe.RecipeManager} when recipes are
 	 * loaded.
@@ -73,9 +73,8 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	static final boolean DEBUG_MODE = TriState.fromProperty("quilt.recipe.debug").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
 	static final Logger LOGGER = LogUtils.getLogger();
-	private static DynamicRegistryManager currentRegistryManager;
 
-	public static <I extends RecipeInput, R extends Recipe<I>> void registerStaticRecipe(
+    public static <I extends RecipeInput, R extends Recipe<I>> void registerStaticRecipe(
 		Identifier id, RecipeData<I, R> recipe
 	) {
 		if (STATIC_RECIPES.putIfAbsent(id, recipe) != null) {
@@ -91,7 +90,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.forEach((id, data) -> {
 			data.createRecipe(registries)
-				.resultOrPartial(error -> LOGGER.error("Failed to create recipe {}: [{}]", id, error))
+				.resultOrPartial(error -> LOGGER.error("Error creating recipe {}: [{}]", id, error))
 				.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
 				.ifPresent(handler::tryRegister);
 		});
@@ -103,24 +102,21 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 
 	public static RecipeMap applyModifications(
 		RecipeManager recipeManager,
-		RecipeMap recipes
+		RecipeMap recipes,
+		HolderLookup.Provider registries
 	) {
 		final HashMultimap<RecipeType<?>, RecipeHolder<?>> byType =
 			HashMultimap.create(((RecipeMapAccessor) recipes).quilt$getByType());
 		final HashMap<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey =
 			new HashMap<>(((RecipeMapAccessor) recipes).quilt$getByKey());
 
-		final var handler = new ModifyRecipeHandlerImpl(
-			recipeManager,
-			byType,
-			byKey,
-			currentRegistryManager
-		);
-		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
-		LOGGER.info("Modified {} recipes.", handler.counter);
+		final var modifyHandler =
+			new ModifyRecipeHandlerImpl(recipeManager, byType, byKey, registries);
+		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(modifyHandler);
+		LOGGER.info("Modified {} recipes.", modifyHandler.counter);
 
 		final var removeHandler =
-			new RemoveRecipeHandlerImpl(recipeManager, byType, byKey, currentRegistryManager);
+			new RemoveRecipeHandlerImpl(recipeManager, byType, byKey, registries);
 		RecipeLoadingEvents.REMOVE.invoker().removeRecipes(removeHandler);
 		LOGGER.info("Removed {} recipes.", removeHandler.counter);
 
@@ -128,9 +124,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			dump(byKey);
 		}
 
-		currentRegistryManager = null;
-
-		return RecipeMapAccessor.quilt$create(ImmutableMultimap.copyOf(byType), ImmutableMap.copyOf(byKey));
+        return RecipeMapAccessor.quilt$create(ImmutableMultimap.copyOf(byType), ImmutableMap.copyOf(byKey));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -165,8 +159,10 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 				try {
 					Files.createDirectories(parent);
 				} catch (IOException e) {
-					LOGGER.error("Failed to create parent recipe directory {}. Cannot dump recipe {}.",
-							parent, id, e);
+					LOGGER.error(
+						"Failed to create parent recipe directory {}. Cannot dump recipe {}.",
+						parent, id, e
+					);
 					continue;
 				}
 			}
@@ -190,10 +186,5 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onDynamicRegistryLoaded(@NotNull DynamicRegistryManager registryManager) {
-		currentRegistryManager = registryManager;
 	}
 }

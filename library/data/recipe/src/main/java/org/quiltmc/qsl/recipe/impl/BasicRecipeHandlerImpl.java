@@ -29,7 +29,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
@@ -41,18 +41,18 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final Multimap<RecipeType<?>, RecipeHolder<?>> byType;
 	final Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey;
 
-	private final DynamicRegistryManager registryManager;
+	private final HolderLookup.Provider registries;
 
 	BasicRecipeHandlerImpl(
 		RecipeManager recipeManager,
 		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
 		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
-		DynamicRegistryManager registryManager
+		HolderLookup.Provider registries
 	) {
 		this.recipeManager = recipeManager;
 		this.byType = byType;
 		this.byKey = byKey;
-		this.registryManager = registryManager;
+		this.registries = registries;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	}
 
 	@Override
-	public @NotNull DynamicRegistryManager getRegistryManager() {
-		return this.registryManager;
+	public @NotNull HolderLookup.Provider getRegistries() {
+		return this.registries;
 	}
 }

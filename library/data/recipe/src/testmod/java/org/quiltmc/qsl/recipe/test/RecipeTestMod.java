@@ -25,21 +25,16 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.recipe.CraftingRecipeInput;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.ItemMapper;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.display.SlotDisplay;
 import net.minecraft.recipe.display.SlotDisplayContext;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
-import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.util.context.ContextMap;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
-import org.quiltmc.qsl.recipe.api.builder.VanillaRecipeBuilders;
 import org.quiltmc.qsl.recipe.api.data.ShapedRecipeData;
 
 public class RecipeTestMod implements ModInitializer {
@@ -56,14 +51,6 @@ public class RecipeTestMod implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// coal/charcoal -> diamond
-		// RecipeManagerHelper.registerStaticRecipe(
-		// 	VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.DIAMOND))
-		// 		// It's important to test a tag ingredient in a static recipe
-		// 		// to make sure we don't resolve the tag early.
-		// 		.ingredient(ItemTags.COALS)
-		// 		.build(Identifier.of(NAMESPACE, "test1"), "")
-		// );
-
 		RecipeManagerHelper.registerStaticRecipe(
 			Identifier.of(NAMESPACE, "test1"),
 			ShapedRecipeData.builder()
@@ -75,46 +62,60 @@ public class RecipeTestMod implements ModInitializer {
 				.build()
 		);
 
-		// RecipeManagerHelper.addRecipes(handler -> {
-		// 	handler.register(Identifier.of(NAMESPACE, "test2"),
-		// 			id -> VanillaRecipeBuilders.shapedRecipe("IG", "C#")
-		// 					.ingredient('I', Items.IRON_INGOT)
-		// 					.ingredient('G', Items.GOLD_INGOT)
-		// 					.ingredient('C', Items.COAL)
-		// 					.ingredient('#', Items.CHARCOAL)
-		// 					.output(pickRandomStack())
-		// 					.build(id, ""));
-		// });
-		//
-		// RecipeManagerHelper.modifyRecipes(handler -> {
-		// 	handler.replace(VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.NETHER_STAR))
-		// 			.ingredient(Items.ACACIA_PLANKS)
-		// 			.build(Identifier.ofDefault("acacia_button"), ""));
-		// 	handler.replace(VanillaRecipeBuilders.shapedRecipe("A", "C")
-		// 			.ingredient('A', ItemTags.PLANKS)
-		// 			.ingredient('C', Items.COAL)
-		// 			.output(new ItemStack(Items.NETHER_BRICK))
-		// 			.build(Identifier.ofDefault("oak_button"), ""));
-		// });
-		//
-		// RecipeManagerHelper.removeRecipes(handler -> {
-		// 	handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-		// 		return craftingRecipe
-		// 			.value()
-		// 			.getDisplays()
-		// 			.stream()
-		// 			.flatMap(recipeDisplay -> recipeDisplay
-		// 				.result()
-		// 				.resolveItems(new ContextMap.Builder().build(SlotDisplayContext.CONTEXT), SlotDisplay.ItemStackMapper.INSTANCE))
-		// 			.map(ItemStack::getItem)
-		// 			.anyMatch(item -> item instanceof BlockItem blockItem
-		// 				&& blockItem.getBlock() instanceof PressurePlateBlock);
-		// 	});
-		// });
+		RecipeManagerHelper.addRecipes(handler -> {
+			handler.register(
+				Identifier.of(NAMESPACE, "test2"),
+				id -> ShapedRecipeData.builder()
+					.pattern(
+						"IG",
+						"C#"
+					)
+					.ingredient('I', Items.IRON_INGOT)
+					.ingredient('G', Items.GOLD_INGOT)
+					.ingredient('C', Items.COAL)
+					.ingredient('#', Items.CHARCOAL)
+					.result(pickRandomStack())
+					.build()
+			);
+		});
+
+		RecipeManagerHelper.modifyRecipes(handler -> {
+			// handler.replace(VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.NETHER_STAR))
+			// 		.ingredient(Items.ACACIA_PLANKS)
+			// 		.build(Identifier.ofDefault("acacia_button"), ""));
+
+			handler.replace(
+				Identifier.ofDefault("oak_button"),
+				ShapedRecipeData.builder()
+					.pattern(
+						"A",
+						"C"
+					)
+					.ingredient('A', ItemTags.PLANKS)
+					.ingredient('C', Items.COAL)
+					.result(new ItemStack(Items.NETHER_BRICK))
+					.build()
+			);
+		});
+
+		RecipeManagerHelper.removeRecipes(handler -> {
+			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
+				return craftingRecipe
+					.value()
+					.getDisplays()
+					.stream()
+					.flatMap(recipeDisplay -> recipeDisplay
+						.result()
+						.resolveItems(new ContextMap.Builder().build(SlotDisplayContext.CONTEXT), SlotDisplay.ItemStackMapper.INSTANCE))
+					.map(ItemStack::getItem)
+					.anyMatch(item -> item instanceof BlockItem blockItem
+						&& blockItem.getBlock() instanceof PressurePlateBlock);
+			});
+		});
 	}
 
 	private static ItemStack pickRandomStack() {
-		Item item = RANDOM_ITEMS_POOL.get(RANDOM.nextInt(RANDOM_ITEMS_POOL.size()));
+		final Item item = RANDOM_ITEMS_POOL.get(RANDOM.nextInt(RANDOM_ITEMS_POOL.size()));
 		return new ItemStack(item);
 	}
 }

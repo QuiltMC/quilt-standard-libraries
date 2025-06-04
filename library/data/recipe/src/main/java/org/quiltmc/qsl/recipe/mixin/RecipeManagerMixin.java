@@ -36,7 +36,6 @@ import net.minecraft.recipe.RecipeMap;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
-import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
 import com.llamalad7.mixinextras.sugar.Local;
@@ -74,12 +73,11 @@ public class RecipeManagerMixin {
 	@Inject(
 		method = "apply(Lnet/minecraft/recipe/RecipeMap;Lnet/minecraft/resource/ResourceManager;" +
 			"Lnet/minecraft/util/profiler/Profiler;)V",
-		at = @At(
-			value = "FIELD", opcode = Opcodes.PUTFIELD,
-			target = "Lnet/minecraft/recipe/RecipeManager;recipes:Lnet/minecraft/recipe/RecipeMap;"
-		)
+		at = @At("HEAD")
 	)
 	private void applyModifications(CallbackInfo ci, @Local(argsOnly = true) LocalRef<RecipeMap> recipeMap) {
-		recipeMap.set(RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, recipeMap.get()));
+		recipeMap.set(RecipeManagerImpl.applyModifications(
+			(RecipeManager) (Object) this, recipeMap.get(), this.registries)
+		);
 	}
 }

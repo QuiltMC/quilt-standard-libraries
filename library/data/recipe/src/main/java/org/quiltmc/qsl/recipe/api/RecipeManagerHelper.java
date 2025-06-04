@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.recipe.api;
 
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeInput;
 import net.minecraft.util.Identifier;
 
