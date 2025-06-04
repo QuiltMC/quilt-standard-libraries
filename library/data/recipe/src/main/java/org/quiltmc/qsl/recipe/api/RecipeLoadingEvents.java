@@ -21,14 +21,14 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
@@ -113,10 +113,10 @@ public final class RecipeLoadingEvents {
 			void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory);
 
 			/**
-			 * {@return the dynamic registry manager}
+			 * @return the lookup provider; allows for safe access to the game's registries and content
 			 */
 			@Contract(pure = true)
-			@NotNull DynamicRegistryManager getRegistryManager();
+			@NotNull HolderLookup.Provider getRegistries();
 		}
 	}
 

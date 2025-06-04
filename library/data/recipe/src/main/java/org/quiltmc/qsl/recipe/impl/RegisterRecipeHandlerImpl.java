@@ -21,24 +21,24 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, Recipe<?>> resourceMap;
 	private final ImmutableList.Builder<RecipeHolder<?>> recipes;
-	private final DynamicRegistryManager registryManager;
+	private final HolderLookup.Provider registryManager;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(
 		Map<Identifier, Recipe<?>> resourceMap,
-		DynamicRegistryManager registryManager
+		HolderLookup.Provider registryManager
 	) {
 		this.resourceMap = resourceMap;
 		this.recipes = ImmutableList.builder();
@@ -78,7 +78,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	}
 
 	@Override
-	public @NotNull DynamicRegistryManager getRegistryManager() {
+	public @NotNull HolderLookup.Provider getRegistries() {
 		return this.registryManager;
 	}
 

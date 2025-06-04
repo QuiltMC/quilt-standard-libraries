@@ -41,17 +41,21 @@ import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
 import org.quiltmc.qsl.recipe.mixin.accessor.RecipeMapAccessor;
 import org.slf4j.Logger;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.RecipeInput;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeMap;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.QuiltLoader;
@@ -65,25 +69,32 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	 * Stores the static recipes which are added to the {@link net.minecraft.recipe.RecipeManager} when recipes are
 	 * loaded.
 	 */
-	private static final Map<Identifier, RecipeHolder<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
+	private static final Map<Identifier, RecipeData<?, ?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
 	static final boolean DEBUG_MODE = TriState.fromProperty("quilt.recipe.debug").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
 	static final Logger LOGGER = LogUtils.getLogger();
 	private static DynamicRegistryManager currentRegistryManager;
 
-	public static void registerStaticRecipe(RecipeHolder<?> recipeHolder) {
-		if (STATIC_RECIPES.putIfAbsent(recipeHolder.id().getValue(), recipeHolder) != null) {
-			throw new IllegalArgumentException("Cannot register " + recipeHolder.id()
+	public static <I extends RecipeInput, R extends Recipe<I>> void registerStaticRecipe(
+		Identifier id, RecipeData<I, R> recipe
+	) {
+		if (STATIC_RECIPES.putIfAbsent(id, recipe) != null) {
+			throw new IllegalArgumentException("Cannot register " + id
 					+ " as another recipe with the same identifier already exists.");
 		}
 	}
 
 	public static Collection<RecipeHolder<?>> addRecipes(
-		Map<Identifier, Recipe<?>> resourceMap
+		Map<Identifier, Recipe<?>> resourceMap, HolderLookup.Provider registries
 	) {
-		final var handler = new RegisterRecipeHandlerImpl(resourceMap, currentRegistryManager);
+		final var handler = new RegisterRecipeHandlerImpl(resourceMap, registries);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.forEach((identifier, recipe) -> handler.tryRegister(recipe));
+		STATIC_RECIPES.forEach((id, data) -> {
+			data.createRecipe(registries)
+				.resultOrPartial(error -> LOGGER.error("Failed to create recipe: [{}]", error))
+				.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
+				.ifPresent(handler::tryRegister);
+		});
 
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 

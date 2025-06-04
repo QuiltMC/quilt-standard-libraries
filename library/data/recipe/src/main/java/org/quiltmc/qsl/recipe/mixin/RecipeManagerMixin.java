@@ -21,7 +21,9 @@ import java.util.SortedMap;
 
 import com.google.common.collect.Iterables;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -31,6 +33,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeMap;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
 import org.objectweb.asm.Opcodes;
@@ -41,6 +44,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
+	@Shadow @Final private HolderLookup.Provider registries;
+
 	@ModifyArg(
 			method = "prepare(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)" +
 				"Lnet/minecraft/recipe/RecipeMap;",
@@ -61,7 +66,7 @@ public class RecipeManagerMixin {
 			Iterables.addAll(modifiableRecipes, recipes);
 		}
 
-		modifiableRecipes.addAll(RecipeManagerImpl.addRecipes(resourceMap));
+		modifiableRecipes.addAll(RecipeManagerImpl.addRecipes(resourceMap, this.registries));
 
 		return modifiableRecipes;
 	}

@@ -90,6 +90,11 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         return new Builder();
     }
 
+    /**
+     * Verifies the pattern and its key are valid.
+     *
+     * @return the dimensions of the pattern
+     */
     private static Dimensions verifyPattern(
         ImmutableList<String> pattern,
         ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key
@@ -193,8 +198,6 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
 
     @Override
     public DataResult<ShapedRecipe> createRecipe(HolderLookup.Provider registries) {
-        final HolderLookup.RegistryLookup<Item> itemLookup = registries.getLookup(RegistryKeys.ITEM).orElseThrow();
-
         final ImmutableList<DataResult<Optional<Ingredient>>> ingredientResults = this.pattern.stream()
             .flatMap(row -> row.chars().mapToObj(c -> (char)c))
             .<DataResult<Optional<Ingredient>>>map(symbol -> {
@@ -204,7 +207,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
                     //noinspection DataFlowIssue; verifyPattern ensures this is safe
                     return this.key.get(symbol).map(
                         items -> DataResult.success(Optional.of(Ingredient.ofItems(items.toArray(Item[]::new)))),
-                        tag -> itemLookup.getTag(tag)
+                        tag -> registries.getLookupOrThrow(RegistryKeys.ITEM).getTag(tag)
                             .map(Ingredient::ofItems)
                             .map(Optional::of)
                             .map(DataResult::success)
@@ -311,7 +314,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
          * Associates the passed {@code symbol} with an ingredient accepting the passed {@code items}.
          * <p>
          * Space is a reserved symbol representing an empty slot, it cannot be associated with an ingredient.<br>
-         * Each non-space symbol in the {@link #pattern(Iterable) pattern} must be mapped using this or one of the other
+         * Each non-space symbol in the {@linkplain #pattern(Iterable) pattern} must be mapped using this or one of the other
          * {@code ingredient} methods.
          *
          * @param symbol the symbol to associate an ingredient with
@@ -342,7 +345,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
          * Associates the passed {@code symbol} with an ingredient accepting items in the passed {@code tag}.
          * <p>
          * Similar to {@link #ingredient(char, Iterable)}, except that acceptable items are defined in the passed
-         * {@code tag} instead.
+         * {@code tag}.
          *
          * @param symbol the symbol to associate an ingredient with
          * @param tag the tag containing items the ingredient will accept
