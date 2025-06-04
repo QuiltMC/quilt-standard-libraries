@@ -91,7 +91,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.forEach((id, data) -> {
 			data.createRecipe(registries)
-				.resultOrPartial(error -> LOGGER.error("Failed to create recipe: [{}]", error))
+				.resultOrPartial(error -> LOGGER.error("Failed to create recipe {}: [{}]", id, error))
 				.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
 				.ifPresent(handler::tryRegister);
 		});
