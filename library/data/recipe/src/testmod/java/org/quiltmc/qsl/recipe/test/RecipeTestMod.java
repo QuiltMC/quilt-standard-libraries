@@ -36,6 +36,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
 import org.quiltmc.qsl.recipe.api.data.ShapedRecipeData;
+import org.quiltmc.qsl.recipe.api.data.ShapelessRecipeData;
 
 public class RecipeTestMod implements ModInitializer {
 	public static final String NAMESPACE = "quilt_recipe_testmod";
@@ -80,9 +81,13 @@ public class RecipeTestMod implements ModInitializer {
 		});
 
 		RecipeManagerHelper.modifyRecipes(handler -> {
-			// handler.replace(VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.NETHER_STAR))
-			// 		.ingredient(Items.ACACIA_PLANKS)
-			// 		.build(Identifier.ofDefault("acacia_button"), ""));
+			handler.replace(
+				Identifier.ofDefault("acacia_button"),
+				ShapelessRecipeData.builder()
+					.ingredient(Items.ACACIA_PLANKS)
+					.result(new ItemStack(Items.NETHER_STAR))
+					.build()
+			);
 
 			handler.replace(
 				Identifier.ofDefault("oak_button"),

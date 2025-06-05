@@ -3,6 +3,7 @@ package org.quiltmc.qsl.recipe.api.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.recipe.impl.RecipeDataUtil;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,10 +13,8 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.ShapedRecipePattern;
 import net.minecraft.registry.HolderLookup;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.DataResult;
 
 import java.util.HashSet;
@@ -25,6 +24,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+
+import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireNonEmpty;
+import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireResult;
+import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireSpecified;
 
 import static java.util.Objects.requireNonNull;
 
@@ -40,7 +43,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     private final String group;
     private final CraftingCategory category;
     private final ImmutableList<String> pattern;
-    private final ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key;
+    private final ImmutableMap<Character, IngredientData> key;
     private final ItemStack result;
     private final boolean showNotification;
 
@@ -60,7 +63,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         @NotNull
         ImmutableList<String> pattern,
         @NotNull
-        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key,
+        ImmutableMap<Character, IngredientData> key,
         @NotNull
         ItemStack result,
         boolean showNotification
@@ -76,7 +79,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
             pattern,
             patternDimensions.width, patternDimensions.height,
             key,
-            requireSpecified(result, "result"),
+            requireResult(result),
             showNotification
         );
     }
@@ -97,7 +100,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
      */
     private static Dimensions verifyPattern(
         ImmutableList<String> pattern,
-        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key
+        ImmutableMap<Character, IngredientData> key
     ) {
         final int height = pattern.size();
         if (height < MIN_HEIGHT || height > MAX_HEIGHT) {
@@ -160,18 +163,6 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         return symbol;
     }
 
-    private static <T> T requireSpecified(T value, String name) {
-        return requireNonNull(value, name + " must be specified");
-    }
-
-    private static <T> Iterable<T> requireNonEmpty(Iterable<T> iterable, String name) {
-        if (!requireNonNull(iterable).iterator().hasNext()) {
-            throw new IllegalArgumentException(name + " must not be empty");
-        }
-
-        return iterable;
-    }
-
     private ShapedRecipeData(
         @NotNull
         String group,
@@ -181,7 +172,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         ImmutableList<String> pattern,
         int width, int height,
         @NotNull
-        ImmutableMap<Character, Either<ImmutableList<Item>, TagKey<Item>>> key,
+        ImmutableMap<Character, IngredientData> key,
         @NotNull
         ItemStack result,
         boolean showNotification
@@ -205,14 +196,9 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
                     return DataResult.success(Optional.empty());
                 } else {
                     //noinspection DataFlowIssue; verifyPattern ensures this is safe
-                    return this.key.get(symbol).map(
-                        items -> DataResult.success(Optional.of(Ingredient.ofItems(items.toArray(Item[]::new)))),
-                        tag -> registries.getLookupOrThrow(RegistryKeys.ITEM).getTag(tag)
-                            .map(Ingredient::ofItems)
-                            .map(Optional::of)
-                            .map(DataResult::success)
-                            .orElseGet(() -> DataResult.error(() -> "missing tag ingredient: " + tag.id()))
-                    );
+                    return this.key.get(symbol)
+                        .createIngredient(registries)
+                        .map(Optional::of);
                 }
             })
             .collect(toImmutableList());
@@ -250,7 +236,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         private String group = "";
         private CraftingCategory category = CraftingCategory.MISC;
         private ImmutableList<String> pattern;
-        private final ImmutableMap.Builder<Character, Either<ImmutableList<Item>, TagKey<Item>>> key = ImmutableMap.builder();
+        private final ImmutableMap.Builder<Character, IngredientData> key = ImmutableMap.builder();
         private ItemStack result;
         private boolean showNotification = true;
 
@@ -328,7 +314,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         public Builder ingredient(char symbol, @NotNull Iterable<Item> items) {
             this.key.put(
                 requireValidSymbol(symbol),
-                Either.left(ImmutableList.copyOf(requireNonEmpty(items, "ingredient")))
+                IngredientData.of(ImmutableList.copyOf(requireNonEmpty(items, "ingredient")))
             );
             return this;
         }
@@ -356,7 +342,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
          * @see #ingredient(char, Item...)
          */
         public Builder ingredient(char symbol, @NotNull TagKey<Item> tag) {
-            this.key.put(requireValidSymbol(symbol), Either.right(requireNonNull(tag)));
+            this.key.put(requireValidSymbol(symbol), IngredientData.of(requireNonNull(tag)));
             return this;
         }
 
@@ -370,7 +356,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
          * @return this builder
          */
         public Builder result(@NotNull ItemStack result) {
-            this.result = requireNonNull(result);
+            this.result = requireResult(result);
             return this;
         }
 
