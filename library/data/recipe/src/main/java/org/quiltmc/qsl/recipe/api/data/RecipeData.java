@@ -20,13 +20,14 @@ import com.mojang.serialization.DataResult;
  */
 public interface RecipeData<I extends RecipeInput, R extends Recipe<I>> {
     /**
-     * Creates the recipe this dat represents.
+     * Creates the recipe this data represents.
      * <p>
      * This is called whenever recipes are re/loaded.<br>
      * It should create a new recipe instance each time it's called to ensure that any changes in dynamic content are
      * reflected in the recipe.
      *
      * @param registries access to the game's registries; provides safe access to dynamic content
+     *
      * @return the result of attempting to create the recipe this data represents;
      * may be an {@linkplain DataResult.Error error} if required content is missing
      */
