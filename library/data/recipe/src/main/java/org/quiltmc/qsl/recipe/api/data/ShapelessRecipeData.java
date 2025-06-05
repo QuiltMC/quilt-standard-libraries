@@ -32,6 +32,11 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
     private static final int MIN_INGREDIENTS = 1;
     private static final int MAX_INGREDIENTS = 9;
 
+    /**
+     * Creates a new recipe data instance.
+     *
+     * @see #builder()
+     */
     public static ShapelessRecipeData of(
         @NotNull
         String group,
@@ -60,6 +65,11 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
         );
     }
 
+    /**
+     * Creates a {@link ShapelessRecipeData.Builder} for creating recipe data instances.
+     *
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -113,41 +123,109 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
         ));
     }
 
+    /**
+     * Convenience class for creating {@link ShapelessRecipeData} instances.
+     */
     public static final class Builder {
         private String group = "";
         private CraftingCategory category = CraftingCategory.MISC;
         private final ImmutableList.Builder<IngredientData> ingredients = ImmutableList.builder();
         private ItemStack result;
 
+        /**
+         * Sets the recipe's group.
+         * <p>
+         * The default value is {@code ""}.
+         *
+         * @param group the group
+         *
+         * @return this builder
+         */
         public Builder group(String group) {
             this.group = requireNonNull(group);
             return this;
         }
 
+        /**
+         * Sets the recipe's category.
+         * <p>
+         * The default value is {@link CraftingCategory#MISC}.
+         *
+         * @param category the category
+         *
+         * @return this builder
+         */
         public Builder category(CraftingCategory category) {
             this.category = requireNonNull(category);
             return this;
         }
 
+        /**
+         * Adds an ingredient accepting the passed {@code items} to the recipe.
+         * <p>
+         * Between {@value MIN_INGREDIENTS} and {@value MAX_INGREDIENTS} must be specified before
+         * {@linkplain #build() building}.
+         *
+         * @param items the items the ingredient will accept
+         *
+         * @return this builder
+         *
+         * @see #ingredient(Item...)
+         * @see #ingredient(TagKey)
+         */
         public Builder ingredient(Iterable<Item> items) {
             this.ingredients.add(IngredientData.of(ImmutableList.copyOf(requireNonEmpty(items, "ingredient"))));
             return this;
         }
 
+        /**
+         * @see #ingredient(Iterable)
+         * @see #ingredient(TagKey)
+         */
         public Builder ingredient(Item... items) {
             return this.ingredient(ImmutableList.copyOf(requireNonNull(items)));
         }
 
+        /**
+         * Adds an ingredient accepting items in the passed {@code tag}.
+         * <p>
+         * Between {@value MIN_INGREDIENTS} and {@value MAX_INGREDIENTS} must be specified before
+         * {@linkplain #build() building}.
+         *
+         * @param tag the tag containing items the ingredient will accept
+         *
+         * @return this builder
+         *
+         * @see #ingredient(Iterable)
+         * @see #ingredient(Item...)
+         */
         public Builder ingredient(TagKey<Item> tag) {
             this.ingredients.add(IngredientData.of(requireNonNull(tag)));
             return this;
         }
 
+        /**
+         * Sets the recipe's result.
+         * <p>
+         * There is no default value; a result must be specified before {@linkplain #build() building}.
+         *
+         * @param result the result
+         *
+         * @return this builder
+         */
         public Builder result(ItemStack result) {
             this.result = requireResult(result);
             return this;
         }
 
+        /**
+         * Creates a new {@link ShapelessRecipeData} instance as specified by this builder.
+         * <p>
+         * A {@linkplain #result(ItemStack) result} and between {@value MIN_INGREDIENTS} and {@value MAX_INGREDIENTS}
+         * {@linkplain #ingredient(Iterable) ingredients} must be specified before building.
+         *
+         * @return the recipe data
+         */
         public ShapelessRecipeData build() {
             return ShapelessRecipeData.of(
                 this.group,

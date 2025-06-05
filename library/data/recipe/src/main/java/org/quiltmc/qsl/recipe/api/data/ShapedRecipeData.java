@@ -3,7 +3,6 @@ package org.quiltmc.qsl.recipe.api.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.recipe.impl.RecipeDataUtil;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
