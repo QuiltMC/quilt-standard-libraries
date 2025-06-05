@@ -83,7 +83,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
             pattern,
             patternDimensions.width, patternDimensions.height,
             key,
-            requireResult(result),
+            requireResult(result).copy(),
             showNotification
         );
     }

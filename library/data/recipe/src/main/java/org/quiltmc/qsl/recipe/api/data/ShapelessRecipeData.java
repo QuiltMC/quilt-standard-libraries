@@ -65,7 +65,7 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
             requireSpecified(group, "group"),
             requireSpecified(category, "category"),
             ingredients,
-            requireResult(result)
+            requireResult(result).copy()
         );
     }
 

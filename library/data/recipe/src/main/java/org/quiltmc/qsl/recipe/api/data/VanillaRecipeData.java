@@ -174,10 +174,10 @@ public final class VanillaRecipeData {
     ) {
         requireSpecified(group, "group");
         requireSpecified(ingredient, "ingredient");
-        requireResult(result);
+        final ItemStack resultCopy = requireResult(result).copy();
 
         return registries -> ingredient.createIngredient(registries)
-            .map(resolvedIngredient -> new StonecuttingRecipe(group, resolvedIngredient, result));
+            .map(resolvedIngredient -> new StonecuttingRecipe(group, resolvedIngredient, resultCopy));
     }
 
     /**
@@ -398,10 +398,10 @@ public final class VanillaRecipeData {
         requireSpecified(group, "group");
         requireSpecified(category, "category");
         requireSpecified(ingredient, "ingredient");
-        requireResult(result);
+        final ItemStack resultCopy = requireResult(result);
 
         return registries -> ingredient.createIngredient(registries).map(resolvedIngredient ->
-            factory.create(group, category, resolvedIngredient, result, experience, cookTime)
+            factory.create(group, category, resolvedIngredient, resultCopy, experience, cookTime)
         );
     }
 
