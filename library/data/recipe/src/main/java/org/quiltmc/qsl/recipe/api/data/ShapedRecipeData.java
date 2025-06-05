@@ -3,6 +3,7 @@ package org.quiltmc.qsl.recipe.api.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.recipe.impl.RecipeDataUtil;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,10 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     private static final int MAX_WIDTH = 3;
     private static final int MIN_HEIGHT = 1;
     private static final int MAX_HEIGHT = 3;
+
+    static final String DEFAULT_GROUP = RecipeDataUtil.DEFAULT_GROUP;
+    static final CraftingCategory DEFAULT_CATEGORY = RecipeDataUtil.DEFAULT_CRAFTING_CATEGORY;
+    static final boolean DEFAULT_SHOW_NOTIFICATION = true;
 
     private final String group;
     private final CraftingCategory category;
@@ -232,17 +237,17 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
      * Convenience class for creating {@link ShapedRecipeData} instances.
      */
     public static final class Builder {
-        private String group = "";
-        private CraftingCategory category = CraftingCategory.MISC;
+        private String group = DEFAULT_GROUP;
+        private CraftingCategory category = DEFAULT_CATEGORY;
         private ImmutableList<String> pattern;
         private final ImmutableMap.Builder<Character, IngredientData> key = ImmutableMap.builder();
         private ItemStack result;
-        private boolean showNotification = true;
+        private boolean showNotification = DEFAULT_SHOW_NOTIFICATION;
 
         /**
          * Sets the recipe's group.
          * <p>
-         * The default value is {@code ""}.
+         * The default value is {@value DEFAULT_GROUP}.
          *
          * @param group the group
          *
@@ -256,7 +261,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         /**
          * Sets the recipe's category.
          * <p>
-         * The default value is {@link CraftingCategory#MISC}.
+         * The default value is {@link #DEFAULT_CATEGORY}.
          *
          * @param category the category
          *
@@ -362,7 +367,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
         /**
          * Sets whether the recipe should show a notification when it's unlocked.
          * <p>
-         * The default value is {@code true}.
+         * The default value is {@value DEFAULT_SHOW_NOTIFICATION}.
          *
          * @param show whether a notification should be shown when the recipe is unlocked
          *

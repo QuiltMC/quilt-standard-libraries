@@ -3,6 +3,7 @@ package org.quiltmc.qsl.recipe.api.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.recipe.impl.RecipeDataUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
@@ -19,6 +20,9 @@ import net.minecraft.recipe.StonecuttingRecipe;
 import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireResult;
 import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireSpecified;
 
+/**
+ * Provides methods for creating {@link RecipeData} representing vanilla recipe types.
+ */
 public final class VanillaRecipeData {
     private VanillaRecipeData() {
         throw new UnsupportedOperationException(
@@ -26,24 +30,42 @@ public final class VanillaRecipeData {
         );
     }
 
+    private static final int DEFAULT_COOKING_EXPERIENCE = 0;
+    public static final int DEFAULT_SLOW_COOK_TIME = 200;
+    public static final CookingCategory DEFAULT_COOKING_CATEGORY = CookingCategory.MISC;
+    public static final int DEFAULT_FAST_COOK_TIME = 100;
+
     /**
      * Creates a {@link ShapedRecipeData.Builder} to aid in creating {@link ShapedRecipeData} instances.
+     *
+     * @return the builder
+     *
+     * @see #createShaped(String, CraftingCategory, ImmutableList, ImmutableMap, ItemStack, boolean)
+     * @see #createShaped(ImmutableList, ImmutableMap, ItemStack)
      */
     public static ShapedRecipeData.Builder shapedBuilder() {
         return ShapedRecipeData.builder();
     }
 
     /**
-     * Creates a {@link ShapelessRecipeData.Builder} to aid in creating {@link ShapelessRecipeData} instances
+     * Creates a {@link ShapelessRecipeData.Builder} to aid in creating {@link ShapelessRecipeData} instances.
+     *
+     * @return the builder
+     *
+     * @see #createShapeless(String, CraftingCategory, ImmutableList, ItemStack)
+     * @see #createShapeless(ImmutableList, ItemStack)
      */
     public static ShapelessRecipeData.Builder shapelessBuilder() {
         return ShapelessRecipeData.builder();
     }
 
     /**
-     * Creates a new shaped recipe data instance.
+     * Creates a new {@link ShapedRecipeData} instance.
+     *
+     * @return the recipe data
      *
      * @see #shapedBuilder()
+     * @see #createShaped(ImmutableList, ImmutableMap, ItemStack)
      */
     public static ShapedRecipeData createShaped(
         @NotNull
@@ -62,11 +84,43 @@ public final class VanillaRecipeData {
     }
 
     /**
-     * Creates a new shapeless recipe data instance.
+     * Creates a new {@link ShapedRecipeData} instance with the default values for
+     * {@linkplain ShapedRecipeData#DEFAULT_GROUP group},
+     * {@linkplain ShapedRecipeData#DEFAULT_CATEGORY category}, and
+     * {@linkplain ShapedRecipeData#DEFAULT_SHOW_NOTIFICATION showNotification}.
+     *
+     * @return the recipe data
+     *
+     * @see #shapedBuilder()
+     * @see #createShaped(String, CraftingCategory, ImmutableList, ImmutableMap, ItemStack, boolean)
+     */
+    public static ShapedRecipeData createShaped(
+        @NotNull
+        ImmutableList<String> pattern,
+        @NotNull
+        ImmutableMap<Character, IngredientData> key,
+        @NotNull
+        ItemStack result
+    ) {
+        return createShaped(
+            ShapedRecipeData.DEFAULT_GROUP,
+            ShapedRecipeData.DEFAULT_CATEGORY,
+            pattern,
+            key,
+            result,
+            ShapedRecipeData.DEFAULT_SHOW_NOTIFICATION
+        );
+    }
+
+    /**
+     * Creates a new {@link ShapelessRecipeData} instance.
+     *
+     * @return the recipe data
      *
      * @see #shapelessBuilder()
+     * @see #createShapeless(ImmutableList, ItemStack)
      */
-    public static ShapelessRecipeData of(
+    public static ShapelessRecipeData createShapeless(
         @NotNull
         String group,
         @NotNull
@@ -76,9 +130,40 @@ public final class VanillaRecipeData {
         @NotNull
         ItemStack result
     ) {
-        return ShapelessRecipeData.of(group, category,ingredients, result);
+        return ShapelessRecipeData.of(group, category, ingredients, result);
     }
 
+    /**
+     * Creates a new {@link ShapelessRecipeData} instance with the default values for
+     * {@linkplain ShapelessRecipeData#DEFAULT_GROUP group} and
+     * {@linkplain ShapelessRecipeData#DEFAULT_CATEGORY category}.
+     *
+     * @return the recipe data
+     *
+     * @see #shapelessBuilder()
+     * @see #createShapeless(String, CraftingCategory, ImmutableList, ItemStack)
+     */
+    public static ShapelessRecipeData createShapeless(
+        @NotNull
+        ImmutableList<IngredientData> ingredients,
+        @NotNull
+        ItemStack result
+    ) {
+        return createShapeless(
+            ShapelessRecipeData.DEFAULT_GROUP,
+            ShapelessRecipeData.DEFAULT_CATEGORY,
+            ingredients,
+            result
+        );
+    }
+
+    /**
+     * Creates a new {@link StonecuttingRecipe} {@link RecipeData} instance.
+     *
+     * @return the recipe data
+     *
+     * @see #createStonecutting(IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, StonecuttingRecipe> createStonecutting(
         @NotNull
         String group,
@@ -95,15 +180,30 @@ public final class VanillaRecipeData {
             .map(resolvedIngredient -> new StonecuttingRecipe(group, resolvedIngredient, result));
     }
 
+    /**
+     * Creates a new {@link StonecuttingRecipe} {@link RecipeData} instance with the default
+     * {@linkplain RecipeDataUtil#DEFAULT_GROUP group}.
+     *
+     * @return the recipe data
+     *
+     * @see #createStonecutting(String, IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, StonecuttingRecipe> createStonecutting(
         @NotNull
         IngredientData ingredient,
         @NotNull
         ItemStack result
     ) {
-        return createStonecutting("", ingredient, result);
+        return createStonecutting(RecipeDataUtil.DEFAULT_GROUP, ingredient, result);
     }
 
+    /**
+     * Creates a new {@link SmeltingRecipe} {@link RecipeData} instance.
+     *
+     * @return the recipe data
+     *
+     * @see #createSmelting(IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, SmeltingRecipe> createSmelting(
         @NotNull
         String group,
@@ -119,15 +219,37 @@ public final class VanillaRecipeData {
         return createCookingImpl(group, category, ingredient, result, experience, cookTime, SmeltingRecipe::new);
     }
 
+    /**
+     * Creates a new {@link SmeltingRecipe} {@link RecipeData} instance with the default values for
+     * {@linkplain RecipeDataUtil#DEFAULT_GROUP group} and {@linkplain #DEFAULT_COOKING_CATEGORY category}.
+     *
+     * @return the recipe data
+     *
+     * @see #createSmelting(String, CookingCategory, IngredientData, ItemStack, float, int)
+     */
     public static RecipeData<SingleRecipeInput, SmeltingRecipe> createSmelting(
         @NotNull
         IngredientData ingredient,
         @NotNull
         ItemStack result
     ) {
-        return createSmelting("", CookingCategory.MISC, ingredient, result, 0, 200);
+        return createSmelting(
+            RecipeDataUtil.DEFAULT_GROUP,
+            DEFAULT_COOKING_CATEGORY,
+            ingredient,
+            result,
+            DEFAULT_COOKING_EXPERIENCE,
+            DEFAULT_SLOW_COOK_TIME
+        );
     }
 
+    /**
+     * Creates a new {@link BlastingRecipe} {@link RecipeData} instance.
+     *
+     * @return the recipe data
+     *
+     * @see #createBlasting(IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, BlastingRecipe> createBlasting(
         @NotNull
         String group,
@@ -143,15 +265,37 @@ public final class VanillaRecipeData {
         return createCookingImpl(group, category, ingredient, result, experience, cookTime, BlastingRecipe::new);
     }
 
+    /**
+     * Creates a new {@link BlastingRecipe} {@link RecipeData} instance with the default values for
+     * {@linkplain RecipeDataUtil#DEFAULT_GROUP group} and {@linkplain #DEFAULT_COOKING_CATEGORY category}.
+     *
+     * @return the recipe data
+     *
+     * @see #createBlasting(String, CookingCategory, IngredientData, ItemStack, float, int)
+     */
     public static RecipeData<SingleRecipeInput, BlastingRecipe> createBlasting(
         @NotNull
         IngredientData ingredient,
         @NotNull
         ItemStack result
     ) {
-        return createBlasting("", CookingCategory.MISC, ingredient, result, 0, 100);
+        return createBlasting(
+            RecipeDataUtil.DEFAULT_GROUP,
+            DEFAULT_COOKING_CATEGORY,
+            ingredient,
+            result,
+            DEFAULT_COOKING_EXPERIENCE,
+            DEFAULT_FAST_COOK_TIME
+        );
     }
 
+    /**
+     * Creates a new {@link SmokingRecipe} {@link RecipeData} instance.
+     *
+     * @return the recipe data
+     *
+     * @see #createSmoking(IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, SmokingRecipe> createSmoking(
         @NotNull
         String group,
@@ -167,15 +311,37 @@ public final class VanillaRecipeData {
         return createCookingImpl(group, category, ingredient, result, experience, cookTime, SmokingRecipe::new);
     }
 
+    /**
+     * Creates a new {@link SmokingRecipe} {@link RecipeData} instance with the default values for
+     * {@linkplain RecipeDataUtil#DEFAULT_GROUP group} and {@linkplain #DEFAULT_COOKING_CATEGORY category}.
+     *
+     * @return the recipe data
+     *
+     * @see #createSmoking(String, CookingCategory, IngredientData, ItemStack, float, int)
+     */
     public static RecipeData<SingleRecipeInput, SmokingRecipe> createSmoking(
         @NotNull
         IngredientData ingredient,
         @NotNull
         ItemStack result
     ) {
-        return createSmoking("", CookingCategory.MISC, ingredient, result, 0, 100);
+        return createSmoking(
+            RecipeDataUtil.DEFAULT_GROUP,
+            DEFAULT_COOKING_CATEGORY,
+            ingredient,
+            result,
+            DEFAULT_COOKING_EXPERIENCE,
+            DEFAULT_FAST_COOK_TIME
+        );
     }
 
+    /**
+     * Creates a new {@link CampfireCookingRecipe} {@link RecipeData} instance.
+     *
+     * @return the recipe data
+     *
+     * @see #createCampfire(IngredientData, ItemStack)
+     */
     public static RecipeData<SingleRecipeInput, CampfireCookingRecipe> createCampfire(
         @NotNull
         String group,
@@ -191,13 +357,28 @@ public final class VanillaRecipeData {
         return createCookingImpl(group, category, ingredient, result, experience, cookTime, CampfireCookingRecipe::new);
     }
 
+    /**
+     * Creates a new {@link CampfireCookingRecipe} {@link RecipeData} instance with the default values for
+     * {@linkplain RecipeDataUtil#DEFAULT_GROUP group} and {@linkplain #DEFAULT_COOKING_CATEGORY category}.
+     *
+     * @return the recipe data
+     *
+     * @see #createCampfire(String, CookingCategory, IngredientData, ItemStack, float, int)
+     */
     public static RecipeData<SingleRecipeInput, CampfireCookingRecipe> createCampfire(
         @NotNull
         IngredientData ingredient,
         @NotNull
         ItemStack result
     ) {
-        return createCampfire("", CookingCategory.MISC, ingredient, result, 0, 100);
+        return createCampfire(
+            RecipeDataUtil.DEFAULT_GROUP,
+            DEFAULT_COOKING_CATEGORY,
+            ingredient,
+            result,
+            DEFAULT_COOKING_EXPERIENCE,
+            DEFAULT_FAST_COOK_TIME
+        );
     }
 
     private static <R extends AbstractCookingRecipe> RecipeData<SingleRecipeInput, R> createCookingImpl(

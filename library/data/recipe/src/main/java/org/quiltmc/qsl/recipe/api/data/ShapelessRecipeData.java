@@ -2,6 +2,7 @@ package org.quiltmc.qsl.recipe.api.data;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.recipe.impl.RecipeDataUtil;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,9 @@ import static java.util.Objects.requireNonNull;
 public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput, ShapelessRecipe> {
     private static final int MIN_INGREDIENTS = 1;
     private static final int MAX_INGREDIENTS = 9;
+
+    static final String DEFAULT_GROUP = RecipeDataUtil.DEFAULT_GROUP;
+    static final CraftingCategory DEFAULT_CATEGORY = RecipeDataUtil.DEFAULT_CRAFTING_CATEGORY;
 
     /**
      * Creates a new shapeless recipe data instance.
@@ -127,15 +131,15 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
      * Convenience class for creating {@link ShapelessRecipeData} instances.
      */
     public static final class Builder {
-        private String group = "";
-        private CraftingCategory category = CraftingCategory.MISC;
+        private String group = DEFAULT_GROUP;
+        private CraftingCategory category = DEFAULT_CATEGORY;
         private final ImmutableList.Builder<IngredientData> ingredients = ImmutableList.builder();
         private ItemStack result;
 
         /**
          * Sets the recipe's group.
          * <p>
-         * The default value is {@code ""}.
+         * The default value is {@value DEFAULT_GROUP}.
          *
          * @param group the group
          *
@@ -149,7 +153,7 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
         /**
          * Sets the recipe's category.
          * <p>
-         * The default value is {@link CraftingCategory#MISC}.
+         * The default value is {@link #DEFAULT_CATEGORY}.
          *
          * @param category the category
          *

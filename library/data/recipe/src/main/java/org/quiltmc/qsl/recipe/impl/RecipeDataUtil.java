@@ -4,6 +4,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.CraftingCategory;
 
 import java.util.Collection;
 
@@ -11,6 +12,9 @@ import static java.util.Objects.requireNonNull;
 
 @ApiStatus.Internal
 public final class RecipeDataUtil {
+    public static final String DEFAULT_GROUP = "";
+    public static final CraftingCategory DEFAULT_CRAFTING_CATEGORY = CraftingCategory.MISC;
+
     public static <T> T requireSpecified(T value, String name) {
         return requireNonNull(value, name + " must be specified");
     }
