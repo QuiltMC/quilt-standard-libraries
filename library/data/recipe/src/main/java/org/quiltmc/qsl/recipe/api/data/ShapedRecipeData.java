@@ -50,7 +50,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     private final int height;
 
     /**
-     * Creates a new recipe data instance.
+     * Creates a new shaped recipe data instance.
      *
      * @see #builder()
      */
@@ -84,7 +84,7 @@ public final class ShapedRecipeData implements RecipeData<CraftingRecipeInput, S
     }
 
     /**
-     * Creates a {@link Builder} for creating recipe data instances.
+     * Creates a {@link Builder} to aid in creating shaped recipe data instances.
      *
      * @return the builder
      */

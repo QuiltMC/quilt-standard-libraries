@@ -11,9 +11,12 @@ import net.minecraft.registry.tag.TagKey;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.DataResult;
 
+import static org.quiltmc.qsl.recipe.impl.RecipeDataUtil.requireNonEmpty;
+
+
 public final class IngredientData {
     public static IngredientData of(ImmutableList<Item> items) {
-        return new IngredientData(Either.left(items));
+        return new IngredientData(Either.left(requireNonEmpty(items, "items")));
     }
 
     public static IngredientData of(TagKey<Item> tag) {

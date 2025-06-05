@@ -1,10 +1,11 @@
 package org.quiltmc.qsl.recipe.impl;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+
+import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,8 +28,11 @@ public final class RecipeDataUtil {
         return result;
     }
 
-    public static <T> Iterable<T> requireNonEmpty(Iterable<T> iterable, String name) {
-        if (!requireNonNull(iterable).iterator().hasNext()) {
+    public static <T, I extends Iterable<T>> I requireNonEmpty(I iterable, String name) {
+        final boolean empty = iterable instanceof Collection<?> collection ? collection.isEmpty()
+            : !requireSpecified(iterable, name).iterator().hasNext();
+
+        if (empty) {
             throw new IllegalArgumentException(name + " must not be empty");
         }
 

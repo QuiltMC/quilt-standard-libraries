@@ -33,7 +33,7 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
     private static final int MAX_INGREDIENTS = 9;
 
     /**
-     * Creates a new recipe data instance.
+     * Creates a new shapeless recipe data instance.
      *
      * @see #builder()
      */
@@ -66,7 +66,7 @@ public final class ShapelessRecipeData implements RecipeData<CraftingRecipeInput
     }
 
     /**
-     * Creates a {@link ShapelessRecipeData.Builder} for creating recipe data instances.
+     * Creates a {@link ShapelessRecipeData.Builder} to aid in creating shapeless recipe data instances.
      *
      * @return the builder
      */
