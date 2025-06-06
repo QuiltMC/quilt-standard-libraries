@@ -16,111 +16,68 @@
 
 package org.quiltmc.qsl.recipe.mixin;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.SortedMap;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.google.gson.JsonElement;
+import com.google.common.collect.Iterables;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.recipe.RecipeMap;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 
-import org.quiltmc.qsl.recipe.impl.ImmutableMapBuilderUtil;
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
+
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
+	@Shadow @Final private HolderLookup.Provider registries;
 
-	@Shadow
-	private Map<Identifier, RecipeHolder<?>> recipes;
-
-	// FIXME: the entire meat and bones of this method is just GONE
-	//  so i'm not really sure what to do about this.
-
-
-	/*
-	@Inject(
-			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
-			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void onReload(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-			CallbackInfo ci,
-			ImmutableMultimap.Builder<RecipeType<?>, RecipeHolder<?>> builderMap,
-			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder) {
-		RecipeManagerImpl.apply(map, builderMap, globalRecipeMapBuilder);
-	}
-
-	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
+	@ModifyArg(
+			method = "prepare(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)" +
+				"Lnet/minecraft/recipe/RecipeMap;",
 			at = @At(
 				value = "INVOKE",
-				target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;",
-				shift = At.Shift.AFTER,
-				remap = false
-			),
-			locals = LocalCapture.CAPTURE_FAILEXCEPTION
-	)
-	private void createMutableMultimap(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci, ImmutableMultimap.Builder<RecipeType<?>, RecipeHolder<?>> recipeBuilder) {
-		this.recipesByType = ImmutableMapBuilderUtil.specialBuild(recipeBuilder);
-	}
-
-	@Redirect(
-			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lcom/google/common/collect/ImmutableMultimap$Builder;build()Lcom/google/common/collect/ImmutableMultimap;",
-					remap = false
+				target = "Lnet/minecraft/recipe/RecipeMap;create(Ljava/lang/Iterable;)Lnet/minecraft/recipe/RecipeMap;"
 			)
 	)
-	private ImmutableMultimap<RecipeType<?>, RecipeHolder<?>> onCreateRecipeMap(ImmutableMultimap.Builder<Identifier, Recipe<?>> recipeMap) {
-		return null;
-	}
+	private Iterable<RecipeHolder<?>> addRecipes(
+		Iterable<RecipeHolder<?>> recipes,
+		@Local SortedMap<Identifier, Recipe<?>> resourceMap
+	) {
+		final ArrayList<RecipeHolder<?>> modifiableRecipes;
+		if (recipes instanceof ArrayList<RecipeHolder<?>> arrayList) {
+			modifiableRecipes = arrayList;
+		} else {
+			modifiableRecipes = new ArrayList<>();
+			Iterables.addAll(modifiableRecipes, recipes);
+		}
 
-	@Redirect(
-			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
-			at = @At(
-				value = "INVOKE",
-				target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;",
-				remap = false
-			)
-	)
-	private ImmutableMap<Identifier, Recipe<?>> onCreateGlobalRecipeMap(ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
-		return null; // The original method bounds us to return an immutable map, but we do not want that!
+		modifiableRecipes.addAll(RecipeManagerImpl.addRecipes(resourceMap, this.registries));
+
+		return modifiableRecipes;
 	}
 
 	@Inject(
-			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
-			at = @At(
-				value = "INVOKE",
-				target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V",
-				remap = false
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+		method = "apply(Lnet/minecraft/recipe/RecipeMap;Lnet/minecraft/resource/ResourceManager;" +
+			"Lnet/minecraft/util/profiler/Profiler;)V",
+		at = @At("HEAD")
 	)
-	private void onReloadEnd(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-			CallbackInfo ci,
-			ImmutableMultimap.Builder<RecipeType<?>, RecipeHolder<?>> builderMap,
-			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder) {
-		Map<Identifier, RecipeHolder<?>> globalRecipes = ImmutableMapBuilderUtil.specialBuild(globalRecipeMapBuilder);
-
-		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipesByType, globalRecipes);
-
-		this.recipes = Collections.unmodifiableMap(globalRecipes);
+	private void applyModifications(CallbackInfo ci, @Local(argsOnly = true) LocalRef<RecipeMap> recipeMap) {
+		recipeMap.set(RecipeManagerImpl.applyModifications(
+			(RecipeManager) (Object) this, recipeMap.get(), this.registries)
+		);
 	}
-
-	 */
 }

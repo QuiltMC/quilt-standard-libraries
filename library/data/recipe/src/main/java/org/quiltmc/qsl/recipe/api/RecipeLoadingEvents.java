@@ -21,21 +21,23 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
 /**
  * Represents the recipe loading events.
  * <p>
- * Triggered when the recipes are being loaded in the {@link net.minecraft.recipe.RecipeManager}.
+ * Triggered when the recipes are being loaded in the {@link RecipeManager}.
  * <p>
  * Events are triggered in the following order:
  * <ol>
@@ -46,7 +48,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  */
 public final class RecipeLoadingEvents {
 	/**
-	 * Event to add new recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * Event to add new recipes while the {@link RecipeManager} is being built.
 	 * <p>
 	 * Triggered before {@link #MODIFY} and {@link #REMOVE}.
 	 */
@@ -57,7 +59,7 @@ public final class RecipeLoadingEvents {
 				}
 			});
 	/**
-	 * Event to modify recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * Event to modify recipes while the {@link RecipeManager} is being built.
 	 * <p>
 	 * Triggered after {@link #ADD} and before {@link #REMOVE}.
 	 */
@@ -68,7 +70,7 @@ public final class RecipeLoadingEvents {
 				}
 			});
 	/**
-	 * Event to remove recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * Event to remove recipes while the {@link RecipeManager} is being built.
 	 * <p>
 	 * Triggered after {@link #ADD} and {@link #MODIFY}.
 	 */
@@ -91,7 +93,7 @@ public final class RecipeLoadingEvents {
 		/**
 		 * Called when recipes are loaded.
 		 * <p>
-		 * {@code handler} is used to add recipes into the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}.
+		 * {@code handler} is used to add recipes into the {@linkplain RecipeManager recipe manager}.
 		 *
 		 * @param handler the recipe handler
 		 */
@@ -103,20 +105,20 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler {
 			/**
-			 * Registers a recipe into the {@link net.minecraft.recipe.RecipeManager}.
+			 * Registers a recipe into the {@link RecipeManager}.
 			 * <p>
 			 * The recipe factory is only called if the recipe is not already present.
 			 *
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
 			 */
-			void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory);
+			void register(Identifier id, Function<Identifier, RecipeData<?, ?>> factory);
 
 			/**
-			 * {@return the dynamic registry manager}
+			 * @return the lookup provider; allows for safe access to the game's registries and content
 			 */
 			@Contract(pure = true)
-			@NotNull DynamicRegistryManager getRegistryManager();
+			@NotNull HolderLookup.Provider getRegistries();
 		}
 	}
 
@@ -138,11 +140,12 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler extends BaseRecipeHandler {
 			/**
-			 * Replaces a recipe in the {@link net.minecraft.recipe.RecipeManager}.
+			 * Replaces a recipe in the {@link RecipeManager}.
 			 *
-			 * @param recipeHolder the recipe
+			 * @param id the identifier of the recipe
+			 * @param recipe the recipe
 			 */
-			void replace(RecipeHolder<?> recipeHolder);
+			void replace(Identifier id, RecipeData<?, ?> recipe);
 		}
 	}
 
@@ -164,7 +167,7 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler extends BaseRecipeHandler {
 			/**
-			 * Removes a recipe in the {@link net.minecraft.recipe.RecipeManager}.
+			 * Removes a recipe in the {@link RecipeManager}.
 			 *
 			 * @param recipe the recipe identifier
 			 */

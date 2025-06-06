@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.recipe.api;
 
 import java.util.Collection;
-import java.util.Map;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.jetbrains.annotations.ApiStatus;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
 /**
@@ -96,8 +95,8 @@ public interface BaseRecipeHandler {
 	<T extends Recipe<?>> Collection<RecipeHolder<T>> getRecipesOfType(RecipeType<T> type);
 
 	/**
-	 * {@return the dynamic registry manager}
-	 */
+	 * @return the lookup provider; allows for safe access to the game's registries and content
+     */
 	@Contract(pure = true)
-	@NotNull DynamicRegistryManager getRegistryManager();
+    @NotNull HolderLookup.Provider getRegistries();
 }
