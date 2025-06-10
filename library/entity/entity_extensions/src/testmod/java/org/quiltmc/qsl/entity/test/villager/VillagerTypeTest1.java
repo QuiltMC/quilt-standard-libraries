@@ -32,7 +32,7 @@ import org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper;
 public class VillagerTypeTest1 implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 1, factories -> {
+		TradeOfferHelper.addOffersToVillagerPool(VillagerProfession.ARMORER, 1, factories -> {
 			factories.add(new SimpleTradeFactory(new TradeOffer(new TradeableItem(Items.GOLD_INGOT, 3), Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)), new ItemStack(Items.NETHERITE_INGOT), 2, 6, 0.15F)));
 		});
 

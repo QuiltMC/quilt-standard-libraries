@@ -9,6 +9,7 @@
     "PointOfInterestTypeMixin",
     "PointOfInterestTypesAccessor",
     "TypeAwareBuyForOneEmeraldFactoryMixin",
+    "accessor.TradeOffersAccessor",
     "networking.EntityMixin",
     "networking.TrackedDataHandlerRegistryMixin"
   ],
