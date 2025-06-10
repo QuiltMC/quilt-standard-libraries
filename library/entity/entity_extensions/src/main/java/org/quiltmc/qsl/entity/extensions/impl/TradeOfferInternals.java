@@ -34,7 +34,6 @@ import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.entity.extensions.mixin.accessor.TradeOffersAccessor;
 
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
@@ -60,7 +59,7 @@ public final class TradeOfferInternals {
 	) {
 		addToVillagerOfferPoolImpl(
 			profession, level, factories,
-			TradeOffersAccessor.quilt$getPROFESSION_TO_LEVELED_TRADE()
+			TradeOffers.PROFESSION_TO_LEVELED_TRADE
 		);
 	}
 
@@ -73,7 +72,7 @@ public final class TradeOfferInternals {
 	) {
 		addToVillagerOfferPoolImpl(
 			profession, level, factories,
-			TradeOffersAccessor.quilt$getEXPERIMENTAL_TRADES()
+			TradeOffers.EXPERIMENTAL_TRADES
 		);
 	}
 

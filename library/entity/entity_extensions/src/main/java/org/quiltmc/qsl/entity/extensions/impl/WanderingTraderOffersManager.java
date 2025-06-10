@@ -19,7 +19,9 @@ import static org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper.VanillaWand
 import static org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper.VanillaWanderingTraderPoolIds.SELL_COMMON_ITEMS;
 import static org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper.VanillaWanderingTraderPoolIds.SELL_SPECIAL_ITEMS;
 
-// Methods to help keep WANDERING_TRADER_TRADES pool indexes and ids synchronized.
+/**
+ * Methods to help keep {@link TradeOffers#WANDERING_TRADER_TRADES} pool indexes and ids synchronized.
+ */
 @ApiStatus.Internal
 public class WanderingTraderOffersManager {
     private WanderingTraderOffersManager() {
@@ -35,7 +37,7 @@ public class WanderingTraderOffersManager {
     public static Optional<Pair<TradeOffers.Factory[], Integer>> getPool(Identifier id) {
         final int index = INDEXES_BY_ID.getOrDefault(id, -1);
         return index < 0 ? Optional.empty()
-            : Optional.of(TradeOffersAccessor.quilt$getWANDERING_TRADER_TRADES().get(index));
+            : Optional.of(TradeOffers.WANDERING_TRADER_TRADES.get(index));
     }
 
     public static void setPool(Identifier id, Pair<TradeOffers.Factory[], Integer> factoriesAndCount) {
@@ -60,7 +62,7 @@ public class WanderingTraderOffersManager {
 
     private static void mutateOffers(Consumer<List<Pair<TradeOffers.Factory[], Integer>>> mutator) {
         final List<Pair<TradeOffers.Factory[], Integer>> mutableOffers = new ArrayList<>(
-            TradeOffersAccessor.quilt$getWANDERING_TRADER_TRADES()
+            TradeOffers.WANDERING_TRADER_TRADES
         );
 
         mutator.accept(mutableOffers);
