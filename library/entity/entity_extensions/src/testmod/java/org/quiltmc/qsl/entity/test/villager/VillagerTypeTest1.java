@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.entity.test.villager;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import net.minecraft.item.ItemStack;
@@ -32,12 +33,28 @@ import org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper;
 public class VillagerTypeTest1 implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 1, factories -> {
-			factories.add(new SimpleTradeFactory(new TradeOffer(new TradeableItem(Items.GOLD_INGOT, 3), Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)), new ItemStack(Items.NETHERITE_INGOT), 2, 6, 0.15F)));
-		});
+		TradeOfferHelper.addToVillagerOfferPool(
+			VillagerProfession.ARMORER, 1,
+			new SimpleTradeFactory(new TradeOffer(
+				new TradeableItem(Items.GOLD_INGOT, 3),
+				Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)),
+				new ItemStack(Items.NETHERITE_INGOT),
+				2, 6, 0.15F
+			))
+		);
 
-		TradeOfferHelper.registerWanderingTraderOffers(1, factories -> {
-			factories.add(new SimpleTradeFactory(new TradeOffer(new TradeableItem(Items.GOLD_INGOT, 3), Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)), new ItemStack(Items.NETHERITE_INGOT), 2, 6, 0.35F)));
-		});
+        TradeOfferHelper.addToWanderingTraderOfferPool(
+			TradeOfferHelper.VanillaWanderingTraderPoolIds.SELL_SPECIAL_ITEMS,
+			// 100 copies to make it more likely
+			Collections.nCopies(
+				100,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.GOLD_INGOT, 3),
+					Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)),
+					new ItemStack(Items.NETHERITE_INGOT),
+					2, 6, 0.35F
+				))
+			)
+		);
 	}
 }
