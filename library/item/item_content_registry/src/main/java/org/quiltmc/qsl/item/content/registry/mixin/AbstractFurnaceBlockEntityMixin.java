@@ -28,18 +28,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
-	int field_55574;
+	int burnTime;
 
 	// Serializes burn time as an integer instead of a short.
 	// Should not cause any desyncs as BE sync packets are now NBT.
 
 	@Inject(method = "readNbtImpl", at = @At("TAIL"))
 	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		this.field_55574 = nbt.getInt("lit_time_remaining");
+		this.burnTime = nbt.getInt("lit_time_remaining").orElseThrow();
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		nbt.putInt("lit_time_remaining", this.field_55574);
+		nbt.putInt("lit_time_remaining", this.burnTime);
 	}
 }
