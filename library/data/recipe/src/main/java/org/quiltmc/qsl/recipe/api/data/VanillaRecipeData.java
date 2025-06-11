@@ -31,9 +31,9 @@ public final class VanillaRecipeData {
     }
 
     private static final int DEFAULT_COOKING_EXPERIENCE = 0;
-    public static final int DEFAULT_SLOW_COOK_TIME = 200;
-    public static final CookingCategory DEFAULT_COOKING_CATEGORY = CookingCategory.MISC;
-    public static final int DEFAULT_FAST_COOK_TIME = 100;
+    private static final int DEFAULT_SLOW_COOK_TIME = 200;
+    private static final CookingCategory DEFAULT_COOKING_CATEGORY = CookingCategory.MISC;
+    private static final int DEFAULT_FAST_COOK_TIME = 100;
 
     /**
      * Creates a {@link ShapedRecipeData.Builder} to aid in creating {@link ShapedRecipeData} instances.
