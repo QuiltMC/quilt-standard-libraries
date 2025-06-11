@@ -37,19 +37,25 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.extensions.api.MinecartComparatorLogic;
 
 @Mixin(DetectorRailBlock.class)
-public abstract class DetectorRailBlockMixin {
+abstract class DetectorRailBlockMixin {
 	@Shadow
-	protected abstract <T extends AbstractMinecartEntity> List<T> getCarts(World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate);
+	protected abstract <T extends AbstractMinecartEntity> List<T> getCarts(
+		World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate
+	);
 
 	@Inject(at = @At("HEAD"), method = "getComparatorOutput", cancellable = true)
-	private void getCustomComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
+	private void getCustomComparatorOutput(
+		BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir
+	) {
 		if (state.getOrDefault(DetectorRailBlock.POWERED, false)) {
-			List<AbstractMinecartEntity> carts = this.getCarts(world, pos, AbstractMinecartEntity.class,
-					cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0);
-
-			if (carts.isEmpty()) return;
-
-			cir.setReturnValue(carts.get(0).getComparatorValue(state, pos));
+			this
+				.getCarts(
+					world, pos, AbstractMinecartEntity.class,
+					cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0
+				)
+				.stream()
+				.findFirst()
+				.ifPresent(cart -> cir.setReturnValue(cart.getComparatorValue(state, pos)));
 		}
 	}
 }

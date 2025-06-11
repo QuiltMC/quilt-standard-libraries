@@ -3,11 +3,12 @@
   "package": "org.quiltmc.qsl.entity.test.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "networking.CreeperEntityRendererMixin"
+    "networking.CreeperEntityRendererMixin",
+    "networking.CreeperRenderStateMixin"
   ],
   "mixins": [
-    "networking.CreeperEntityMixin",
-    "TntMinecartEntityMixin"
+    "TntMinecartEntityMixin",
+    "networking.CreeperEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
