@@ -1,26 +1,39 @@
 package org.quiltmc.qsl.item.content.registry.mixin;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.objects.Object2IntSortedMap;
 import net.minecraft.block.entity.FuelTimes;
 import net.minecraft.item.Item;
-import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
+import net.minecraft.item.ItemStack;
+import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(targets = {"net.minecraft.block.entity.FuelTimes"})
-public abstract class FuelTimesMixin {
-	@WrapOperation(method = "<init>", at = @At(value = "FIELD", target = "net/minecraft/block/entity/FuelTimes.fuelTimes : Lit/unimi/dsi/fastutil/objects/Object2IntSortedMap;"))
-	private void returnCachedMap(FuelTimes instance, Object2IntSortedMap<Item> value, Operation<Void> original) {
-		if(!ItemContentRegistriesInitializer.FUEL_MAP.isEmpty()) {
-		 	// Is this actually right? I guess it was done this way in order for it to not have duplicate entries
-			// But wouldn't the map sort it out for us?
-			// I'm keeping this here to make it functionally equivalent with the old mixin.
-			value.clear();
-			value.putAll(ItemContentRegistriesInitializer.FUEL_MAP);
-		}
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 
-		original.call(instance, value);
+@Mixin(FuelTimes.class)
+public class FuelTimesMixin {
+	// Mixins are redirects here because we don't want to silently error if another mod is incompatible here
+
+	@Redirect(method = "isFuel", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/Object2IntSortedMap;containsKey(Ljava/lang/Object;)Z", remap = false))
+	private boolean isFuelWithREA(Object2IntSortedMap<Item> instance, Object o, @Local(argsOnly = true) ItemStack stack) {
+		return ItemContentRegistries.FUEL_TIMES.get(stack.getItem()).isPresent();
+	}
+
+	@Redirect(method = "validItems", at = @At(value = "INVOKE", target = "Ljava/util/Collections;unmodifiableSequencedSet(Ljava/util/SequencedSet;)Ljava/util/SequencedSet;", remap = false))
+	private SequencedSet<Item> validFuelsWithREA(SequencedSet<? extends Item> instance) {
+		SequencedSet<Item> items = new LinkedHashSet<>();
+		ItemContentRegistries.FUEL_TIMES.forEach((entry) -> items.add(entry.entry()));
+
+		return Collections.unmodifiableSequencedSet(items);
+	}
+
+	@Redirect(method = "getFuelTime", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/Object2IntSortedMap;getInt(Ljava/lang/Object;)I", remap = false))
+	public int getFuelTimeWithREA(Object2IntSortedMap<Item> instance, Object o, @Local(argsOnly = true) ItemStack stack) {
+		return ItemContentRegistries.FUEL_TIMES.get(stack.getItem()).orElse(0);
 	}
 }
+

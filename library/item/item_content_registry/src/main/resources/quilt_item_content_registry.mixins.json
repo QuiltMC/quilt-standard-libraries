@@ -5,7 +5,9 @@
   "mixins": [
     "AbstractFurnaceBlockEntityMixin",
     "FuelTimesMixin",
-    "FuelTimesBuilderMixin"
+    "FuelTimesBuilderMixin",
+    "MinecraftServerMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1
