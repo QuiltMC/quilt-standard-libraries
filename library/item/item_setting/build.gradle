@@ -24,6 +24,11 @@ qslModule {
 		item {
 			testmodOnly("item_content_registry")
 		}
+		gui {
+			// FIXME this shouldn't be necessary since resource_loader already depends on it,
+			//  but it's not actually present for the testmod for some reason
+			testmodOnly("screen")
+		}
 	}
 }
 
@@ -33,7 +38,8 @@ tasks.register('checkItemSettings') {
 	dependsOn jar
 
 	doLast {
-		def moduleJar = project.buildDir.toPath().resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
+		def moduleJar = project.layout.buildDirectory.getAsFile().get().toPath()
+			.resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
 
 		try (def moduleFs = FileSystems.newFileSystem(URI.create("jar:${moduleJar.toUri()}"), [create: false])) {
 			try (def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)) {

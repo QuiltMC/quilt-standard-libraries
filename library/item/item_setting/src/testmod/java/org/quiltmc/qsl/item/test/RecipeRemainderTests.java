@@ -21,73 +21,123 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsTests.registerItem;
+
 public class RecipeRemainderTests implements ModInitializer {
 	// Static field so we can use it in BrewingRecipeRegistryMixin
-	public static final Item POTION_INGREDIENT_REMAINDER = Registry.register(
-			Registries.ITEM,
-			Identifier.of(QuiltItemSettingsTests.NAMESPACE, "potion_ingredient_remainder"),
-			new Item(
-					new QuiltItemSettings().recipeRemainder(
-						(original, recipe) -> new ItemStack(Items.BLAZE_POWDER), RecipeRemainderLocation.POTION_ADDITION
-					)
+	public static final Item POTION_INGREDIENT_REMAINDER = registerItem(
+		"potion_ingredient_remainder",
+		new QuiltItemSettings()
+			.recipeRemainder((original, recipe) ->
+				new ItemStack(Items.BLAZE_POWDER), RecipeRemainderLocation.POTION_ADDITION
 			)
 	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// TODO: figure out a way to test these better. Maybe a gametest?
-		Item hammerItem = new Item(new QuiltItemSettings().maxDamage(16).recipeDamageRemainder());
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
+		registerItem(
+			"hammer",
+			new QuiltItemSettings()
+				.maxDamage(16)
+				.recipeDamageRemainder()
+		);
 
-		Item furnaceInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> Items.DIAMOND.getDefaultStack(), RecipeRemainderLocation.FURNACE_INGREDIENT));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
+		// furnace input remainder
+		registerItem(
+			"weird_ore",
+			new QuiltItemSettings()
+			.recipeRemainder(
+				(original, recipe) -> Items.DIAMOND.getDefaultStack(),
+				RecipeRemainderLocation.FURNACE_INGREDIENT
+			)
+		);
 
-		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			var remainder = original.copy();
-			remainder.setCount(2);
-			return remainder;
-		}, RecipeRemainderLocation.FURNACE_INGREDIENT));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
+		// furnace input self remainder
+		registerItem(
+			"infinite_ore",
+			new QuiltItemSettings()
+				.recipeRemainder(
+					(original, recipe) -> {
+						final var remainder1 = original.copy();
+						remainder1.setCount(2);
+						return remainder1;
+					},
+					RecipeRemainderLocation.FURNACE_INGREDIENT
+				)
+		);
 
-		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
-			var remainder = original.copy();
-			if (recipe == null) {
-				// noop
-			} else if (recipe.getType() == RecipeType.SMELTING) {
-				remainder.setCount(1);
-			} else if (recipe.getType() == RecipeType.SMOKING) {
-				remainder.setCount(2);
-			} else if (recipe.getType() == RecipeType.BLASTING) {
-				remainder.setCount(3);
-			}
+		// furnace fuel self remainder
+		registerItem(
+			"infinite_fuel",
+			new QuiltItemSettings()
+				.recipeRemainder(
+					(original, recipe) -> {
+						final ItemStack remainder = original.copy();
+						if (recipe != null) {
+							if (recipe.getType() == RecipeType.SMELTING) {
+								remainder.setCount(1);
+							} else if (recipe.getType() == RecipeType.SMOKING) {
+								remainder.setCount(2);
+							} else if (recipe.getType() == RecipeType.BLASTING) {
+								remainder.setCount(3);
+							}
+						}
 
-			return remainder;
-		}, RecipeRemainderLocation.FURNACE_FUEL));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
+						return remainder;
+					},
+					RecipeRemainderLocation.FURNACE_FUEL
+				)
+		);
 
-		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeSelfRemainder(RecipeRemainderLocation.SMITHING_INGREDIENT));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
+		// smithing input remainder
+		registerItem(
+			"infinite_netherite",
+			new QuiltItemSettings()
+				.recipeSelfRemainder(RecipeRemainderLocation.SMITHING_INGREDIENT)
+		);
 
-		Item smithingTemplateRemainder = new Item(new QuiltItemSettings().maxDamage(100).recipeDamageRemainder(1, RecipeRemainderLocation.SMITHING_TEMPLATE));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite_template"), smithingTemplateRemainder);
+		// smithing template remainder
+		registerItem(
+			"reusable_netherite_template",
+			new QuiltItemSettings()
+				.maxDamage(100)
+				.recipeDamageRemainder(1, RecipeRemainderLocation.SMITHING_TEMPLATE)
+		);
 
-		Item smithingBaseRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> new ItemStack(Items.LEATHER), RecipeRemainderLocation.SMITHING_BASE));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "leaving_leather_base"), smithingBaseRemainder);
+		// smithing base remainder
+		registerItem(
+			"leaving_leather_base",
+			new QuiltItemSettings()
+				.recipeRemainder((original, recipe) ->
+					new ItemStack(Items.LEATHER), RecipeRemainderLocation.SMITHING_BASE
+				)
+		);
 
-		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().maxDamage(100).recipeDamageRemainder(RecipeRemainderLocation.LOOM_DYE));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "reusable_dye"), loomInputRemainder);
+		// loom input remainder
+		registerItem(
+			"reusable_dye",
+			settings -> new DyeItem(DyeColor.RED, settings),
+			new QuiltItemSettings()
+				.maxDamage(100)
+				.recipeDamageRemainder(RecipeRemainderLocation.LOOM_DYE)
+		);
 
-		Item cuttingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> Items.STONE.getDefaultStack(), RecipeRemainderLocation.STONECUTTER_INPUT));
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "infinite_stone"), cuttingInputRemainder);
+		// cutting input remainder
+		registerItem(
+			"infinite_stone",
+			new QuiltItemSettings()
+				.recipeRemainder(
+					(original, recipe) -> Items.STONE.getDefaultStack(),
+					RecipeRemainderLocation.STONECUTTER_INPUT
+				)
+		);
 	}
 }

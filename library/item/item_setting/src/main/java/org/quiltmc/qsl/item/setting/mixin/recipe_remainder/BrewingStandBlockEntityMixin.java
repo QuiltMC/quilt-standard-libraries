@@ -31,16 +31,26 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
 	@Shadow
 	@Final
 	private static int INGREDIENT_SLOT;
 
-	@Redirect(method = "craft(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/collection/DefaultedList;)V",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V")
+	@Redirect(
+		method = "craft(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;" +
+			"Lnet/minecraft/util/collection/DefaultedList;)V",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V")
 	)
-	private static void applyRecipeRemainder(ItemStack ingredient, int amount, World world, BlockPos pos, DefaultedList<ItemStack> inventory) {
+	private static void applyRecipeRemainder(
+		ItemStack ingredient, int amount,
+		World world, BlockPos pos, DefaultedList<ItemStack> inventory,
+		@Share("originalAddition")LocalRef<ItemStack> originalAddition
+	) {
+		originalAddition.set(ingredient);
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				ingredient,
 				amount,
@@ -51,5 +61,21 @@ public class BrewingStandBlockEntityMixin {
 				world,
 				pos
 		);
+	}
+
+	// skip vanilla's setting of the remainder as it overwrites quilt's
+	@Redirect(
+		method = "craft",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"
+		)
+	)
+	private static Object skipSettingRemainder(
+		DefaultedList<?> instance, int index, Object value,
+		@Share("originalAddition")LocalRef<ItemStack> originalAddition
+	) {
+		// return the stack that would be returned here in vanilla in case anyone wraps this to capture it
+		return originalAddition.get();
 	}
 }
