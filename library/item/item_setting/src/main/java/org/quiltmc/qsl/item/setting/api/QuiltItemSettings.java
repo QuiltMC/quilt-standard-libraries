@@ -134,25 +134,36 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public QuiltItemSettings recipeDamageRemainder(int by, RecipeRemainderLocation... locations) {
 		if (by == 0) {
-			return this.recipeRemainder((original, recipe) -> original.copy(), locations);
+			return this.recipeRemainder(
+				(original, recipe) -> {
+					final ItemStack copy = original.copy();
+					copy.setCount(1);
+					return copy;
+				},
+				locations
+			);
 		}
 
-		return this.recipeRemainder((original, recipe) -> {
-			if (!original.isDamageable()) {
-				return original.copy();
-			}
+		return this.recipeRemainder(
+			(original, recipe) -> {
+				final ItemStack copy = original.copy();
+				copy.setCount(1);
 
-			final ItemStack copy = original.copy();
+				if (!original.isDamageable()) {
+					return copy;
+				}
 
-			copy.setDamage(copy.getDamage() + by);
+				copy.setDamage(copy.getDamage() + by);
 
-			if (copy.getDamage() >= copy.getMaxDamage()) {
-				copy.setCount(0);
-				return ItemStack.EMPTY;
-			}
+				if (copy.getDamage() >= copy.getMaxDamage()) {
+					copy.setCount(0);
+					return ItemStack.EMPTY;
+				}
 
-			return copy;
-		}, locations);
+				return copy;
+			},
+			locations
+		);
 	}
 
 	/**
