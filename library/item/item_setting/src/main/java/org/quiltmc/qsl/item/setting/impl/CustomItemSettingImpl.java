@@ -32,26 +32,28 @@ import net.minecraft.item.Item;
 
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
 import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
-import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @ApiStatus.Internal
 public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
-	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);
-	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSetting.create(() -> null);
+	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER =
+		CustomItemSetting.create(() -> null);
 
 	@SuppressWarnings("ConstantConditions")
-	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>> RECIPE_REMAINDER_PROVIDER = new CustomItemSettingImpl<>(HashMap::new) {
-		@Override
-		public void apply(Item.Settings settings, Item item) {
-			if (item.getRecipeRemainder() != ItemStack.EMPTY) {
-				throw new IllegalArgumentException("Item cannot have a standard recipe remainder and a custom recipe remainder");
-			}
+	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>>
+		RECIPE_REMAINDER_PROVIDER = new CustomItemSettingImpl<>(HashMap::new) {
+			@Override
+			public void apply(Item.Settings settings, Item item) {
+				if (item.getRecipeRemainder() != ItemStack.EMPTY) {
+					throw new IllegalArgumentException(
+						"Item cannot have a standard recipe remainder and a custom recipe remainder"
+					);
+				}
 
-			super.apply(settings, item);
-		}
-	};
+				super.apply(settings, item);
+			}
+		};
 
 	private static final Map<Item.Settings, Collection<CustomItemSettingImpl<?>>> CUSTOM_SETTINGS = new WeakHashMap<>();
 
@@ -95,7 +97,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	// Because item settings are reusable, it is possible that the same item settings object will be applied
 	// to multiple items.
 	public static void onBuild(Item.Settings settings, Item item) {
-		for (CustomItemSettingImpl<?> setting : CUSTOM_SETTINGS.getOrDefault(settings, Collections.emptyList())) {
+		for (final CustomItemSettingImpl<?> setting : CUSTOM_SETTINGS.getOrDefault(settings, Collections.emptyList())) {
 			setting.apply(settings, item);
 		}
 	}

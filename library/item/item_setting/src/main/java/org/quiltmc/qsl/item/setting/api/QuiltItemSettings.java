@@ -19,6 +19,7 @@ package org.quiltmc.qsl.item.setting.api;
 
 import java.util.Map;
 
+import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.FoodComponent;
 import org.jetbrains.annotations.Contract;
 
@@ -30,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.JukeboxSong;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Rarity;
 
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
@@ -42,26 +44,6 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
  * To use it, simply replace {@code new Item.Settings()} with {@code new QuiltItemSettings()}.
  */
 public class QuiltItemSettings extends Item.Settings {
-	/**
-	 * Sets the {@link EquipmentSlotProvider} of the item.
-	 *
-	 * @param equipmentSlotProvider the {@link EquipmentSlotProvider}
-	 * @return this
-	 */
-	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
-		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
-	}
-
-	/**
-	 * Sets the {@link EquipmentSlotProvider} of the item to always use {@code equipmentSlot}.
-	 *
-	 * @param equipmentSlot the {@link EquipmentSlot}
-	 * @return this
-	 */
-	public QuiltItemSettings equipmentSlot(EquipmentSlot equipmentSlot) {
-		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
-	}
-
 	/**
 	 * Sets the {@link CustomDamageHandler} of the item.
 	 * Note that this is only called on an ItemStack if {@link ItemStack#isDamageable()} returns true.
@@ -117,7 +99,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param locations the {@link RecipeRemainderLocation locations} for the remainder
 	 */
 	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider, RecipeRemainderLocation... locations) {
-		for (var location : locations) {
+		for (final RecipeRemainderLocation location : locations) {
 			((CustomItemSettingImpl<Map<RecipeRemainderLocation, RecipeRemainderProvider>>) QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER)
 					.get(this)
 					.put(location, provider);
@@ -160,7 +142,7 @@ public class QuiltItemSettings extends Item.Settings {
 				return original.copy();
 			}
 
-			ItemStack copy = original.copy();
+			final ItemStack copy = original.copy();
 
 			copy.setDamage(copy.getDamage() + by);
 
@@ -190,6 +172,7 @@ public class QuiltItemSettings extends Item.Settings {
 	}
 
 	// Overrides of vanilla methods
+	// TODO override remaining methods once they're mapped
 
 	@Override
 	@Contract("_->this")
@@ -199,6 +182,7 @@ public class QuiltItemSettings extends Item.Settings {
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings maxCount(int maxCount) {
 		super.maxCount(maxCount);
 		return this;
@@ -257,6 +241,90 @@ public class QuiltItemSettings extends Item.Settings {
 	@Contract("_->this")
 	public QuiltItemSettings attributeModifiersComponent(AttributeModifiersComponent value) {
 		super.attributeModifiersComponent(value);
+		return this;
+	}
+
+	@Override
+	@Contract("_,_->this")
+	public QuiltItemSettings food(FoodComponent food, ConsumableComponent consumable) {
+		super.food(food, consumable);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings useRemainder(Item item) {
+		super.useRemainder(item);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings useCooldown(float seconds) {
+		super.useCooldown(seconds);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings enchantable(int value) {
+		super.enchantable(value);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings repairable(Item repairMaterial) {
+		super.repairable(repairMaterial);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings repairable(TagKey<Item> repairMaterials) {
+		super.repairable(repairMaterials);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings equippable(EquipmentSlot slot) {
+		super.equippable(slot);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings swapEquippable(EquipmentSlot slot) {
+		super.swapEquippable(slot);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings key(RegistryKey<Item> key) {
+		super.key(key);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings translationKey(String value) {
+		super.translationKey(value);
+		return this;
+	}
+
+	@Override
+	@Contract("->this")
+	public QuiltItemSettings blockTranslationKey() {
+		super.blockTranslationKey();
+		return this;
+	}
+
+	@Override
+	@Contract("->this")
+	public QuiltItemSettings itemTranslationKey() {
+		super.itemTranslationKey();
 		return this;
 	}
 }
