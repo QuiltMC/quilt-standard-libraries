@@ -30,23 +30,30 @@ import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 
 @Mixin(Items.class)
-public class ItemsMixin {
+abstract class ItemsMixin {
 	@WrapOperation(
 			method = "<clinit>",
 			slice = @Slice(
 				from = @At(value = "CONSTANT", args = "stringValue=dragon_breath")
 			),
 			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/item/Item$Settings;recipeRemainder(Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item$Settings;",
-					ordinal = 0
+				value = "INVOKE",
+				target = "Lnet/minecraft/item/Item$Settings;recipeRemainder(Lnet/minecraft/item/Item;)" +
+					"Lnet/minecraft/item/Item$Settings;",
+				ordinal = 0
 			)
 	)
-	private static Item.Settings changeDragonBreathRecipeRemainder(Item.Settings instance, Item recipeRemainder, Operation<Item.Settings> originalCall) {
+	private static Item.Settings changeDragonBreathRecipeRemainder(
+		Item.Settings instance, Item recipeRemainder, Operation<Item.Settings> originalCall
+	) {
 		// See: https://github.com/FabricMC/fabric/issues/2873
 		//      https://bugs.mojang.com/browse/MC-259583
 		return new QuiltItemSettings()
 			.recipeRemainder((_original, _recipe) -> recipeRemainder.getDefaultStack())
-			.recipeRemainder((original, recipe) -> original.getCount() >= 2 ? recipeRemainder.getDefaultStack() : ItemStack.EMPTY, RecipeRemainderLocation.POTION_ADDITION);
+			.recipeRemainder(
+				(original, recipe) -> original.getCount() >= 2 ?
+					recipeRemainder.getDefaultStack()
+					: ItemStack.EMPTY, RecipeRemainderLocation.POTION_ADDITION
+			);
 	}
 }

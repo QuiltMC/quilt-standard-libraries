@@ -32,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
@@ -48,9 +47,10 @@ import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandlerImpl;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implements SidedInventory {
+abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implements SidedInventory {
 	@Unique
 	private static final ThreadLocal<AbstractFurnaceBlockEntity> quilt$THREAD_LOCAL_BLOCK_ENTITY = new ThreadLocal<>();
 	@Shadow
@@ -65,8 +65,10 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@Final
 	private RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> recipeCache;
 
-	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-		super(type, pos, state);
+	@SuppressWarnings("DataFlowIssue")
+	private AbstractFurnaceBlockEntityMixin() {
+		super(null, null, null);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	// Needed some place to store the furnace entity before any remainders are checked
@@ -77,18 +79,22 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	// prevent additional smelting if remainder item overflow would have no location to be dropped into the world
-	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
-	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, RecipeHolder<? extends AbstractCookingRecipe> recipe, SingleRecipeInput singleRecipeInput, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir) {
+	private static void checkMismatchedRemaindersCanDrop(
+		DynamicRegistryManager registryManager, RecipeHolder<? extends AbstractCookingRecipe> recipe,
+		SingleRecipeInput singleRecipeInput, DefaultedList<ItemStack> slots, int count,
+		CallbackInfoReturnable<Boolean> cir
+	) {
 		if (cir.getReturnValue() && quilt$THREAD_LOCAL_BLOCK_ENTITY.get() == null) {
-			ItemStack original = slots.get(INPUT_SLOT).copy();
+			final ItemStack original = slots.get(INPUT_SLOT).copy();
 
 			if (!original.isEmpty()) {
-				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe.value(), RecipeRemainderLocation.FURNACE_INGREDIENT).copy();
+				final ItemStack remainder = RecipeRemainderLogicHandler
+					.getRemainder(original, recipe.value(), RecipeRemainderLocation.FURNACE_INGREDIENT).copy();
 				original.decrement(1);
 
 				if (!remainder.isEmpty() && ItemStack.itemsAndComponentsMatch(original, remainder)) {
-					int toTake = Math.min(original.getMaxCount() - original.getCount(), remainder.getCount());
+					final int toTake = Math.min(original.getMaxCount() - original.getCount(), remainder.getCount());
 					remainder.decrement(toTake);
 
 					if (!remainder.isEmpty()) {
@@ -98,60 +104,91 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 			}
 		}
 	}
-	//FIXME: i only really made the params into locals; gotta look into this again
-	// likewise for every other "fix me" annotation below
-	// (might also require patching the locals)
 
-	@SuppressWarnings({"ConstantConditions", "UnreachableCode"})
+	@SuppressWarnings("ConstantConditions")
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setFuelRemainder(ItemStack instance, int amount, @Local(argsOnly = true) ServerWorld world, @Local BlockPos pos, @Local BlockState state, @Local AbstractFurnaceBlockEntity blockEntity) {
-		AbstractFurnaceBlockEntityMixin cast = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
+	private static void setFuelRemainder(
+		ItemStack instance, int amount,
+		@Local(argsOnly = true) ServerWorld world,
+		@Local(argsOnly = true) AbstractFurnaceBlockEntity blockEntity
+	) {
+		final AbstractFurnaceBlockEntityMixin mixin = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
 
-		Recipe<?> recipe;
-		if (!cast.inventory.get(INPUT_SLOT).isEmpty()) {
-			recipe = cast.recipeCache.getFirstMatch(new SingleRecipeInput(cast.inventory.get(INPUT_SLOT)), world).map(RecipeHolder::value).orElse(null);
-		} else {
-			recipe = null;
-		}
+		final Recipe<?> recipe = mixin.inventory.get(INPUT_SLOT).isEmpty() ?
+			null
+			: mixin.recipeCache.getFirstMatch(new SingleRecipeInput(mixin.inventory.get(INPUT_SLOT)), world)
+			.map(RecipeHolder::value).orElse(null);
 
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				instance,
 				amount,
 				recipe,
 				RecipeRemainderLocation.FURNACE_FUEL,
-				cast.inventory,
+				mixin.inventory,
 				FUEL_SLOT,
 				blockEntity.getWorld(),
 				blockEntity.getPos()
 		);
 	}
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
+	@Redirect(
+		method = "tick",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"
+		)
+	)
 	private static <E> E cancelVanillaRemainder(DefaultedList<E> defaultedList, int index, E element) {
 		return element;
 	}
 
-	//FIXME
-	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setInputRemainder(ItemStack inputStack, int amount, @Local DynamicRegistryManager registryManager, @Local @Nullable RecipeHolder<?> recipeHolder, @Local DefaultedList<ItemStack> inventory, @Local int count) {
+	@Redirect(
+		method = "craftRecipe",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V")
+	)
+	private static void setInputRemainder(
+		ItemStack inputStack, int amount,
+		@Local(argsOnly = true) @Nullable RecipeHolder<?> recipeHolder,
+		@Local(argsOnly = true) DefaultedList<ItemStack> inventory
+	) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				inputStack,
-				amount,
-				recipeHolder == null ? null : recipeHolder.value(),
-				RecipeRemainderLocation.FURNACE_INGREDIENT,
-				inventory,
-				INPUT_SLOT,
-				remainder -> { // consumer only called when there are excess remainder items that can be dropped into the world
-					// block entity guaranteed not to be null here thanks to checks in canAcceptRecipeOutput injection above
-					AbstractFurnaceBlockEntity be = quilt$THREAD_LOCAL_BLOCK_ENTITY.get();
-					BlockPos location = be.getPos();
-					ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
+			inputStack,
+			amount,
+			recipeHolder == null ? null : recipeHolder.value(),
+			RecipeRemainderLocation.FURNACE_INGREDIENT,
+			inventory,
+			INPUT_SLOT,
+			// consumer only called when there are excess remainder items that can be dropped into the world
+			remainder -> {
+				// block entity could be null if another mixin allows craftRecipe to be called elsewhere
+				// normally it's set in checkMismatchedRemaindersCanDrop before vanilla's only craftRecipe call
+				@Nullable
+				final AbstractFurnaceBlockEntity blockEntity = quilt$THREAD_LOCAL_BLOCK_ENTITY.get();
+				if (blockEntity == null) {
+					RecipeRemainderLogicHandlerImpl.LOGGER
+						.warn("Unable to scatter excess remainder because block entity is null");
+				} else {
+					final BlockPos location = blockEntity.getPos();
+					final World world = blockEntity.getWorld();
+					if (world == null) {
+						RecipeRemainderLogicHandlerImpl.LOGGER
+							.warn("Unable to scatter excess remainder because block entity world is null");
+					} else {
+						ItemScatterer.spawn(
+							world,
+							location.getX(), location.getY(), location.getZ(),
+							remainder
+						);
+					}
 				}
+			}
 		);
 	}
 
 	@Inject(method = "tick", at = @At("RETURN"))
-	private static void resetThreadLocalBlockEntity(ServerWorld world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
+	private static void resetThreadLocalBlockEntity(
+		ServerWorld world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci
+	) {
 		quilt$THREAD_LOCAL_BLOCK_ENTITY.remove();
 	}
 }

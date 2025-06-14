@@ -16,11 +16,10 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
-import net.minecraft.inventory.CraftingResultInventory;
-import net.minecraft.recipe.CraftingHandler;
-import net.minecraft.screen.slot.ItemCombinationSlotManager;
+import net.minecraft.recipe.Recipe;
+
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,33 +28,57 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeHolder;
-import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.screen.ForgingScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SmithingScreenHandler;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 @Mixin(SmithingScreenHandler.class)
-public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
+abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
 	public abstract void updateResult();
 
-	public SmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, ItemCombinationSlotManager itemCombinationSlotManager) {
-		super(type, syncId, playerInventory, context, itemCombinationSlotManager);
+	@SuppressWarnings("DataFlowIssue")
+	private SmithingScreenHandlerMixin() {
+		super(null, 0, null, null, null);
+		throw new AssertionError("dummy constructor called");
 	}
 
-	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
-	private void applyRecipeRemainderToIngredient(SmithingScreenHandler instance, int slot) {
+	// save the last recipe because unlockLastRecipe clears it
+	@Inject(
+		method = "onTakeOutput",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/inventory/CraftingResultInventory;unlockLastRecipe" +
+				"(Lnet/minecraft/entity/player/PlayerEntity;Ljava/util/List;)V"
+		)
+	)
+	private void shareLastRecipe(
+		CallbackInfo ci,
+		@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
+	) {
+		final RecipeHolder<?> lastRecipeHolder = this.result.getLastRecipe();
+		lastRecipe.set(lastRecipeHolder == null ? null : lastRecipeHolder.value());
+	}
+
+	@Redirect(
+		method = "onTakeOutput",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V")
+	)
+	private void applyRecipeRemainderToIngredient(
+		SmithingScreenHandler instance, int slot,
+		@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
+	) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 			this.getSlot(slot),
 			1,
-			this.result.getLastRecipe().value(),
+			lastRecipe.get(),
 			switch (slot) {
 				case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
 				case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
@@ -67,7 +90,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	}
 
 	@Inject(method = "onTakeOutput", at = @At("RETURN"))
-	public void refreshOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+	private void refreshOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
 		this.updateResult();
 	}
 }

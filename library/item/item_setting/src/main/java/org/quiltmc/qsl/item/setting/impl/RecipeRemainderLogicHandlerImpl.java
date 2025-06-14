@@ -35,11 +35,16 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 @ApiStatus.Internal
 public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLogicHandler {
 	public static final Map<Identifier, RecipeRemainderLocation> LOCATIONS = new HashMap<>();
 	public static final Set<RecipeRemainderLocation> DEFAULT_LOCATIONS = new HashSet<>();
+
+	public static final Logger LOGGER = LogUtils.getLogger();
 
 	/**
 	 * @return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed

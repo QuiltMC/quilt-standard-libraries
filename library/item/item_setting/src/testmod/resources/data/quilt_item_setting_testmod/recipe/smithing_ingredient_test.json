@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "minecraft:diamond_block",
+  "addition": "quilt_item_setting_testmod:infinite_netherite",
+  "result": {
+    "id": "minecraft:netherite_block"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}
