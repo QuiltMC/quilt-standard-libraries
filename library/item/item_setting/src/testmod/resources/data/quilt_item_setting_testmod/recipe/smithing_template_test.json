@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "minecraft:gold_block",
+  "addition": "minecraft:netherite_ingot",
+  "result": {
+    "id": "minecraft:netherite_block"
+  },
+  "template": "quilt_item_setting_testmod:reusable_netherite_template"
+}

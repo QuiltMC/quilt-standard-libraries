@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "quilt_item_setting_testmod:infinite_stone",
+  "result": {
+    "id": "minecraft:chiseled_stone_bricks"
+  },
+  "count": 1
+}

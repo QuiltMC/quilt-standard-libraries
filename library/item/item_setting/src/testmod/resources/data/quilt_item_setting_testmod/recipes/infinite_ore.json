@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "quilt_item_setting_testmod:infinite_ore"
-  },
-  "result": "minecraft:cobblestone",
-  "experience": 0.1,
-  "cookingtime": 10
-}

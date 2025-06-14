@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "quilt_item_setting_testmod:leaving_leather_base",
+  "addition": "minecraft:netherite_ingot",
+  "result": {
+    "id": "minecraft:netherite_chestplate"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}
