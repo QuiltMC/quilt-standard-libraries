@@ -66,9 +66,9 @@ public class RecipeRemainderTests implements ModInitializer {
 			new QuiltItemSettings()
 				.recipeRemainder(
 					(original, recipe) -> {
-						final var remainder1 = original.copy();
-						remainder1.setCount(2);
-						return remainder1;
+						final ItemStack copy = original.copy();
+						copy.setCount(2);
+						return copy;
 					},
 					RecipeRemainderLocation.FURNACE_INGREDIENT
 				)
