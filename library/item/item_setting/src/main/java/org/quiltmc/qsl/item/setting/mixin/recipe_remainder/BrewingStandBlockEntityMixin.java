@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
@@ -63,9 +64,13 @@ abstract class BrewingStandBlockEntityMixin {
 		);
 	}
 
-	// skip vanilla's setting of the remainder as it overwrites quilt's
+	// skip vanilla's setting of the remainder because it overwrites quilt's
 	@Redirect(
 		method = "craft",
+		slice = @Slice(from = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/item/Item;getRecipeRemainder()Lnet/minecraft/item/ItemStack;"
+		)),
 		at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"
