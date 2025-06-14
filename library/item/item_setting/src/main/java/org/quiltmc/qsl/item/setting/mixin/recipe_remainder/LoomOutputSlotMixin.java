@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
@@ -29,14 +28,20 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(targets = {"net.minecraft.screen.LoomScreenHandler$C_ntobwfpp"})
-public class LoomOutputSlotMixin extends Slot {
-	public LoomOutputSlotMixin(Inventory inventory, int i, int j, int k) {
-		super(inventory, i, j, k);
+abstract class LoomOutputSlotMixin extends Slot {
+	private LoomOutputSlotMixin() {
+		super(null, 0, 0, 0);
+		throw new AssertionError("dummy constructor called");
 	}
 
-	// can't seem to properly target this + intellij refuses to show me the bytecode for the anonymous class, so...
-
-	@Redirect(method = "onTakeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+	// MCDev erroneously says this method and target are incorrect; the anonymous class is probably confusing it
+	@Redirect(
+		method = "onTakeItem",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"
+		)
+	)
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack resultStack) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,

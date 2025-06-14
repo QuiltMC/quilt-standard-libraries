@@ -90,7 +90,7 @@ abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	}
 
 	@Inject(method = "onTakeOutput", at = @At("RETURN"))
-	public void refreshOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+	private void refreshOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
 		this.updateResult();
 	}
 }

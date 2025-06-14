@@ -33,7 +33,9 @@ interface CraftingRecipeMixin extends Recipe<CraftingRecipeInput> {
 	) {
 		final CraftingRecipeInputExtensions extendedInput = (CraftingRecipeInputExtensions) input;
 		try {
+			// attach recipe to input
 			extendedInput.quilt$setRecipe((CraftingRecipe) this);
+			// MCDev erroneously assert this call has incorrect parameters
 			return original.call(input);
 		} finally {
 			extendedInput.quilt$clearRecipe();
@@ -44,11 +46,11 @@ interface CraftingRecipeMixin extends Recipe<CraftingRecipeInput> {
 	private static DefaultedList<ItemStack> modifyRemainder(
 		DefaultedList<ItemStack> original, CraftingRecipeInput recipeInput
 	) {
-		@Nullable
-		final CraftingRecipe recipe = ((CraftingRecipeInputExtensions) recipeInput).quilt$getRecipe();
-
 		RecipeRemainderProvider.getRemainingStacks(
-			recipeInput, recipe, RecipeRemainderLocation.CRAFTING, original
+			recipeInput,
+			// retrieve recipe from input
+			((CraftingRecipeInputExtensions) recipeInput).quilt$getRecipe(),
+			RecipeRemainderLocation.CRAFTING, original
 		);
 
 		return original;

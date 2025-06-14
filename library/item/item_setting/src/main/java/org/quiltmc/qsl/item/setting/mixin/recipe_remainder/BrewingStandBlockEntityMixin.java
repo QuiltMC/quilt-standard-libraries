@@ -35,7 +35,7 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 @Mixin(BrewingStandBlockEntity.class)
-public class BrewingStandBlockEntityMixin {
+abstract class BrewingStandBlockEntityMixin {
 	@Shadow
 	@Final
 	private static int INGREDIENT_SLOT;
@@ -48,7 +48,7 @@ public class BrewingStandBlockEntityMixin {
 	private static void applyRecipeRemainder(
 		ItemStack ingredient, int amount,
 		World world, BlockPos pos, DefaultedList<ItemStack> inventory,
-		@Share("originalAddition")LocalRef<ItemStack> originalAddition
+		@Share("originalAddition") LocalRef<ItemStack> originalAddition
 	) {
 		originalAddition.set(ingredient);
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
