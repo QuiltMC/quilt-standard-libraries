@@ -17,18 +17,19 @@
 package org.quiltmc.qsl.item.content.registry.impl;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntSortedMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -46,10 +47,9 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 	public static final Map<ItemConvertible, Float> INITIAL_COMPOST_CHANCE = ImmutableMap.copyOf(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE);
 
-	// FIXME: fuel filters no longer apply
 	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "fuel_filters"));
 
-	private static boolean COLLECT_INITIAL_TAGS = false;
+	private static boolean collectInitialFuels = false;
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -68,18 +68,18 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	}
 
 	public static void startInitialFuelCollection() {
-		COLLECT_INITIAL_TAGS = true;
+		collectInitialFuels = true;
 
 		INITIAL_FUEL_ITEM_MAP.clear();
 		INITIAL_FUEL_TAG_MAP.clear();
 	}
 
 	public static boolean shouldCollectInitialFuels() {
-		return COLLECT_INITIAL_TAGS;
+		return collectInitialFuels;
 	}
 
 	public static void endInitialFuelCollection() {
-		COLLECT_INITIAL_TAGS = false;
+		collectInitialFuels = false;
 
 		// Since this is run after datapacks are first loaded, we should only add fields that aren't already included
 		INITIAL_FUEL_ITEM_MAP.forEach((item, fuelTime) -> {
@@ -93,5 +93,10 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 				ItemContentRegistries.FUEL_TIMES.put(tag, fuelTime);
 			}
 		});
+
+		final Optional<HolderSet.NamedSet<Item>> tag = Registries.ITEM.getTag(FUEL_FILTERS);
+		tag.ifPresent(filters -> filters.forEach(filter ->
+			ItemContentRegistries.FUEL_TIMES.remove(filter.getValue())
+		));
 	}
 }
