@@ -22,6 +22,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -31,23 +33,26 @@ import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 public final class StatusEffectTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_status_effect_testmod";
 
-	public static Identifier id(String path) {
+	public static Identifier createId(String path) {
 		return Identifier.of(NAMESPACE, path);
 	}
 
-	public static final StatusEffectRemovalReason DRANK_PASTEURIZED_MILK = new StatusEffectRemovalReason(id("action.drank_pasteurized_milk")) {
-		@Override
-		public boolean removesEffect(StatusEffectInstance effect) {
-			return effect.getEffectType().getValue().getType() == StatusEffectType.HARMFUL;
-		}
-	};
-
-	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registries.ITEM, id("pasteurized_milk_bucket"),
-		new PasteurizedMilkBucketItem(new Item.Settings()
-			.recipeRemainder(Items.BUCKET)
-			.maxCount(1)));
+	public static final StatusEffectRemovalReason DRANK_PASTEURIZED_MILK =
+		new StatusEffectRemovalReason(createId("action.drank_pasteurized_milk")) {
+			@Override
+			public boolean removesEffect(StatusEffectInstance effect) {
+				return effect.getEffectType().getValue().getType() == StatusEffectType.HARMFUL;
+			}
+		};
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		final RegistryKey<Item> bucketKey = RegistryKey.of(RegistryKeys.ITEM, createId("pasteurized_milk_bucket"));
+		Registry.register(Registries.ITEM, bucketKey, new PasteurizedMilkBucketItem(
+			new Item.Settings()
+				.key(bucketKey)
+				.recipeRemainder(Items.BUCKET)
+				.maxCount(1)
+		));
 	}
 }
