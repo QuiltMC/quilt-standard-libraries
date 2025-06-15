@@ -56,8 +56,8 @@ import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistr
 @Mixin(ArmorFeatureRenderer.class)
 abstract class ArmorFeatureRendererMixin<
 	S extends BipedRenderState, M extends BipedEntityModel<S>,
-	A extends BipedEntityModel<S>> extends FeatureRenderer<S, M
-> {
+	A extends BipedEntityModel<S>
+> extends FeatureRenderer<S, M> {
 	@Shadow @Final private EquipmentRenderer equipmentRenderer;
 
     @Unique
