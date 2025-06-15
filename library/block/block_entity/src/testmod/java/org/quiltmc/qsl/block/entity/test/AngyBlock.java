@@ -17,9 +17,14 @@
 package org.quiltmc.qsl.block.entity.test;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
+
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -29,14 +34,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class AngyBlock extends BlockWithEntity {
-	public AngyBlock(MapColor mapColor) {
-		super(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(mapColor));
+	public AngyBlock(AbstractBlock.Settings settings, MapColor mapColor) {
+		super(settings.mapColor(mapColor));
 	}
 
 	@Override
 	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 		if (!world.isClient()) {
-			var blockEntity = BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.get(world, pos);
+			final ColorfulBlockEntity blockEntity = BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.get(world, pos);
 
 			if (blockEntity == null) {
 				throw new AssertionError("Missing block entity for angy block at " + pos);
