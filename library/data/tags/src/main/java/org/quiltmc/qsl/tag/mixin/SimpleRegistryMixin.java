@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.tag.mixin;
 
+import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+
 import java.util.List;
-import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,17 +29,10 @@ import net.minecraft.registry.Holder;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.registry.tag.TagKey;
 
-import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-
 @Mixin(SimpleRegistry.class)
 public class SimpleRegistryMixin {
-
-	// FIXME:
-	//  bindTags replaced by bindTag.
-	//  fixing this mixin requires
-	//  refactoring TagRegistryImpl#populateTags
 	@Inject(method = "bindTag", at = @At("HEAD"))
-	private void onPopulateTags(TagKey<?> tag, List<Holder<?>> list, CallbackInfo ci) {
-		// TagRegistryImpl.populateTags(map);
+	private void populateTag(TagKey<?> tag, List<Holder<?>> list, CallbackInfo ci) {
+		TagRegistryImpl.populateTag(tag, list);
 	}
 }
