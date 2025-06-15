@@ -41,20 +41,24 @@ public class BlockEntityTypeMixin implements QuiltBlockEntityType {
 	private Set<Block> blocks;
 
 	@Unique
-	public Set<Block> quilt$getMutableSupportedBlocks() {
-		if (this.blocks instanceof ImmutableSet) {
+	private Set<Block> quilt$getMutableSupportedBlocks() {
+		if (!(this.blocks instanceof HashSet<Block>)) {
 			this.blocks = new HashSet<>(this.blocks);
 		}
 
 		return this.blocks;
 	}
 
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void addSupportedBlock(Block block) {
 		QuiltBlockEntityImpl.INSTANCE.ensureCanModify();
 		this.quilt$getMutableSupportedBlocks().add(block);
 	}
 
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void addSupportedBlocks(Block... blocks) {
 		QuiltBlockEntityImpl.INSTANCE.ensureCanModify();
