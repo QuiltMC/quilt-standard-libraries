@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.tag.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "SimpleRegistryMixin",
+    "SimpleRegistryPendingTagsMixin",
+    "TagGroupLoaderMixin",
     "TagKeyAccessor",
     "TagKeyMixin"
   ],

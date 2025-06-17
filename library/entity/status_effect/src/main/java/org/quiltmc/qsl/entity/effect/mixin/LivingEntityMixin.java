@@ -16,15 +16,19 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Holder;
+
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectEvents;
@@ -37,20 +41,25 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-// We want to make sure that our wrap operations are put before other mods, so that we wrap the vanilla call and not a mod's call.
+// We want to make sure that our wrap operations are put before other mods,
+// so that we wrap the vanilla call and not a mod's call.
 // This is because we do not call the vanilla method, so any mod adding something will not be called.
 @Mixin(value = LivingEntity.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
-public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
+abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
 	@SuppressWarnings("ConstantConditions")
-	public LivingEntityMixin() {
+	private LivingEntityMixin() {
 		super(null, null);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	@Shadow
@@ -63,10 +72,11 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	@Unique
 	private StatusEffectRemovalReason quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 
-	@SuppressWarnings("ConstantConditions")
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public boolean removeStatusEffect(@NotNull Holder<StatusEffect> type, @NotNull StatusEffectRemovalReason reason) {
-		var effect = this.activeStatusEffects.get(type);
+		final StatusEffectInstance effect = this.activeStatusEffects.get(type);
 		if (effect == null) {
 			return false;
 		}
@@ -80,7 +90,8 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		}
 	}
 
-	@SuppressWarnings("ConstantConditions")
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public int clearStatusEffects(@NotNull StatusEffectRemovalReason reason) {
 		if (this.getWorld().isClient) {
@@ -88,9 +99,9 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		}
 
 		int removed = 0;
-		var it = this.activeStatusEffects.values().iterator();
+		final Iterator<StatusEffectInstance> it = this.activeStatusEffects.values().iterator();
 		while (it.hasNext()) {
-			var effect = it.next();
+			final StatusEffectInstance effect = it.next();
 			if (StatusEffectUtils.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
 				it.remove();
 				this.onStatusEffectRemoved(effect, reason);
@@ -101,14 +112,15 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		return removed;
 	}
 
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
 		this.quilt$lastRemovalReason = reason;
-		this.onEffectsRemoved(Collections.singleton(effect)); //FIXME: awful awful awful
+		this.onEffectsRemoved(List.of(effect));
 		this.quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Inject(
 			method = "onStatusEffectApplied",
 			at = @At(
@@ -117,21 +129,42 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 					shift = At.Shift.AFTER
 			)
 	)
-	private void quilt$callOnAppliedEvent(StatusEffectInstance effect, Entity source, CallbackInfo ci) {
+	private void callOnAppliedEvent(StatusEffectInstance effect, Entity source, CallbackInfo ci) {
 		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, false);
+	}
+
+	// share effect instance rather than using @Local because it's less brittle
+	@ModifyReceiver(
+		method = "onEffectsRemoved",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/effect/StatusEffectInstance;getEffectType()Lnet/minecraft/registry/Holder;"
+		)
+	)
+	private StatusEffectInstance shareEffectInstance(
+		StatusEffectInstance instance,
+		@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
+	) {
+		effectInstance.set(instance);
+		return instance;
 	}
 
 	@WrapOperation(
 			method = "onEffectsRemoved",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved" +
+					"(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
 			)
 	)
-	// shoddy attempt at patching this with a bandaid - at least the compiler has stopped crying. needless to say, FIXME
-	private void quilt$callOnRemovedWithReason(StatusEffect instance, AttributeContainer attributes, Operation<Void> original, @Local(argsOnly = true) Collection<StatusEffectInstance> effects) {
-		instance.onRemoved((LivingEntity) (Object) this, attributes, effects.iterator().next(), this.quilt$lastRemovalReason);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, effects.iterator().next(), this.quilt$lastRemovalReason);
+	private void callOnRemovedWithReason(
+		StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
+		@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
+	) {
+		final LivingEntity self = (LivingEntity) (Object) this;
+		final StatusEffectInstance effect = effectInstance.get();
+		instance.onRemoved(self, attributes, effect, this.quilt$lastRemovalReason);
+		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(self, effect, this.quilt$lastRemovalReason);
 	}
 
 	@Inject(
@@ -141,8 +174,8 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		),
 		cancellable = true
 	)
-	public void quilt$shouldRemoveEffect(Holder<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
-		StatusEffectInstance instance = this.activeStatusEffects.get(effect);
+	public void shouldRemoveEffect(Holder<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
+		final StatusEffectInstance instance = this.activeStatusEffects.get(effect);
 		if (instance != null) {
 			if (!StatusEffectUtils.shouldRemove((LivingEntity) (Object) this, instance, StatusEffectRemovalReason.GENERIC_ONE)) {
 				cir.setReturnValue(false);
@@ -157,34 +190,57 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 				target = "Lnet/minecraft/entity/LivingEntity;onEffectsRemoved(Ljava/util/Collection;)V"
 			)
 	)
-	public void quilt$addRemoveStatusEffectReason(LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original) {
+	public void addRemoveStatusEffectReason(
+		LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
+	) {
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.GENERIC_ONE;
 		original.call(instance, effects);
 		this.quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 	}
 
-	// FIXME: clearStatusEffects no longer relies on an iterator, but a map
-	/*
-	@WrapOperation(
+	@ModifyArg(
 			method = "clearStatusEffects",
 			at = @At(
 				value = "INVOKE",
-				target = "Ljava/util/Collection;iterator()Ljava/util/Iterator;"
+				target = "Lcom/google/common/collect/Maps;newHashMap(Ljava/util/Map;)Ljava/util/HashMap;"
 			)
 	)
-	private Iterator<StatusEffectInstance> quilt$filterStatusEffects(Collection<StatusEffectInstance> instance, Operation<Iterator<StatusEffectInstance>> original) {
-		return Iterators.filter(original.call(instance), effect -> StatusEffectUtils.shouldRemove(
-			(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
-		));
+	private Map<Holder<StatusEffect>, StatusEffectInstance> filterStatusEffects(
+		Map<Holder<StatusEffect>, StatusEffectInstance> effects
+	) {
+		final Iterator<StatusEffectInstance> itr = effects.values().iterator();
+		while (itr.hasNext()) {
+			final StatusEffectInstance effect = itr.next();
+			final boolean remove = StatusEffectUtils.shouldRemove(
+				(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
+			);
+
+			if (remove) {
+				itr.remove();
+			}
+		}
+
+		return effects;
 	}
 
-	 */
+	@Redirect(
+		method = "clearStatusEffects",
+		at = @At(
+			value = "INVOKE",
+			target = "Ljava/util/Map;clear()V"
+		)
+	)
+	private void stopClear(Map<?, ?> instance) {
+		// don't clear map, effects are selectively removed in filterStatusEffects
+	}
 
 	@WrapOperation(method = "tickStatusEffects", at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/entity/LivingEntity;onEffectsRemoved(Ljava/util/Collection;)V")
 	)
-	private void quilt$removeWithExpiredReason(LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original) {
+	private void removeWithExpiredReason(
+		LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
+	) {
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.EXPIRED;
 		original.call(instance, effects);
 	}
@@ -196,21 +252,36 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
 		)
 	)
-	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, AttributeContainer attributes, Operation<Void> original, StatusEffectInstance statusEffectInstance) {
-		instance.onRemoved((LivingEntity) (Object) this, attributes, statusEffectInstance, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, statusEffectInstance, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
+	private void removeWithUpgradeApplyingReason(
+		StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
+		StatusEffectInstance statusEffectInstance
+	) {
+		final LivingEntity self = (LivingEntity) (Object) this;
+		instance.onRemoved(
+			self,
+			attributes,
+			statusEffectInstance,
+			StatusEffectRemovalReason.UPGRADE_REAPPLYING
+		);
+		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(
+			self,
+			statusEffectInstance,
+			StatusEffectRemovalReason.UPGRADE_REAPPLYING
+		);
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Inject(
 			method = "onStatusEffectUpgraded",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied" +
+					"(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
 				shift = At.Shift.AFTER
 			)
 	)
-	private void quilt$callOnAppliedEvent_upgradeReapplying(StatusEffectInstance effect, boolean reapplyEffect, Entity source, CallbackInfo ci) {
+	private void callOnAppliedEvent_upgradeReapplying(
+		StatusEffectInstance effect, boolean reapplyEffect, Entity source, CallbackInfo ci
+	) {
 		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, true);
 	}
 }

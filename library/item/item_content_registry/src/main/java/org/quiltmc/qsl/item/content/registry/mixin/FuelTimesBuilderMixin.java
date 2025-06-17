@@ -11,15 +11,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FuelTimes.Builder.class)
-public abstract class FuelTimesBuilderMixin {
-	@Inject(method = "add(Lnet/minecraft/item/ItemConvertible;I)Lnet/minecraft/block/entity/FuelTimes$Builder;", at = @At("HEAD"), cancellable = true)
-	private void collectInitialItems(ItemConvertible item, int fuelTime, CallbackInfoReturnable<FuelTimes.Builder> cir) {
+abstract class FuelTimesBuilderMixin {
+	@Inject(
+		method = "add(Lnet/minecraft/item/ItemConvertible;I)Lnet/minecraft/block/entity/FuelTimes$Builder;",
+		at = @At("HEAD")
+	)
+	private void collectInitialItems(
+		ItemConvertible item, int fuelTime, CallbackInfoReturnable<FuelTimes.Builder> cir
+	) {
 		if (ItemContentRegistriesInitializer.shouldCollectInitialFuels()) {
 			ItemContentRegistriesInitializer.INITIAL_FUEL_ITEM_MAP.put(item.asItem(), fuelTime);
 		}
 	}
 
-	@Inject(method = "add(Lnet/minecraft/registry/tag/TagKey;I)Lnet/minecraft/block/entity/FuelTimes$Builder;", at = @At("HEAD"), cancellable = true)
+	@Inject(
+		method = "add(Lnet/minecraft/registry/tag/TagKey;I)Lnet/minecraft/block/entity/FuelTimes$Builder;",
+		at = @At("HEAD")
+	)
 	private void collectInitialTags(TagKey<Item> tag, int fuelTime, CallbackInfoReturnable<FuelTimes.Builder> cir) {
 		if (ItemContentRegistriesInitializer.shouldCollectInitialFuels()) {
 			ItemContentRegistriesInitializer.INITIAL_FUEL_TAG_MAP.put(tag, fuelTime);
