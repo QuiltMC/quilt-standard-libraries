@@ -17,12 +17,13 @@
 package org.quiltmc.qsl.registry.attachment.test;
 
 import com.mojang.logging.LogUtils;
+
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
@@ -40,13 +41,29 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-public class DispatchedAttachmentTest implements ModInitializer,
-		ResourceLoaderEvents.EndDataPackReload {
-	public static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION =
-			RegistryEntryAttachment.dispatchedBuilder(Registries.ITEM, Identifier.of("quilt", "modular_function"),
-					FuncValue.class, FuncValue.CODECS::get, FuncValue.PACKET_CODECS::get).build();
+import java.util.Iterator;
 
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.createItemKey;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItem;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
+
+public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderEvents.EndDataPackReload {
 	public static final Logger LOGGER = LogUtils.getLogger();
+
+	private static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION =
+		RegistryEntryAttachment.dispatchedBuilder(Registries.ITEM, Identifier.of("quilt", "modular_function"),
+			FuncValue.class, FuncValue.CODECS::get, FuncValue.PACKET_CODECS::get).build();
+
+	private static void registryModularFunctionItem(String path) {
+		registerItem(path, ModularFunctionItem::new);
+	}
+
+	private static void registryModularFunctionItemWithExtension(String path, FuncValue value) {
+		registerItemWithExtension(
+			path, ModularFunctionItem::new,
+			MODULAR_FUNCTION, value
+		);
+	}
 
 	public static final class ModularFunctionItem extends Item {
 		public ModularFunctionItem(Settings settings) {
@@ -56,7 +73,7 @@ public class DispatchedAttachmentTest implements ModInitializer,
 		@Override
 		public ActionResult use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient()) {
-				ServerPlayerEntity player = (ServerPlayerEntity) user;
+				final ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.get(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
 						() -> player.sendMessage(Text.literal("No function assigned!")
 								.formatted(Formatting.RED), true));
@@ -66,60 +83,49 @@ public class DispatchedAttachmentTest implements ModInitializer,
 		}
 	}
 
-	/**
-	 * Has a built-in value of one type.
-	 */
-	public static final ModularFunctionItem ITEM_1 = RegistryExtensions.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_1"), new ModularFunctionItem(new Item.Settings()),
-			MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!"));
-	/**
-	 * Has a built-in value of one type, overridden via datapack by a value with another type.
-	 */
-	public static final ModularFunctionItem ITEM_2 = RegistryExtensions.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_2"), new ModularFunctionItem(new Item.Settings()),
-			MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!"));
-	/**
-	 * Set via datapack.
-	 */
-	public static final ModularFunctionItem ITEM_3 = Registry.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_3"), new ModularFunctionItem(new Item.Settings()));
-	/**
-	 * Has no value at all.
-	 */
-	public static final ModularFunctionItem ITEM_4 = Registry.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
-	/**
-	 * Has a value a provided by a tag.
-	 */
-	public static final ModularFunctionItem ITEM_5 = Registry.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
-	/**
-	 * Has a value a provided by a tag via datapack.
-	 */
-	public static final ModularFunctionItem ITEM_6 = Registry.register(Registries.ITEM,
-			Identifier.of("quilt", "modular_item_6"), new ModularFunctionItem(new Item.Settings()));
-
 	@Override
 	public void onInitialize(ModContainer mod) {
-		MODULAR_FUNCTION.put(TagKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "modular_tag_1")),
-				new SendMessageFuncValue("Built-in value via tag!"));
+		// Has a built-in value of one type.
+		registryModularFunctionItemWithExtension("modular_item_1", new SendMessageFuncValue("Built-in value!"));
+
+		// Has a built-in value of one type, overridden via datapack by a value with another type.
+		registryModularFunctionItemWithExtension("modular_item_2", new SendMessageFuncValue("Built-in value!"));
+
+		// Set via datapack.
+		registryModularFunctionItem("modular_item_3");
+
+		// Has no value at all.
+		registryModularFunctionItem("modular_item_4");
+
+		// Has a value a provided by a tag.
+		registryModularFunctionItem("modular_item_5");
+
+		// Has a value a provided by a tag via datapack.
+		registryModularFunctionItem("modular_item_6");
+
+		MODULAR_FUNCTION.put(
+			TagKey.of(RegistryKeys.ITEM, AttachmentTestUtil.createId("modular_tag_1")),
+			new SendMessageFuncValue("Built-in value via tag!")
+		);
 	}
 
 	@Override
 	public void onEndDataPackReload(Context context) {
-		if (context.error().isPresent()) return;
+		if (context.error().isPresent()) {
+			return;
+		}
 
 		LOGGER.info(" === DATA PACK RELOADED! === ");
 
-		var tagIt = MODULAR_FUNCTION.tagEntryIterator();
-		while (tagIt.hasNext()) {
-			var entry = tagIt.next();
+		final Iterator<RegistryEntryAttachment.TagEntry<Item, FuncValue>> tagItr = MODULAR_FUNCTION.tagEntryIterator();
+		while (tagItr.hasNext()) {
+			final RegistryEntryAttachment.TagEntry<Item, FuncValue> entry = tagItr.next();
 			LOGGER.info("Tag #{} is set to {}", entry.tag().id(), entry.value());
 		}
 
-		var it = MODULAR_FUNCTION.entryIterator();
-		while (it.hasNext()) {
-			var entry = it.next();
+		final Iterator<RegistryEntryAttachment.Entry<Item, FuncValue>> itemItr = MODULAR_FUNCTION.entryIterator();
+		while (itemItr.hasNext()) {
+			final RegistryEntryAttachment.Entry<Item, FuncValue> entry = itemItr.next();
 			LOGGER.info("Entry {} is set to {}", Registries.ITEM.getId(entry.entry()), entry.value());
 		}
 	}
