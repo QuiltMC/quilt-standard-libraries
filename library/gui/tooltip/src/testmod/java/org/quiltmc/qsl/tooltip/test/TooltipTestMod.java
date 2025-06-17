@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.tooltip.test;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
@@ -25,6 +26,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -36,19 +39,25 @@ import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public final class TooltipTestMod implements ModInitializer {
 	public static final String NAMESPACE = "quilt_tooltip_testmod";
-	public static final Item CUSTOM_TOOLTIP_ITEM = new SimpleCustomTooltipItem();
-	public static final Item CUSTOM_CONVERTIBLE_TOOLTIP_ITEM = new ConvertibleTooltipItem();
+
+	public static Identifier createId(String path) {
+		return Identifier.of(NAMESPACE, path);
+	}
+
+	private static void registerItem(String path, Function<Item.Settings, Item> factory) {
+		final RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, createId(path));
+		Registry.register(Registries.ITEM, key, factory.apply(new Item.Settings().key(key)));
+	}
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ITEM, Identifier.of(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
-		Registry.register(Registries.ITEM, Identifier.of(NAMESPACE, "custom_convertible_tooltip_item"),
-			CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);
+		registerItem("custom_tooltip_item", SimpleCustomTooltipItem::new);
+		registerItem("custom_convertible_tooltip_item", ConvertibleTooltipItem::new);
 	}
 
 	private static class SimpleCustomTooltipItem extends Item {
-		SimpleCustomTooltipItem() {
-			super(new Settings()/*.group(ItemGroup.MISC)*/);
+		SimpleCustomTooltipItem(Settings settings) {
+			super(settings);
 		}
 
 		@Override
@@ -58,8 +67,8 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	private static class ConvertibleTooltipItem extends Item {
-		ConvertibleTooltipItem() {
-			super(new Settings()/*.group(ItemGroup.MISC)*/);
+		ConvertibleTooltipItem(Settings settings) {
+			super(settings);
 		}
 
 		@Override
@@ -68,8 +77,7 @@ public final class TooltipTestMod implements ModInitializer {
 		}
 	}
 
-	public record Data(String message) implements TooltipData {
-	}
+	public record Data(String message) implements TooltipData { }
 
 	public record ConvertibleData(String message) implements ConvertibleTooltipData {
 		@ClientOnly
