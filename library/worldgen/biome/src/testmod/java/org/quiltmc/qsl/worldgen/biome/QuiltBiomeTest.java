@@ -157,6 +157,9 @@ public class QuiltBiomeTest implements ModInitializer {
 								QUILT_DESERT_WELL_FEATURE
 						))
 				// It should be glaringly obvious if these three tests work or not; be sure to check forests as well.
+				// FIXME sky and fog color modifications don't work
+				//  AFAICT they're applied correctly, but ClientWorld see's vanilla colors,
+				//  so I suspect there's a sync issue
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.isIn(BiomeTags.JUNGLE),
 						context -> context.getEffects().setSkyColor(0x111111))
