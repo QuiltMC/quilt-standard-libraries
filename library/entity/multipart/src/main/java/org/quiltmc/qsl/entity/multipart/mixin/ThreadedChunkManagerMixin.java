@@ -24,9 +24,9 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(ThreadedChunkManager.class)
-public class ThreadedChunkManagerMixin {
+abstract class ThreadedChunkManagerMixin {
 	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class))
-	private Class cancelEnderDragonCheck(Class constant) {
+	private Class cancelEnderDragonCheck(Object instance, Class constant) {
 		return EntityPart.class;
 	}
 }
