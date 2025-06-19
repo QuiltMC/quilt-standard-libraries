@@ -16,16 +16,14 @@
 
 package org.quiltmc.qsl.entity.multipart.api;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-
-import net.minecraft.client.render.ShapeRenderer;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.entity.Hitbox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Box;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+import java.util.Optional;
 
 /**
  * Represents the sub-parts of a {@link MultipartEntity}.
@@ -37,28 +35,32 @@ public interface EntityPart<E extends Entity> {
 	E getOwner();
 
 	/**
-	 * Renders the hitbox for the entity part.
+	 * Gets the hitbox for the entity part.
 	 * <p>
 	 * Should normally not be overridden unless it is to more accurately draw non-standard hitboxes.
 	 *
-	 * @param matrices  the {@link MatrixStack matrix stack} used for rendering
-	 * @param vertices  the {@link VertexConsumer vertex consumer} used for rendering
-	 * @param ownerX    the {@link #getOwner() owner's} rendered X coordinate
-	 * @param ownerY    the {@link #getOwner() owner's} rendered Y coordinate
-	 * @param ownerZ    the {@link #getOwner() owner's} rendered Z coordinate
-	 * @param owner     the {@link #getOwner() owner}
+	 * @param ownerX    the {@linkplain #getOwner() owner's} rendered X coordinate
+	 * @param ownerY    the {@linkplain #getOwner() owner's} rendered Y coordinate
+	 * @param ownerZ    the {@linkplain #getOwner() owner's} rendered Z coordinate
+	 * @param owner     the {@linkplain #getOwner() owner}
 	 * @param tickDelta progress for linearly interpolating between the previous and current game state
 	 */
 	@ClientOnly
-	default void renderHitbox(MatrixStack matrices, VertexConsumer vertices, double ownerX, double ownerY, double ownerZ, Entity owner, float tickDelta) {
+	default Optional<Hitbox> getHitbox(double ownerX, double ownerY, double ownerZ, Entity owner, float tickDelta) {
 		if (this instanceof Entity entityPart) {
-			matrices.push();
-			double entityPartX = ownerX + MathHelper.lerp(tickDelta, entityPart.lastRenderX, entityPart.getX());
-			double entityPartY = ownerY + MathHelper.lerp(tickDelta, entityPart.lastRenderY, entityPart.getY());
-			double entityPartZ = ownerZ + MathHelper.lerp(tickDelta, entityPart.lastRenderZ, entityPart.getZ());
-			matrices.translate(entityPartX, entityPartY, entityPartZ);
-			ShapeRenderer.renderOutline(matrices, vertices, entityPart.getBounds().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
-			matrices.pop();
+			final Box bounds = entityPart.getBounds().offset(
+				-entityPart.getX(),
+				-entityPart.getY(),
+				-entityPart.getZ()
+			);
+
+			return Optional.of(new Hitbox(
+				bounds.minX, bounds.minY, bounds.minZ,
+				bounds.maxX, bounds.maxY, bounds.maxZ,
+				0.25F, 1.0F, 0.0F
+			));
+		} else {
+			return Optional.empty();
 		}
 	}
 }
