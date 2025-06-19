@@ -100,7 +100,7 @@ abstract class CreeperEntityMixin extends HostileEntity implements QuiltExtended
 
 	@Override
 	public void writeAdditionalSpawnData(RegistryByteBuf buffer) {
-		ItemStack.PACKET_CODEC.encode(buffer, this.stackToDrop);
+		ItemStack.OPTIONAL_PACKET_CODEC.encode(buffer, this.stackToDrop);
 	}
 
 	@Override
