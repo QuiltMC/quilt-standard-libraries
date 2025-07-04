@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  * This is useful for items that, for example, may drain durability from some other source before damaging
  * the stack itself.
  * <p>
- * Custom damage handlers can be set with {@link QuiltItemSettings#customDamage}.
+ * Custom damage handlers can be set with {@link QuiltItemSettingsExtensions#customDamage}.
  */
 @FunctionalInterface
 public interface CustomDamageHandler {

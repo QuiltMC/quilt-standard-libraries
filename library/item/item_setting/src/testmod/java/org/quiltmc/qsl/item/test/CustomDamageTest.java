@@ -29,10 +29,10 @@ import net.minecraft.util.dynamic.Codecs;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 
-import static org.quiltmc.qsl.item.test.QuiltItemSettingsTests.createId;
-import static org.quiltmc.qsl.item.test.QuiltItemSettingsTests.registerItem;
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.createId;
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registerItem;
 
 public class CustomDamageTest implements ModInitializer {
 	public static final DataComponentType<Integer> WEIRD = Registry.register(
@@ -46,9 +46,10 @@ public class CustomDamageTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final QuiltItemSettings weirdPickSettings = new QuiltItemSettings();
+		final Item.Settings weirdPickSettings = new Item.Settings();
 		weirdPickSettings
 			// method_66330 is pickaxe
+			// C_bemqmqey.INCORRECT_FOR_GOLD_TOOL is ToolMaterial.GOLD
 			.method_66330(C_bemqmqey.INCORRECT_FOR_GOLD_TOOL, 1.0F, -2.8F);
 
 		registerItem("weird_pickaxe", WeirdPick::new, weirdPickSettings);
@@ -67,8 +68,8 @@ public class CustomDamageTest implements ModInitializer {
 	};
 
 	public static class WeirdPick extends Item {
-		protected WeirdPick(QuiltItemSettings settings) {
-			super(settings.customDamage(WEIRD_DAMAGE_HANDLER));
+		protected WeirdPick(Item.Settings settings) {
+			super(((QuiltItemSettingsExtensions) settings).customDamage(WEIRD_DAMAGE_HANDLER));
 		}
 
 		@Override

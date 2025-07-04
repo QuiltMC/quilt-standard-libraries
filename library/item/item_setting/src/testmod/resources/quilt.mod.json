@@ -12,7 +12,7 @@
     "load_type": "always",
     "entrypoints": {
       "init": [
-        "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
+        "org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests",
         "org.quiltmc.qsl.item.test.RecipeRemainderTests",
         "org.quiltmc.qsl.item.test.CustomDamageTest"
       ]

@@ -5,6 +5,7 @@
   "mixins": [
     "CraftingRecipeInputMixin",
     "ItemMixin",
+    "ItemSettingsMixin",
     "ItemStackMixin",
     "recipe_remainder.AbstractFurnaceBlockEntityMixin",
     "recipe_remainder.BannerDuplicateRecipeMixin",

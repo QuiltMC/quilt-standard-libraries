@@ -26,7 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 
 @Mixin(Items.class)
@@ -48,8 +48,8 @@ abstract class ItemsMixin {
 	) {
 		// See: https://github.com/FabricMC/fabric/issues/2873
 		//      https://bugs.mojang.com/browse/MC-259583
-		return new QuiltItemSettings()
-			.recipeRemainder((_original, _recipe) -> recipeRemainder.getDefaultStack())
+		return ((QuiltItemSettingsExtensions)((QuiltItemSettingsExtensions) new Item.Settings())
+			.recipeRemainder((_original, _recipe) -> recipeRemainder.getDefaultStack()))
 			.recipeRemainder(
 				(original, recipe) -> original.getCount() >= 2 ?
 					recipeRemainder.getDefaultStack()

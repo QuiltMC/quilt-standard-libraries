@@ -25,16 +25,16 @@ import net.minecraft.util.DyeColor;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 
-import static org.quiltmc.qsl.item.test.QuiltItemSettingsTests.registerItem;
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registerItem;
 
 public class RecipeRemainderTests implements ModInitializer {
 	// Static field so we can use it in BrewingRecipeRegistryMixin
 	public static final Item POTION_INGREDIENT_REMAINDER = registerItem(
 		"potion_ingredient_remainder",
-		new QuiltItemSettings()
+		((QuiltItemSettingsExtensions) new Item.Settings())
 			.recipeRemainder((original, recipe) ->
 				new ItemStack(Items.BLAZE_POWDER), RecipeRemainderLocation.POTION_ADDITION
 			)
@@ -45,15 +45,15 @@ public class RecipeRemainderTests implements ModInitializer {
 		// TODO: figure out a way to test these better. Maybe a gametest?
 		registerItem(
 			"hammer",
-			new QuiltItemSettings()
-				.maxDamage(16)
+			((QuiltItemSettingsExtensions) new Item.Settings()
+				.maxDamage(16))
 				.recipeDamageRemainder()
 		);
 
 		// furnace input remainder
 		registerItem(
 			"weird_ore",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 			.recipeRemainder(
 				(original, recipe) -> Items.DIAMOND.getDefaultStack(),
 				RecipeRemainderLocation.FURNACE_INGREDIENT
@@ -63,7 +63,7 @@ public class RecipeRemainderTests implements ModInitializer {
 		// furnace input self remainder
 		registerItem(
 			"infinite_ore",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.recipeRemainder(
 					(original, recipe) -> {
 						final ItemStack copy = original.copy();
@@ -77,7 +77,7 @@ public class RecipeRemainderTests implements ModInitializer {
 		// furnace fuel self remainder
 		registerItem(
 			"infinite_fuel",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.recipeRemainder(
 					(original, recipe) -> {
 						final ItemStack remainder = original.copy();
@@ -100,22 +100,22 @@ public class RecipeRemainderTests implements ModInitializer {
 		// smithing input remainder
 		registerItem(
 			"infinite_netherite",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.recipeSelfRemainder(RecipeRemainderLocation.SMITHING_INGREDIENT)
 		);
 
 		// smithing template remainder
 		registerItem(
 			"reusable_netherite_template",
-			new QuiltItemSettings()
-				.maxDamage(100)
+			((QuiltItemSettingsExtensions) new Item.Settings()
+				.maxDamage(100))
 				.recipeDamageRemainder(1, RecipeRemainderLocation.SMITHING_TEMPLATE)
 		);
 
 		// smithing base remainder
 		registerItem(
 			"leaving_leather_base",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.recipeRemainder((original, recipe) ->
 					new ItemStack(Items.LEATHER), RecipeRemainderLocation.SMITHING_BASE
 				)
@@ -125,15 +125,15 @@ public class RecipeRemainderTests implements ModInitializer {
 		registerItem(
 			"reusable_dye",
 			settings -> new DyeItem(DyeColor.RED, settings),
-			new QuiltItemSettings()
-				.maxDamage(100)
+			((QuiltItemSettingsExtensions) new Item.Settings()
+				.maxDamage(100))
 				.recipeDamageRemainder(RecipeRemainderLocation.LOOM_DYE)
 		);
 
 		// cutting input remainder
 		registerItem(
 			"infinite_stone",
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.recipeRemainder(
 					(original, recipe) -> Items.STONE.getDefaultStack(),
 					RecipeRemainderLocation.STONECUTTER_INPUT
