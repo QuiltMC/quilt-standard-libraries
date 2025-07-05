@@ -28,9 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.extensions.api.bow.BowExtensions;
-import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
-
-import com.llamalad7.mixinextras.sugar.Local;
+import org.quiltmc.qsl.item.extensions.impl.BowAttackModificationImpl;
 
 @Mixin(BowItem.class)
 public abstract class BowItemMixin extends RangedWeaponItemMixin implements BowExtensions {
@@ -50,17 +48,10 @@ public abstract class BowItemMixin extends RangedWeaponItemMixin implements BowE
 			// speed is calculated from pullProgress * 3 in BowItem::onStoppedUsing
 			final float pullProgress = speed / 3f;
 
-			final PersistentProjectileEntity projectile = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker()
-				.replaceProjectileShot(
-					bowStack, arrowStack, user, pullProgress,
-					persistentProjectile
-				);
-
-			BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(
-				bowStack, arrowStack, user, pullProgress, persistentProjectile
+			return BowAttackModificationImpl.modifyShotProjectile(
+				persistentProjectile,
+				arrowStack, pullProgress, bowStack, user
 			);
-
-			return projectile;
 		} else {
 			return original;
 		}

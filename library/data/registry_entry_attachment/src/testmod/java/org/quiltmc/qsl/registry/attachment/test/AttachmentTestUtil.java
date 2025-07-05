@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 public final class AttachmentTestUtil {
 	private AttachmentTestUtil() {
-		throw new AssertionError(AttachmentTestUtil.class.getSimpleName() + " contains only static members");
+		throw new UnsupportedOperationException(AttachmentTestUtil.class.getSimpleName() + " contains only static members");
 	}
 
 	public static final String NAMESPACE = "quilt";
