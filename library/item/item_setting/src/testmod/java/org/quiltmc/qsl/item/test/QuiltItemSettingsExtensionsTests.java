@@ -30,12 +30,12 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class QuiltItemSettingsTests implements ModInitializer {
+public class QuiltItemSettingsExtensionsTests implements ModInitializer {
 	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
 	public static final String NAMESPACE = "quilt_item_setting_testmod";
 
@@ -75,7 +75,7 @@ public class QuiltItemSettingsTests implements ModInitializer {
 					append.accept(Text.literal(CUSTOM_DATA_TEST.get(stack.getItem())));
 				}
 			},
-			new QuiltItemSettings()
+			((QuiltItemSettingsExtensions) new Item.Settings())
 				.customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!")
 		);
 	}

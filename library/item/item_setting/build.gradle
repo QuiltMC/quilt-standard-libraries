@@ -30,6 +30,9 @@ qslModule {
 			testmodOnly("screen")
 		}
 	}
+	injectedInterface('net/minecraft/class_1792$class_1793') {
+		values = ['org/quiltmc/qsl/item/setting/api/QuiltItemSettingsExtensions']
+	}
 }
 
 // Check that the QuiltItemSettings class has all required methods.

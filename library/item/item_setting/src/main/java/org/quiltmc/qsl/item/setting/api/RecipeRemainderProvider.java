@@ -32,7 +32,7 @@ import net.minecraft.util.collection.DefaultedList;
  * getting removed when used in crafting.
  *
  * <p>
- * Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.
+ * Recipe remainder providers can be set with {@link QuiltItemSettingsExtensions#recipeRemainder(RecipeRemainderProvider)}.
  */
 @FunctionalInterface
 public interface RecipeRemainderProvider {
