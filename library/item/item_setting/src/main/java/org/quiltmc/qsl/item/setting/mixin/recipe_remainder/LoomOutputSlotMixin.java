@@ -34,7 +34,6 @@ abstract class LoomOutputSlotMixin extends Slot {
 		throw new AssertionError("dummy constructor called");
 	}
 
-	// MCDev erroneously says this method and target are incorrect; the anonymous class is probably confusing it
 	@Redirect(
 		method = "onTakeItem",
 		at = @At(

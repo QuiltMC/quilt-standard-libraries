@@ -38,7 +38,6 @@ public class TestServerMixin {
 			method = "tick",
 			constant = @Constant(stringValue = "All {} required tests passed :)")
 	)
-	// was static, signature didn't match target method. target method signature probably changed
 	private String replaceSuccessMessage(String original) {
 		// You may ask why, it's simple.
 		// The original emoticon is a bit... weird.
