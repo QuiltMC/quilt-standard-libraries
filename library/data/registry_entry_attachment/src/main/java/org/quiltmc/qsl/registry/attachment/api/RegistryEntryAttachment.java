@@ -348,8 +348,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Associates a value with an entry.
 	 *
-	 * <p>
-	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <p><strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
 	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
@@ -363,8 +362,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Associates a value with a tag.
 	 *
-	 * <p>
-	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <p><strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
 	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
@@ -377,8 +375,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Removes any value associated with an entry.
 	 *
-	 * <p>
-	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <p><strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
 	 * Mods are allowed to ignore value removals that happen after registry freezing.
 	 *
@@ -390,8 +387,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	/**
 	 * Removes any value associated with a tag.
 	 *
-	 * <p>
-	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <p><strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
 	 * <br>
 	 * Mods are allowed to ignore value removals that happen after registry freezing.
 	 *
@@ -588,8 +584,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		/**
 		 * Sets the default value of this attachment.
 		 *
-		 * <p>
-		 * Setting this will <b>remove</b> the currently set
+		 * <p>Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValueProvider(DefaultValueProvider) default value provider}!
 		 *
 		 * @param defaultValue default value
@@ -605,12 +600,10 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		 * Sets the <em>default value provider</em> of this attachment, which will be used to compute a value for a
 		 * specific entry, should it be missing.
 		 *
-		 * <p>
-		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be
+		 * synchronized.
 		 *
-		 * <p>
-		 * Setting this will <b>remove</b> the currently set
-		 * {@linkplain #defaultValue(Object) default value}!
+		 * <p>Setting this will <b>remove</b> the currently set {@linkplain #defaultValue(Object) default value}!
 		 *
 		 * @param defaultValueProvider function to compute otherwise-missing value
 		 * @return this builder
@@ -627,7 +620,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		 * @return new attachment
 		 */
 		public RegistryEntryAttachment<R, V> build() {
-			RegistryEntryAttachment<R, V> attachment;
+			final RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
 					this.codec, this.packetCodec, this.side, this.defaultValue);

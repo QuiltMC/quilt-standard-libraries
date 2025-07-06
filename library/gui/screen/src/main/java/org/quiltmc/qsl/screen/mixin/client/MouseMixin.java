@@ -32,7 +32,6 @@ import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 @ClientOnly
 @Mixin(Mouse.class)
 abstract class MouseMixin {
-
 	@WrapOperation(
 			method = "onMouseButton",
 			at = @At(
@@ -40,13 +39,15 @@ abstract class MouseMixin {
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
 			)
 	)
-	private boolean mouseClickedEvent(Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original) {
+	private boolean mouseClickedEvent(
+			Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_CLICK.invoker().allowMouseClick(instance, mouseX, mouseY, button) == TriState.FALSE) {
 			return true;
 		}
 
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(instance, mouseX, mouseY, button);
-		boolean result = original.call(instance, mouseX, mouseY, button);
+		final boolean result = original.call(instance, mouseX, mouseY, button);
 		ScreenMouseEvents.AFTER_MOUSE_CLICK.invoker().afterMouseClick(instance, mouseX, mouseY, button);
 
 		return result;
@@ -60,13 +61,15 @@ abstract class MouseMixin {
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
 			)
 	)
-	private boolean mouseReleasedEvent(Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original) {
+	private boolean mouseReleasedEvent(
+			Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_RELEASE.invoker().allowMouseRelease(instance, mouseX, mouseY, button) == TriState.FALSE) {
 			return true;
 		}
 
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(instance, mouseX, mouseY, button);
-		boolean result = original.call(instance, mouseX, mouseY, button);
+		final boolean result = original.call(instance, mouseX, mouseY, button);
 		ScreenMouseEvents.AFTER_MOUSE_RELEASE.invoker().afterMouseRelease(instance, mouseX, mouseY, button);
 
 		return result;
@@ -79,14 +82,19 @@ abstract class MouseMixin {
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDDD)Z"
 			)
 	)
-	private boolean mouseScrolledEvent(Screen instance, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY, Operation<Boolean> original) {
+	private boolean mouseScrolledEvent(
+			Screen instance, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY,
+			Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY) == TriState.FALSE) {
 			return true;
 		}
 
-		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker().beforeMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
-		boolean result = original.call(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
-		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker().afterMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker()
+				.beforeMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		final boolean result = original.call(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker()
+				.afterMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 
 		return result;
 	}

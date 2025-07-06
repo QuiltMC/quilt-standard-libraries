@@ -16,8 +16,14 @@
 
 package org.quiltmc.qsl.registry.impl.event;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -25,15 +31,21 @@ import java.util.stream.Stream;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.feature_flags.FeatureFlagBitSet;
-import net.minecraft.registry.tag.TagGroupLoader;
-import net.minecraft.util.collection.IndexedIterable;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.registry.*;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderOwner;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.MutableRegistry;
+import net.minecraft.registry.RegistrationInfo;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagGroupLoader;
+import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.registry.Holder.Reference;
-import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.HolderSet.NamedSet;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -205,7 +217,7 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Iterator<T> iterator() {
+	@NotNull public Iterator<T> iterator() {
 		return this.wrapped.iterator();
 	}
 
@@ -327,6 +339,5 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 		return this.wrapped.isSame(owner);
 	}
 
-	record DelayedEntry<T>(RegistryKey<T> key, T entry, RegistrationInfo info) {
-	}
+	record DelayedEntry<T>(RegistryKey<T> key, T entry, RegistrationInfo info) { }
 }

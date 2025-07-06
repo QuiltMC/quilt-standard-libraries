@@ -50,14 +50,14 @@ public interface RecipeRemainderLogicHandler {
 	 * @return the recipe remainder
 	 */
 	static ItemStack getRemainder(ItemStack original, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
-		Map<RecipeRemainderLocation, RecipeRemainderProvider> providers =
-			CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(original.getItem());
+		final Map<RecipeRemainderLocation, RecipeRemainderProvider> providers =
+				CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(original.getItem());
 
 		RecipeRemainderProvider provider = (_original, _recipe) -> _original.getItem().getRecipeRemainder();
 
 		if (
-			RecipeRemainderLogicHandlerImpl.DEFAULT_LOCATIONS.contains(location)
-				&& providers.containsKey(RecipeRemainderLocation.DEFAULT_LOCATIONS)
+				RecipeRemainderLogicHandlerImpl.DEFAULT_LOCATIONS.contains(location)
+					&& providers.containsKey(RecipeRemainderLocation.DEFAULT_LOCATIONS)
 		) {
 			provider = providers.get(RecipeRemainderLocation.DEFAULT_LOCATIONS);
 		}
@@ -70,10 +70,7 @@ public interface RecipeRemainderLogicHandler {
 			provider = providers.get(RecipeRemainderLocation.ALL_LOCATIONS);
 		}
 
-		final ItemStack remainder = provider.getRecipeRemainder(
-			original,
-			recipe
-		);
+		final ItemStack remainder = provider.getRecipeRemainder(original, recipe);
 
 		return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
 	}
@@ -93,12 +90,12 @@ public interface RecipeRemainderLogicHandler {
 	 */
 	@Contract(mutates = "param1, param5, param7")
 	static void handleRemainderForNonPlayerCraft(
-		ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location,
-		DefaultedList<ItemStack> inventory, int index, World world, BlockPos pos
+			ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location,
+			DefaultedList<ItemStack> inventory, int index, World world, BlockPos pos
 	) {
 		handleRemainderForNonPlayerCraft(
-			input, amount, recipe, location, inventory, index,
-			remainder -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), remainder)
+				input, amount, recipe, location, inventory, index,
+				remainder -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), remainder)
 		);
 	}
 
@@ -139,7 +136,7 @@ public interface RecipeRemainderLogicHandler {
 	 */
 	@Contract(mutates = "param1, param5")
 	static void handleRemainderForScreenHandler(
-		Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
+			Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
 	) {
 		RecipeRemainderLogicHandlerImpl.handleRemainderForScreenHandler(slot, amount, recipe, location, player);
 	}
@@ -149,7 +146,7 @@ public interface RecipeRemainderLogicHandler {
 	 */
 	@Contract(mutates = "param1, param4")
 	static void handleRemainderForScreenHandler(
-		Slot slot, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
+			Slot slot, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
 	) {
 		handleRemainderForScreenHandler(slot, 1, recipe, location, player);
 	}

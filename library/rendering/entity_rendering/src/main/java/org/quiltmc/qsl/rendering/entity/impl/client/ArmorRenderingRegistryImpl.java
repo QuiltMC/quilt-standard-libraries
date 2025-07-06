@@ -20,14 +20,12 @@ import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedRenderState;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
@@ -51,7 +49,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.TextureProvider> createTextureProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.TextureProvider.class,
 				listeners -> (texture, entity, stack, slot, useSecondTexture) -> {
-					for (var listener : listeners) {
+					for (final ArmorRenderingRegistry.TextureProvider listener : listeners) {
 						texture = listener.getArmorTexture(texture, entity, stack, slot, useSecondTexture);
 					}
 
@@ -63,7 +61,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.ModelProvider> createModelProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.ModelProvider.class,
 				listeners -> (model, entity, stack, slot) -> {
-					for (var listener : listeners) {
+					for (final ArmorRenderingRegistry.ModelProvider listener : listeners) {
 						model = listener.getArmorModel(model, entity, stack, slot);
 					}
 
@@ -75,7 +73,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> createRenderLayerProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.RenderLayerProvider.class,
 				listeners -> (layer, state, stack, slot, texture) -> {
-					for (var listener : listeners) {
+					for (final ArmorRenderingRegistry.RenderLayerProvider listener : listeners) {
 						layer = listener.getArmorRenderLayer(layer, state, stack, slot, texture);
 					}
 
@@ -114,11 +112,11 @@ public final class ArmorRenderingRegistryImpl {
 	}
 
 	public static @NotNull RegistryKey<EquipmentAsset> getArmorAsset(
-		@NotNull RegistryKey<EquipmentAsset> asset,
-		@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-		boolean useSecondTexture
+			@NotNull RegistryKey<EquipmentAsset> asset,
+			@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+			boolean useSecondTexture
 	) {
-		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
+		final var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
 		if (e == null) {
 			return asset;
 		}
@@ -127,12 +125,12 @@ public final class ArmorRenderingRegistryImpl {
 	}
 
 	public static @NotNull BipedEntityModel<BipedRenderState> getArmorModel(
-		@NotNull BipedEntityModel<BipedRenderState> model,
-		@NotNull BipedRenderState state,
-		@NotNull ItemStack stack,
-		@NotNull EquipmentSlot slot
+			@NotNull BipedEntityModel<BipedRenderState> model,
+			@NotNull BipedRenderState state,
+			@NotNull ItemStack stack,
+			@NotNull EquipmentSlot slot
 	) {
-		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
+		final var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
 		if (e == null) {
 			return model;
 		}
@@ -141,11 +139,11 @@ public final class ArmorRenderingRegistryImpl {
 	}
 
 	public static @NotNull RenderLayer getArmorRenderLayer(
-		@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
-		@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
+			@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
+			@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
 	) {
-        final Event<ArmorRenderingRegistry.RenderLayerProvider> event =
-			((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
+		final Event<ArmorRenderingRegistry.RenderLayerProvider> event =
+				((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
 		if (event == null) {
 			return layer;
 		}

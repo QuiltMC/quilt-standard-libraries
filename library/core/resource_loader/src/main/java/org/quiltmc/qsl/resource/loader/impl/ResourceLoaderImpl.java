@@ -36,19 +36,22 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
-import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
@@ -95,10 +98,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<String, ModNioPack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
-	private static final boolean DEBUG_RELOADERS_IDENTITY = TriState.fromProperty("quilt.resource_loader.debug.reloaders_identity")
-		.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
-	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
-		.toBooleanOrElse(false);
+	private static final boolean DEBUG_RELOADERS_IDENTITY = TriState
+			.fromProperty("quilt.resource_loader.debug.reloaders_identity")
+			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+	private static final boolean DEBUG_RELOADERS_ORDER = TriState
+			.fromProperty("quilt.resource_loader.debug.reloaders_order")
+			.toBooleanOrElse(false);
 
 	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
@@ -106,12 +111,14 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
 	final Set<PackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
-	private final Event<PackRegistrationContext.Callback> defaultResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
-	private final Event<PackRegistrationContext.Callback> topResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
+	private final Event<PackRegistrationContext.Callback> defaultResourcePackRegistrationEvent =
+			createResourcePackRegistrationEvent();
+	private final Event<PackRegistrationContext.Callback> topResourcePackRegistrationEvent =
+			createResourcePackRegistrationEvent();
 
 	private static Event<PackRegistrationContext.Callback> createResourcePackRegistrationEvent() {
 		return Event.create(PackRegistrationContext.Callback.class, callbacks -> context -> {
-			for (var callback : callbacks) {
+			for (final PackRegistrationContext.Callback callback : callbacks) {
 				callback.onRegisterPack(context);
 			}
 		});
@@ -125,8 +132,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return IMPL_MAP.computeIfAbsent(type, ResourceLoaderImpl::new);
 	}
 
-	public static <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType, ResourcePack pack, InputStream inputStream) {
-		JsonObject json;
+	public static <T> @Nullable T parseMetadata(
+			MetadataSectionType<T> metaSectionType, ResourcePack pack, InputStream inputStream
+	) {
+		final JsonObject json;
 
 		try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 			json = JsonHelper.deserialize(reader);
@@ -148,9 +157,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static <T> T fromJson(MetadataSectionType<T> metaSectionType, JsonObject json) throws IllegalStateException {
-		var fieldJson = JsonHelper.getObject(json, metaSectionType.name());
+		final JsonObject fieldJson = JsonHelper.getObject(json, metaSectionType.name());
 
-		var value = metaSectionType.codec().decode(JsonOps.INSTANCE, fieldJson);
+		final DataResult<com.mojang.datafixers.util.Pair<T, JsonElement>> value =
+				metaSectionType.codec().decode(JsonOps.INSTANCE, fieldJson);
 
 		return value.getOrThrow().getFirst();
 	}
@@ -161,7 +171,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		get(type).sort(reloaders);
 	}
 
-	@SuppressWarnings("removal")
 	@Override
 	public void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader) {
 		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
@@ -210,16 +219,18 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public @NotNull ResourcePack newFileSystemPack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
-												   PackActivationType activationType, @NotNull Text displayName) {
-		String name = id.getNamespace() + '/' + id.getPath();
+	public @NotNull ResourcePack newFileSystemPack(
+			@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
+			PackActivationType activationType, @NotNull Text displayName
+	) {
+		final String name = id.getNamespace() + '/' + id.getPath();
 		return new ModNioPack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
 	}
 
 	/**
 	 * Flattens the given resource pack if it's a group resource pack.
-	 * <p>
-	 * This is useful to flatten the resource pack list once the runtime list is figured out.
+	 *
+	 * <p>This is useful to flatten the resource pack list once the runtime list is figured out.
 	 *
 	 * @param pack     the given resource pack
 	 * @param consumer the resource pack consumer
@@ -251,9 +262,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		//   trust them 100%. Only code doesn't lie.
 		// - We add all custom reloaders after vanilla reloaders if they don't have contrary ordering. Same reasons.
 
-		var runtimePhases = new Object2ObjectOpenHashMap<Identifier, ResourceReloaderPhaseData>();
+		final var runtimePhases = new Object2ObjectOpenHashMap<Identifier, ResourceReloaderPhaseData>();
 
-		Iterator<ResourceReloader> itPhases = reloaders.iterator();
+		final Iterator<ResourceReloader> itPhases = reloaders.iterator();
 		// Add the virtual before Vanilla phase.
 		ResourceReloaderPhaseData last = new ResourceReloaderPhaseData(ResourceReloaderKeys.BEFORE_VANILLA, null);
 		last.setVanillaStatus(ResourceReloaderPhaseData.VanillaStatus.VANILLA);
@@ -261,8 +272,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		// Add all the Vanilla reloaders.
 		while (itPhases.hasNext()) {
-			var currentReloader = itPhases.next();
-			Identifier id;
+			final ResourceReloader currentReloader = itPhases.next();
+			final Identifier id;
 
 			if (currentReloader instanceof IdentifiableResourceReloader identifiable) {
 				id = identifiable.getQuiltId();
@@ -276,12 +287,15 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				);
 
 				if (DEBUG_RELOADERS_IDENTITY) {
-					LOGGER.warn("The resource reloader at {} does not implement IdentifiableResourceReloader " +
-						"making ordering support more difficult for other modders.", currentReloader.getClass().getName());
+					LOGGER.warn(
+							"The resource reloader at {} does not implement IdentifiableResourceReloader "
+								+ "making ordering support more difficult for other modders.",
+							currentReloader.getClass().getName()
+					);
 				}
 			}
 
-			var current = new ResourceReloaderPhaseData(id, currentReloader);
+			final var current = new ResourceReloaderPhaseData(id, currentReloader);
 			current.setVanillaStatus(ResourceReloaderPhaseData.VanillaStatus.VANILLA);
 			runtimePhases.put(id, current);
 
@@ -290,62 +304,75 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		}
 
 		// Add the virtual after Vanilla phase.
-		var afterVanilla = new ResourceReloaderPhaseData.AfterVanilla(ResourceReloaderKeys.AFTER_VANILLA);
+		final var afterVanilla = new ResourceReloaderPhaseData.AfterVanilla(ResourceReloaderKeys.AFTER_VANILLA);
 		runtimePhases.put(afterVanilla.getId(), afterVanilla);
 		PhaseData.link(last, afterVanilla);
 
 		// Add the modded reloaders.
-		for (var moddedReloader : this.addedReloaders) {
-			var phase = new ResourceReloaderPhaseData(moddedReloader.getQuiltId(), moddedReloader);
+		for (final IdentifiableResourceReloader moddedReloader : this.addedReloaders) {
+			final var phase = new ResourceReloaderPhaseData(moddedReloader.getQuiltId(), moddedReloader);
 			runtimePhases.put(phase.getId(), phase);
 		}
 
 		// Add the ordering.
-		for (var order : this.reloadersOrdering) {
-			var first = runtimePhases.get(order.getLeft());
+		for (final Pair<Identifier, Identifier> order : this.reloadersOrdering) {
+			final ResourceReloaderPhaseData first = runtimePhases.get(order.getLeft());
 
-			if (first == null) continue;
+			if (first == null) {
+				continue;
+			}
 
-			var second = runtimePhases.get(order.getRight());
+			final var second = runtimePhases.get(order.getRight());
 
-			if (second == null) continue;
+			if (second == null) {
+				continue;
+			}
 
 			PhaseData.link(first, second);
 		}
 
 		// Attempt to order un-ordered modded reloaders to after Vanilla to respect the rules.
-		for (var putAfter : runtimePhases.values()) {
-			if (putAfter == afterVanilla) continue;
+		for (final ResourceReloaderPhaseData putAfter : runtimePhases.values()) {
+			if (putAfter == afterVanilla) {
+				continue;
+			}
 
-			if (putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE
-				|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER) {
+			if (
+					putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE
+						|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER
+			) {
 				PhaseData.link(afterVanilla, putAfter);
 			}
 		}
 
 		// Sort the phases.
-		var phases = new ArrayList<>(runtimePhases.values());
+		final var phases = new ArrayList<>(runtimePhases.values());
 		PhaseSorting.sortPhases(phases);
 
 		// Apply the sorting!
 		reloaders.clear();
 
-		for (var phase : phases) {
+		for (final ResourceReloaderPhaseData phase : phases) {
 			if (phase.getData() != null) {
 				reloaders.add(phase.getData());
 			}
 		}
 
 		if (DEBUG_RELOADERS_ORDER) {
-			LOGGER.info("Sorted reloaders: " + phases.stream().map(data -> {
-				String str = data.getId().toString();
+			LOGGER.info(
+					"Sorted reloaders: {}",
+					phases.stream()
+						.map(data -> {
+							String str = data.getId().toString();
 
-				if (data.getData() == null) {
-					str += " (virtual)";
-				}
+							if (data.getData() == null) {
+								str += " (virtual)";
+							}
 
-				return str;
-			}).collect(Collectors.joining(", ")));
+							return str;
+						})
+						.collect(Collectors.joining(", "))
+			);
 		}
 	}
 
@@ -359,18 +386,18 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param subPath the resource pack sub path directory in mods, may be {@code null}
 	 */
 	public static void appendModPacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
-		var modResourcePacks = type == ResourceType.CLIENT_RESOURCES
-			? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
-		var existingList = modResourcePacks.get(subPath);
-		var byMod = new Reference2ObjectOpenHashMap<ModMetadata, ModNioPack>();
+		final Map<String, List<ModNioPack>> modResourcePacks = type == ResourceType.CLIENT_RESOURCES
+				? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
+		final List<ModNioPack> existingList = modResourcePacks.get(subPath);
+		final var byMod = new Reference2ObjectOpenHashMap<ModMetadata, ModNioPack>();
 
 		if (existingList != null) {
-			for (var pack : existingList) {
+			for (final var pack : existingList) {
 				byMod.put(pack.modInfo, pack);
 			}
 		}
 
-		for (var container : QuiltLoader.getAllMods()) {
+		for (final ModContainer container : QuiltLoader.getAllMods()) {
 			if (container.getSourceType() == ModContainer.BasicSourceType.BUILTIN) {
 				continue;
 			}
@@ -382,7 +409,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			Path path = container.rootPath();
 
 			if (subPath != null) {
-				Path childPath = container.getPath(subPath).toAbsolutePath().normalize();
+				final Path childPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 				if (!childPath.startsWith(path) || !Files.exists(childPath)) {
 					continue;
@@ -394,9 +421,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			byMod.put(container.metadata(), ModNioPack.ofMod(container.metadata(), path, type));
 		}
 
-		List<ModNioPack> packList = byMod.values().stream()
-			.filter(pack -> !pack.getNamespaces(type).isEmpty())
-			.toList();
+		final List<ModNioPack> packList = byMod.values().stream()
+				.filter(pack -> !pack.getNamespaces(type).isEmpty())
+				.toList();
 
 		// Cache the pack list for the next reload.
 		modResourcePacks.put(subPath, packList);
@@ -406,13 +433,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static GroupPack.Wrapped buildMinecraftPack(ResourceType type, ResourcePack vanillaPack) {
 		// Build a list of mod resource packs.
-		var packs = new ArrayList<ResourcePack>();
+		final var packs = new ArrayList<ResourcePack>();
 		appendModPacks(packs, type, null);
 
-		var pack = new GroupPack.Wrapped(type, vanillaPack, packs, false);
-		int[] lastExtraPackIndex = new int[]{1};
+		final var pack = new GroupPack.Wrapped(type, vanillaPack, packs, false);
+		final int[] lastExtraPackIndex = new int[]{1};
 
-		var context = new PackRegistrationContextImpl(type, List.of(pack), p -> {
+		final var context = new PackRegistrationContextImpl(type, List.of(pack), p -> {
 			packs.add(lastExtraPackIndex[0]++, p);
 			pack.recompute();
 		});
@@ -422,9 +449,11 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return pack;
 	}
 
-	public static GroupPack.Wrapped buildVanillaBuiltinPack(ResourcePack vanillaPack, ResourceType type, String packName) {
+	public static GroupPack.Wrapped buildVanillaBuiltinPack(
+			ResourcePack vanillaPack, ResourceType type, String packName
+	) {
 		// Build a list of mod resource packs.
-		var packs = new ArrayList<ResourcePack>();
+		final var packs = new ArrayList<ResourcePack>();
 		appendModPacks(packs, type, packName);
 
 		return new GroupPack.Wrapped(type, vanillaPack, packs, false);
@@ -447,20 +476,25 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @return {@code true} if successfully registered the resource pack, or {@code false} otherwise
 	 * @see ResourceLoader#registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
-	public static boolean registerBuiltinPack(Identifier id, String subPath, ModContainer container,
-											  PackActivationType activationType, Text displayName) {
-		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
+	public static boolean registerBuiltinPack(
+			Identifier id, String subPath, ModContainer container,
+			PackActivationType activationType, Text displayName
+	) {
+		final Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
 			return false;
 		}
 
-		var name = id.getNamespace() + "/" + id.getPath();
+		final String name = id.getNamespace() + "/" + id.getPath();
 
 		boolean result = false;
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
-			result = registerBuiltinPack(ResourceType.CLIENT_RESOURCES,
-				newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+			result = registerBuiltinPack(
+				ResourceType.CLIENT_RESOURCES,
+				newBuiltinPack(
+					container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType
+				)
 			);
 		}
 
@@ -473,31 +507,34 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	private static boolean registerBuiltinPack(ResourceType type, ModNioPack pack) {
 		if (QuiltLoader.isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
-			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
-				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+			final Map<String, ModNioPack> builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
+					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 			builtinResourcePacks.put(pack.getName(), pack);
 			return true;
 		}
+
 		return false;
 	}
 
-	private static ModNioPack newBuiltinPack(ModContainer container, String name, Text displayName,
-											 Path resourcePackPath, ResourceType type, PackActivationType activationType) {
+	private static ModNioPack newBuiltinPack(
+			ModContainer container, String name, Text displayName,
+			Path resourcePackPath, ResourceType type, PackActivationType activationType
+	) {
 		return new ModNioPack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 
 	public static void registerBuiltinPacks(ResourceType type, Consumer<PackProfile> profileAdder) {
-		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
-			? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+		final var builtinPacks = type == ResourceType.CLIENT_RESOURCES
+				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
 		// Loop through each registered built-in resource packs and add them if valid.
-		for (var entry : builtinPacks.entrySet()) {
-			ModNioPack pack = entry.getValue();
+		for (final Map.Entry<String, ModNioPack> entry : builtinPacks.entrySet()) {
+			final ModNioPack pack = entry.getValue();
 
 			// Add the built-in pack only if namespaces for the specified resource type are present.
 			if (!pack.getNamespaces(type).isEmpty()) {
 				// Make the resource pack profile for built-in pack, should never be always enabled.
-				var profile = QuiltBuiltinPackProfile.of(pack);
+				final var profile = QuiltBuiltinPackProfile.of(pack);
 
 				if (profile != null) {
 					profileAdder.accept(profile);
@@ -514,15 +551,16 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param map the language map
 	 */
 	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
-		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.CLIENT_RESOURCES,
-			VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
+		final GroupPack.Wrapped pack = ResourceLoaderImpl.buildMinecraftPack(
+				ResourceType.CLIENT_RESOURCES,
+				VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
 		);
 
 		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {
-			for (var namespace : manager.getAllNamespaces()) {
-				var langId = Identifier.of(namespace, "lang/" + Language.DEFAULT_LANGUAGE + ".json");
+			for (final String namespace : manager.getAllNamespaces()) {
+				final var langId = Identifier.of(namespace, "lang/" + Language.DEFAULT_LANGUAGE + ".json");
 
-				for (var resource : manager.getAllResources(langId)) {
+				for (final Resource resource : manager.getAllResources(langId)) {
 					try (var stream = resource.open()) {
 						Language.load(stream, map::put);
 					} catch (IOException e) {

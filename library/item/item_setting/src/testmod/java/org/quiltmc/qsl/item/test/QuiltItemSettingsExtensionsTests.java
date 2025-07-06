@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.item.test;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,9 +34,6 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class QuiltItemSettingsExtensionsTests implements ModInitializer {
 	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
@@ -52,7 +52,7 @@ public class QuiltItemSettingsExtensionsTests implements ModInitializer {
 	}
 
 	public static <I extends Item, S extends Item.Settings> I registerItem(
-		String path, Function<S, I> factory, S settings
+			String path, Function<S, I> factory, S settings
 	) {
 		final RegistryKey<Item> key = createItemKey(path);
 		settings.key(key);
@@ -63,20 +63,20 @@ public class QuiltItemSettingsExtensionsTests implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		// Registers an item with a custom item setting that adds some tooltip.
 		registerItem(
-			"custom_data_item",
-			settings -> new Item(settings) {
-				// appendTooltip's' deprecation means override-only, don't call
-				@SuppressWarnings("deprecation")
-				@Override
-				public void appendTooltip(
-					ItemStack stack, TooltipContext context, C_idvlscju c_idvlscju,
-					Consumer<Text> append, TooltipConfig config
-				) {
-					append.accept(Text.literal(CUSTOM_DATA_TEST.get(stack.getItem())));
-				}
-			},
-			((QuiltItemSettingsExtensions) new Item.Settings())
-				.customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!")
+				"custom_data_item",
+				settings -> new Item(settings) {
+					// appendTooltip's' deprecation means override-only, don't call
+					@SuppressWarnings("deprecation")
+					@Override
+					public void appendTooltip(
+							ItemStack stack, TooltipContext context, C_idvlscju c_idvlscju,
+							Consumer<Text> append, TooltipConfig config
+					) {
+						append.accept(Text.literal(CUSTOM_DATA_TEST.get(stack.getItem())));
+					}
+				},
+				((QuiltItemSettingsExtensions) new Item.Settings())
+					.customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!")
 		);
 	}
 }

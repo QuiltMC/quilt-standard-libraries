@@ -27,8 +27,8 @@ import org.quiltmc.qsl.resource.loader.impl.ModIoOps;
 
 /**
  * Contains the definition of a tree structure for caching, each node represents either a directory, a file, or a missing entry.
- * <p>
- * This may be dangerous if someone does a lot of one-time access.
+ *
+ * <p>This may be dangerous if someone does a lot of one-time access.
  *
  * @author LambdAurora
  */
@@ -68,11 +68,11 @@ public final class CacheTree {
 		}
 
 		public String getFullPath() {
-			var list = new ArrayList<String>();
-			var elem = this;
+			final var list = new ArrayList<String>();
+			Node elem = this;
 
 			while (!elem.isRoot()) {
-				list.add(0, elem.getPathPart());
+				list.addFirst(elem.getPathPart());
 
 				elem = elem.getParent();
 			}
@@ -85,7 +85,9 @@ public final class CacheTree {
 		}
 
 		public @Nullable ResourceAccess.Entry toEntry(ModIoOps ops) {
-			if (this.type == EntryType.EMPTY) return null;
+			if (this.type == EntryType.EMPTY) {
+				return null;
+			}
 
 			return new ResourceAccess.Entry(ops.getNormalizedPath(this.getFullPath()), this.type);
 		}
@@ -102,27 +104,27 @@ public final class CacheTree {
 		}
 
 		public Branch putBranch(String name) {
-			var child = new Branch(this, name);
+			final var child = new Branch(this, name);
 			this.nodes.put(name, child);
 			return child;
 		}
 
 		public void putEmpty(String name) {
-			var child = new Leaf(this, name, EntryType.EMPTY);
+			final var child = new Leaf(this, name, EntryType.EMPTY);
 			this.nodes.put(name, child);
 		}
 
 		public Leaf putFile(String name) {
-			var child = new Leaf(this, name, EntryType.FILE);
+			final var child = new Leaf(this, name, EntryType.FILE);
 			this.nodes.put(name, child);
 			return child;
 		}
 
 		public @Nullable Node resolveOrCompute(ModIoOps io, String path) {
-			int firstSeparator = path.indexOf('/');
-			String childName = firstSeparator == -1 ? path : path.substring(0, firstSeparator);
+			final int firstSeparator = path.indexOf('/');
+			final String childName = firstSeparator == -1 ? path : path.substring(0, firstSeparator);
 
-			Node node = this.nodes.get(childName);
+			final Node node = this.nodes.get(childName);
 
 			if (node == null) {
 				String absolutePath = childName;
@@ -131,7 +133,7 @@ public final class CacheTree {
 					absolutePath = this.getFullPath() + '/' + absolutePath;
 				}
 
-				var type = io.getEntryType(absolutePath);
+				final EntryType type = io.getEntryType(absolutePath);
 
 				switch (type) {
 					case EMPTY -> {
@@ -139,7 +141,7 @@ public final class CacheTree {
 						return null;
 					}
 					case DIRECTORY -> {
-						Branch branch = this.putBranch(childName);
+						final Branch branch = this.putBranch(childName);
 
 						if (firstSeparator != -1) {
 							return branch.resolveOrCompute(io, path.substring(firstSeparator + 1));
@@ -148,7 +150,7 @@ public final class CacheTree {
 						}
 					}
 					case FILE -> {
-						Leaf leaf = this.putFile(childName);
+						final Leaf leaf = this.putFile(childName);
 
 						if (firstSeparator == -1) {
 							return leaf;

@@ -36,8 +36,8 @@ public interface DefaultValueProvider<R, V> {
 
 	/**
 	 * Represents the result of computing a default value.
-	 * <p>
-	 * Can either have a value or an error string.
+	 *
+	 * <p>Can either have a value or an error string.
 	 *
 	 * @param <V> type of value
 	 */

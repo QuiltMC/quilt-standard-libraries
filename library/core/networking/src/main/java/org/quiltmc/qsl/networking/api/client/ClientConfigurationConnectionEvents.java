@@ -43,8 +43,9 @@ public final class ClientConfigurationConnectionEvents {
 
 	/**
 	 * An event for notification when the client play network handler is ready to send packets to the server.
-	 * <p>
-	 * At this stage, the network handler is ready to send packets to the server since the client's local state has been set up.
+	 *
+	 * <p>At this stage, the network handler is ready to send packets to the server since the client's local state has
+	 * been set up.
 	 */
 	public static final Event<Start> START = Event.create(Start.class, callbacks -> (handler, sender, client) -> {
 		for (Start callback : callbacks) {
@@ -55,8 +56,8 @@ public final class ClientConfigurationConnectionEvents {
 	/**
 	 * An event for notification when the client play network handler has been configured and has received the {@link net.minecraft.network.packet.s2c.configuration.FinishConfigurationS2CPacket FinishConfigurationS2CPacket}.
 	 * Called right before switching to the {@link net.minecraft.network.NetworkPhase#PLAY PLAY} stage.
-	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 *
+	 * <p>No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Configured> CONFIGURED = Event.create(Configured.class, callbacks -> (handler, client) -> {
 		for (Configured callback : callbacks) {
@@ -66,8 +67,8 @@ public final class ClientConfigurationConnectionEvents {
 
 	/**
 	 * An event for the disconnection of the client play network handler.
-	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 *
+	 * <p>No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, client) -> {
 		for (Disconnect callback : callbacks) {
@@ -93,7 +94,9 @@ public final class ClientConfigurationConnectionEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Start extends ClientEventAwareListener {
-		void onConfigurationStart(ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client);
+		void onConfigurationStart(
+				ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client
+		);
 	}
 
 	@ClientOnly

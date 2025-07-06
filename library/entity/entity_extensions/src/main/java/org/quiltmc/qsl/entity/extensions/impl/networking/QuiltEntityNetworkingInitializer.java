@@ -33,7 +33,6 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
 @ApiStatus.Internal
 public class QuiltEntityNetworkingInitializer implements ModInitializer {
-
 	public static final SimpleRegistry<TrackedDataHandler<?>> TRACKED_DATA_HANDLER_REGISTRY = new SimpleRegistry<>(
 			RegistryKey.ofRegistry(Identifier.of("quilt", "tracked_data_handlers")), Lifecycle.stable(), false
 	);
@@ -54,7 +53,10 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registries.ROOT), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
+		Registry.register(
+				((Registry<Registry<TrackedDataHandler<?>>>) Registries.ROOT),
+				TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY
+		);
 
 		PayloadTypeRegistry.playS2C().register(ExtendedEntitySpawnPayload.ID, ExtendedEntitySpawnPayload.CODEC);
 	}

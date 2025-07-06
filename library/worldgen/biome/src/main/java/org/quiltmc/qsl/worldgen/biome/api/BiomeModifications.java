@@ -33,8 +33,8 @@ import net.minecraft.world.gen.feature.PlacedFeature;
 
 /**
  * Provides an API to modify Biomes after they have been loaded and before they are used in the World.
- * <p>
- * Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
+ *
+ * <p>Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
  * or the demo level.
  */
 public final class BiomeModifications {
@@ -74,7 +74,7 @@ public final class BiomeModifications {
 				"Cannot add spawns for entities with spawnGroup=MISC since they'd be replaced by pigs.");
 
 		// We need the entity type to be registered, or we cannot deduce an identifier otherwise
-		Identifier id = Registries.ENTITY_TYPE.getId(entityType);
+		final Identifier id = Registries.ENTITY_TYPE.getId(entityType);
 		Preconditions.checkState(id != Registries.ENTITY_TYPE.getDefaultId(), "Unregistered entity type: %s", entityType);
 
 		create(id).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {

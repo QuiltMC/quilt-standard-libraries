@@ -154,17 +154,17 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public String toString() {
-		return "ChatS2CMessage{" +
-				"globalIndex=" + this.globalIndex +
-				", sender=" + this.sender +
-				", index=" + this.index +
-				", signature=" + this.signature +
-				", body=" + this.body +
-				", unsignedContent=" + this.unsignedContent +
-				", filterMask=" + this.filterMask +
-				", messageType=" + this.messageType +
-				", player=" + this.player +
-				", isClient=" + this.isClient +
-				'}';
+		return "ChatS2CMessage{"
+			+ "globalIndex=" + this.globalIndex
+			+ ", sender=" + this.sender
+			+ ", index=" + this.index
+			+ ", signature=" + this.signature
+			+ ", body=" + this.body
+			+ ", unsignedContent=" + this.unsignedContent
+			+ ", filterMask=" + this.filterMask
+			+ ", messageType=" + this.messageType
+			+ ", player=" + this.player
+			+ ", isClient=" + this.isClient
+			+ '}';
 	}
 }

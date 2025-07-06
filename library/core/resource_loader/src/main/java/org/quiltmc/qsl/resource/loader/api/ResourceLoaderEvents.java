@@ -40,8 +40,9 @@ public final class ResourceLoaderEvents {
 
 	/**
 	 * An event indicating the start of the reloading of data packs on a Minecraft server.
-	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
+	 *
+	 * <p>This event should not be used to load resources, use
+	 * {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<StartDataPackReload> START_DATA_PACK_RELOAD = Event.create(StartDataPackReload.class,
 			callbacks -> context -> {
@@ -52,18 +53,21 @@ public final class ResourceLoaderEvents {
 
 	/**
 	 * An event indicating the end of the reloading of data packs on a Minecraft server.
-	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
+	 *
+	 * <p>This event should not be used to load resources, use
+	 * {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<EndDataPackReload> END_DATA_PACK_RELOAD = Event.create(EndDataPackReload.class,
 			callbacks -> context -> {
 				for (var callback : callbacks) {
 					callback.onEndDataPackReload(context);
 				}
+
 				ResourceLoaderEventContextsImpl.server = null;
 			});
 
-	public sealed interface DataPackReloadContext permits ResourceLoaderEvents.StartDataPackReload.Context, ResourceLoaderEvents.EndDataPackReload.Context {
+	public sealed interface DataPackReloadContext permits
+			ResourceLoaderEvents.StartDataPackReload.Context, ResourceLoaderEvents.EndDataPackReload.Context {
 		/**
 		 * {@return the server instance}
 		 */
@@ -121,8 +125,8 @@ public final class ResourceLoaderEvents {
 	public interface EndDataPackReload extends EventAwareListener {
 		/**
 		 * Called after data packs on a Minecraft server have been reloaded.
-		 * <p>
-		 * If the reload was not successful, the old data packs will be kept.
+		 *
+		 * <p>If the reload was not successful, the old data packs will be kept.
 		 *
 		 * @param context the data-pack reload context, if the error is present the data-pack reload failed
 		 */
@@ -131,13 +135,13 @@ public final class ResourceLoaderEvents {
 		@ApiStatus.NonExtendable
 		non-sealed interface Context extends DataPackReloadContext {
 			/**
-			 * {@return the dynamic registry manager instance}
+			 * @return the dynamic registry manager instance
 			 */
 			@Contract(pure = true)
 			DynamicRegistryManager dynamicRegistries();
 
 			/**
-			 * {@return present if the data-pack reload failed, or {@linkplain Optional#empty() empty} otherwise}
+			 * @return present if the data-pack reload failed, or {@linkplain Optional#empty() empty} otherwise
 			 */
 			@Contract(pure = true)
 			Optional<Throwable> error();

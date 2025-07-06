@@ -16,17 +16,18 @@
 
 package org.quiltmc.qsl.item.content.registry.mixin;
 
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.HolderLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.HolderLookup;
+
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class AbstractFurnaceBlockEntityMixin {
+abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
 	int burnTime;
 

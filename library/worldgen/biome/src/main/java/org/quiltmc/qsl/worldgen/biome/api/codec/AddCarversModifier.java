@@ -24,7 +24,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 import org.quiltmc.qsl.data.callback.api.CodecHelpers;
@@ -35,8 +34,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds carvers to a biome.
- * <p>
- * The biome modifier identifier is {@code quilt:add_carvers}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:add_carvers}.
  *
  * @param carvers registry keys for the carvers to add
  */
@@ -57,7 +56,7 @@ public record AddCarversModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var carver : this.carvers) {
+		for (final RegistryKey<ConfiguredCarver<?>> carver : this.carvers) {
 			modificationContext.getGenerationSettings().addCarver(carver);
 		}
 	}

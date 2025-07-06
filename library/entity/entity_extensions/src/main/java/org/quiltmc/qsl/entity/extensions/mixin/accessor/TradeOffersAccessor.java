@@ -16,25 +16,25 @@
 
 package org.quiltmc.qsl.entity.extensions.mixin.accessor;
 
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.Pair;
-import org.quiltmc.qsl.entity.extensions.impl.WanderingTraderOffersManager;
-
-import net.minecraft.village.TradeOffers;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
+import net.minecraft.village.TradeOffers;
+
+import org.quiltmc.qsl.entity.extensions.impl.WanderingTraderOffersManager;
 
 @Mixin(TradeOffers.class)
 public interface TradeOffersAccessor {
-    /**
-     * Only for use in {@link WanderingTraderOffersManager}
-     */
-    @Mutable
-    @Accessor("WANDERING_TRADER_TRADES")
-    static void quilt$setWANDERING_TRADER_TRADES(List<Pair<TradeOffers.Factory[], Integer>> trades) {
-        throw new AssertionError("dummy method body reached");
-    }
+	/**
+	 * Only for use in {@link WanderingTraderOffersManager}.
+	 */
+	@Mutable
+	@Accessor("WANDERING_TRADER_TRADES")
+	static void quilt$setWANDERING_TRADER_TRADES(List<Pair<TradeOffers.Factory[], Integer>> trades) {
+		throw new AssertionError("dummy method body reached");
+	}
 }

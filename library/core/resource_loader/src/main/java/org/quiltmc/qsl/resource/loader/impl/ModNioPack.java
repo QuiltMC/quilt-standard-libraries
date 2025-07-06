@@ -28,12 +28,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
@@ -59,7 +59,8 @@ import org.quiltmc.qsl.resource.loader.impl.cache.ResourceTreeCache;
 public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final FileSystem DEFAULT_FILESYSTEM = FileSystems.getDefault();
-	private static final boolean DISABLE_CACHING = TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
+	private static final boolean DISABLE_CACHING =
+			TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
 	/* Metadata */
 	private final String name;
 	private final Text displayName;
@@ -79,13 +80,15 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 		);
 	}
 
-	public ModNioPack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
-					  Path path, ResourceType type, @Nullable AutoCloseable closer) {
+	public ModNioPack(
+			@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
+			Path path, ResourceType type, @Nullable AutoCloseable closer
+	) {
 		super(new PackLocationInfo(
-			name,
-			displayName,
-			new QuiltBuiltinPackProfile.BuiltinPackSource(modInfo, activationType),
-			Optional.empty()
+				name,
+				displayName,
+				new QuiltBuiltinPackProfile.BuiltinPackSource(modInfo, activationType),
+				Optional.empty()
 		));
 
 		/* Metadata */
@@ -105,7 +108,10 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 		}
 
 		/* Cache */
-		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()) {
+		if (
+				DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM
+					|| path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()
+		) {
 			// The default file system means it's on-disk files that may change
 			this.cache = new ResourceAccess(this.io);
 		} else {
@@ -116,7 +122,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
-		String actualPath = String.join("/", path);
+		final String actualPath = String.join("/", path);
 
 		return this.open(actualPath);
 	}
@@ -127,7 +133,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	}
 
 	protected ResourceIoSupplier<InputStream> open(String filePath) {
-		ResourceAccess.Entry entry = this.cache.getEntry(filePath);
+		final ResourceAccess.Entry entry = this.cache.getEntry(filePath);
 
 		if (entry != null && entry.type() == EntryType.FILE) {
 			return ResourceIoSupplier.create(entry.path());
@@ -138,33 +144,36 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public void listResources(ResourceType type, String namespace, String startingPath, ResourceConsumer consumer) {
-		String namespacePath = type.getDirectory() + '/' + namespace;
-		String nioPath = startingPath.replace("/", this.io.getSeparator());
+		final String namespacePath = type.getDirectory() + '/' + namespace;
+		final String nioPath = startingPath.replace("/", this.io.getSeparator());
 
-		ResourceAccess.Entry namespaceEntry = this.cache.getEntry(namespacePath);
+		final ResourceAccess.Entry namespaceEntry = this.cache.getEntry(namespacePath);
 
 		if (namespaceEntry != null) {
-			ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
+			final ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
 
 			if (searchEntry != null) {
 				try (var stream = Files.walk(searchEntry.path())) {
 					stream.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
-						.forEach(p -> {
-							String idPath = namespaceEntry.path().relativize(p).toString()
-								.replace(this.io.getSeparator(), "/");
-							Identifier id = Identifier.tryValidate(namespace, idPath);
+							.forEach(p -> {
+								final String idPath = namespaceEntry.path().relativize(p).toString()
+										.replace(this.io.getSeparator(), "/");
+								final Identifier id = Identifier.tryValidate(namespace, idPath);
 
-							if (id == null) {
-								Util.logAndPause(String.format(Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
-									this.getName(), this.modInfo.id(), namespace, idPath
-								));
-							} else {
-								consumer.accept(id, ResourceIoSupplier.create(p));
-							}
-						});
+								if (id == null) {
+									Util.logAndPause(String.format(
+											Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
+											this.getName(), this.modInfo.id(), namespace, idPath
+									));
+								} else {
+									consumer.accept(id, ResourceIoSupplier.create(p));
+								}
+							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
-						+ ", mod " + this.modInfo.id() + " failed!", e);
+					LOGGER.warn(
+							"findResources at {} in namespace {}, mod {} failed!",
+							startingPath, namespace, this.modInfo.id(), e
+					);
 				}
 			}
 		}
@@ -188,7 +197,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
-		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
+		final ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
 
 		if (resource == null) {
 			return null;

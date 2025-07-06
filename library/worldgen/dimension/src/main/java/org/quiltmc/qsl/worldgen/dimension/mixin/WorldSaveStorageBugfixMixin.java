@@ -17,7 +17,16 @@
 
 package org.quiltmc.qsl.worldgen.dimension.mixin;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 import com.mojang.serialization.Dynamic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtException;
@@ -28,14 +37,6 @@ import net.minecraft.server.world.FeatureAndDataSettings;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.storage.ParsedSaveProperties;
 import net.minecraft.world.storage.WorldSaveStorage;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * After removing a dimension mod or a dimension data pack, Minecraft may fail to enter
@@ -43,8 +44,8 @@ import java.util.function.Supplier;
  * This mixin will remove the custom dimensions from the nbt tag, so the deserializer and DFU cannot see custom
  * dimensions and won't cause errors.
  * The custom dimensions will be re-added later.
- * <p>
- * This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
+ *
+ * <p>This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
  * is not removed after uninstalling the dimension data pack.
  * This makes custom dimensions non-removable. Most players don't want this behavior.
  * With this Mixin, custom dimensions will be removed when its data pack is removed.
@@ -54,9 +55,10 @@ abstract class WorldSaveStorageBugfixMixin {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "method_54523", at = @At("HEAD"))
 	private static void onReadGeneratorProperties(
-		Dynamic<?> dynamic, FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry, HolderLookup.Provider lookupProvider, CallbackInfoReturnable<ParsedSaveProperties> cir
+			Dynamic<?> dynamic, FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry,
+			HolderLookup.Provider lookupProvider, CallbackInfoReturnable<ParsedSaveProperties> cir
 	) {
-		NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
+		final NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
 
 		final String key = "WorldGenSettings";
 		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound(key).orElseThrow(supplyNbtMissingException(key));
@@ -75,13 +77,13 @@ abstract class WorldSaveStorageBugfixMixin {
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
 		final String key = "dimensions";
-		NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
+		final NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {
-			var newDimensions = new NbtCompound();
+			final var newDimensions = new NbtCompound();
 
-			for (var dimId : BASE_DIMENSIONS) {
-				var strId = dimId.getValue().toString();
+			for (final RegistryKey<DimensionOptions> dimId : BASE_DIMENSIONS) {
+				final String strId = dimId.getValue().toString();
 
 				// method_10545 is containsKey
 				if (dimensions.method_10545(strId)) {

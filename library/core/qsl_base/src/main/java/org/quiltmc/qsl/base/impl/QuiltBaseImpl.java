@@ -31,8 +31,8 @@ public final class QuiltBaseImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_base");
 	/**
 	 * Represents the number of ticks before an auto test server audits mixins and shutdowns.
-	 * <p>
-	 * Set with {@code -Dquilt.auto_test}.
+	 *
+	 * <p>Set with {@code -Dquilt.auto_test}.
 	 */
 	public static final Integer AUTO_TEST_SERVER_TICK_TIME;
 
@@ -41,7 +41,7 @@ public final class QuiltBaseImpl {
 	}
 
 	public static void ensureContainsDefaultPhase(Identifier[] defaultPhases) {
-		for (var id : defaultPhases) {
+		for (final Identifier id : defaultPhases) {
 			if (id.equals(Event.DEFAULT_PHASE)) {
 				return;
 			}
@@ -51,7 +51,7 @@ public final class QuiltBaseImpl {
 	}
 
 	static {
-		String autoTest = System.getProperty("quilt.auto_test");
+		final String autoTest = System.getProperty("quilt.auto_test");
 		Integer autoTestTickTime = null;
 
 		if (autoTest != null) {

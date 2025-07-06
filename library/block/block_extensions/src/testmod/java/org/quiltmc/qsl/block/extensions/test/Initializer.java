@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
+import java.util.function.Function;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -32,24 +34,22 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 
-import java.util.function.Function;
-
 public final class Initializer implements ModInitializer {
 	public static final String NAMESPACE = "quilt_block_extensions_testmod";
 
 	public static final Block BLOCK = registerBlock(
-		"test_block",
-		QuiltBlockSettings.copyOf(Blocks.GLASS),
-		settings -> new GlassBlock(settings
-			.luminance(15)
-			.pistonBehavior(PistonBehavior.PUSH_ONLY)
-		)
+			"test_block",
+			QuiltBlockSettings.copyOf(Blocks.GLASS),
+			settings -> new GlassBlock(settings
+				.luminance(15)
+				.pistonBehavior(PistonBehavior.PUSH_ONLY)
+			)
 	);
 
 	public static final Block BLOCK2 = registerBlock(
-		"test_block2",
-		QuiltBlockSettings.copyOf(Blocks.VINE),
-		settings -> new VineBlock(settings.ticksRandomly(false))
+			"test_block2",
+			QuiltBlockSettings.copyOf(Blocks.VINE),
+			settings -> new VineBlock(settings.ticksRandomly(false))
 	);
 
 	public static Identifier createId(String path) {
@@ -61,7 +61,7 @@ public final class Initializer implements ModInitializer {
 	}
 
 	private static <B extends Block, S extends AbstractBlock.Settings> B registerBlock(
-		String path, S baseSettings, Function<S, B> factory
+			String path, S baseSettings, Function<S, B> factory
 	) {
 		final RegistryKey<Block> key = createBlockKey(path);
 		baseSettings.key(key);

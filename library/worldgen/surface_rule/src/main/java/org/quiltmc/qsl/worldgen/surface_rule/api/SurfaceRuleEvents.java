@@ -28,15 +28,16 @@ import org.quiltmc.qsl.data.callback.api.DynamicEventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.
- * <p>
- * <b>Modification events</b> like {@link #MODIFY_OVERWORLD}, {@link #MODIFY_NETHER}, and {@link #MODIFY_THE_END} allows to modify the surface rules
+ *
+ * <p><b>Modification events</b> like {@link #MODIFY_OVERWORLD}, {@link #MODIFY_NETHER}, and {@link #MODIFY_THE_END}
+ * allows to modify the surface rules
  * for the related Vanilla dimensions.
  */
 public final class SurfaceRuleEvents {
 	/**
 	 * Represents the event phase named {@code quilt:remove} for the modification events for which removals may happen.
-	 * <p>
-	 * This phase always happen after the {@link Event#DEFAULT_PHASE default phase}.
+	 *
+	 * <p>This phase always happen after the {@link Event#DEFAULT_PHASE default phase}.
 	 */
 	public static final Identifier REMOVE_PHASE = Identifier.of("quilt", "remove");
 

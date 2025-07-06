@@ -49,10 +49,11 @@ public interface ServerConfigurationTaskManager {
 	 * Adds a task with a higher priority to the handler that must complete before joining.
 	 * Priority tasks are executed in the order they are added to the handler.
 	 * All priority tasks will be finished before normal tasks begin executing again.
-	 * If a priority task is added during normal task execution, the handler will switch to executing the priority tasks.
+	 * If a priority task is added during normal task execution, the handler will switch to executing the priority
+	 * tasks.
 	 *
-	 * <p>
-	 * Calling this during the {@link ServerConfigurationConnectionEvents#INIT} event might add your tasks before registry sync.
+	 * <p>Calling this during the {@link ServerConfigurationConnectionEvents#INIT} event might add your tasks before
+	 * registry sync.
 	 *
 	 * @param task the task to add
 	 */

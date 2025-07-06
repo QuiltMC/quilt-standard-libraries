@@ -18,9 +18,9 @@ package org.quiltmc.qsl.registry.impl.sync.client.screen;
 
 import java.util.function.DoubleConsumer;
 
-import net.minecraft.client.gui.widget.MultilineScrollableWidget;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.client.gui.widget.MultilineScrollableWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 
@@ -32,13 +32,15 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 public class ScrollableMultiTextWidget extends MultilineScrollableWidget {
 	private final DoubleConsumer scrollUpdater;
 
-	public ScrollableMultiTextWidget(int x, int y, int width, int height, Text text, TextRenderer textRenderer, double scroll, DoubleConsumer scrollUpdater) {
+	public ScrollableMultiTextWidget(
+			int x, int y, int width, int height, Text text, TextRenderer textRenderer, double scroll,
+			DoubleConsumer scrollUpdater
+	) {
 		super(x, y, width, height, text, textRenderer);
 		this.scrollUpdater = scrollUpdater;
 
 		this.method_44382(scroll);
 	}
-
 
 	// Originally setScrollAmount
 	@Override

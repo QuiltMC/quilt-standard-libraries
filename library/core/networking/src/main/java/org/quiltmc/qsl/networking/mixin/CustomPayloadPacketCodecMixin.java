@@ -31,9 +31,6 @@ import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.impl.QuiltCustomPayloadPacketCodec;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net/minecraft/network/packet/payload/CustomPayload$C_idfcqkqn")
 public abstract class CustomPayloadPacketCodecMixin<B extends PacketByteBuf> implements PacketCodec<B, CustomPayload>, QuiltCustomPayloadPacketCodec<B> {
@@ -41,7 +38,7 @@ public abstract class CustomPayloadPacketCodecMixin<B extends PacketByteBuf> imp
 	private CustomPayloadTypeProvider<B> customPayloadTypeProvider;
 
 	@Override
-	public void setPacketCodecProvider(CustomPayloadTypeProvider<B> customPayloadTypeProvider) {
+	public void qsl$setPacketCodecProvider(CustomPayloadTypeProvider<B> customPayloadTypeProvider) {
 		if (this.customPayloadTypeProvider != null) {
 			throw new IllegalStateException("Payload codec provider is already set!");
 		}
@@ -49,13 +46,21 @@ public abstract class CustomPayloadPacketCodecMixin<B extends PacketByteBuf> imp
 		this.customPayloadTypeProvider = customPayloadTypeProvider;
 	}
 
-	@WrapOperation(method = {
-		"method_56489",
-		"decode"
-	}, at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/payload/CustomPayload$C_idfcqkqn;method_56487(Lnet/minecraft/util/Identifier;)Lnet/minecraft/network/codec/PacketCodec;"))
-	private PacketCodec<B, ? extends CustomPayload> wrapGetCodec(@Coerce PacketCodec<B, CustomPayload> instance, Identifier identifier, Operation<PacketCodec<B, CustomPayload>> original, @Local B packetByteBuf) {
+	@WrapOperation(
+			method = {"method_56489", "decode"},
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/network/packet/payload/CustomPayload$C_idfcqkqn;method_56487("
+					+ "Lnet/minecraft/util/Identifier;)Lnet/minecraft/network/codec/PacketCodec;"
+			)
+	)
+	private PacketCodec<B, ? extends CustomPayload> wrapGetCodec(
+			@Coerce PacketCodec<B, CustomPayload> instance, Identifier identifier,
+			Operation<PacketCodec<B, CustomPayload>> original, @Local(argsOnly = true) B packetByteBuf
+	) {
 		if (this.customPayloadTypeProvider != null) {
-			CustomPayload.Type<B, ? extends CustomPayload> payloadType = this.customPayloadTypeProvider.get(packetByteBuf, identifier);
+			final CustomPayload.Type<B, ? extends CustomPayload> payloadType =
+					this.customPayloadTypeProvider.get(packetByteBuf, identifier);
 
 			if (payloadType != null) {
 				return payloadType.codec();

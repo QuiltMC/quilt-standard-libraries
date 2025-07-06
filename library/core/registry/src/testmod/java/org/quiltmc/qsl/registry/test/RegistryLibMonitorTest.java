@@ -40,23 +40,26 @@ public class RegistryLibMonitorTest implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Registry Lib Monitor Test");
 
 	private static final RegistryKey<Block> TEST_BLOCK_A_KEY = RegistryKey.of(
-		RegistryKeys.BLOCK,
-		Identifier.of("quilt_registry_test_monitors", "test_block_a")
+			RegistryKeys.BLOCK,
+			Identifier.of("quilt_registry_test_monitors", "test_block_a")
 	);
 	private static final RegistryKey<Block> TEST_BLOCK_B_KEY = RegistryKey.of(
-		RegistryKeys.BLOCK,
-		Identifier.of("quilt_registry_test_monitors", "test_block_b")
+			RegistryKeys.BLOCK,
+			Identifier.of("quilt_registry_test_monitors", "test_block_b")
 	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Block blockA = register(TEST_BLOCK_A_KEY, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_A_KEY)));
+		final Block blockA = register(
+				TEST_BLOCK_A_KEY,
+				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_A_KEY))
+		);
 
-		var monitor = RegistryMonitor.create(Registries.BLOCK)
+		final RegistryMonitor<Block> monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
 
-		var allSet = new HashSet<Block>();
-		var upcomingSet = new HashSet<Block>();
+		final var allSet = new HashSet<Block>();
+		final var upcomingSet = new HashSet<Block>();
 
 		monitor.forAll(context -> {
 			LOGGER.info("[forAll event]: Block {} id={} raw={} had its registration monitored in registry {}",
@@ -69,14 +72,21 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		Block blockB = register(TEST_BLOCK_B_KEY, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_B_KEY)));
+		final Block blockB = register(
+				TEST_BLOCK_B_KEY,
+				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_B_KEY))
+		);
 
 		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
-			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");
+			throw new AssertionError(
+				"Entries " + allSet + " found by RegistryMonitor via forAll were not as expected"
+			);
 		}
 
 		if (upcomingSet.contains(blockA) || !upcomingSet.contains(blockB)) {
-			throw new AssertionError("Entries " + upcomingSet + " found by RegistryMonitor via forUpcoming were not as expected");
+			throw new AssertionError(
+				"Entries " + upcomingSet + " found by RegistryMonitor via forUpcoming were not as expected"
+			);
 		}
 	}
 }

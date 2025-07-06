@@ -39,44 +39,43 @@ public class RegistryConfig extends ReflectiveConfig {
 
 				Modpack protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.
 				""")
-		public final TrackedValue<Integer> modpack_protocol_version = value(-1);
+		public final TrackedValue<Integer> modpack_protocol_version = this.value(-1);
 		@Comment("Modpack protocol id. It should be different for every modpack, to prevent joining with mismatched mods.")
-		public final TrackedValue<String> modpack_protocol_id = value("my_quilt_modpack");
+		public final TrackedValue<String> modpack_protocol_id = this.value("my_quilt_modpack");
 		@Comment("A modpack protocol name. Used for easier identification. Doesn't effect functionality")
-		public final TrackedValue<String> modpack_protocol_name = value("My Quilt Modpack");
-
+		public final TrackedValue<String> modpack_protocol_name = this.value("My Quilt Modpack");
 
 		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> missing_registry_sync_message = value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
+		public final TrackedValue<String> missing_registry_sync_message = this.value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
 				Unsupported (vanilla?) client!
 				This server requires a modded client to join!
 				"""), DynamicRegistryManager.EMPTY));
 
 		@Comment("Top part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> mismatched_entries_top_message = value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
+		public final TrackedValue<String> mismatched_entries_top_message = this.value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
 				Failed to synchronize client with the server!
 				This can happen when client's and server's mods don't match.
 				"""), DynamicRegistryManager.EMPTY));
 
 		@Comment("Bottom part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> mismatched_entries_bottom_message = value("");
+		public final TrackedValue<String> mismatched_entries_bottom_message = this.value("");
 
 		@Comment("Shows some details about why client couldn't connect.")
-		public final TrackedValue<Boolean> mismatched_entries_show_details = value(true);
+		public final TrackedValue<Boolean> mismatched_entries_show_details = this.value(true);
 
 		@Comment("Allows players with Fabric API to connect, as long as they have all required mods.")
-		public final TrackedValue<Boolean> support_fabric_api_protocol = value(true);
+		public final TrackedValue<Boolean> support_fabric_api_protocol = this.value(true);
 
 		@Comment("Forces unknown clients to use the Fabric Registry Sync protocol fallback. Disables preventing Vanilla clients from joining.")
-		public final TrackedValue<Boolean> force_fabric_api_protocol_fallback = value(false);
+		public final TrackedValue<Boolean> force_fabric_api_protocol_fallback = this.value(false);
 
 		@Comment("Disables the Mod Protocol sync on server list/initial query.")
-		public final TrackedValue<Boolean> disable_mod_protocol_ping = value(false);
+		public final TrackedValue<Boolean> disable_mod_protocol_ping = this.value(false);
 
 		@Comment("Disables the Registry Sync requirement. USE AT YOUR OWN RISK!")
-		public final TrackedValue<Boolean> disable_registry_sync = value(false);
+		public final TrackedValue<Boolean> disable_registry_sync = this.value(false);
 
 		@Comment("Disables validation of (block/fluid) states. USE AT YOUR OWN RISK!")
-		public final TrackedValue<Boolean> disable_state_validation = value(false);
+		public final TrackedValue<Boolean> disable_state_validation = this.value(false);
 	}
 }

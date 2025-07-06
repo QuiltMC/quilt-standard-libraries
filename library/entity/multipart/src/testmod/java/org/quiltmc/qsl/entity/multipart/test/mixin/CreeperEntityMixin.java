@@ -39,7 +39,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements Multip
 	}
 
 	@Override
-	public EntityPart<?>[] getEntityParts() {
+	public EntityPart<?>[] qsl$getEntityParts() {
 		return new EntityPart[] {this.secretHitbox};
 	}
 

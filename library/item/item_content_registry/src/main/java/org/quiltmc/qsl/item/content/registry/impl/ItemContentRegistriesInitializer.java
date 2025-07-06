@@ -56,7 +56,9 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
-			if (context.error().isPresent()) return;
+			if (context.error().isPresent()) {
+				return;
+			}
 
 			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
 			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCES);
@@ -96,7 +98,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		final Optional<HolderSet.NamedSet<Item>> tag = Registries.ITEM.getTag(FUEL_FILTERS);
 		tag.ifPresent(filters -> filters.forEach(filter ->
-			ItemContentRegistries.FUEL_TIMES.remove(filter.getValue())
+				ItemContentRegistries.FUEL_TIMES.remove(filter.getValue())
 		));
 	}
 }

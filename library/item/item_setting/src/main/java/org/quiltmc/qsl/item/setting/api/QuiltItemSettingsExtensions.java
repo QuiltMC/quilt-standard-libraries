@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * Interface implemented by {@link Item.Settings} instances when QSL is present.

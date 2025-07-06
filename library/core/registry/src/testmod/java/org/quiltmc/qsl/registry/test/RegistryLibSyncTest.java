@@ -25,6 +25,7 @@ import net.fabricmc.api.EnvType;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
@@ -66,38 +67,46 @@ public class RegistryLibSyncTest implements ModInitializer {
 				register(i);
 			}
 
-			var opt = register(10);
+			final Identifier opt = register(10);
 			RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, opt);
 			RegistrySynchronization.setEntryOptional((SimpleRegistry<Block>) Registries.BLOCK, opt);
 
 			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
-		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registries.ROOT,
+		final SimpleRegistry<Path> customRequiredRegistry = Registry.register(
+				(Registry<Registry<Path>>) Registries.ROOT,
 				Identifier.of(NAMESPACE, "synced_registry"),
-				new SimpleRegistry<>(RegistryKey.ofRegistry(Identifier.of(NAMESPACE, "synced_registry")), Lifecycle.stable()));
+				new SimpleRegistry<>(
+					RegistryKey.ofRegistry(Identifier.of(NAMESPACE, "synced_registry")),
+					Lifecycle.stable()
+				)
+		);
 
 		Registry.register(customRequiredRegistry, Identifier.parse("quilt:game_dir"), QuiltLoader.getGameDir());
 		RegistrySynchronization.markForSync(customRequiredRegistry);
 	}
 
-	@SuppressWarnings({"unchecked", "RedundantCast"})
+	@SuppressWarnings({"unchecked"})
 	private void printReg() {
 		try {
-			var writer = Files.newBufferedWriter(
+			final var writer = Files.newBufferedWriter(
 					QuiltLoader.getGameDir().resolve("reg-" + MinecraftQuiltLoader.getEnvironmentType() + ".txt"),
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 			);
 
-			for (var reg : Registries.ROOT) {
+			for (final Registry<?> reg : Registries.ROOT) {
 				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registries.ROOT).getId(reg) + "\n");
 				if (reg instanceof SynchronizedRegistry<?> sync) {
 					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
 					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
 				}
 
-				for (var entry : reg) {
-					writer.write("" + ((Registry<Object>) reg).getRawId(entry) + ": " + ((Registry<Object>) reg).getId(entry));
+				for (final Object entry : reg) {
+					writer.write(
+							"" + ((Registry<Object>) reg).getRawId(entry) + ": "
+								+ ((Registry<Object>) reg).getId(entry)
+					);
 					writer.write("\n");
 				}
 			}
@@ -106,7 +115,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 			writer.write("=== BlockStates");
 			writer.write("\n");
 
-			for (var entry : Block.STATE_IDS) {
+			for (final BlockState entry : Block.STATE_IDS) {
 				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + Registries.BLOCK.getId(entry.getBlock()));
 				writer.write("\n");
 			}
@@ -120,10 +129,10 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
 		final Identifier id = Identifier.of(NAMESPACE, "entry_" + i);
-        final Block block = new Block(
-			AbstractBlock.Settings.copy(Blocks.STONE)
-				.mapColor(MapColor.BLACK)
-				.key(RegistryKey.of(RegistryKeys.BLOCK, id))
+		final Block block = new Block(
+				AbstractBlock.Settings.copy(Blocks.STONE)
+					.mapColor(MapColor.BLACK)
+					.key(RegistryKey.of(RegistryKeys.BLOCK, id))
 		);
 		final BlockItem item = new BlockItem(block, new Item.Settings().key(RegistryKey.of(RegistryKeys.ITEM, id)));
 

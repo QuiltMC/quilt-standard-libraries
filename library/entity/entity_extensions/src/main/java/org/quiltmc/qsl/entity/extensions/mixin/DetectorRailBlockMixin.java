@@ -40,22 +40,22 @@ import org.quiltmc.qsl.entity.extensions.api.MinecartComparatorLogic;
 abstract class DetectorRailBlockMixin {
 	@Shadow
 	protected abstract <T extends AbstractMinecartEntity> List<T> getCarts(
-		World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate
+			World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate
 	);
 
 	@Inject(at = @At("HEAD"), method = "getComparatorOutput", cancellable = true)
 	private void getCustomComparatorOutput(
-		BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir
+			BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir
 	) {
 		if (state.getOrDefault(DetectorRailBlock.POWERED, false)) {
 			this
-				.getCarts(
-					world, pos, AbstractMinecartEntity.class,
-					cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0
-				)
-				.stream()
-				.findFirst()
-				.ifPresent(cart -> cir.setReturnValue(cart.getComparatorValue(state, pos)));
+					.getCarts(
+						world, pos, AbstractMinecartEntity.class,
+						cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0
+					)
+					.stream()
+					.findFirst()
+					.ifPresent(cart -> cir.setReturnValue(cart.getComparatorValue(state, pos)));
 		}
 	}
 }

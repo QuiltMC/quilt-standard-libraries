@@ -16,16 +16,18 @@
 
 package org.quiltmc.qsl.registry.attachment.test;
 
-import com.mojang.logging.LogUtils;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItem;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.ActionResult;
+import java.util.Iterator;
+
+import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import net.minecraft.util.ActionResult;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -38,21 +40,17 @@ import net.minecraft.world.World;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-
-import java.util.Iterator;
-
-import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.createItemKey;
-import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItem;
-import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
 
 public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderEvents.EndDataPackReload {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	private static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION =
-		RegistryEntryAttachment.dispatchedBuilder(Registries.ITEM, Identifier.of("quilt", "modular_function"),
-			FuncValue.class, FuncValue.CODECS::get, FuncValue.PACKET_CODECS::get).build();
+	private static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION = RegistryEntryAttachment
+			.dispatchedBuilder(
+				Registries.ITEM, Identifier.of("quilt", "modular_function"),
+				FuncValue.class, FuncValue.CODECS::get, FuncValue.PACKET_CODECS::get
+			)
+			.build();
 
 	private static void registryModularFunctionItem(String path) {
 		registerItem(path, ModularFunctionItem::new);
@@ -60,8 +58,8 @@ public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderE
 
 	private static void registryModularFunctionItemWithExtension(String path, FuncValue value) {
 		registerItemWithExtension(
-			path, ModularFunctionItem::new,
-			MODULAR_FUNCTION, value
+				path, ModularFunctionItem::new,
+				MODULAR_FUNCTION, value
 		);
 	}
 
@@ -104,8 +102,8 @@ public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderE
 		registryModularFunctionItem("modular_item_6");
 
 		MODULAR_FUNCTION.put(
-			TagKey.of(RegistryKeys.ITEM, AttachmentTestUtil.createId("modular_tag_1")),
-			new SendMessageFuncValue("Built-in value via tag!")
+				TagKey.of(RegistryKeys.ITEM, AttachmentTestUtil.createId("modular_tag_1")),
+				new SendMessageFuncValue("Built-in value via tag!")
 		);
 	}
 

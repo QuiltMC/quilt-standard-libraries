@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
@@ -29,17 +30,16 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
 /**
  * Represents the recipe loading events.
- * <p>
- * Triggered when the recipes are being loaded in the {@link RecipeManager}.
- * <p>
- * Events are triggered in the following order:
+ *
+ * <p>Triggered when the recipes are being loaded in the {@link RecipeManager}.
+ *
+ * <p>Events are triggered in the following order:
  * <ol>
  *     <li>{@link #ADD}</li>
  *     <li>{@link #MODIFY}</li>
@@ -49,8 +49,8 @@ import org.quiltmc.qsl.recipe.api.data.RecipeData;
 public final class RecipeLoadingEvents {
 	/**
 	 * Event to add new recipes while the {@link RecipeManager} is being built.
-	 * <p>
-	 * Triggered before {@link #MODIFY} and {@link #REMOVE}.
+	 *
+	 * <p>Triggered before {@link #MODIFY} and {@link #REMOVE}.
 	 */
 	public static final Event<AddRecipesCallback> ADD = Event.create(AddRecipesCallback.class,
 			callbacks -> handler -> {
@@ -60,8 +60,8 @@ public final class RecipeLoadingEvents {
 			});
 	/**
 	 * Event to modify recipes while the {@link RecipeManager} is being built.
-	 * <p>
-	 * Triggered after {@link #ADD} and before {@link #REMOVE}.
+	 *
+	 * <p>Triggered after {@link #ADD} and before {@link #REMOVE}.
 	 */
 	public static final Event<ModifyRecipesCallback> MODIFY = Event.create(ModifyRecipesCallback.class,
 			callbacks -> handler -> {
@@ -71,8 +71,8 @@ public final class RecipeLoadingEvents {
 			});
 	/**
 	 * Event to remove recipes while the {@link RecipeManager} is being built.
-	 * <p>
-	 * Triggered after {@link #ADD} and {@link #MODIFY}.
+	 *
+	 * <p>Triggered after {@link #ADD} and {@link #MODIFY}.
 	 */
 	public static final Event<RemoveRecipesCallback> REMOVE = Event.create(RemoveRecipesCallback.class,
 			callbacks -> handler -> {
@@ -92,8 +92,8 @@ public final class RecipeLoadingEvents {
 	public interface AddRecipesCallback extends EventAwareListener {
 		/**
 		 * Called when recipes are loaded.
-		 * <p>
-		 * {@code handler} is used to add recipes into the {@linkplain RecipeManager recipe manager}.
+		 *
+		 * <p>{@code handler} is used to add recipes into the {@linkplain RecipeManager recipe manager}.
 		 *
 		 * @param handler the recipe handler
 		 */
@@ -106,8 +106,8 @@ public final class RecipeLoadingEvents {
 		interface RecipeHandler {
 			/**
 			 * Registers a recipe into the {@link RecipeManager}.
-			 * <p>
-			 * The recipe factory is only called if the recipe is not already present.
+			 *
+			 * <p>The recipe factory is only called if the recipe is not already present.
 			 *
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
@@ -180,7 +180,9 @@ public final class RecipeLoadingEvents {
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 * @param <T>                    the type of the recipe
 			 */
-			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate);
+			<T extends Recipe<?>> void removeIf(
+					RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
+			);
 
 			/**
 			 * Removes a recipe if the predicate returns {@code true}.

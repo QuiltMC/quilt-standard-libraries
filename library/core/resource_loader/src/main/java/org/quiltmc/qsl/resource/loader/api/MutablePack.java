@@ -108,8 +108,10 @@ public interface MutablePack extends ResourcePack {
 	 * @see #putResource(ResourceType, Identifier, byte[])
 	 * @see #putResource(ResourceType, Identifier, Supplier)
 	 */
-	@NotNull Future<byte[]> putResourceAsync(@NotNull ResourceType type, @NotNull Identifier id,
-											 @NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory);
+	@NotNull Future<byte[]> putResourceAsync(
+			@NotNull ResourceType type, @NotNull Identifier id,
+			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory
+	);
 
 	/**
 	 * Puts a text resource into the resource pack's root.
@@ -180,15 +182,17 @@ public interface MutablePack extends ResourcePack {
 	 * @return the future
 	 * @see #putResourceAsync(ResourceType, Identifier, Function)
 	 */
-	default @NotNull Future<byte[]> putTextAsync(@NotNull ResourceType type, @NotNull Identifier id,
-												 @NotNull Function<@NotNull Identifier, @NotNull String> textFactory) {
+	default @NotNull Future<byte[]> putTextAsync(
+			@NotNull ResourceType type, @NotNull Identifier id,
+			@NotNull Function<@NotNull Identifier, @NotNull String> textFactory
+	) {
 		return this.putResourceAsync(type, id, textFactory.andThen(text -> text.getBytes(StandardCharsets.UTF_8)));
 	}
 
 	/**
 	 * Puts an image resource into the resource pack's root.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param fileName the name of the file
 	 * @param image    the resource content
@@ -201,8 +205,8 @@ public interface MutablePack extends ResourcePack {
 
 	/**
 	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param id    the path of the resource
 	 * @param image the resource content
@@ -215,8 +219,8 @@ public interface MutablePack extends ResourcePack {
 
 	/**
 	 * Puts an image resource into the resource pack's root.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param fileName      the name of the file
 	 * @param imageSupplier the supplier of the resource content
@@ -235,8 +239,8 @@ public interface MutablePack extends ResourcePack {
 
 	/**
 	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param id            the path of the resource
 	 * @param imageSupplier the supplier of the resource content
@@ -255,8 +259,8 @@ public interface MutablePack extends ResourcePack {
 
 	/**
 	 * Puts an image resource into the resource pack's root asynchronously.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param fileName     the name of the file
 	 * @param imageFactory the factory of the resource content
@@ -275,8 +279,8 @@ public interface MutablePack extends ResourcePack {
 
 	/**
 	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory asynchronously.
-	 * <p>
-	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * <p><b>Note:</b> this method is only available on the client.
 	 *
 	 * @param id           the path of the resource
 	 * @param imageFactory the factory of the resource content
@@ -284,7 +288,9 @@ public interface MutablePack extends ResourcePack {
 	 * @see #putResourceAsync(ResourceType, Identifier, Function)
 	 */
 	@ClientOnly
-	default @NotNull Future<byte[]> putImageAsync(@NotNull Identifier id, @NotNull Function<@NotNull Identifier, @NotNull NativeImage> imageFactory) {
+	default @NotNull Future<byte[]> putImageAsync(
+			@NotNull Identifier id, @NotNull Function<@NotNull Identifier, @NotNull NativeImage> imageFactory
+	) {
 		return this.putResourceAsync(ResourceType.CLIENT_RESOURCES, id, imageFactory.andThen(image -> {
 			try (image) {
 				return NativeImageUtil.getBytes(image);

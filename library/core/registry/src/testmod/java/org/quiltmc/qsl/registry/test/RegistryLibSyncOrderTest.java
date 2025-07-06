@@ -52,10 +52,10 @@ public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServer
 	private static final CustomPayload.Id<TestPayload> PACKET_ID = new CustomPayload.Id<>(Identifier.of("quilt", "reg_sync_order_packet"));
 	private static final PacketCodec<PacketByteBuf, TestPayload> PACKET_CODEC = CustomPayload.create(TestPayload::write, TestPayload::new);
 
-	private static RegistryKey<Item> ITEM_A_KEY =
-		RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_a"));
-	private static RegistryKey<Item> ITEM_B_KEY =
-		RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_b"));
+	private static final RegistryKey<Item> ITEM_A_KEY =
+			RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_a"));
+	private static final RegistryKey<Item> ITEM_B_KEY =
+			RegistryKey.of(RegistryKeys.ITEM, Identifier.of("quilt", "reg_sync_order_b"));
 
 	public static Item ITEM_A = new Item(new Item.Settings().key(ITEM_A_KEY));
 	public static Item ITEM_B = new Item(new Item.Settings().key(ITEM_B_KEY));
@@ -95,8 +95,8 @@ public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServer
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientConfigurationNetworking.registerGlobalReceiver(PACKET_ID, (client, handler, payload, responseSender) -> {
-			int aID = Registries.ITEM.getRawId(ITEM_A);
-			int bID = Registries.ITEM.getRawId(ITEM_B);
+			final int aID = Registries.ITEM.getRawId(ITEM_A);
+			final int bID = Registries.ITEM.getRawId(ITEM_B);
 			if (payload.early()) {
 				if (aID == payload.a()) {
 					throw new RuntimeException("Item A ID matches!");
@@ -140,7 +140,9 @@ public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServer
 
 		@Override
 		public void start(Consumer<Packet<?>> task) {
-			task.accept(new CustomPayloadS2CPacket(new TestPayload(this.early, Registries.ITEM.getRawId(ITEM_A), Registries.ITEM.getRawId(ITEM_B))));
+			task.accept(new CustomPayloadS2CPacket(new TestPayload(
+					this.early, Registries.ITEM.getRawId(ITEM_A), Registries.ITEM.getRawId(ITEM_B)
+			)));
 			((ServerConfigurationTaskManager) this.handler).finishTask(TYPE);
 		}
 

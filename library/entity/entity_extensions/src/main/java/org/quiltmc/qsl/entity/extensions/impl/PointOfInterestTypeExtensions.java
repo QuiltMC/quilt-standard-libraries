@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.entity.extensions.impl;
 
+import java.util.Collection;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Collection;
 
 @ApiStatus.Internal
 public interface PointOfInterestTypeExtensions {
@@ -45,7 +46,7 @@ public interface PointOfInterestTypeExtensions {
 	void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states);
 
 	/**
-	 * Replaces the existing {@link PointOfInterestType#blockStates} after construction.
+	 * Replaces the existing {@link PointOfInterestType#blockStates()} after construction.
 	 *
 	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
 	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.

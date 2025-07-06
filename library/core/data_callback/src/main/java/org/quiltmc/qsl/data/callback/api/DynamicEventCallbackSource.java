@@ -36,6 +36,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import com.google.gson.Strictness;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -43,7 +44,6 @@ import net.minecraft.registry.ResourceFileNamespace;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.qsl.base.api.event.Event;
 
@@ -58,7 +58,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 public class DynamicEventCallbackSource<T extends CodecAware> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private static final Gson GSON = new GsonBuilder().setLenient().create();
+	private static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT).create();
 
 	protected final @NotNull Identifier resourcePath;
 
@@ -93,7 +93,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 		this.codec = Codec.lazyInitialized(() -> codecs.createDelegatingCodecPhased(callbackClass.getSimpleName()));
 
 		@SuppressWarnings("unchecked")
-		var emptyArray = (T[]) Array.newInstance(callbackClass, 0);
+		final var emptyArray = (T[]) Array.newInstance(callbackClass, 0);
 		this.emptyArray = emptyArray;
 	}
 
@@ -121,25 +121,25 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	}
 
 	private void updateListeners(Identifier phase) {
-		var combinedMap = new TreeMap<Identifier, T>();
+		final var combinedMap = new TreeMap<Identifier, T>();
 
-		for (var entry : this.listeners.entrySet()) {
+		for (final Map.Entry<Identifier, Pair<Identifier, T>> entry : this.listeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
-		for (var entry : this.dynamicListeners.entrySet()) {
+		for (final Map.Entry<Identifier, Pair<Identifier, T>> entry : this.dynamicListeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
 		@SuppressWarnings("unchecked")
-		var array = (T[]) Array.newInstance(this.callbackClass, combinedMap.size());
+		final var array = (T[]) Array.newInstance(this.callbackClass, combinedMap.size());
 
 		int i = 0;
-		for (T t : combinedMap.values()) {
+		for (final T t : combinedMap.values()) {
 			array[i] = t;
 			i++;
 		}
@@ -182,24 +182,29 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 * @param ops             the dynamic ops to use to decode data
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
-		var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
-		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
+		final var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
+		final ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace
+				.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
-		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
-		for (Map.Entry<Identifier, Resource> entry : resources) {
-			Identifier id = entry.getKey();
-			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
+		final Set<Map.Entry<Identifier, Resource>> resources =
+				resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
+		for (final Map.Entry<Identifier, Resource> entry : resources) {
+			final Identifier id = entry.getKey();
+			final Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
 
-			var resource = entry.getValue();
+			final Resource resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
-				var json = GSON.fromJson(reader, JsonElement.class);
-				DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
+				final JsonElement json = GSON.fromJson(reader, JsonElement.class);
+				final DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
 
 				if (result.result().isPresent()) {
-					var pair = result.result().get();
+					final Pair<Identifier, T> pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);
 				} else {
-					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, id, result.error().get().message());
+					LOGGER.error(
+							"Couldn't parse data file {} from {}: {}",
+							unwrappedIdentifier, id, result.error().orElseThrow().message()
+					);
 				}
 			} catch (IOException e) {
 				LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, id, e);

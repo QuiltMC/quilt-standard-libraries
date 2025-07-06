@@ -96,7 +96,7 @@ public interface BaseRecipeHandler {
 
 	/**
 	 * @return the lookup provider; allows for safe access to the game's registries and content
-     */
+	*/
 	@Contract(pure = true)
-    @NotNull HolderLookup.Provider getRegistries();
+	@NotNull HolderLookup.Provider getRegistries();
 }

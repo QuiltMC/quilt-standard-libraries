@@ -17,13 +17,13 @@
 package org.quiltmc.qsl.item.setting.mixin;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.item.setting.impl.CraftingRecipeInputExtensions;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.CraftingRecipeInput;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.quiltmc.qsl.item.setting.impl.CraftingRecipeInputExtensions;
 
 /**
  * Allows attaching a recipe to the input as a way of adding a recipe param to

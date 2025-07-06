@@ -18,6 +18,7 @@ package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BannerDuplicateRecipe;
@@ -28,13 +29,11 @@ import net.minecraft.util.collection.DefaultedList;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
 @Mixin(BannerDuplicateRecipe.class)
 abstract class BannerDuplicateRecipeMixin implements Recipe<CraftingRecipeInput> {
 	@ModifyReturnValue(method = "getRecipeRemainders", at = @At(value = "RETURN"))
 	private DefaultedList<ItemStack> interceptGetRemainingStacks(
-		DefaultedList<ItemStack> original, CraftingRecipeInput input
+			DefaultedList<ItemStack> original, CraftingRecipeInput input
 	) {
 		return RecipeRemainderProvider
 			.getRemainingStacks(input, this, RecipeRemainderLocation.CRAFTING, original);

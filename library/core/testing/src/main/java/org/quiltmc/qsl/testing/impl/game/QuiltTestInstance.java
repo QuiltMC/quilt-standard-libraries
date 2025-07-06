@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.testing.impl.game;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
+import java.util.function.Consumer;
+
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.registry.*;
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.registry.Holder;
 import net.minecraft.test.TestContext;
 import net.minecraft.test.TestData;
 import net.minecraft.test.TestEnvironmentDefinition;
@@ -28,23 +30,27 @@ import net.minecraft.test.TestInstance;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Represents Quilt's extended {@link TestInstance}.
  */
 @ApiStatus.Internal
 public final class QuiltTestInstance extends TestInstance {
-	public static final MapCodec<QuiltTestInstance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(Identifier.CODEC.fieldOf("id").forGetter(QuiltTestInstance::id)).apply(instance, QuiltGameTestImpl::getQuiltTest));
+	public static final MapCodec<QuiltTestInstance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
+			.group(
+				Identifier.CODEC.fieldOf("id").forGetter(QuiltTestInstance::id)
+			)
+			.apply(instance, QuiltGameTestImpl::getQuiltTest)
+	);
 
 	private final Class<?> sourceClass;
-	private  final Identifier id;
+	private final Identifier id;
 	private final Consumer<TestContext> testInvoker;
 
-	public QuiltTestInstance(TestData<Holder<TestEnvironmentDefinition>> data, Consumer<TestContext> testInvoker, Identifier id, Class<?> sourceClass) {
+	public QuiltTestInstance(
+			TestData<Holder<TestEnvironmentDefinition>> data, Consumer<TestContext> testInvoker, Identifier id,
+			Class<?> sourceClass
+	) {
 		super(data);
 		this.testInvoker = testInvoker;
 		this.id = id;
@@ -71,6 +77,6 @@ public final class QuiltTestInstance extends TestInstance {
 
 	@Override
 	protected MutableText getDescription() {
-		return Text.literal("Quilt Test for Class `" + sourceClass.getName() + "`");
+		return Text.literal("Quilt Test for Class `" + this.sourceClass.getName() + "`");
 	}
 }

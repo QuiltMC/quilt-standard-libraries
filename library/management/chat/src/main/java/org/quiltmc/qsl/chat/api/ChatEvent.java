@@ -60,7 +60,6 @@ public interface ChatEvent<C, R> {
 	 */
 	void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback);
 
-
 	/**
 	 * Registers a callback to a specific phase of the event.
 	 *
@@ -71,12 +70,14 @@ public interface ChatEvent<C, R> {
 
 	/**
 	 * Request that callbacks registered for one phase be executed before callbacks registered for another phase.
-	 * <p>
-	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 *
+	 * <p>Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
 	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
 	 *
-	 * @param firstPhase  the identifier of the phase that should run before the other. It will be created if it didn't exist yet
-	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
+	 * @param firstPhase  the identifier of the phase that should run before the other.
+	 *                       It will be created if it didn't exist yet
+	 * @param secondPhase the identifier of the phase that should run after the other.
+	 *                      It will be created if it didn't exist yet
 	 */
 	void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase);
 

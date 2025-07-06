@@ -19,11 +19,11 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.Locale;
 
-import net.minecraft.registry.tag.TagGroupLoader;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.function.FunctionLoader;
@@ -40,11 +40,12 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 	@Unique
 	private Identifier quilt$id;
 
+	// overrides api method
 	@Override
-	@SuppressWarnings({"ConstantConditions"})
+	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
-			Object self = this;
+			final Object self = this;
 
 			if (self instanceof RecipeManager) {
 				this.quilt$id = ResourceReloaderKeys.Server.RECIPES;
@@ -55,7 +56,9 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 			} else if (self instanceof TagGroupLoader<?>) {
 				this.quilt$id = ResourceReloaderKeys.Server.TAGS;
 			} else {
-				this.quilt$id = Identifier.ofDefault("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+				this.quilt$id = Identifier.ofDefault(
+					"private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT)
+				);
 			}
 		}
 

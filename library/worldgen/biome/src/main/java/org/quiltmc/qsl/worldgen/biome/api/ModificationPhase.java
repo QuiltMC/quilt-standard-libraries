@@ -35,35 +35,36 @@ public enum ModificationPhase implements StringIdentifiable {
 	/**
 	 * The appropriate phase for enriching biomes by adding to them without relying on
 	 * other information in the biome, or removing other features.
-	 * <p>
-	 * <b>Examples:</b> New ores, new vegetation, new structures
+	 *
+	 * <p><b>Examples:</b> New ores, new vegetation, new structures
 	 */
 	ADDITIONS("additions"),
 
 	/**
 	 * The appropriate phase for modifiers that remove features or other aspects of biomes (i.e. removal of spawns,
 	 * removal of features, etc.).
-	 * <p>
-	 * <b>Examples:</b> Remove iron ore from plains, remove ghasts
+	 *
+	 * <p><b>Examples:</b> Remove iron ore from plains, remove ghasts
 	 */
 	REMOVALS("removals"),
 
 	/**
 	 * The appropriate phase for modifiers that replace existing features with modified features.
-	 * <p>
-	 * <b>Examples:</b> Replace mineshafts with biome-specific mineshafts
+	 *
+	 * <p><b>Examples:</b> Replace mineshafts with biome-specific mineshafts
 	 */
 	REPLACEMENTS("replacements"),
 
 	/**
 	 * The appropriate phase for modifiers that perform wide-reaching biome postprocessing.
-	 * <p>
-	 * <b>Examples:</b> Mods that allow modpack authors to customize world generation, changing biome
+	 *
+	 * <p><b>Examples:</b> Mods that allow modpack authors to customize world generation, changing biome
 	 * properties (i.e. category) that other mods rely on.
 	 */
 	POST_PROCESSING("post_processing");
 
-	public static final com.mojang.serialization.Codec<ModificationPhase> CODEC = StringIdentifiable.createCodec(ModificationPhase::values);
+	public static final com.mojang.serialization.Codec<ModificationPhase> CODEC =
+			StringIdentifiable.createCodec(ModificationPhase::values);
 
 	private final String name;
 

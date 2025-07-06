@@ -38,11 +38,11 @@ import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 /**
  * Offers access to play stage server-side networking functionalities.
- * <p>
- * Server-side networking functionalities include receiving server-bound packets, sending client-bound packets,
+ *
+ * <p>Server-side networking functionalities include receiving server-bound packets, sending client-bound packets,
  * and events related to server-side network handlers.
- * <p>
- * This class should be only used for the logical server.
+ *
+ * <p>This class should be only used for the logical server.
  *
  * @see ServerLoginNetworking
  * @see ServerConfigurationNetworking
@@ -53,8 +53,9 @@ public final class ServerPlayNetworking {
 	/**
 	 * Registers a handler to a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 *
+	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no
+	 * change will be made.
 	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
 	 *
 	 * @param channelName    the identifier of the channel
@@ -70,8 +71,8 @@ public final class ServerPlayNetworking {
 	/**
 	 * Removes the handler of a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * The {@code channel} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -95,13 +96,17 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(CustomPayload.Id, CustomChannelReceiver)} since
+	 * This method differs from
+	 * {@link ServerPlayNetworking#registerGlobalReceiver(CustomPayload.Id, CustomChannelReceiver)} since
 	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
-	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
-	 * login response has been received, you should use {@link ServerPlayConnectionEvents#INIT} to register the channel handler.
-	 * <p>
-	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
+	 *
+	 * <p>For example, if you only register a receiver using this method when a
+	 * {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
+	 * login response has been received, you should use {@link ServerPlayConnectionEvents#INIT} to register the channel
+	 * handler.
+	 *
+	 * <p>If a handler is already registered to the {@code channelName}, this method will return {@code false}, and
+	 * no change will be made.
 	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
 	 *
 	 * @param networkHandler the handler
@@ -110,7 +115,10 @@ public final class ServerPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
 	 */
-	public static <T extends CustomPayload> boolean registerReceiver(ServerPlayNetworkHandler networkHandler, CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler) {
+	public static <T extends CustomPayload> boolean registerReceiver(
+			ServerPlayNetworkHandler networkHandler, CustomPayload.Id<T> channelName,
+			CustomChannelReceiver<T> channelHandler
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
@@ -118,14 +126,16 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * Removes the handler of a channel.
-	 * <p>
-	 * The {@code channelName} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerPlayNetworking.CustomChannelReceiver<?> unregisterReceiver(ServerPlayNetworkHandler networkHandler, CustomPayload.Id<?> channelName) {
+	public static ServerPlayNetworking.CustomChannelReceiver<?> unregisterReceiver(
+			ServerPlayNetworkHandler networkHandler, CustomPayload.Id<?> channelName
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -290,11 +300,13 @@ public final class ServerPlayNetworking {
 	public interface CustomChannelReceiver<T extends CustomPayload> {
 		/**
 		 * Receives an incoming packet.
-		 * <p>
-		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
-		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft server instance.
-		 * <p>
-		 * An example usage of this is to create an explosion where the player is looking:
+		 *
+		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be
+		 * {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided
+		 * Minecraft server instance.
+		 *
+		 * <p>An example usage of this is to create an explosion where the player is looking:
 		 * <pre>{@code
 		 * ServerPlayNetworking.registerReceiver(Identifier.of("mymod", "boom"), (server, player, handler, data, responseSender) -> {
 		 * 	boolean fire = data.readBoolean();
@@ -308,10 +320,14 @@ public final class ServerPlayNetworking {
 		 *
 		 * @param server         the server
 		 * @param player         the player
-		 * @param handler        the network handler that received this packet, representing the player/client who sent the packet
+		 * @param handler        the network handler that received this packet, representing the player/client who sent
+		 *                            the packet
 		 * @param payload        the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
+		void receive(
+				MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T payload,
+				PacketSender<CustomPayload> responseSender
+		);
 	}
 }

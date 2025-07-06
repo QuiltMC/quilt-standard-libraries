@@ -23,5 +23,5 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.EquipmentAsset;
 
 public record ArmorRenderLayerContext(
-    BipedRenderState state, ItemStack stack, EquipmentSlot slot, RegistryKey<EquipmentAsset> armorAsset
+		BipedRenderState state, ItemStack stack, EquipmentSlot slot, RegistryKey<EquipmentAsset> armorAsset
 ) { }

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.recipe.impl;
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.Multimap;
@@ -36,15 +35,14 @@ import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
 @ApiStatus.Internal
 final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
-	RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler
-{
+		RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler {
 	int counter = 0;
 
 	ModifyRecipeHandlerImpl(
-		RecipeManager recipeManager,
-		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
-		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
-		HolderLookup.Provider registries
+			RecipeManager recipeManager,
+			Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+			Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+			HolderLookup.Provider registries
 	) {
 		super(recipeManager, byType, byKey, registries);
 	}
@@ -52,54 +50,54 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 	@Override
 	public void replace(Identifier id, RecipeData<?, ?> recipe) {
 		recipe.createRecipe(this.getRegistries())
-			.resultOrPartial(error ->
-				RecipeManagerImpl.LOGGER.error("Error creating replacement recipe {}: [{}]", id, error)
-			)
-			.ifPresent(newRecipe -> {
-				final RecipeHolder<?> oldRecipeHolder = this.getRecipe(id);
+				.resultOrPartial(error ->
+					RecipeManagerImpl.LOGGER.error("Error creating replacement recipe {}: [{}]", id, error)
+				)
+				.ifPresent(newRecipe -> {
+					final RecipeHolder<?> oldRecipeHolder = this.getRecipe(id);
 
-				if (oldRecipeHolder == null) {
-					if (RecipeManagerImpl.DEBUG_MODE) {
-						RecipeManagerImpl.LOGGER.info(
-							"Add new recipe {} with type {} in modify phase.",
-							id, newRecipe.getType()
-						);
-					}
-				} else {
-					final RecipeType<?> oldType = oldRecipeHolder.value().getType();
-
-					if (RecipeManagerImpl.DEBUG_MODE) {
-						if (oldType == newRecipe.getType()) {
+					if (oldRecipeHolder == null) {
+						if (RecipeManagerImpl.DEBUG_MODE) {
 							RecipeManagerImpl.LOGGER.info(
-								"Replace recipe {} with same type {} in modify phase.",
-								id, newRecipe.getType()
-							);
-						} else {
-							RecipeManagerImpl.LOGGER.info(
-								"Replace new recipe {} with type {} (and old type {}) in modify phase.",
-								id, newRecipe.getType(), oldType
+									"Add new recipe {} with type {} in modify phase.",
+									id, newRecipe.getType()
 							);
 						}
+					} else {
+						final RecipeType<?> oldType = oldRecipeHolder.value().getType();
+
+						if (RecipeManagerImpl.DEBUG_MODE) {
+							if (oldType == newRecipe.getType()) {
+								RecipeManagerImpl.LOGGER.info(
+										"Replace recipe {} with same type {} in modify phase.",
+										id, newRecipe.getType()
+								);
+							} else {
+								RecipeManagerImpl.LOGGER.info(
+										"Replace new recipe {} with type {} (and old type {}) in modify phase.",
+										id, newRecipe.getType(), oldType
+								);
+							}
+						}
+
+						this.byType.get(oldType).remove(oldRecipeHolder);
 					}
 
-                    this.byType.get(oldType).remove(oldRecipeHolder);
-                }
+					final RecipeType<? extends Recipe<?>> type = newRecipe.getType();
 
-				final RecipeType<? extends Recipe<?>> type = newRecipe.getType();
+					if (!this.byType.containsKey(type)) {
+						throw new IllegalStateException(
+							"The given recipe %s does not have its recipe type %s in the recipe manager."
+								.formatted(id, type)
+						);
+					}
 
-				if (!this.byType.containsKey(type)) {
-					throw new IllegalStateException(
-						"The given recipe %s does not have its recipe type %s in the recipe manager."
-							.formatted(id, type)
-					);
-				}
+					final RecipeHolder<Recipe<?>> recipeHolder =
+						new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), newRecipe);
+					this.byType.get(type).add(recipeHolder);
+					this.byKey.put(recipeHolder.id(), recipeHolder);
 
-                final RecipeHolder<Recipe<?>> recipeHolder =
-					new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), newRecipe);
-				this.byType.get(type).add(recipeHolder);
-				this.byKey.put(recipeHolder.id(), recipeHolder);
-
-				this.counter++;
-			});
+					this.counter++;
+				});
 	}
 }

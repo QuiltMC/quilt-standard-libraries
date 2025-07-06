@@ -16,17 +16,17 @@
 
 package org.quiltmc.qsl.block.entity.api;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-
-import org.quiltmc.qsl.block.entity.mixin.accessor.BlockEntityTypeAccessor;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+
+import org.quiltmc.qsl.block.entity.mixin.accessor.BlockEntityTypeAccessor;
 
 /**
  * Provides a way to build {@link BlockEntityType} with more features than {@link BlockEntityType.BlockEntityFactory}.
@@ -37,7 +37,9 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	private final BlockEntityType.BlockEntityFactory<? extends BE> factory;
 	private final Set<Block> supportedBlocks;
 
-	private QuiltBlockEntityTypeBuilder(BlockEntityType.BlockEntityFactory<? extends BE> factory, Set<Block> supportedBlocks) {
+	private QuiltBlockEntityTypeBuilder(
+			BlockEntityType.BlockEntityFactory<? extends BE> factory, Set<Block> supportedBlocks
+	) {
 		this.factory = factory;
 		this.supportedBlocks = supportedBlocks;
 	}
@@ -51,8 +53,8 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	 * @return a new block entity type builder
 	 */
 	public static <BE extends BlockEntity> QuiltBlockEntityTypeBuilder<BE> create(
-		BlockEntityType.BlockEntityFactory<? extends BE> factory, Block... supportedBlocks)
-	{
+			BlockEntityType.BlockEntityFactory<? extends BE> factory, Block... supportedBlocks
+	) {
 		return new QuiltBlockEntityTypeBuilder<>(
 			factory,
 			Arrays.stream(supportedBlocks)

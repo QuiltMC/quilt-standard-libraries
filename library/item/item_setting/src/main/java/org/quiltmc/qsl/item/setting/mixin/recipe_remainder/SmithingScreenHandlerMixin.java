@@ -16,17 +16,17 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
-import net.minecraft.recipe.Recipe;
-
 import org.jetbrains.annotations.Nullable;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeHolder;
@@ -35,9 +35,6 @@ import net.minecraft.screen.SmithingScreenHandler;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
-
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 @Mixin(SmithingScreenHandler.class)
 abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
@@ -52,40 +49,40 @@ abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 
 	// save the last recipe because unlockLastRecipe clears it
 	@Inject(
-		method = "onTakeOutput",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/inventory/CraftingResultInventory;unlockLastRecipe" +
-				"(Lnet/minecraft/entity/player/PlayerEntity;Ljava/util/List;)V"
-		)
+			method = "onTakeOutput",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/inventory/CraftingResultInventory;unlockLastRecipe"
+					+ "(Lnet/minecraft/entity/player/PlayerEntity;Ljava/util/List;)V"
+			)
 	)
 	private void shareLastRecipe(
-		CallbackInfo ci,
-		@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
+			CallbackInfo ci,
+			@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
 	) {
 		final RecipeHolder<?> lastRecipeHolder = this.result.getLastRecipe();
 		lastRecipe.set(lastRecipeHolder == null ? null : lastRecipeHolder.value());
 	}
 
 	@Redirect(
-		method = "onTakeOutput",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V")
+			method = "onTakeOutput",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V")
 	)
 	private void applyRecipeRemainderToIngredient(
-		SmithingScreenHandler instance, int slot,
-		@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
+			SmithingScreenHandler instance, int slot,
+			@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
 	) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
-			this.getSlot(slot),
-			1,
-			lastRecipe.get(),
-			switch (slot) {
-				case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
-				case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
-				case SmithingScreenHandler.ADDITIONAL_SLOT -> RecipeRemainderLocation.SMITHING_INGREDIENT;
-				default -> throw new IllegalStateException("Unexpected value: " + slot);
-			},
-			this.player
+				this.getSlot(slot),
+				1,
+				lastRecipe.get(),
+				switch (slot) {
+					case SmithingScreenHandler.TEMPLATE_SLOT -> RecipeRemainderLocation.SMITHING_TEMPLATE;
+					case SmithingScreenHandler.BASE_SLOT -> RecipeRemainderLocation.SMITHING_BASE;
+					case SmithingScreenHandler.ADDITIONAL_SLOT -> RecipeRemainderLocation.SMITHING_INGREDIENT;
+					default -> throw new IllegalStateException("Unexpected value: " + slot);
+				},
+				this.player
 		);
 	}
 

@@ -17,13 +17,11 @@
 package org.quiltmc.qsl.rendering.entity.api.client;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedRenderState;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
@@ -52,7 +50,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerTextureProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
-		for (var item : items) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerTextureProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -67,7 +65,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void addTextureProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
 			@NotNull ItemConvertible... items) {
-		for (var item : items) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addTextureProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}
@@ -91,7 +89,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerModelProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
-		for (var item : items) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerModelProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -106,7 +104,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void addModelProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
 			@NotNull ItemConvertible... items) {
-		for (var item : items) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addModelProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}
@@ -127,7 +125,9 @@ public final class ArmorRenderingRegistry {
 	 * @param model the model
 	 * @param items the items to register for
 	 */
-	public static void registerModel(@NotNull BipedEntityModel<BipedRenderState> model, @NotNull ItemConvertible... items) {
+	public static void registerModel(
+			@NotNull BipedEntityModel<BipedRenderState> model, @NotNull ItemConvertible... items
+	) {
 		registerModelProvider(Event.DEFAULT_PHASE, (modelx, state, stack, slot) -> model, items);
 	}
 
@@ -140,7 +140,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerRenderLayerProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
-		for (var item : items) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerRenderLayerProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -153,9 +153,11 @@ public final class ArmorRenderingRegistry {
 	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
 	 * @param items       the items to request the phase ordering for
 	 */
-	public static void addRenderLayerProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
-			@NotNull ItemConvertible... items) {
-		for (var item : items) {
+	public static void addRenderLayerProviderPhaseOrdering(
+			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
+			@NotNull ItemConvertible... items
+	) {
+		for (final ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addRenderLayerProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}
@@ -166,7 +168,9 @@ public final class ArmorRenderingRegistry {
 	 * @param provider the provider
 	 * @param items    the items to register for
 	 */
-	public static void registerRenderLayerProvider(@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
+	public static void registerRenderLayerProvider(
+			@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items
+	) {
 		registerRenderLayerProvider(Event.DEFAULT_PHASE, provider, items);
 	}
 

@@ -67,13 +67,13 @@ public class CommonPacketsImpl {
 	}
 
 	private static void handleCommonVersion(MinecraftServer server, ServerConfigurationNetworkHandler handler, CommonVersionPayload payload, PacketSender<CustomPayload> responseSender) {
-		ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
+		final ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
 		addon.onCommonVersionPacket(getNegotiatedVersion(payload));
 		((ServerConfigurationTaskManager) handler).finishTask(CommonVersionConfigurationTask.KEY);
 	}
 
 	private static void handleCommonRegister(MinecraftServer server, ServerConfigurationNetworkHandler handler, CommonRegisterPayload payload, PacketSender<CustomPayload> responseSender) {
-		ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
+		final ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
 
 		if (CommonRegisterPayload.PLAY_PHASE.equals(payload.phase())) {
 			if (payload.version() != addon.getNegotiatedVersion()) {
@@ -111,7 +111,11 @@ public class CommonPacketsImpl {
 
 		@Override
 		public void start(Consumer<Packet<?>> sender) {
-			addon.sendPayload(new CommonRegisterPayload(addon.getNegotiatedVersion(), CommonRegisterPayload.PLAY_PHASE, ServerPlayNetworking.getGlobalReceivers()));
+			this.addon.sendPayload(new CommonRegisterPayload(
+					this.addon.getNegotiatedVersion(),
+					CommonRegisterPayload.PLAY_PHASE,
+					ServerPlayNetworking.getGlobalReceivers())
+			);
 		}
 
 		@Override
@@ -121,7 +125,7 @@ public class CommonPacketsImpl {
 	}
 
 	private static int getNegotiatedVersion(CommonVersionPayload payload) {
-		int version = getHighestCommonVersion(payload.versions(), SUPPORTED_COMMON_PACKET_VERSIONS);
+		final int version = getHighestCommonVersion(payload.versions(), SUPPORTED_COMMON_PACKET_VERSIONS);
 
 		if (version <= 0) {
 			throw new UnsupportedOperationException("Server does not support any requested versions from client");
@@ -131,8 +135,8 @@ public class CommonPacketsImpl {
 	}
 
 	public static int getHighestCommonVersion(int[] a, int[] b) {
-		int[] as = a.clone();
-		int[] bs = b.clone();
+		final int[] as = a.clone();
+		final int[] bs = b.clone();
 
 		Arrays.sort(as);
 		Arrays.sort(bs);

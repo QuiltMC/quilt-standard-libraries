@@ -17,18 +17,17 @@
 
 package org.quiltmc.qsl.entity.event.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import net.minecraft.world.entity.TeleportTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.world.entity.TeleportTarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
 
 @Mixin(Entity.class)
@@ -40,7 +39,7 @@ abstract class EntityMixin {
 	private @Nullable Entity quilt$invokeAfterWorldChange(Entity newEntity, ServerWorld world, TeleportTarget target) {
 		if (newEntity != null) {
 			EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker()
-				.afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), target.newWorld());
+					.afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), target.newWorld());
 		}
 
 		return newEntity;

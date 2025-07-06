@@ -37,8 +37,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the effects of a biome.
- * <p>
- * The biome modifier identifier is {@code quilt:modify_effects}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:modify_effects}.
  *
  * @see BiomeModificationContext.EffectsContext
  */
@@ -81,7 +81,7 @@ public record ModifyEffectsModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		var effectContext = modificationContext.getEffects();
+		final BiomeModificationContext.EffectsContext effectContext = modificationContext.getEffects();
 		this.fogColor.ifPresent(effectContext::setFogColor);
 		this.waterColor.ifPresent(effectContext::setWaterColor);
 		this.waterFogColor.ifPresent(effectContext::setWaterFogColor);

@@ -37,12 +37,8 @@ import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.recipe.api.data.RecipeData;
-import org.quiltmc.qsl.recipe.mixin.accessor.RecipeMapAccessor;
 import org.slf4j.Logger;
 
 import net.minecraft.recipe.Recipe;
@@ -52,7 +48,6 @@ import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeMap;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -61,7 +56,8 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
+import org.quiltmc.qsl.recipe.mixin.accessor.RecipeMapAccessor;
 
 @ApiStatus.Internal
 public final class RecipeManagerImpl {
@@ -74,8 +70,8 @@ public final class RecipeManagerImpl {
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
 	static final Logger LOGGER = LogUtils.getLogger();
 
-    public static <I extends RecipeInput, R extends Recipe<I>> void registerStaticRecipe(
-		Identifier id, RecipeData<I, R> recipe
+	public static <I extends RecipeInput, R extends Recipe<I>> void registerStaticRecipe(
+			Identifier id, RecipeData<I, R> recipe
 	) {
 		if (STATIC_RECIPES.putIfAbsent(id, recipe) != null) {
 			throw new IllegalArgumentException("Cannot register " + id
@@ -84,15 +80,15 @@ public final class RecipeManagerImpl {
 	}
 
 	public static Collection<RecipeHolder<?>> addRecipes(
-		Map<Identifier, Recipe<?>> resourceMap, HolderLookup.Provider registries
+			Map<Identifier, Recipe<?>> resourceMap, HolderLookup.Provider registries
 	) {
 		final var handler = new RegisterRecipeHandlerImpl(resourceMap, registries);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.forEach((id, data) -> {
 			data.createRecipe(registries)
-				.resultOrPartial(error -> LOGGER.error("Error creating recipe {}: [{}]", id, error))
-				.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
-				.ifPresent(handler::tryRegister);
+					.resultOrPartial(error -> LOGGER.error("Error creating recipe {}: [{}]", id, error))
+					.map(recipe -> new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), recipe))
+					.ifPresent(handler::tryRegister);
 		});
 
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
@@ -101,14 +97,14 @@ public final class RecipeManagerImpl {
 	}
 
 	public static RecipeMap applyModifications(
-		RecipeManager recipeManager,
-		RecipeMap recipes,
-		HolderLookup.Provider registries
+			RecipeManager recipeManager,
+			RecipeMap recipes,
+			HolderLookup.Provider registries
 	) {
 		final HashMultimap<RecipeType<?>, RecipeHolder<?>> byType =
-			HashMultimap.create(((RecipeMapAccessor) recipes).quilt$getByType());
+				HashMultimap.create(((RecipeMapAccessor) recipes).quilt$getByType());
 		final HashMap<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey =
-			new HashMap<>(((RecipeMapAccessor) recipes).quilt$getByKey());
+				new HashMap<>(((RecipeMapAccessor) recipes).quilt$getByKey());
 
 		final var modifyHandler =
 			new ModifyRecipeHandlerImpl(recipeManager, byType, byKey, registries);
@@ -124,7 +120,7 @@ public final class RecipeManagerImpl {
 			dump(byKey);
 		}
 
-        return RecipeMapAccessor.quilt$create(ImmutableMultimap.copyOf(byType), ImmutableMap.copyOf(byKey));
+		return RecipeMapAccessor.quilt$create(ImmutableMultimap.copyOf(byType), ImmutableMap.copyOf(byKey));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -145,7 +141,8 @@ public final class RecipeManagerImpl {
 			final Recipe<?> recipe = recipeEntry.getValue().value();
 
 			final var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
-			final DataResult<JsonElement> encoded = serializer.getCodec().encode(recipe, JsonOps.INSTANCE, JsonOps.INSTANCE.mapBuilder()).build(new JsonObject());
+			final DataResult<JsonElement> encoded = serializer.getCodec()
+					.encode(recipe, JsonOps.INSTANCE, JsonOps.INSTANCE.mapBuilder()).build(new JsonObject());
 			if (encoded.error().isPresent()) {
 				LOGGER.error("Failed to serialize recipe {} with reason {}.", id, encoded.error().get().message());
 			}
@@ -160,8 +157,8 @@ public final class RecipeManagerImpl {
 					Files.createDirectories(parent);
 				} catch (IOException e) {
 					LOGGER.error(
-						"Failed to create parent recipe directory {}. Cannot dump recipe {}.",
-						parent, id, e
+							"Failed to create parent recipe directory {}. Cannot dump recipe {}.",
+							parent, id, e
 					);
 					continue;
 				}

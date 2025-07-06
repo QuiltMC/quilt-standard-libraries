@@ -16,25 +16,30 @@
 
 package org.quiltmc.qsl.item.content.registry.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import net.minecraft.block.entity.FuelTimes;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.server.MinecraftServer;
+
 import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(MinecraftServer.class)
-public class MinecraftServerMixin {
+abstract class MinecraftServerMixin {
 	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/FuelTimes;create(Lnet/minecraft/registry/HolderLookup$Provider;Lnet/minecraft/feature_flags/FeatureFlagBitSet;)Lnet/minecraft/block/entity/FuelTimes;"))
-	private FuelTimes doFuelTimeCollection(HolderLookup.Provider provider, FeatureFlagBitSet flags, Operation<FuelTimes> original) {
+	private FuelTimes doFuelTimeCollection(
+			HolderLookup.Provider provider, FeatureFlagBitSet flags, Operation<FuelTimes> original
+	) {
 		ItemContentRegistriesInitializer.startInitialFuelCollection();
 
-		var fuelTimes = original.call(provider, flags);
+		final FuelTimes fuelTimes = original.call(provider, flags);
 
 		ItemContentRegistriesInitializer.endInitialFuelCollection();
+
 		return fuelTimes;
 	}
 }

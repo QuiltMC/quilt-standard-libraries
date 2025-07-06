@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
@@ -34,20 +35,18 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 @ApiStatus.Internal
 final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
-	RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler
-{
+		RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler {
 	int counter = 0;
 
 	RemoveRecipeHandlerImpl(
-		RecipeManager recipeManager,
-		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
-		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
-		HolderLookup.Provider registries
+			RecipeManager recipeManager,
+			Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+			Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+			HolderLookup.Provider registries
 	) {
 		super(recipeManager, byType, byKey, registries);
 	}
@@ -66,8 +65,8 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 
 			if (RecipeManagerImpl.DEBUG_MODE) {
 				RecipeManagerImpl.LOGGER.info(
-					"Remove recipe {} with type {} in removal phase.",
-					id, recipeType
+						"Remove recipe {} with type {} in removal phase.",
+						id, recipeType
 				);
 			}
 
@@ -78,11 +77,11 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Recipe<?>> void removeIf(
-		RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
+			RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
 	) {
 		this.removeIfInternal(
-			new TypedView<>(this.byType.get(recipeType), holder -> (RecipeHolder<T>) holder),
-			recipeRemovalPredicate
+				new TypedView<>(this.byType.get(recipeType), holder -> (RecipeHolder<T>) holder),
+				recipeRemovalPredicate
 		);
 	}
 
@@ -94,22 +93,22 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 	}
 
 	private <R extends RecipeHolder<?>> void removeIfInternal(
-		Iterable<R> typedRecipes, Predicate<R> recipeRemovalPredicate
+			Iterable<R> typedRecipes, Predicate<R> recipeRemovalPredicate
 	) {
 		if (typedRecipes == null) {
-            return;
-        }
+			return;
+		}
 
 		final Iterator<R> typedRecipesItr = typedRecipes.iterator();
 
 		while (typedRecipesItr.hasNext()) {
-            final R entry = typedRecipesItr.next();
+			final R entry = typedRecipesItr.next();
 
 			if (recipeRemovalPredicate.test(entry)) {
 				if (RecipeManagerImpl.DEBUG_MODE) {
 					RecipeManagerImpl.LOGGER.info(
-						"Remove recipe matching predicate {} with type {} in removal phase.",
-						entry.id(), entry.value().getType()
+							"Remove recipe matching predicate {} with type {} in removal phase.",
+							entry.id(), entry.value().getType()
 					);
 				}
 
@@ -121,28 +120,28 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 	}
 
 	/**
-     * Provides a typed iterable view of recipe holders.
-     */
+	 * Provides a typed iterable view of recipe holders.
+	 */
 	private record TypedView<R extends RecipeHolder<?>>(
-		Iterable<RecipeHolder<?>> untyped,
-		Function<RecipeHolder<?>, R> cast
+			Iterable<RecipeHolder<?>> untyped,
+			Function<RecipeHolder<?>, R> cast
 	) implements Iterable<R> {
 		@Override
 		public @NotNull java.util.Iterator<R> iterator() {
 			return new Iterator();
 		}
 
-        private final class Iterator implements java.util.Iterator<R> {
-            private final java.util.Iterator<RecipeHolder<?>> untyped;
+		private final class Iterator implements java.util.Iterator<R> {
+			private final java.util.Iterator<RecipeHolder<?>> untyped;
 
 			private Iterator() {
 				this.untyped = TypedView.this.untyped.iterator();
 			}
 
-            @Override
-            public boolean hasNext() {
-                return this.untyped.hasNext();
-            }
+			@Override
+			public boolean hasNext() {
+				return this.untyped.hasNext();
+			}
 
 			@Override
 			public R next() {

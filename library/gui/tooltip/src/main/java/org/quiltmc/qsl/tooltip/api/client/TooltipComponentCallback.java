@@ -29,13 +29,16 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Allows registering a mapping from {@link TooltipData} to {@link TooltipComponent}.
- * This allows custom tooltips for items: first, override {@link Item#getTooltipData} and return a custom {@link TooltipData}.
- * Second, register a listener to this event and convert the data to your component implementation if it's an instance of your data class.
- * <p>
- * Note that failure to map some data to a component will throw an exception,
+ * This allows custom tooltips for items: first, override {@link Item#getTooltipData} and return a custom
+ * {@link TooltipData}.
+ * Second, register a listener to this event and convert the data to your component implementation if it's an instance
+ * of your data class.
+ *
+ * <p>Note that failure to map some data to a component will throw an exception,
  * so make sure that any data you return in {@link Item#getTooltipData} will be handled by one of the callbacks.
  *
- * @see org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData ConvertibleTooltipData: for custom tooltip data implementations, avoid the event for those
+ * @see org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData ConvertibleTooltipData: for custom tooltip data
+ * implementations, avoid the event for those
  */
 @FunctionalInterface
 @ClientOnly

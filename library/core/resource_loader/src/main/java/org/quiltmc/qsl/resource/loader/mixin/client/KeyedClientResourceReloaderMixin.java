@@ -19,11 +19,11 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Locale;
 
-import net.minecraft.unmapped.C_fpwiwmrb;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.unmapped.C_fpwiwmrb;
 import net.minecraft.client.PeriodicNotificationManager;
 import net.minecraft.client.font.FontManager;
 import net.minecraft.client.particle.ParticleManager;
@@ -55,7 +55,8 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 @Mixin({
 	/* public */
 	BakedModelManager.class, BlockEntityRenderDispatcher.class, BlockRenderManager.class,
-	EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class, FoliageColormapResourceSupplier.class,
+	EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class,
+	FoliageColormapResourceSupplier.class,
 	FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
 	StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
 	SpriteAtlasHolder.class, C_fpwiwmrb.class,
@@ -66,11 +67,12 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	@Unique
 	private Identifier quilt$id;
 
+	// overrides api method
 	@Override
-	@SuppressWarnings({"ConstantConditions"})
+	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
-			Object self = this;
+			final Object self = this;
 
 			if (self instanceof BakedModelManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.MODELS;

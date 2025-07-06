@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
+
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -25,8 +27,6 @@ import net.minecraft.util.Rarity;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-
-import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
 
 public class TransitiveAccessWidenerTest implements ModInitializer {
 	private static final RegistryKey<Item> MODDED_MINING_TOOL_KEY = createItemKey("modded_mining_tool");

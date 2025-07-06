@@ -30,13 +30,12 @@ public final class QuiltCustomItemSettings {
 	 * The {@link CustomItemSetting} in charge of handing {@link CustomDamageHandler}s.
 	 */
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER =
-		CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER;
+			CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER;
 
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders.
 	 *
-	 * <p>
-	 * The setting is currently used in the following places:
+	 * <p>The setting is currently used in the following places:
 	 * <ul>
 	 *     <li>Crafting</li>
 	 *     <li>Furnace Fuel</li>
@@ -50,5 +49,5 @@ public final class QuiltCustomItemSettings {
 	 * </ul>
 	 */
 	public static final CustomItemSetting<Map<RecipeRemainderLocation, RecipeRemainderProvider>>
-		RECIPE_REMAINDER_PROVIDER = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER;
+			RECIPE_REMAINDER_PROVIDER = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER;
 }

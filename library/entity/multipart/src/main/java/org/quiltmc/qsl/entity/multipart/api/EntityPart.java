@@ -16,14 +16,14 @@
 
 package org.quiltmc.qsl.entity.multipart.api;
 
+import java.util.Optional;
+
 import net.minecraft.client.render.entity.Hitbox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.util.math.Box;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-
-import java.util.Optional;
 
 /**
  * Represents the sub-parts of a {@link MultipartEntity}.
@@ -36,8 +36,8 @@ public interface EntityPart<E extends Entity> {
 
 	/**
 	 * Gets the hitbox for the entity part.
-	 * <p>
-	 * Should normally not be overridden unless it is to more accurately draw non-standard hitboxes.
+	 *
+	 * <p>Should normally not be overridden unless it is to more accurately draw non-standard hitboxes.
 	 *
 	 * @param ownerX    the {@linkplain #getOwner() owner's} rendered X coordinate
 	 * @param ownerY    the {@linkplain #getOwner() owner's} rendered Y coordinate
@@ -49,9 +49,9 @@ public interface EntityPart<E extends Entity> {
 	default Optional<Hitbox> getHitbox(double ownerX, double ownerY, double ownerZ, Entity owner, float tickDelta) {
 		if (this instanceof Entity entityPart) {
 			final Box bounds = entityPart.getBounds().offset(
-				-entityPart.getX(),
-				-entityPart.getY(),
-				-entityPart.getZ()
+					-entityPart.getX(),
+					-entityPart.getY(),
+					-entityPart.getZ()
 			);
 
 			return Optional.of(new Hitbox(

@@ -16,22 +16,27 @@
 
 package org.quiltmc.qsl.item.extensions.mixin.bow.client;
 
-import net.minecraft.client.render.entity.AbstractSkeletonEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import net.minecraft.client.render.entity.AbstractSkeletonEntityRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.item.extensions.api.bow.BowExtensions;
 
 @Mixin(AbstractSkeletonEntityRenderer.class)
-public abstract class AbstractSkeletonEntityRendererMixin {
+abstract class AbstractSkeletonEntityRendererMixin {
 	// Allows Skeletons to visually shoot custom bows by returning true
 	@Redirect(
-		method = {"updateState(Lnet/minecraft/entity/mob/AbstractSkeletonEntity;Lnet/minecraft/client/render/entity/state/SkeletonRenderState;F)V", "getArmPose(Lnet/minecraft/entity/mob/AbstractSkeletonEntity;Lnet/minecraft/util/Arm;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;"},
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
+			method = {
+				"updateState(Lnet/minecraft/entity/mob/AbstractSkeletonEntity;Lnet/minecraft/client/render/entity/"
+					+ "state/SkeletonRenderState;F)V",
+				"getArmPose(Lnet/minecraft/entity/mob/AbstractSkeletonEntity;Lnet/minecraft/util/Arm;)Lnet/minecraft/"
+					+ "client/render/entity/model/BipedEntityModel$ArmPose;"
+			},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
 	)
 	private boolean widenBowClassification(ItemStack heldItemStack, Item item) {
 		return heldItemStack.getItem() instanceof BowExtensions;

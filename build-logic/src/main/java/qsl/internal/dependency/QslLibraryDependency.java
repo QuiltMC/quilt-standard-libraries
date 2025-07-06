@@ -60,7 +60,7 @@ public class QslLibraryDependency implements Named, Serializable {
 	}
 
 	/**
-	 * The configuration type for the module dependency
+	 * The configuration type for the module dependency.
 	 */
 	public enum ConfigurationType implements Serializable {
 		API(JavaPlugin.API_CONFIGURATION_NAME, true),

@@ -57,7 +57,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<CustomPayload.Id<?>, ServerPlayNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
+		for (final Map.Entry<CustomPayload.Id<?>, ServerPlayNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -74,7 +74,8 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T extends CustomPayload> void receive(ServerPlayNetworking.CustomChannelReceiver<?> handler, T buf) {
-		((ServerPlayNetworking.CustomChannelReceiver<T>) handler).receive(this.server, this.handler.player, this.handler, buf, this);
+		((ServerPlayNetworking.CustomChannelReceiver<T>) handler)
+				.receive(this.server, this.handler.player, this.handler, buf, this);
 	}
 
 	// impl details
@@ -88,7 +89,6 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	public Packet<?> createPacket(CustomPayload payload) {
 		return ServerNetworkingImpl.createS2CPacket(payload);
 	}
-
 
 	@Override
 	protected void invokeRegisterEvent(List<CustomPayload.Id<?>> ids) {

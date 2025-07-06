@@ -38,7 +38,9 @@ public class SyncLogScreen extends Screen {
 	private double currentScroll = 0;
 
 	public SyncLogScreen(Screen parent, List<LogBuilder.Section> sections) {
-		super(Text.translatableWithFallback("quilt.core.registry_sync.logs_title", "Server Synchronization Logs"));
+		super(Text.translatableWithFallback(
+				"quilt.core.registry_sync.logs_title", "Server Synchronization Logs"
+		));
 		this.parent = parent;
 		this.sections = sections;
 	}
@@ -48,22 +50,26 @@ public class SyncLogScreen extends Screen {
 		super.init();
 		String sections = LogBuilder.stringify(this.sections);
 
-		this.scrollableText = new ScrollableMultiTextWidget(40, 40, this.width - 80, this.height - 90, Text.literal(sections), this.textRenderer, currentScroll, newScroll -> {
-			this.currentScroll = newScroll;
-		});
+		this.scrollableText = new ScrollableMultiTextWidget(
+				40, 40, this.width - 80, this.height - 90,
+				Text.literal(sections), this.textRenderer, this.currentScroll,
+				newScroll -> {
+					this.currentScroll = newScroll;
+				}
+		);
 		this.addDrawableSelectableElement(this.scrollableText);
 
-		int y = this.height - 40;
+		final int y = this.height - 40;
 
 		{
-			int x = this.width / 2 - 5 - 120;
+			final int x = this.width / 2 - 5 - 120;
 			this.addDrawableSelectableElement(ButtonWidget.builder(Text.translatable("chat.copy"), (button) -> {
 				this.client.keyboard.setClipboard(sections);
 			}).positionAndSize(x, y, 120, 20).build());
 		}
 
 		{
-			int x = this.width / 2 + 5;
+			final int x = this.width / 2 + 5;
 			this.addDrawableSelectableElement(ButtonWidget.builder(CommonTexts.BACK, (button) -> {
 				this.client.setScreen(this.parent);
 			}).positionAndSize(x, y, 120, 20).build());

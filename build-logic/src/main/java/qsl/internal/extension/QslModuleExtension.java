@@ -41,7 +41,7 @@ public interface QslModuleExtension {
 	void accessWidener();
 
 	/**
-	 * Disables expecting "$MOD_ID.mixins.json" to be present in the resources directory
+	 * Disables expecting "$MOD_ID.mixins.json" to be present in the resources directory.
 	 */
 	void noMixins();
 

@@ -36,8 +36,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes features from a biome. If no steps are specified when decoding, features will be removed from all steps.
- * <p>
- * The biome modifier identifier is {@code quilt:remove_features}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:remove_features}.
  *
  * @param steps    the feature generation steps to remove the features from
  * @param features registry keys for the features to remove
@@ -61,8 +61,8 @@ public record RemoveFeaturesModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var feature : this.features) {
-			for (var step : this.steps) {
+		for (final RegistryKey<PlacedFeature> feature : this.features) {
+			for (final GenerationStep.Feature step : this.steps) {
 				modificationContext.getGenerationSettings().removeFeature(step, feature);
 			}
 		}

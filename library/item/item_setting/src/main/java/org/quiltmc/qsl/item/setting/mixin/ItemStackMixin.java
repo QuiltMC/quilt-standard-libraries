@@ -46,14 +46,14 @@ abstract class ItemStackMixin {
 			method = "damageEquipment(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/item/ItemStack;damageEquipment(ILnet/minecraft/server/world/ServerWorld;" +
-					"Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V"
+				target = "Lnet/minecraft/item/ItemStack;damageEquipment(ILnet/minecraft/server/world/ServerWorld;"
+					+ "Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V"
 			)
 	)
 	private void modifyDamage(
-		ItemStack instance, int amount, ServerWorld world, @Nullable ServerPlayerEntity player,
-		Consumer<Item> breakCallback, Operation<Void> original,
-		@Local(argsOnly = true) EquipmentSlot slot
+			ItemStack instance, int amount, ServerWorld world, @Nullable ServerPlayerEntity player,
+			Consumer<Item> breakCallback, Operation<Void> original,
+			@Local(argsOnly = true) EquipmentSlot slot
 	) {
 		final CustomDamageHandler handler = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER.get(this.getItem());
 

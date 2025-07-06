@@ -23,13 +23,14 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * Extensions of {@link BlockEntityType}, allows to manipulate the supported block set.
- * <p>
- * Modifying the supported block set is only allowed before client finishes initializing, and before any logical server starts.
- * After this freeze adding any blocks will be disallowed.
- * <p>
- * Freezing happens at {@link org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents#STARTING}
+ *
+ * <p>Modifying the supported block set is only allowed before client finishes initializing, and before any logical
+ * server starts. After this freeze adding any blocks will be disallowed.
+ *
+ * <p>Freezing happens at {@link org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents#STARTING}
  * and {@link org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents#READY} events in the
- * {@code quilt_block_entity:block_entity_freezing} phase, which is ordered after the default phase to avoid any race condition.
+ * {@code quilt_block_entity:block_entity_freezing} phase, which is ordered after the default phase to avoid any race
+ * condition.
  */
 @InjectedInterface(BlockEntityType.class)
 public interface QuiltBlockEntityType {

@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import org.quiltmc.qsl.entity.extensions.impl.PointOfInterestTypeExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -35,6 +34,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.poi.PointOfInterestType;
 
+import org.quiltmc.qsl.entity.extensions.impl.PointOfInterestTypeExtensions;
 
 @Mixin(PointOfInterestType.class)
 public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
@@ -45,9 +45,9 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
-		for (Block block : blocks) {
+		for (final Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
@@ -56,7 +56,7 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
 		builder.addAll(states);
 
@@ -65,9 +65,9 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
-		for (Block block : blocks) {
+		for (final Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
@@ -82,15 +82,19 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	@Unique
 	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
-			for (BlockState state : this.blockStates) {
+			for (final BlockState state : this.blockStates) {
 				PointOfInterestTypesAccessor.getStateToTypeMap().remove(state);
 			}
 		}
 
-		for (BlockState state : states) {
-			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap().put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+		for (final BlockState state : states) {
+			final Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
+					.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
-				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in more than one PoI type: %s and %s!", state, key.getValue().toString(), replaced.getKey().toString())));
+				throw Util.throwOrPause(new IllegalStateException(String.format(
+					"%s is defined in more than one PoI type: %s and %s!",
+					state, key.getValue().toString(), replaced.getKey().toString()
+				)));
 			}
 		}
 

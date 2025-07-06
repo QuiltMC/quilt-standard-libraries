@@ -22,29 +22,26 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
-
-import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
 
 @Mixin(RangedWeaponItem.class)
 abstract class RangedWeaponItemMixin {
 	// stub handler to be overriden by BowItemMixin
 	@ModifyExpressionValue(
-		method = "shootAll",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/item/RangedWeaponItem;getProjectile(Lnet/minecraft/world/World;" +
-				"Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Z)" +
-				"Lnet/minecraft/entity/projectile/ProjectileEntity;"
-		)
+			method = "shootAll",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/item/RangedWeaponItem;getProjectile(Lnet/minecraft/world/World;"
+					+ "Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;"
+					+ "Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/projectile/ProjectileEntity;"
+			)
 	)
 	protected ProjectileEntity modifyArrow(
-		ProjectileEntity original, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack,
-		@Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user,
-		@Local(ordinal = 0, argsOnly = true) float speed
+			ProjectileEntity original, @Local(ordinal = 0, argsOnly = true) ItemStack bowStack,
+			@Local(ordinal = 1) ItemStack arrowStack, @Local(ordinal = 0, argsOnly = true) LivingEntity user,
+			@Local(ordinal = 0, argsOnly = true) float speed
 	) {
 		return original;
 	}

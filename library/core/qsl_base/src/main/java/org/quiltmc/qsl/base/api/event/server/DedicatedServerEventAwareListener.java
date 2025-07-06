@@ -20,11 +20,12 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
- * Represents a dedicated-server-sided event callback aware of its uniquely associated event, may be used as an entrypoint.
- * <p>
- * In {@code quilt.mod.json}, the entrypoint is defined with {@code server_events} key.
- * <p>
- * Any event callback interface extending this interface can be listened using this entrypoint.
+ * Represents a dedicated-server-sided event callback aware of its uniquely associated event,
+ * may be used as an entrypoint.
+ *
+ * <p>In {@code quilt.mod.json}, the entrypoint is defined with {@code server_events} key.
+ *
+ * <p>Any event callback interface extending this interface can be listened using this entrypoint.
  *
  * @see EventAwareListener
  * @see ClientEventAwareListener

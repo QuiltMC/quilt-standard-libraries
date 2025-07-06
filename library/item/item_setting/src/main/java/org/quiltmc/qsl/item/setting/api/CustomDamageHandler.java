@@ -17,20 +17,20 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import java.util.function.Consumer;
+
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
-import java.util.function.Consumer;
-
 /**
  * Allows an item to run custom logic when {@link ItemStack#damageEquipment(int, LivingEntity, EquipmentSlot)} (int, LivingEntity, EquipmentSlot)} is called.
  * This is useful for items that, for example, may drain durability from some other source before damaging
  * the stack itself.
- * <p>
- * Custom damage handlers can be set with {@link QuiltItemSettingsExtensions#customDamage}.
+ *
+ * <p>Custom damage handlers can be set with {@link QuiltItemSettingsExtensions#customDamage}.
  */
 @FunctionalInterface
 public interface CustomDamageHandler {

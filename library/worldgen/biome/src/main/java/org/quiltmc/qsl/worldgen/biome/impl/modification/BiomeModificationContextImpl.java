@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.util.collection.WeightedEntry;
-import net.minecraft.util.collection.WeightedList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.util.collection.WeightedEntry;
+import net.minecraft.util.collection.WeightedList;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -112,8 +112,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 	/**
 	 * Gets an entry from the given registry, assuming it's a registry loaded from data packs.
-	 * <p>
-	 * Gives more helpful error messages if an entry is missing by checking if the modder
+	 *
+	 * <p>Gives more helpful error messages if an entry is missing by checking if the modder
 	 * forgot to data-gen the JSONs corresponding to their built-in objects.
 	 *
 	 * @param registry the registry
@@ -122,12 +122,12 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	 * @return the holder of the game object
 	 */
 	private static <T> Holder.Reference<T> getHolder(Registry<T> registry, RegistryKey<T> key) {
-		Holder.Reference<T> entry = registry.getHolder(key).orElse(null);
+		final Holder.Reference<T> entry = registry.getHolder(key).orElse(null);
 
 		if (entry == null) {
 			// Entry is missing. Check if it exists in the built-in registries and warn modders
 			// about the world-gen changing to JSON-only.
-			Registry<T> builtInRegistry = BUILTIN_REGISTRIES.get().getLookupOrThrow(registry.getKey());
+			final Registry<T> builtInRegistry = BUILTIN_REGISTRIES.get().getLookupOrThrow(registry.getKey());
 
 			if (builtInRegistry.contains(key)) {
 				throw new IllegalArgumentException("Entry " + key + " only exists in the built-in registry "
@@ -284,17 +284,17 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public boolean removeFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey) {
-			PlacedFeature placedFeature = getHolder(this.features, placedFeatureKey).getValue();
+			final PlacedFeature placedFeature = getHolder(this.features, placedFeatureKey).getValue();
 
-			int stepIndex = step.ordinal();
-			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
+			final int stepIndex = step.ordinal();
+			final List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
 
 			if (stepIndex >= featureSteps.size()) {
 				return false; // The step was not populated with any features yet.
 			}
 
-			HolderSet<PlacedFeature> featuresInStep = featureSteps.get(stepIndex);
-			List<Holder<PlacedFeature>> features = new ArrayList<>(featuresInStep.stream().toList());
+			final HolderSet<PlacedFeature> featuresInStep = featureSteps.get(stepIndex);
+			final List<Holder<PlacedFeature>> features = new ArrayList<>(featuresInStep.stream().toList());
 
 			if (features.removeIf(feature -> feature.getValue() == placedFeature)) {
 				featureSteps.set(stepIndex, HolderSet.createDirect(features));
@@ -308,8 +308,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> entry) {
-			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
-			int index = step.ordinal();
+			final List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
+			final int index = step.ordinal();
 
 			// Add new empty lists for the generation steps that have no features yet.
 			while (index >= featureSteps.size()) {
@@ -330,9 +330,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
-			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).getValue();
+			final ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).getValue();
 
-			var genCarvers = new ArrayList<>(this.generationSettings.carvers.stream().toList());
+			final var genCarvers = new ArrayList<>(this.generationSettings.carvers.stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.getValue() == carver)) {
 				this.generationSettings.carvers = HolderSet.createDirect(genCarvers);
@@ -343,7 +343,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private <T> HolderSet<T> plus(HolderSet<T> values, Holder<T> entry) {
-			var list = new ArrayList<>(values.stream().toList());
+			final var list = new ArrayList<>(values.stream().toList());
 			list.add(entry);
 			return HolderSet.createDirect(list);
 		}
@@ -361,8 +361,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		private void unfreezeSpawners() {
 			this.quiltSpawners.clear();
 
-			for (SpawnGroup spawnGroup : SpawnGroup.values()) {
-				WeightedList<SpawnSettings.SpawnEntry> entries = this.spawnSettings.spawners.get(spawnGroup);
+			for (final SpawnGroup spawnGroup : SpawnGroup.values()) {
+				final WeightedList<SpawnSettings.SpawnEntry> entries = this.spawnSettings.spawners.get(spawnGroup);
 
 				if (entries != null) {
 					this.quiltSpawners.put(spawnGroup, new ArrayList<>(entries.getEntries()));
@@ -382,9 +382,10 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void freezeSpawners() {
-			Map<SpawnGroup, WeightedList<SpawnSettings.SpawnEntry>> spawners = new HashMap<>(this.spawnSettings.spawners);
+			final Map<SpawnGroup, WeightedList<SpawnSettings.SpawnEntry>> spawners =
+					new HashMap<>(this.spawnSettings.spawners);
 
-			for (var entry : this.quiltSpawners.entrySet()) {
+			for (final var entry : this.quiltSpawners.entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					spawners.put(entry.getKey(), WeightedList.empty());
 				} else {
@@ -416,7 +417,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		public boolean removeSpawns(BiPredicate<SpawnGroup, SpawnSettings.SpawnEntry> predicate) {
 			boolean anyRemoved = false;
 
-			for (SpawnGroup group : SpawnGroup.values()) {
+			for (final SpawnGroup group : SpawnGroup.values()) {
 				if (this.quiltSpawners.get(group).removeIf(entry -> predicate.test(group, entry.value()))) {
 					anyRemoved = true;
 				}

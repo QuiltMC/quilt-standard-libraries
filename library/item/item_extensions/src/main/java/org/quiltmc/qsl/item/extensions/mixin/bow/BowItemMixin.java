@@ -42,7 +42,7 @@ public abstract class BowItemMixin extends RangedWeaponItemMixin implements BowE
 	// Allows custom bows to modify the projectile shot by bows
 	@Override
 	protected ProjectileEntity modifyArrow(
-		ProjectileEntity original, ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float speed
+			ProjectileEntity original, ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float speed
 	) {
 		if (original instanceof PersistentProjectileEntity persistentProjectile) {
 			// speed is calculated from pullProgress * 3 in BowItem::onStoppedUsing

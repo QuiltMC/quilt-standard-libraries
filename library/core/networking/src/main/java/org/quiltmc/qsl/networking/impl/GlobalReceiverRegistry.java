@@ -26,12 +26,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import net.minecraft.network.NetworkPhase;
-import net.minecraft.network.NetworkSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.NetworkPhase;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.packet.payload.CustomPayload;
 
 @ApiStatus.Internal
@@ -60,7 +59,7 @@ public final class GlobalReceiverRegistry<H> {
 
 	@Nullable
 	public H getReceiver(CustomPayload.Id<?> channelName) {
-		Lock lock = this.lock.readLock();
+		final Lock lock = this.lock.readLock();
 		lock.lock();
 
 		try {
@@ -78,7 +77,7 @@ public final class GlobalReceiverRegistry<H> {
 			throw new IllegalArgumentException(String.format("Cannot register handler for reserved channel with name \"%s\"", channelName));
 		}
 
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -102,7 +101,7 @@ public final class GlobalReceiverRegistry<H> {
 		}
 
 		this.assertPayloadType(channelName);
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -119,7 +118,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public Map<CustomPayload.Id<?>, H> getReceivers() {
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -130,7 +129,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public Set<CustomPayload.Id<?>> getChannels() {
-		Lock lock = this.lock.readLock();
+		final Lock lock = this.lock.readLock();
 		lock.lock();
 
 		try {
@@ -143,7 +142,7 @@ public final class GlobalReceiverRegistry<H> {
 	// State tracking methods
 
 	public void startSession(AbstractNetworkAddon<H> addon) {
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -154,7 +153,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public void endSession(AbstractNetworkAddon<H> addon) {
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -165,11 +164,11 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	private void handleRegistration(CustomPayload.Id<?> channelName, H handler) {
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			for (AbstractNetworkAddon<H> addon : this.trackedAddons) {
+			for (final AbstractNetworkAddon<H> addon : this.trackedAddons) {
 				addon.registerChannel(channelName, handler);
 			}
 		} finally {
@@ -178,11 +177,11 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	private void handleUnregistration(CustomPayload.Id<?> channelName) {
-		Lock lock = this.lock.writeLock();
+		final Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			for (AbstractNetworkAddon<H> addon : this.trackedAddons) {
+			for (final AbstractNetworkAddon<H> addon : this.trackedAddons) {
 				addon.unregisterChannel(channelName);
 			}
 		} finally {
@@ -196,11 +195,17 @@ public final class GlobalReceiverRegistry<H> {
 		}
 
 		if (this.payloadTypeRegistry.get(channelName) == null) {
-			throw new IllegalArgumentException(String.format("Cannot register handler as no payload type has been registered with name \"%s\" for %s %s", channelName, this.side, this.phase));
+			throw new IllegalArgumentException(String.format(
+				"Cannot register handler as no payload type has been registered with name \"%s\" for %s %s",
+				channelName, this.side, this.phase
+			));
 		}
 
 		if (channelName.toString().length() > DEFAULT_CHANNEL_NAME_MAX_LENGTH) {
-			throw new IllegalArgumentException(String.format("Cannot register handler for channel with name \"%s\" as it exceeds the maximum length of 128 characters", channelName));
+			throw new IllegalArgumentException(String.format(
+				"Cannot register handler for channel with name \"%s\" as it exceeds the maximum length of 128 characters",
+				channelName
+			));
 		}
 	}
 

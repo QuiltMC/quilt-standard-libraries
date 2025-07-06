@@ -59,12 +59,13 @@ public interface ResourceLoader {
 	void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader);
 
 	/**
-	 * Requests that resource reloaders registered as the first identifier is applied before the other referenced resource reloader.
-	 * <p>
-	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 * Requests that resource reloaders registered as the first identifier is applied before the other referenced
+	 * resource reloader.
+	 *
+	 * <p>Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
 	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
-	 * <p>
-	 * Please keep in mind that this only takes effect during the application stage!
+	 *
+	 * <p>Please keep in mind that this only takes effect during the application stage!
 	 *
 	 * @param firstReloader  the identifier of the resource reloader that should run before the other
 	 * @param secondReloader the identifier of the resource reloader that should run after the other
@@ -75,8 +76,8 @@ public interface ResourceLoader {
 
 	/**
 	 * Registers a pack profile provider.
-	 * <p>
-	 * A pack profile means any provided resource packs will show up in the resource pack selection screen.
+	 *
+	 * <p>A pack profile means any provided resource packs will show up in the resource pack selection screen.
 	 * Always fired <i>after</i> the built-in pack providers.
 	 *
 	 * @param provider the provider
@@ -85,8 +86,8 @@ public interface ResourceLoader {
 
 	/**
 	 * {@return the registration of default packs event}
-	 * <p>
-	 * This event is triggered when the default resources are created and allow to register additional packs
+	 *
+	 * <p>This event is triggered when the default resources are created and allow to register additional packs
 	 * that are displayed to the user as the {@code "Default"} pack.
 	 * Added packs are added before mod packs, meaning mod resources will override added packs' resources.
 	 */
@@ -95,8 +96,8 @@ public interface ResourceLoader {
 
 	/**
 	 * {@return the registration of top packs event}
-	 * <p>
-	 * This event is triggered once all default and user packs are added.
+	 *
+	 * <p>This event is triggered once all default and user packs are added.
 	 * It allows to add additional packs that can override any other packs.
 	 */
 	@Contract(pure = true)
@@ -104,8 +105,9 @@ public interface ResourceLoader {
 
 	/**
 	 * Creates a new resource pack based on a {@link Path} as its root.
-	 * <p>
-	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * <p>If the file system of the given {@link Path} is not the operating system's file system then the pack resources
+	 * will be cached.
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod ID
 	 * @param rootPath       the root path of this resource pack
@@ -117,13 +119,17 @@ public interface ResourceLoader {
 	 */
 	default @NotNull ResourcePack newFileSystemPack(@NotNull Identifier id, @NotNull Path rootPath,
 			PackActivationType activationType) {
-		return this.newFileSystemPack(id, rootPath, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
+		return this.newFileSystemPack(
+			id, rootPath, activationType,
+			ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id)
+		);
 	}
 
 	/**
 	 * Creates a new resource pack based on a {@link Path} as its root.
-	 * <p>
-	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * <p>If the file system of the given {@link Path} is not the operating system's file system then the pack resources
+	 * will be cached.
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod ID
 	 * @param rootPath       the root path of this resource pack
@@ -136,16 +142,17 @@ public interface ResourceLoader {
 	 */
 	default @NotNull ResourcePack newFileSystemPack(@NotNull Identifier id, @NotNull Path rootPath,
 													PackActivationType activationType, @NotNull Text displayName) {
-		var container = QuiltLoader.getModContainer(id.getNamespace())
-				.orElseThrow(() ->
-						new IllegalArgumentException("No mod with ID '" + id.getNamespace() + "' could be found"));
+		final ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
+				new IllegalArgumentException("No mod with ID '" + id.getNamespace() + "' could be found")
+		);
 		return this.newFileSystemPack(id, container, rootPath, activationType, displayName);
 	}
 
 	/**
 	 * Creates a new resource pack based on a {@link Path} as its root.
-	 * <p>
-	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * <p>If the file system of the given {@link Path} is not the operating system's file system then the pack resources
+	 * will be cached.
 	 *
 	 * @param id             the identifier of the resource pack
 	 * @param owner          the mod which owns this resource pack
@@ -163,8 +170,9 @@ public interface ResourceLoader {
 
 	/**
 	 * Creates a new resource pack based on a {@link Path} as its root.
-	 * <p>
-	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * <p>If the file system of the given {@link Path} is not the operating system's file system then the pack resources
+	 * will be cached.
 	 *
 	 * @param id             the identifier of the resource pack
 	 * @param owner          the mod which owns this resource pack
@@ -181,17 +189,21 @@ public interface ResourceLoader {
 
 	/**
 	 * Registers a built-in resource pack.
-	 * <p>
-	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
+	 *
+	 * <p>A built-in resource pack is an extra resource pack provided by your mod which is not always active,
 	 * similarly to the "Programmer Art" resource pack.
-	 * <p>
-	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
-	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
-	 * <p>
-	 * The path in which the resource pack is located is in the mod JAR file under the {@code "resourcepacks/<id path>"} directory.
+	 *
+	 * <p>A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but
+	 * still directly provided by it.
+	 * For example, it could provide textures of your mod in another resolution, or could allow providing different
+	 * styles of your assets.
+	 *
+	 * <p>The path in which the resource pack is located is in the mod JAR file under the
+	 * {@code "resourcepacks/<id path>"} directory.
 	 * {@code id path} being the path specified in the identifier of this built-in resource pack.
-	 * <p>
-	 * This method will automatically fetch the {@linkplain ModContainer} based on the namespace provided in {@code id}.
+	 *
+	 * <p>This method will automatically fetch the {@linkplain ModContainer} based on the namespace provided in
+	 * {@code id}.
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
@@ -207,17 +219,21 @@ public interface ResourceLoader {
 
 	/**
 	 * Registers a built-in resource pack.
-	 * <p>
-	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
+	 *
+	 * <p>A built-in resource pack is an extra resource pack provided by your mod which is not always active,
 	 * similarly to the "Programmer Art" resource pack.
-	 * <p>
-	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
-	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
-	 * <p>
-	 * The path in which the resource pack is located is in the mod JAR file under the {@code "resourcepacks/<id path>"} directory.
+	 *
+	 * <p>A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but
+	 * still directly provided by it.
+	 * For example, it could provide textures of your mod in another resolution, or could allow providing different
+	 * styles of your assets.
+	 *
+	 * <p>The path in which the resource pack is located is in the mod JAR file under the
+	 * {@code "resourcepacks/<id path>"} directory.
 	 * {@code id path} being the path specified in the identifier of this built-in resource pack.
-	 * <p>
-	 * This method will automatically fetch the {@linkplain ModContainer} based on the namespace provided in {@code id}.
+	 *
+	 * <p>This method will automatically fetch the {@linkplain ModContainer} based on the namespace provided in
+	 * {@code id}.
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
@@ -229,22 +245,25 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
 	static boolean registerBuiltinPack(@NotNull Identifier id, @NotNull PackActivationType activationType, Text displayName) {
-		var container = QuiltLoader.getModContainer(id.getNamespace())
-				.orElseThrow(() ->
-						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
+		final ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
+				new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found")
+		);
 		return registerBuiltinPack(id, container, activationType, displayName);
 	}
 
 	/**
 	 * Registers a built-in resource pack.
-	 * <p>
-	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
+	 *
+	 * <p>A built-in resource pack is an extra resource pack provided by your mod which is not always active,
 	 * similarly to the "Programmer Art" resource pack.
-	 * <p>
-	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
-	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
-	 * <p>
-	 * The path in which the resource pack is located is in the mod JAR file under the {@code "resourcepacks/<id path>"} directory.
+	 *
+	 * <p>A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but
+	 * still directly provided by it.
+	 * For example, it could provide textures of your mod in another resolution, or could allow providing different
+	 * styles of your assets.
+	 *
+	 * <p>The path in which the resource pack is located is in the mod JAR file under the
+	 * {@code "resourcepacks/<id path>"} directory.
 	 * {@code id path} being the path specified in the identifier of this built-in resource pack.
 	 *
 	 * @param id             the identifier of the resource pack
@@ -262,14 +281,17 @@ public interface ResourceLoader {
 
 	/**
 	 * Registers a built-in resource pack.
-	 * <p>
-	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
+	 *
+	 * <p>A built-in resource pack is an extra resource pack provided by your mod which is not always active,
 	 * similarly to the "Programmer Art" resource pack.
-	 * <p>
-	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
-	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
-	 * <p>
-	 * The path in which the resource pack is located is in the mod JAR file under the {@code "resourcepacks/<id path>"} directory.
+	 *
+	 * <p>A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but
+	 * still directly provided by it.
+	 * For example, it could provide textures of your mod in another resolution, or could allow providing different
+	 * styles of your assets.
+	 *
+	 * <p>The path in which the resource pack is located is in the mod JAR file under the
+	 * {@code "resourcepacks/<id path>"} directory.
 	 * {@code id path} being the path specified in the identifier of this built-in resource pack.
 	 *
 	 * @param id             the identifier of the resource pack
@@ -281,8 +303,10 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinPack(Identifier, PackActivationType, Text)
 	 * @see #registerBuiltinPack(Identifier, ModContainer, PackActivationType)
 	 */
-	static boolean registerBuiltinPack(@NotNull Identifier id, @NotNull ModContainer container,
-									   @NotNull PackActivationType activationType, Text displayName) {
+	static boolean registerBuiltinPack(
+			@NotNull Identifier id, @NotNull ModContainer container,
+			@NotNull PackActivationType activationType, Text displayName
+	) {
 		return ResourceLoaderImpl.registerBuiltinPack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

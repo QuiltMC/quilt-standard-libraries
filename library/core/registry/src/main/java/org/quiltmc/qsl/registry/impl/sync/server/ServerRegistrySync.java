@@ -46,6 +46,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.LoaderValue;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking;
@@ -81,28 +83,43 @@ public final class ServerRegistrySync {
 		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.End.ID, ServerRegistrySync::handleEnd);
 	}
 
-	public static void handleHandshake(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.Handshake handshake, PacketSender<CustomPayload> responseSender) {
+	public static void handleHandshake(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.Handshake handshake,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleHandshake(handshake);
 	}
 
-	public static void handleSyncFailed(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.SyncFailed syncFailed, PacketSender<CustomPayload> responseSender) {
+	public static void handleSyncFailed(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.SyncFailed syncFailed,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleSyncFailed(syncFailed);
 	}
 
-	public static void handleModProtocol(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.ModProtocol modProtocol, PacketSender<CustomPayload> responseSender) {
+	public static void handleModProtocol(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.ModProtocol modProtocol,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleModProtocol(modProtocol);
 	}
 
-	public static void handleUnknownEntry(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.UnknownEntry unknownEntry, PacketSender<CustomPayload> responseSender) {
+	public static void handleUnknownEntry(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.UnknownEntry unknownEntry,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleUnknownEntry(unknownEntry);
 	}
 
-	public static void handleEnd(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.End end, PacketSender<CustomPayload> responseSender) {
+	public static void handleEnd(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.End end,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleEnd(end);
 	}
 
 	public static void readConfig() {
-		var config = RegistryConfig.INSTANCE.registry_sync;
+		final var config = RegistryConfig.INSTANCE.registry_sync;
 
 		noRegistrySyncMessage = text(config.missing_registry_sync_message.value());
 		errorStyleHeader = text(config.mismatched_entries_top_message.value());
@@ -115,15 +132,15 @@ public final class ServerRegistrySync {
 		stateValidation = !config.disable_state_validation.value();
 
 		if (stateValidation) {
-			for (var container : QuiltLoader.getAllMods()) {
-				var data = container.metadata();
-				var quiltRegistry = data.value("quilt_registry");
+			for (final ModContainer container : QuiltLoader.getAllMods()) {
+				final ModMetadata data = container.metadata();
+				final LoaderValue quiltRegistry = data.value("quilt_registry");
 
 				if (quiltRegistry == null || quiltRegistry.type() != LoaderValue.LType.OBJECT) {
 					continue;
 				}
 
-				var value = quiltRegistry.asObject().get("disable_state_validation");
+				final var value = quiltRegistry.asObject().get("disable_state_validation");
 
 				if (value != null && value.type() == LoaderValue.LType.BOOLEAN && value.asBoolean()) {
 					stateValidation = false;
@@ -153,7 +170,7 @@ public final class ServerRegistrySync {
 		Text text = null;
 		try {
 			text = Text.SerializationUtil.fromJson(string, DynamicRegistryManager.EMPTY);
-		} catch (Exception e) {}
+		} catch (Exception e) { }
 
 		return text != null ? text : Text.literal(string);
 	}
@@ -171,7 +188,7 @@ public final class ServerRegistrySync {
 			return true;
 		}
 
-		for (var registry : Registries.ROOT) {
+		for (final var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				return true;
@@ -190,7 +207,7 @@ public final class ServerRegistrySync {
 			return true;
 		}
 
-		for (var registry : Registries.ROOT) {
+		for (final var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
 				return true;
@@ -207,20 +224,20 @@ public final class ServerRegistrySync {
 			sendModProtocol(sender);
 		}
 
-		for (var registry : Registries.ROOT) {
+		for (final var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-				var map = synchronizedRegistry.quilt$getSyncMap();
+				final var map = synchronizedRegistry.quilt$getSyncMap();
 
-				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
+				final var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
 
 				sendStartPacket(sender, registry);
 				int dataLength = 0;
 
-				for (var key : map.keySet()) {
+				for (final var key : map.keySet()) {
 					dataLength += key.length();
-					var collection = map.get(key);
-					for (var entry : collection) {
+					final var collection = map.get(key);
+					for (final var entry : collection) {
 						packetData.computeIfAbsent(key, (k) -> new ArrayList<>()).add(entry);
 						dataLength += entry.path().length() + 4 + 1;
 
@@ -249,22 +266,22 @@ public final class ServerRegistrySync {
 
 	private static <T, B> void sendStateValidationRequest(Consumer<Packet<?>> sender, ServerPackets.ValidateStates.StateType type, Registry<T> registry, IdList<B> stateList, Function<T, Collection<B>> toStates) {
 		int dataLength = 0;
-		var packetData = new Int2ObjectArrayMap<IntList>();
+		final var packetData = new Int2ObjectArrayMap<IntList>();
 
-		for (var key : registry) {
+		for (final var key : registry) {
 			if (RegistrySynchronization.isEntryOptional((SimpleRegistry<? super T>) registry, key)) {
 				continue;
 			}
 
-			var blockId = registry.getRawId(key);
+			final var blockId = registry.getRawId(key);
 			dataLength += VarInts.getSizeBytes(blockId);
-			var states = toStates.apply(key);
+			final var states = toStates.apply(key);
 			var ids = new IntArrayList(states.size());
 			packetData.put(blockId, ids);
 			dataLength += VarInts.getSizeBytes(states.size());
 
-			for (var entry : states) {
-				var stateId = stateList.getRawId(entry);
+			for (final var entry : states) {
+				final var stateId = stateList.getRawId(entry);
 				dataLength += VarInts.getSizeBytes(stateId);
 				ids.add(stateId);
 

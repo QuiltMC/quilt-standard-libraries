@@ -42,25 +42,25 @@ public class BlockEntityTypeTest implements ModInitializer {
 	public static final List<AngyBlock> ANGY_BLOCKS = new ArrayList<>();
 
 	public static final AngyBlock INITIAL_ANGY_BLOCK =
-		registerAngy("initial_angy_block", MapColor.PINK);
+			registerAngy("initial_angy_block", MapColor.PINK);
 	public static final AngyBlock BUILDER_ADDED_ANGY_BLOCK =
-		registerAngy("builder_added_angy_block", MapColor.BLUE);
+			registerAngy("builder_added_angy_block", MapColor.BLUE);
 	public static final AngyBlock BUILDER_MULTI_1_ANGY_BLOCK =
-		registerAngy("builder_multi_1_angy_block", MapColor.GREEN);
+			registerAngy("builder_multi_1_angy_block", MapColor.GREEN);
 	public static final AngyBlock BUILDER_MULTI_2_ANGY_BLOCK =
-		registerAngy("builder_multi_2_angy_block", MapColor.EMERALD);
+			registerAngy("builder_multi_2_angy_block", MapColor.EMERALD);
 	public static final AngyBlock POST_ADDED_ANGY_BLOCK =
-		registerAngy("post_added_angy_block", MapColor.CYAN);
+			registerAngy("post_added_angy_block", MapColor.CYAN);
 	public static final AngyBlock POST_MULTI_1_ANGY_BLOCK =
-		registerAngy("post_multi_1_angy_block", MapColor.LIME);
+			registerAngy("post_multi_1_angy_block", MapColor.LIME);
 	public static final AngyBlock POST_MULTI_2_ANGY_BLOCK =
-		registerAngy("post_multi_2_angy_block", MapColor.LIME_TERRACOTTA);
+			registerAngy("post_multi_2_angy_block", MapColor.LIME_TERRACOTTA);
 
 	public static final BlockEntityType<ColorfulBlockEntity> COLORFUL_BLOCK_ENTITY_TYPE = QuiltBlockEntityTypeBuilder
-		.create(ColorfulBlockEntity::new, INITIAL_ANGY_BLOCK)
-		.addBlock(BUILDER_ADDED_ANGY_BLOCK)
-		.addBlocks(BUILDER_MULTI_1_ANGY_BLOCK, BUILDER_MULTI_2_ANGY_BLOCK)
-		.build();
+			.create(ColorfulBlockEntity::new, INITIAL_ANGY_BLOCK)
+			.addBlock(BUILDER_ADDED_ANGY_BLOCK)
+			.addBlocks(BUILDER_MULTI_1_ANGY_BLOCK, BUILDER_MULTI_2_ANGY_BLOCK)
+			.build();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -79,8 +79,8 @@ public class BlockEntityTypeTest implements ModInitializer {
 
 		final RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, id);
 		final AngyBlock block = Registry.register(Registries.BLOCK, blockKey, new AngyBlock(
-			AbstractBlock.Settings.copy(Blocks.STONE).key(blockKey),
-			mapColor
+				AbstractBlock.Settings.copy(Blocks.STONE).key(blockKey),
+				mapColor
 		));
 
 		final RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -31,19 +30,20 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 /**
  * Utilities for getting information about active Mod Protocols, a system for requiring compatible versions
  * of a mod or modpack to be installed on the client when connecting to a server.
- * <p>
+ *
  * <h1>The Mod Protocol System</h1>
  * <h2>Overview</h2>
- * The mod protocol system allows mods and modpacks to require specific version ranges (represented as a protocol integer)
- * to be present on both sides when joining a server.
- * <p>
- * When a client pings a server or attempts to connect, the server sends to the client a list of ALL mod protocols, containing
- * each one's id, display name and a list of supported protocol versions. Upon connection, the client replies with a list
- * of the highest version that is supported by the client and server for each protocol. The negotiated protocol version can
- * be queried with {@link ModProtocols#getSupported(ServerConfigurationNetworkHandler, ModContainer)}.
- * <p>
- * If a client does not support any of the protocol versions requested by the server, then the client will not be allowed
- * to connect (unless the mod protocol is marked optional).
+ * The mod protocol system allows mods and modpacks to require specific version ranges
+ * (represented as a protocol integer) to be present on both sides when joining a server.
+ *
+ * <p>When a client pings a server or attempts to connect, the server sends to the client a list of ALL mod protocols,
+ * containing each one's id, display name and a list of supported protocol versions. Upon connection, the client replies
+ * with a list of the highest version that is supported by the client and server for each protocol. The negotiated
+ * protocol version can be queried with
+ * {@link ModProtocols#getSupported(ServerConfigurationNetworkHandler, ModContainer)}.
+ *
+ * <p>If a client does not support any of the protocol versions requested by the server, then the client will not be
+ * allowed to connect (unless the mod protocol is marked optional).
  * <h2>Configuration</h2>
  * Mods can define a mod protocol in their {@code quilt.mod.json}.
  * <pre>{@code
@@ -56,8 +56,8 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
  * }
  * }</pre>
  *
- *  The id of the protocol is identical to the mod id. The display name is always the mod's display name (or ID if none exists)
- *  followed by the version, e.g. "Quilt Registry API v4.1.0"
+ * <p>The id of the protocol is identical to the mod id. The display name is always the mod's display name
+ * (or ID if none exists) followed by the version, e.g. "Quilt Registry API v4.1.0".
  * Protocols can also be marked optional, which means they are not required to be supported by both sides in order
  * to connect:
  * <pre>{@code
@@ -71,10 +71,10 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
  *     }
  * }
  * }</pre>
- * <p>
- * In addition to mods defining their own mod protocols, users can define a special modpack protocol in the Quilt Registry
- * config (located at {@code configs/quilt/qsl/registry.toml}). Other than being defined by the user, the modpack protocol
- * is otherwise identical to standard mod protocols.
+ *
+ * <p>In addition to mods defining their own mod protocols, users can define a special modpack protocol in the
+ * Quilt Registry config (located at {@code configs/quilt/qsl/registry.toml}). Other than being defined by the user,
+ * the modpack protocol is otherwise identical to standard mod protocols.
  */
 @ApiStatus.Experimental
 public final class ModProtocols {
@@ -115,7 +115,9 @@ public final class ModProtocols {
 	 */
 	@Contract(pure = true)
 	public static int getSupportedModpack(@NotNull ServerConfigurationNetworkHandler handler) {
-		return isModpackProtocolEnabled() ? ExtendedConnectionClient.from(handler).quilt$getModProtocol("modpack:" + getModpackProtocolId()) : UNSUPPORTED;
+		return isModpackProtocolEnabled()
+			? ExtendedConnectionClient.from(handler).quilt$getModProtocol("modpack:" + getModpackProtocolId())
+			: UNSUPPORTED;
 	}
 
 	/**
@@ -126,7 +128,9 @@ public final class ModProtocols {
 	 * @return latest supported by player protocol for mod. -1 if not supported
 	 */
 	@Contract(pure = true)
-	public static int getSupported(@NotNull ServerConfigurationNetworkHandler handler, @NotNull ModContainer modContainer) {
+	public static int getSupported(
+			@NotNull ServerConfigurationNetworkHandler handler, @NotNull ModContainer modContainer
+	) {
 		return ExtendedConnectionClient.from(handler).quilt$getModProtocol("mod:" + modContainer.metadata().id());
 	}
 }

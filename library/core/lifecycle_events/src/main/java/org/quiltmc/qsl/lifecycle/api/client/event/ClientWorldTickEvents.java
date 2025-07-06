@@ -27,9 +27,9 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * Events related to a ticking Minecraft client's world.
  *
  * <h2>A note of warning</h2>
- * <p>
- * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
- * loop is a very hot code path.
+ *
+ * <p>Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the
+ * tick loop is a very hot code path.
  */
 @ClientOnly
 public final class ClientWorldTickEvents {

@@ -21,7 +21,8 @@ package org.quiltmc.qsl.testing.api.game;
  */
 public interface QuiltGameTest {
 	/**
-	 * Use in {@link org.quiltmc.qsl.testing.api.game.annotation.GameTest} structureName to use an empty 8x8 structure for the test.
+	 * Use in {@link org.quiltmc.qsl.testing.api.game.annotation.GameTest} structureName to use an empty 8x8 structure
+	 * for the test.
 	 */
 	String EMPTY_STRUCTURE = "quilt:empty";
 
@@ -32,8 +33,8 @@ public interface QuiltGameTest {
 
 	/**
 	 * Override this method to implement custom logic to invoke the test method.
-	 * <p>
-	 * This can be used to run code before or after each test.
+	 *
+	 * <p>This can be used to run code before or after each test.
 	 * You can also pass in custom objects into the test method if desired.
 	 * The structure will have been placed in the world before this method is invoked.
 	 *

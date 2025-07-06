@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
 
 final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 	ChannelList(MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
-		super(client, top, width, bottom-top, itemHeight);
+		super(client, top, width, bottom - top, itemHeight);
 	}
 
 	@Override
@@ -51,9 +51,17 @@ final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 		}
 
 		@Override
-		public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight,
-						   int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			graphics.drawText(ChannelList.this.client.textRenderer, Text.literal(this.channel.toString()), x, y, Formatting.WHITE.getColorValue(), false);
+		public void render(
+				GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight,
+				int mouseX, int mouseY, boolean hovered, float tickDelta
+		) {
+			graphics.drawText(
+					ChannelList.this.client.textRenderer,
+					Text.literal(this.channel.toString()),
+					x, y,
+					Formatting.WHITE.getColorValue(),
+					false
+			);
 		}
 	}
 }

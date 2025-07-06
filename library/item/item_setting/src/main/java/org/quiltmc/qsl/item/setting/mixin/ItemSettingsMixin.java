@@ -16,6 +16,13 @@
 
 package org.quiltmc.qsl.item.setting.mixin;
 
+import java.util.Map;
+
+import org.spongepowered.asm.mixin.Mixin;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
 import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
@@ -23,13 +30,6 @@ import org.quiltmc.qsl.item.setting.api.QuiltCustomItemSettings;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import org.spongepowered.asm.mixin.Mixin;
-
-import java.util.Map;
 
 // for injected interface methods
 @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -101,11 +101,11 @@ abstract class ItemSettingsMixin implements QuiltItemSettingsExtensions {
 				(CustomItemSettingImpl<Map<RecipeRemainderLocation, RecipeRemainderProvider>>)
 					QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER
 			)
-				.get((Item.Settings)(Object) this)
-				.put(location, provider);
+					.get((Item.Settings) (Object) this)
+					.put(location, provider);
 		}
 
-		return (Item.Settings)(Object) this;
+		return (Item.Settings) (Object) this;
 	}
 
 	/**

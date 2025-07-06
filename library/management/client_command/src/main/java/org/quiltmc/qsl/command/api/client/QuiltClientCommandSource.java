@@ -102,8 +102,8 @@ public interface QuiltClientCommandSource extends CommandSource {
 
 	/**
 	 * Gets the meta property under {@code key} that was assigned to this source.
-	 * <p>
-	 * This method should return the same result for every call with the same {@code key}.
+	 *
+	 * <p>This method should return the same result for every call with the same {@code key}.
 	 *
 	 * @param key the meta key
 	 * @return the meta

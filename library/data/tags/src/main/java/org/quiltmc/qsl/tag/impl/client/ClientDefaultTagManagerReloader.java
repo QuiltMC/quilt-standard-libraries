@@ -34,9 +34,9 @@ import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackManager;
 import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.resource.loader.api.GroupPack;
 import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
 import org.quiltmc.qsl.resource.loader.impl.ModPackProvider;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
@@ -49,23 +49,24 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	private final PackManager resourcePackManager;
 
 	ClientDefaultTagManagerReloader() {
-		DefaultPack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
+		final DefaultPack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
 
-		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, defaultPack);
+		final GroupPack.Wrapped pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, defaultPack);
 		this.resourcePackManager = new PackManager((profileAdder) -> {
 			profileAdder.accept(PackProfile.of(
-				new PackLocationInfo(
-					"vanilla",
-					pack.getDisplayName(),
-					null,
-					pack.getKnownPackInfo()),
-				QuiltPackProfile.wrapToFactory(pack),
-				ResourceType.SERVER_DATA,
-				new PackPosition(
-					true,
-					PackProfile.InsertionPosition.BOTTOM,
-					true
-				)
+					new PackLocationInfo(
+						"vanilla",
+						pack.getDisplayName(),
+						null,
+						pack.getKnownPackInfo()
+					),
+					QuiltPackProfile.wrapToFactory(pack),
+					ResourceType.SERVER_DATA,
+					new PackPosition(
+						true,
+						PackProfile.InsertionPosition.BOTTOM,
+						true
+					)
 			));
 		}, ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER);
 	}
@@ -81,9 +82,13 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	 * @return the modified resource manager
 	 */
 	private AutoCloseableResourceManager getServerDataResourceManager() {
-		this.resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
+		this.resourcePackManager.setEnabledProfiles(
+				MinecraftClient.getInstance().getResourcePackManager().getEnabledNames()
+		);
 		this.resourcePackManager.scanPacks();
-		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, this.resourcePackManager.createResourcePacks());
+		final var manager = new MultiPackResourceManager(
+				ResourceType.SERVER_DATA, this.resourcePackManager.createResourcePacks()
+		);
 		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();
 		return manager;
 	}

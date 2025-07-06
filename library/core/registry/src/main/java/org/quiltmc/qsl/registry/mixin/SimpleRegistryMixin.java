@@ -19,7 +19,6 @@ package org.quiltmc.qsl.registry.mixin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.mojang.serialization.Lifecycle;
@@ -40,7 +39,11 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.registry.*;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistrationInfo;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -97,18 +100,24 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	private Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent;
 
 	// HACK TODO for some reason initializing this like normal doesnt work. i dont care to figure out why - glitch
-	@Inject(method = "<init>(Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V", at = @At("TAIL"))
-	private void quilt$onSimpleRegistryInit(RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci) {
+	@Inject(
+			method = "<init>(Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V",
+			at = @At("TAIL")
+	)
+	private void quilt$onSimpleRegistryInit(
+			RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci
+	) {
 		this.quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 		this.quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
 			callbacks -> context -> {
-				Identifier id = context.id();
-				V value = context.value();
-				int rawId = context.rawId();
+				final Identifier id = context.id();
+				final V value = context.value();
+				final int rawId = context.rawId();
 
-				for (var callback : callbacks) {
-					// This is done because some events may create recursion, which would corrupt the context for future queued events.
+				for (final RegistryEvents.EntryAdded<V> callback : callbacks) {
+					// This is done because some events may create recursion, which would corrupt the context for future
+					// queued events.
 					// Storing the values on this stack is much faster than instancing a new context every time.
 					if (context instanceof MutableRegistryEntryContextImpl<V> mutable) {
 						mutable.set(id, value, rawId);
@@ -119,22 +128,24 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			});
 	}
 
-	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
-		method = "register",
-		slice = @Slice(
-			from = @At(
-				value = "INVOKE",
-				target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
-				remap = false
+			method = "register",
+			slice = @Slice(
+				from = @At(
+					value = "INVOKE",
+					target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)"
+						+ "Ljava/lang/Object;",
+					remap = false
+				)
+			),
+			at = @At(
+				value = "STORE",
+				ordinal = 0
 			)
-		),
-		at = @At(
-			value = "STORE",
-			ordinal = 0
-		)
 	)
-	private Holder.Reference<V> quilt$eagerFillReference(Holder.Reference<V> reference, RegistryKey<V> key, V entry, RegistrationInfo lifecycle) {
+	private Holder.Reference<V> quilt$eagerFillReference(
+			Holder.Reference<V> reference, RegistryKey<V> key, V entry, RegistrationInfo lifecycle
+	) {
 		reference.setValue(entry);
 		return reference;
 	}
@@ -143,13 +154,13 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	 * Invokes the entry add event.
 	 */
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
-	@Inject(
-		method = "register",
-		at = @At("RETURN")
-	)
-	private void quilt$invokeEntryAddEvent(RegistryKey<V> key, V entry, RegistrationInfo info, CallbackInfoReturnable<Holder<V>> cir) {
-		this.quilt$entryContext.set(key.getValue(), entry, getRawId(entry));
-		RegistryEventStorage.as((SimpleRegistry<V>) (Object) this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
+	@Inject(method = "register", at = @At("RETURN"))
+	private void quilt$invokeEntryAddEvent(
+			RegistryKey<V> key, V entry, RegistrationInfo info, CallbackInfoReturnable<Holder<V>> cir
+	) {
+		this.quilt$entryContext.set(key.getValue(), entry, this.getRawId(entry));
+		RegistryEventStorage.as((SimpleRegistry<V>) (Object) this).quilt$getEntryAddedEvent().invoker()
+				.onAdded(this.quilt$entryContext);
 
 		this.quilt$markDirty();
 	}
@@ -167,11 +178,11 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	@Override
 	public Map<String, Collection<SyncEntry>> quilt$getSyncMap() {
 		if (this.quilt$syncMap == null) {
-			var map = new HashMap<String, Collection<SyncEntry>>();
+			final var map = new HashMap<String, Collection<SyncEntry>>();
 
 			this.entryToRawId.forEach((entry, key) -> {
-				var identifier = this.getId(entry);
-				var flag = this.quilt$entryToFlag.getOrDefault(entry, (byte) 0);
+				final Identifier identifier = this.getId(entry);
+				final byte flag = this.quilt$entryToFlag.getOrDefault(entry, (byte) 0);
 
 				if (!RegistryFlag.isSkipped(flag)) {
 					map.computeIfAbsent(
@@ -191,13 +202,15 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	public Status quilt$getContentStatus() {
 		if (this.quilt$syncStatus == null) {
 			var status = Status.VANILLA;
-			var optional = RegistryFlag.isOptional(this.quilt$flags);
-			for (var entry : this.rawIdToEntry) {
-				if (entry == null) continue;
+			final boolean optional = RegistryFlag.isOptional(this.quilt$flags);
+			for (final Holder.Reference<V> entry : this.rawIdToEntry) {
+				if (entry == null) {
+					continue;
+				}
 
-				var namespace = entry.getRegistryKey().getValue().getNamespace();
+				final String namespace = entry.getRegistryKey().getValue().getNamespace();
 				if (!ServerRegistrySync.isNamespaceVanilla(namespace)) {
-					var flag = this.quilt$entryToFlag.getOrDefault(entry.getValue(), (byte) 0);
+					final byte flag = this.quilt$entryToFlag.getOrDefault(entry.getValue(), (byte) 0);
 					if (!RegistryFlag.isSkipped(flag)) {
 						if (RegistryFlag.isOptional(flag)) {
 							status = Status.OPTIONAL;
@@ -224,18 +237,18 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			this.quilt$createIdSnapshot();
 		}
 
-		var missingEntries = new ArrayList<MissingEntry>();
+		final var missingEntries = new ArrayList<MissingEntry>();
 
-		var holders = new ArrayList<>(this.rawIdToEntry);
+		final var holders = new ArrayList<>(this.rawIdToEntry);
 		int currentId = 0;
 
 		this.entryToRawId.clear();
 		this.rawIdToEntry.clear();
 
-		for (var key : entries.keySet()) {
-			for (var idEntry : entries.get(key)) {
-				var identifier = Identifier.of(key, idEntry.path());
-				var holder = this.byId.get(identifier);
+		for (final String key : entries.keySet()) {
+			for (final SyncEntry idEntry : entries.get(key)) {
+				final var identifier = Identifier.of(key, idEntry.path());
+				final Holder.Reference<V> holder = this.byId.get(identifier);
 
 				if (holder != null) {
 					this.entryToRawId.put(holder.getValue(), idEntry.rawId());
@@ -258,10 +271,12 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			this.rawIdToEntry.add(null);
 		}
 
-		for (var holder : holders) {
-			if (holder == null) continue;
+		for (final Holder.Reference<V> holder : holders) {
+			if (holder == null) {
+				continue;
+			}
 
-			var id = ++currentId;
+			final int id = ++currentId;
 			this.entryToRawId.put(holder.getValue(), id);
 			this.rawIdToEntry.set(id, holder);
 		}
@@ -309,10 +324,10 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 		if (this.quilt$idSnapshot != null) {
 			this.rawIdToEntry.clear();
 			this.rawIdToEntry.addAll(this.quilt$idSnapshot);
-			var size = this.rawIdToEntry.size();
+			final int size = this.rawIdToEntry.size();
 
 			for (int i = 0; i < size; i++) {
-				var entry = this.rawIdToEntry.get(i);
+				final Holder.Reference<V> entry = this.rawIdToEntry.get(i);
 				if (entry != null) {
 					this.entryToRawId.put(entry.getValue(), i);
 				}

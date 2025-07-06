@@ -27,11 +27,12 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Holds events related to {@link Screen}s.
- * <p>
- * A screen being (re)initialized will reset the screen to its default state,
+ *
+ * <p>A screen being (re)initialized will reset the screen to its default state,
  * therefore reverting all changes a mod developer may have applied to a screen.
- * <p>
- * The primary entrypoint into a screen is when it is being opened, this is signified by an event {@link ScreenEvents#BEFORE_INIT before}
+ *
+ * <p>The primary entrypoint into a screen is when it is being opened, this is signified by an event
+ * {@link ScreenEvents#BEFORE_INIT before}
  * and {@link ScreenEvents#AFTER_INIT after} initialization of the screen.
  *
  * @see QuiltScreen
@@ -42,9 +43,9 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 public final class ScreenEvents {
 	/**
 	 * An event that is called before a screen is initialized to its default state.
-	 * <p>
-	 * This event indicates that a screen with no special handling of element repositioning has been resized, and therefore
-	 * is being re-initialized.
+	 *
+	 * <p>This event indicates that a screen with no special handling of element repositioning has been resized,
+	 * and therefore is being re-initialized.
 	 * This event can also indicate that the previous screen has been changed.
 	 *
 	 * @see ScreenEvents#AFTER_INIT
@@ -57,17 +58,20 @@ public final class ScreenEvents {
 
 	/**
 	 * An event that is called after a screen is initialized to its default state.
-	 * <p>
-	 * Typically, this event is used to modify a screen after the screen has been initialized.
+	 *
+	 * <p>Typically, this event is used to modify a screen after the screen has been initialized.
 	 * Modifications such as changing sizes of buttons, removing buttons and adding/removing child elements to the screen
 	 * can be done safely using this event.
-	 * <p>
-	 * This event can also indicate that the previous screen has been closed.
-	 * <p>
-	 * Note that by adding an element to a screen, the element is not automatically {@link net.minecraft.client.gui.screen.Screen ticked} or {@link net.minecraft.client.gui.Drawable drawn}.
-	 * Unless the element is a button, you need to call the specific {@link Screen#tick() tick} and {@link net.minecraft.client.gui.Drawable#render(GuiGraphics, int, int, float) render} methods in the corresponding screen events.
-	 * <p>
-	 * For example, to add a button to the title screen, the following code could be used:
+	 *
+	 * <p>This event can also indicate that the previous screen has been closed.
+	 *
+	 * <p>Note that by adding an element to a screen, the element is not automatically
+	 * {@link net.minecraft.client.gui.screen.Screen ticked} or {@link net.minecraft.client.gui.Drawable drawn}.
+	 * Unless the element is a button, you need to call the specific {@link Screen#tick() tick} and
+	 * {@link net.minecraft.client.gui.Drawable#render(GuiGraphics, int, int, float) render}
+	 * methods in the corresponding screen events.
+	 *
+	 * <p>For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
 	 * ScreenEvents.AFTER_INIT.register((screen, client, firstInit) -> {
 	 * 	if (screen instanceof TitleScreen) {
@@ -87,10 +91,11 @@ public final class ScreenEvents {
 	/**
 	 * An event that is called after {@link Screen#removed()} is called.
 	 * This event signifies that the screen is now closed.
-	 * <p>
-	 * This event is typically used to undo any screen specific state changes such as
+	 *
+	 * <p>This event is typically used to undo any screen specific state changes such as
 	 * terminate threads spawned by a screen.
-	 * This event may precede initialization events {@link ScreenEvents#BEFORE_INIT} but there is no guarantee that event will be called immediately afterwards.
+	 * This event may precede initialization events {@link ScreenEvents#BEFORE_INIT} but there is no guarantee that
+	 * event will be called immediately afterwards.
 	 */
 	public static final Event<Remove> REMOVE = Event.create(Remove.class, callbacks -> screen -> {
 		for (var callback : callbacks) {

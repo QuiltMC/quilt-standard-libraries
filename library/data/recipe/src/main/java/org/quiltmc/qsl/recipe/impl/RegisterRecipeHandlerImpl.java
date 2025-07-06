@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
@@ -29,7 +30,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
@@ -40,8 +40,8 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(
-		Map<Identifier, Recipe<?>> resourceMap,
-		HolderLookup.Provider registries
+			Map<Identifier, Recipe<?>> resourceMap,
+			HolderLookup.Provider registries
 	) {
 		this.resourceMap = resourceMap;
 		this.recipes = ImmutableList.builder();
@@ -49,13 +49,13 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	}
 
 	private void register(RecipeHolder<?> recipeHolder) {
-        this.recipes.add(recipeHolder);
+		this.recipes.add(recipeHolder);
 		this.registered++;
 
 		if (RecipeManagerImpl.DEBUG_MODE) {
 			RecipeManagerImpl.LOGGER.info(
-				"Added recipe {} with type {} in register phase.",
-				recipeHolder.id(), recipeHolder.value().getType()
+					"Added recipe {} with type {} in register phase.",
+					recipeHolder.id(), recipeHolder.value().getType()
 			);
 		}
 	}
