@@ -20,13 +20,14 @@ package org.quiltmc.qsl.entity.extensions.api;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.entity.extensions.impl.TradeOfferInternals;
 
 /**
@@ -41,13 +42,13 @@ public final class TradeOfferHelper {
 
 	/**
 	 * Registers offer factories for use by villagers.
-	 * <p>
-	 * This adds offers to the default (non-rebalanced) trades, but they may be used with the rebalanced trade
+	 *
+	 * <p>This adds offers to the default (non-rebalanced) trades, but they may be used with the rebalanced trade
 	 * experiment as well if no rebalanced trades override them.<br>
 	 * To add separate offers for the rebalanced trade experiment, use
 	 * {@link #addToExperimentalVillagerOfferPool(RegistryKey, int, TradeOffers.Factory...)}.
-	 * <p>
-	 * Below is an example of registering an offer factory to be added a blacksmith with a profession level of 3:
+	 *
+	 * <p>Below is an example of registering an offer factory to be added a blacksmith with a profession level of 3:
 	 * <blockquote><pre>
 	 * TradeOfferHelper.registerVillagerOffers(
 	 * 	VillagerProfession.BLACKSMITH, 3,
@@ -63,11 +64,11 @@ public final class TradeOfferHelper {
 	 * @see #addToVillagerOfferPool(RegistryKey, int, Collection)
 	 */
 	public static synchronized void addToVillagerOfferPool(
-		@NotNull
-		RegistryKey<VillagerProfession> profession,
-		int level,
-		@NotNull
-		TradeOffers.Factory... factories
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			TradeOffers.Factory... factories
 	) {
 		TradeOfferInternals.addToVillagerOfferPool(profession, level, factories);
 	}
@@ -76,11 +77,11 @@ public final class TradeOfferHelper {
 	 * @see #addToVillagerOfferPool(RegistryKey, int, TradeOffers.Factory...)
 	 */
 	public static synchronized void addToVillagerOfferPool(
-		@NotNull
-		RegistryKey<VillagerProfession> profession,
-		int level,
-		@NotNull
-		Collection<TradeOffers.Factory> factories
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			Collection<TradeOffers.Factory> factories
 	) {
 		Objects.requireNonNull(factories, "factories must not be null");
 		addToVillagerOfferPool(profession, level, factories.toArray(new TradeOffers.Factory[0]));
@@ -88,8 +89,8 @@ public final class TradeOfferHelper {
 
 	/**
 	 * Registers offer factories for use by villagers when the rebalanced trade experiment is enabled.
-	 * <p>
-	 * Below is an example of registering an offer factory to be added a blacksmith with a profession level of 3:
+	 *
+	 * <p>Below is an example of registering an offer factory to be added a blacksmith with a profession level of 3:
 	 * <blockquote><pre>
 	 * TradeOfferHelper.registerRebalancedVillagerOffers(
 	 * 	VillagerProfession.BLACKSMITH, 3,
@@ -97,9 +98,9 @@ public final class TradeOfferHelper {
 	 * 	new CustomTradeFactory(...)
 	 * );
 	 * </pre></blockquote>
-	 * <p>
-	 * <strong>Experimental feature</strong>. This API may receive changes as necessary to adapt to further experiment
-	 * changes.
+	 *
+	 * <p><strong>Experimental feature</strong>. This API may receive changes as necessary to adapt to further
+	 * experiment changes.
 	 *
 	 * @param profession 	the registry key of the villager profession to assign the trades to
 	 * @param level			the profession level the villager must be to offer the trades; must not be negative
@@ -107,11 +108,11 @@ public final class TradeOfferHelper {
 	 */
 	@ApiStatus.Experimental
 	public static synchronized void addToExperimentalVillagerOfferPool(
-		@NotNull
-		RegistryKey<VillagerProfession> profession,
-		int level,
-		@NotNull
-		TradeOffers.Factory... factories
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			TradeOffers.Factory... factories
 	) {
 		TradeOfferInternals.addToExperimentalVillagerOfferPool(profession, level, factories);
 	}
@@ -121,19 +122,19 @@ public final class TradeOfferHelper {
 	 */
 	@ApiStatus.Experimental
 	public static synchronized void addToExperimentalVillagerOfferPool(
-		@NotNull
-		RegistryKey<VillagerProfession> profession,
-		int level,
-		@NotNull
-		Collection<TradeOffers.Factory> factories
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			Collection<TradeOffers.Factory> factories
 	) {
 		addToExperimentalVillagerOfferPool(profession, level, factories.toArray(new TradeOffers.Factory[0]));
 	}
 
 	/**
 	 * Adds offer factories to the identified Wandering Trader offer {@code pool}.
-	 * <p>
-	 * Identifiers for vanilla's pools can be found in {@link VanillaWanderingTraderPoolIds}.<br>
+	 *
+	 * <p>Identifiers for vanilla's pools can be found in {@link VanillaWanderingTraderPoolIds}.<br>
 	 * If the passed identifier hasn't been
 	 * {@linkplain #registerWanderingTraderPool(Identifier, int, TradeOffers.Factory...) registered} yet,
 	 * then the passed {@code factories} will only be added to the pool once it has been registered.
@@ -144,10 +145,10 @@ public final class TradeOfferHelper {
 	 * @see #addToWanderingTraderOfferPool(Identifier, Collection)
 	 */
 	public static synchronized void addToWanderingTraderOfferPool(
-		@NotNull
-		Identifier id,
-		@NotNull
-		TradeOffers.Factory... factories
+			@NotNull
+			Identifier id,
+			@NotNull
+			TradeOffers.Factory... factories
 	) {
 		TradeOfferInternals.addToWanderingTraderOfferPool(id, factories);
 	}
@@ -156,7 +157,7 @@ public final class TradeOfferHelper {
 	 * @see #addToWanderingTraderOfferPool(Identifier, TradeOffers.Factory...)
 	 */
 	public static synchronized void addToWanderingTraderOfferPool(
-		Identifier pool, Collection<TradeOffers.Factory> factories
+			Identifier pool, Collection<TradeOffers.Factory> factories
 	) {
 		TradeOfferInternals.addToWanderingTraderOfferPool(pool, factories.toArray(new TradeOffers.Factory[0]));
 	}
@@ -173,11 +174,11 @@ public final class TradeOfferHelper {
 	 * @see #registerWanderingTraderPool(Identifier, int, Collection)
 	 */
 	public static synchronized void registerWanderingTraderPool(
-		@NotNull
-		Identifier id,
-		int count,
-		@NotNull
-		TradeOffers.Factory... factories
+			@NotNull
+			Identifier id,
+			int count,
+			@NotNull
+			TradeOffers.Factory... factories
 	) {
 		TradeOfferInternals.registerWanderingTraderPool(id, count, factories);
 	}
@@ -186,11 +187,11 @@ public final class TradeOfferHelper {
 	 * @see #registerWanderingTraderPool(Identifier, int, TradeOffers.Factory...)
 	 */
 	public static synchronized void registerWanderingTraderPool(
-		@NotNull
-		Identifier pool,
-		int count,
-		@NotNull
-		Collection<TradeOffers.Factory> factories
+			@NotNull
+			Identifier pool,
+			int count,
+			@NotNull
+			Collection<TradeOffers.Factory> factories
 	) {
 		TradeOfferInternals.registerWanderingTraderPool(pool, count, factories.toArray(new TradeOffers.Factory[0]));
 	}

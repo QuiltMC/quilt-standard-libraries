@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.rendering.entity.test.client;
 
+import java.util.List;
+import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.MinecraftClient;
@@ -37,16 +40,12 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 import org.quiltmc.qsl.rendering.entity.test.EntityRenderingTestmod;
 
-import java.util.List;
-import java.util.Map;
-
 @ClientOnly
 public final class ClientEntityRenderingTestmod implements
-	ClientModInitializer,
-	ArmorRenderingRegistry.TextureProvider,
-	ArmorRenderingRegistry.ModelProvider,
-	ArmorRenderingRegistry.RenderLayerProvider
-{
+		ClientModInitializer,
+		ArmorRenderingRegistry.TextureProvider,
+		ArmorRenderingRegistry.ModelProvider,
+		ArmorRenderingRegistry.RenderLayerProvider {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ArmorRenderingRegistry.registerTextureProvider(this, EntityRenderingTestmod.QUILT_LEGGINGS);
@@ -55,12 +54,12 @@ public final class ClientEntityRenderingTestmod implements
 	}
 
 	private static final RegistryKey<EquipmentAsset> LEGGINGS_KEY = EntityRenderingTestmod
-		.createAssetKey("quilt_leggings");
+			.createAssetKey("quilt_leggings");
 
 	private static @NotNull BipedEntityModel<BipedRenderState> getWitchHeadModel() {
-        final ModelPart witchHeadPart = MinecraftClient.getInstance().getEntityModelLoader()
-			.getModelPart(EntityModelLayers.WITCH)
-			.getChild(EntityModelPartNames.HEAD);
+		final ModelPart witchHeadPart = MinecraftClient.getInstance().getEntityModelLoader()
+				.getModelPart(EntityModelLayers.WITCH)
+				.getChild(EntityModelPartNames.HEAD);
 
 		return new BipedEntityModel<>(
 			new ModelPart(
@@ -82,8 +81,8 @@ public final class ClientEntityRenderingTestmod implements
 
 	@Override
 	public @NotNull RegistryKey<EquipmentAsset> getArmorTexture(
-		@NotNull RegistryKey<EquipmentAsset> texture, @NotNull BipedRenderState state,
-		@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer
+			@NotNull RegistryKey<EquipmentAsset> texture, @NotNull BipedRenderState state,
+			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer
 	) {
 		if (slot == EquipmentSlot.LEGS) {
 			// redirect leggings texture, because it has a non-standard name
@@ -95,8 +94,8 @@ public final class ClientEntityRenderingTestmod implements
 
 	@Override
 	public @NotNull BipedEntityModel<BipedRenderState> getArmorModel(
-		@NotNull BipedEntityModel<BipedRenderState> model, @NotNull BipedRenderState state,
-		@NotNull ItemStack stack, @NotNull EquipmentSlot slot
+			@NotNull BipedEntityModel<BipedRenderState> model, @NotNull BipedRenderState state,
+			@NotNull ItemStack stack, @NotNull EquipmentSlot slot
 	) {
 		if (slot == EquipmentSlot.HEAD) {
 			return getWitchHeadModel();
@@ -106,7 +105,10 @@ public final class ClientEntityRenderingTestmod implements
 	}
 
 	@Override
-	public @NotNull RenderLayer getArmorRenderLayer(@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset) {
+	public @NotNull RenderLayer getArmorRenderLayer(
+			@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
+			@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
+	) {
 		// this render layer is required since we use the witch head model for the quilt_helmet
 		return RenderLayer.getEntityCutoutNoCull(Identifier.ofDefault("textures/entity/witch.png"));
 	}

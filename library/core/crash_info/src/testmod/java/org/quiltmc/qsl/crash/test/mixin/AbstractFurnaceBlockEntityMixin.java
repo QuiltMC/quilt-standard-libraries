@@ -16,20 +16,19 @@
 
 package org.quiltmc.qsl.crash.test.mixin;
 
-import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class AbstractFurnaceBlockEntityMixin {
+abstract class AbstractFurnaceBlockEntityMixin {
 	@Inject(method = "tick", at = @At("HEAD"))
 	private static void crashOnTick(ServerWorld world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
 		if (world.getBlockState(pos.down()).getBlock() == Blocks.DIAMOND_BLOCK) {

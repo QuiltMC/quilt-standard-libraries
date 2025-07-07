@@ -16,24 +16,26 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.minecraft.item.ClearAllEffectsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-
 import net.minecraft.entity.LivingEntity;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // See LivingEntityMixin
 @Mixin(value = ClearAllEffectsComponent.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class ClearAllEffectsComponentMixin {
 	@Inject(method = "apply", at = @At(value = "HEAD"))
-	private void quilt$addRemovalReason(World world, ItemStack stack, LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
+	private void quilt$addRemovalReason(
+			World world, ItemStack stack, LivingEntity entity, CallbackInfoReturnable<Boolean> cir
+	) {
 		entity.clearStatusEffects(StatusEffectRemovalReason.DRANK_MILK);
 	}
 }

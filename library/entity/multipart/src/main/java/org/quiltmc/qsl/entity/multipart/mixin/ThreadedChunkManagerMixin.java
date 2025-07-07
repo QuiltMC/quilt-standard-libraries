@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin;
 
-import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import net.minecraft.server.world.ThreadedChunkManager;
-import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.server.world.ThreadedChunkManager;
+
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 @Mixin(ThreadedChunkManager.class)
 abstract class ThreadedChunkManagerMixin {

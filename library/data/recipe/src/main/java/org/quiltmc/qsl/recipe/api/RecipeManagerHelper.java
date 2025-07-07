@@ -33,14 +33,14 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Registers a static recipe.
-	 * <p>
-	 * A static recipe is a recipe that is registered at mod startup (or later) and is kept during the whole lifecycle
-	 * of the game.
-	 * <p>
-	 * Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
+	 *
+	 * <p>A static recipe is a recipe that is registered at mod startup (or later) and is kept during the whole
+	 * lifecycle of the game.
+	 *
+	 * <p>Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
 	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already loaded.
-	 * <p>
-	 * Static recipes can be added at any time, but are only applied after a data pack reload.
+	 *
+	 * <p>Static recipes can be added at any time, but are only applied after a data pack reload.
 	 *
 	 * @param id the identifier of the recipe
 	 * @param recipe the recipe data to register
@@ -49,7 +49,7 @@ public final class RecipeManagerHelper {
 	 * @throws IllegalStateException if another recipe with the same identifier is already registered
 	 */
 	public static <I extends RecipeInput, R extends Recipe<I>> RecipeData<?, ?> registerStaticRecipe(
-		Identifier id, RecipeData<I, R> recipe
+			Identifier id, RecipeData<I, R> recipe
 	) {
 		RecipeManagerImpl.registerStaticRecipe(id, recipe);
 		return recipe;
@@ -57,10 +57,10 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Registers a dynamic recipe provider.
-	 * <p>
-	 * The dynamic recipe provider is called when the recipes are loaded.
-	 * <p>
-	 * Triggered before {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}
+	 *
+	 * <p>The dynamic recipe provider is called when the recipes are loaded.
+	 *
+	 * <p>Triggered before {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}
 	 * and {@link #removeRecipes(RecipeLoadingEvents.RemoveRecipesCallback)}.
 	 *
 	 * @param callback the callback to add recipes
@@ -72,8 +72,8 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Modifies recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
-	 * <p>
-	 * Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
+	 *
+	 * <p>Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
 	 * and before {@link #removeRecipes(RecipeLoadingEvents.RemoveRecipesCallback)}.
 	 *
 	 * @param callback the callback to modify recipes
@@ -85,8 +85,8 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Removes recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
-	 * <p>
-	 * Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
+	 *
+	 * <p>Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
 	 * and {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}.
 	 *
 	 * @param callback the callback to remove recipes

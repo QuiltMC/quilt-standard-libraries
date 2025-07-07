@@ -32,8 +32,8 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
  * Holds {@link RegistryEntryAttachment}s for different properties that blocks can hold.
- * <p>
- * Current properties:
+ *
+ * <p>Current properties:
  * <ul>
  *     <li>{@link #FLATTENABLE}</li>
  *     <li>{@link #OXIDIZABLE}</li>
@@ -51,8 +51,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/flattenable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
@@ -64,8 +65,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for oxidizable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/oxidizable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
@@ -77,8 +79,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for waxable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/waxable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
@@ -90,8 +93,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for strippable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippable.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/strippable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
@@ -115,8 +119,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for flammable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammable.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/flammable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
@@ -128,8 +133,9 @@ public class BlockContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for enchanting boosters in bookshelf equivalents.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
 	 */
 	public static final RegistryEntryAttachment<Block, EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
 			.builder(Registries.BLOCK,

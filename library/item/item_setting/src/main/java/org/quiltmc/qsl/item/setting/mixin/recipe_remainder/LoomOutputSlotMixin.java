@@ -35,11 +35,11 @@ abstract class LoomOutputSlotMixin extends Slot {
 	}
 
 	@Redirect(
-		method = "onTakeItem",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"
-		)
+			method = "onTakeItem",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"
+			)
 	)
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack resultStack) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(

@@ -37,7 +37,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Registry Lib Events Test");
 
 	private static final RegistryKey<Block> TEST_BLOCK_KEY =
-		RegistryKey.of(RegistryKeys.BLOCK, Identifier.of("quilt_registry_test_events", "event_test_block"));
+			RegistryKey.of(RegistryKeys.BLOCK, Identifier.of("quilt_registry_test_events", "event_test_block"));
 
 	private static boolean entryAddEventFoundBlock = false;
 
@@ -53,12 +53,15 @@ public class RegistryLibEventsTest implements ModInitializer {
 		});
 
 		register(
-			TEST_BLOCK_KEY,
-			new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_KEY))
+				TEST_BLOCK_KEY,
+				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_KEY))
 		);
 
 		if (!entryAddEventFoundBlock) {
-			throw new AssertionError("Registry entry add event was not invoked on the registration of block with id " + TEST_BLOCK_KEY);
+			throw new AssertionError(
+					"Registry entry add event was not invoked on the registration of block with id "
+						+ TEST_BLOCK_KEY
+			);
 		}
 	}
 

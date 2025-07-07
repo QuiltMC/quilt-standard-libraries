@@ -18,7 +18,6 @@ package org.quiltmc.qsl.tooltip.mixin.client;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +36,11 @@ import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 @Mixin(ItemStack.class)
 public final class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"))
-	private void onGetTooltip(Item.TooltipContext context, PlayerEntity player, TooltipConfig config, CallbackInfoReturnable<List<Text>> cir) {
-		ItemTooltipCallback.EVENT.invoker().onTooltipRequest((ItemStack) (Object) this, player, context, config, cir.getReturnValue());
+	private void onGetTooltip(
+			Item.TooltipContext context, PlayerEntity player, TooltipConfig config,
+			CallbackInfoReturnable<List<Text>> cir
+	) {
+		ItemTooltipCallback.EVENT.invoker()
+				.onTooltipRequest((ItemStack) (Object) this, player, context, config, cir.getReturnValue());
 	}
 }

@@ -37,14 +37,21 @@ public final class NetworkingPlayPacketClientTest implements ClientModInitialize
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		//ClientPlayNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, this::receive);
-		PayloadTypeRegistry.playC2S().register(NetworkingPlayPacketTest.TEST_CHANNEL, NetworkingPlayPacketTest.TEST_CODEC);
+		PayloadTypeRegistry.playC2S()
+				.register(NetworkingPlayPacketTest.TEST_CHANNEL, NetworkingPlayPacketTest.TEST_CODEC);
 
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			ClientPlayNetworking.registerReceiver(NetworkingPlayPacketTest.TEST_CHANNEL,  (client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf));
+			ClientPlayNetworking.registerReceiver(
+					NetworkingPlayPacketTest.TEST_CHANNEL,
+					(client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf)
+			);
 		});
 	}
 
-	private void receive(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, NetworkingPlayPacketTest.TestPacket text) {
+	private void receive(
+			ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client,
+			NetworkingPlayPacketTest.TestPacket text
+	) {
 		client.execute(() -> {
 			LOGGER.info("Received text from {} which says {}.", NetworkingPlayPacketTest.TEST_CHANNEL, text.text());
 			client.inGameHud.setOverlayMessage(Text.literal(text.text()), true);

@@ -33,9 +33,10 @@ import net.minecraft.resource.ResourceManager;
 import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 
 /**
- * Represents the context implementation for the {@link org.quiltmc.qsl.registry.api.event.RegistryEvents#DYNAMIC_REGISTRY_SETUP} event.
- * <p>
- * <b>It is imperative that the passed registries are mutable to allow registration.</b>
+ * Represents the context implementation for the
+ * {@link org.quiltmc.qsl.registry.api.event.RegistryEvents#DYNAMIC_REGISTRY_SETUP} event.
+ *
+ * <p><b>It is imperative that the passed registries are mutable to allow registration.</b>
  *
  * @author LambdAurora
  */
@@ -44,7 +45,9 @@ public class DynamicRegistryManagerSetupContextImpl implements DynamicRegistryMa
 	private final ResourceManager resourceManager;
 	private final Map<RegistryKey<?>, MutableRegistry<?>> registries;
 
-	public DynamicRegistryManagerSetupContextImpl(ResourceManager resourceManager, Stream<MutableRegistry<?>> registries) {
+	public DynamicRegistryManagerSetupContextImpl(
+			ResourceManager resourceManager, Stream<MutableRegistry<?>> registries
+	) {
 		this.resourceManager = resourceManager;
 		this.registries = new Object2ObjectOpenHashMap<>();
 
@@ -70,6 +73,7 @@ public class DynamicRegistryManagerSetupContextImpl implements DynamicRegistryMa
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public Stream<RegistryEntry<?>> streamRegistries() {
-		return this.registries.entrySet().stream().map(entry -> new RegistryEntry<>((RegistryKey) entry.getKey(), entry.getValue()));
+		return this.registries.entrySet().stream()
+			.map(entry -> new RegistryEntry<>((RegistryKey) entry.getKey(), entry.getValue()));
 	}
 }

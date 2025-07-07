@@ -16,6 +16,22 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -29,27 +45,11 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Holder;
 
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectEvents;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 // We want to make sure that our wrap operations are put before other mods,
 // so that we wrap the vanilla call and not a mod's call.
@@ -135,15 +135,16 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 
 	// share effect instance rather than using @Local because it's less brittle
 	@ModifyReceiver(
-		method = "onEffectsRemoved",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/effect/StatusEffectInstance;getEffectType()Lnet/minecraft/registry/Holder;"
-		)
+			method = "onEffectsRemoved",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/effect/StatusEffectInstance;getEffectType()"
+					+ "Lnet/minecraft/registry/Holder;"
+			)
 	)
 	private StatusEffectInstance shareEffectInstance(
-		StatusEffectInstance instance,
-		@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
+			StatusEffectInstance instance,
+			@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
 	) {
 		effectInstance.set(instance);
 		return instance;
@@ -153,13 +154,13 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 			method = "onEffectsRemoved",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved" +
-					"(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved"
+					+ "(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
 			)
 	)
 	private void callOnRemovedWithReason(
-		StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
-		@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
+			StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
+			@Share("effectInstance") LocalRef<StatusEffectInstance> effectInstance
 	) {
 		final LivingEntity self = (LivingEntity) (Object) this;
 		final StatusEffectInstance effect = effectInstance.get();
@@ -168,11 +169,9 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 	}
 
 	@Inject(
-		method = "removeStatusEffect(Lnet/minecraft/registry/Holder;)Z",
-		at = @At(
-			value = "HEAD"
-		),
-		cancellable = true
+			method = "removeStatusEffect(Lnet/minecraft/registry/Holder;)Z",
+			at = @At(value = "HEAD"),
+			cancellable = true
 	)
 	public void shouldRemoveEffect(Holder<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
 		final StatusEffectInstance instance = this.activeStatusEffects.get(effect);
@@ -191,7 +190,7 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 			)
 	)
 	public void addRemoveStatusEffectReason(
-		LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
+			LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
 	) {
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.GENERIC_ONE;
 		original.call(instance, effects);
@@ -206,13 +205,13 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 			)
 	)
 	private Map<Holder<StatusEffect>, StatusEffectInstance> filterStatusEffects(
-		Map<Holder<StatusEffect>, StatusEffectInstance> effects
+			Map<Holder<StatusEffect>, StatusEffectInstance> effects
 	) {
 		final Iterator<StatusEffectInstance> itr = effects.values().iterator();
 		while (itr.hasNext()) {
 			final StatusEffectInstance effect = itr.next();
 			final boolean remove = StatusEffectUtils.shouldRemove(
-				(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
+					(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
 			);
 
 			if (remove) {
@@ -224,11 +223,11 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 	}
 
 	@Redirect(
-		method = "clearStatusEffects",
-		at = @At(
-			value = "INVOKE",
-			target = "Ljava/util/Map;clear()V"
-		)
+			method = "clearStatusEffects",
+			at = @At(
+				value = "INVOKE",
+				target = "Ljava/util/Map;clear()V"
+			)
 	)
 	private void stopClear(Map<?, ?> instance) {
 		// don't clear map, effects are selectively removed in filterStatusEffects
@@ -239,34 +238,34 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 			target = "Lnet/minecraft/entity/LivingEntity;onEffectsRemoved(Ljava/util/Collection;)V")
 	)
 	private void removeWithExpiredReason(
-		LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
+			LivingEntity instance, Collection<StatusEffectInstance> effects, Operation<Void> original
 	) {
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.EXPIRED;
 		original.call(instance, effects);
 	}
 
 	@WrapOperation(
-		method = "onStatusEffectUpgraded",
-		at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
-		)
+			method = "onStatusEffectUpgraded",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
+			)
 	)
 	private void removeWithUpgradeApplyingReason(
-		StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
-		StatusEffectInstance statusEffectInstance
+			StatusEffect instance, AttributeContainer attributes, Operation<Void> original,
+			StatusEffectInstance statusEffectInstance
 	) {
 		final LivingEntity self = (LivingEntity) (Object) this;
 		instance.onRemoved(
-			self,
-			attributes,
-			statusEffectInstance,
-			StatusEffectRemovalReason.UPGRADE_REAPPLYING
+				self,
+				attributes,
+				statusEffectInstance,
+				StatusEffectRemovalReason.UPGRADE_REAPPLYING
 		);
 		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(
-			self,
-			statusEffectInstance,
-			StatusEffectRemovalReason.UPGRADE_REAPPLYING
+				self,
+				statusEffectInstance,
+				StatusEffectRemovalReason.UPGRADE_REAPPLYING
 		);
 	}
 
@@ -274,13 +273,13 @@ abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStat
 			method = "onStatusEffectUpgraded",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied" +
-					"(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied"
+					+ "(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
 				shift = At.Shift.AFTER
 			)
 	)
 	private void callOnAppliedEvent_upgradeReapplying(
-		StatusEffectInstance effect, boolean reapplyEffect, Entity source, CallbackInfo ci
+			StatusEffectInstance effect, boolean reapplyEffect, Entity source, CallbackInfo ci
 	) {
 		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, true);
 	}

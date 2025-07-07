@@ -18,9 +18,9 @@
 package org.quiltmc.qsl.worldgen.dimension.impl;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.TeleportTarget;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.world.entity.TeleportTarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 

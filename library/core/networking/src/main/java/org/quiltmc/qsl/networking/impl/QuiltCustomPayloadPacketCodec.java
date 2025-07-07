@@ -22,7 +22,7 @@ import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public interface QuiltCustomPayloadPacketCodec<B extends PacketByteBuf> {
-	void setPacketCodecProvider(CustomPayloadTypeProvider<B> customPayloadTypeProvider);
+	void qsl$setPacketCodecProvider(CustomPayloadTypeProvider<B> customPayloadTypeProvider);
 
 	interface CustomPayloadTypeProvider<B extends PacketByteBuf> {
 		CustomPayload.Type<B, ? extends CustomPayload> get(B packetByteBuf, Identifier identifier);

@@ -28,10 +28,11 @@ import org.quiltmc.qsl.item.extensions.mixin.crossbow.CrossbowItemAccessor;
 
 /**
  * An interface to implement for all custom crossbows in Quilt.
- * <p>
- * This is meant to be used on a {@link net.minecraft.item.CrossbowItem} class.
- * <p>
- * In order to modify the projectile shot from your crossbow, implementing and registering {@link CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow} is recommended.
+ *
+ * <p>This is meant to be used on a {@link net.minecraft.item.CrossbowItem} class.
+ *
+ * <p>In order to modify the projectile shot from your crossbow, implementing and registering
+ * {@link CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow} is recommended.
  *
  * @see ProjectileModifyingCrossbowItem
  */
@@ -39,15 +40,17 @@ import org.quiltmc.qsl.item.extensions.mixin.crossbow.CrossbowItemAccessor;
 public interface CrossbowExtensions {
 	/**
 	 * Allows modifying the speed of the crossbow projectile.
-	 * <p>
-	 * The default implementation follows the vanilla values for projectiles
+	 *
+	 * <p>The default implementation follows the vanilla values for projectiles
 	 *
 	 * @param stack  the item stack for the crossbow
 	 * @param component the projectile component for the crossbow
 	 * @param entity the entity shooting the crossbow
 	 * @return the speed of the projectile
 	 */
-	default float getProjectileSpeed(@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity) {
+	default float getProjectileSpeed(
+			@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity
+	) {
 		return CrossbowItemAccessor.invokeGetSpeed(component);
 	}
 }

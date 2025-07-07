@@ -21,13 +21,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.loot.LootTables;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.text.Text;
-import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -47,6 +46,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
@@ -100,7 +100,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 
 	@GameTest(structureName = QuiltGameTest.EMPTY_STRUCTURE)
 	public void flatten(QuiltTestContext context) {
-		var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_SHOVEL));
+		final var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_SHOVEL));
 
 		tester.push(Blocks.DIRT.getDefaultState(), Blocks.DIRT_PATH.getDefaultState());
 		tester.push(Blocks.GRASS_BLOCK.getDefaultState(), Blocks.DIRT_PATH.getDefaultState());
@@ -111,7 +111,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 
 	@GameTest(structureName = QuiltGameTest.EMPTY_STRUCTURE)
 	public void strip(QuiltTestContext context) {
-		var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_AXE));
+		final var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_AXE));
 
 		tester.push(Blocks.OAK_LOG.getDefaultState(), Blocks.STRIPPED_OAK_LOG.getDefaultState());
 		tester.push(
@@ -143,8 +143,8 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	}
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
-		Optional<T> entry = attachment.get(block);
-		Identifier id = Registries.BLOCK.getId(block);
+		final Optional<T> entry = attachment.get(block);
+		final Identifier id = Registries.BLOCK.getId(block);
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}
@@ -178,7 +178,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 		void run(QuiltTestContext context) {
 			this.entries.forEach(entry -> context.setBlockState(entry.pos(), entry.baseState()));
 
-			var player = context.createMockPlayer(GameMode.SURVIVAL);
+			final PlayerEntity player = context.createMockPlayer(GameMode.SURVIVAL);
 			this.entries.forEach(entry -> {
 				context.useStackOnBlockAt(player, this.tool, entry.pos(), Direction.UP);
 			});

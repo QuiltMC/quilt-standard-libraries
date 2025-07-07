@@ -21,13 +21,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.loot.LootTable;
-import net.minecraft.registry.RegistryKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnLocation;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.loot.LootTable;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.block.Block;
-import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.mob.MobEntity;
@@ -37,7 +44,6 @@ import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.entity.extensions.impl.QuiltEntityType;
 
 /**
@@ -71,8 +77,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Creates an entity type builder.
-	 * <p>
-	 * This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 *
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
 	 *
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
@@ -106,8 +112,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Creates an entity type builder for a living entity.
-	 * <p>
-	 * This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 *
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
 	 *
 	 * @param <T> the type of entity
 	 * @return a new living entity type builder
@@ -230,8 +236,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Sets the maximum block range at which players can see this entity type.
-	 * <p>
-	 * This gets rounded up to the next integer radius in chunks.
+	 *
+	 * <p>This gets rounded up to the next integer radius in chunks.
 	 *
 	 * @param range the tracking range in blocks
 	 * @return this builder for chaining
@@ -253,10 +259,11 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Sets whether this entity type should always update velocity to the client on a tracked tick.
-	 * <p>
-	 * This respects {@link QuiltEntityTypeBuilder#trackingTickInterval}.
 	 *
-	 * @param alwaysUpdateVelocity {@code true} if this entity type should always update velocity to the client on a tracked tick, or {@code false} otherwise
+	 * <p>This respects {@link QuiltEntityTypeBuilder#trackingTickInterval}.
+	 *
+	 * @param alwaysUpdateVelocity {@code true} if this entity type should always update velocity to the client on a
+	 *                                           tracked tick, or {@code false} otherwise
 	 * @return this builder for chaining
 	 */
 	public QuiltEntityTypeBuilder<T> alwaysUpdateVelocity(boolean alwaysUpdateVelocity) {
@@ -269,8 +276,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * wither rose, sweet berry bush, cactus, and fire-damage-dealing blocks for
 	 * non-fire-resistant mobs.
 	 *
-	 * <p>
-	 * {@code minecraft:prevent_mob_spawning_inside} tag overrides this.
+	 * <p>{@code minecraft:prevent_mob_spawning_inside} tag overrides this.
 	 * With this setting, fire-resistant mobs can spawn on/in fire damage dealing blocks,
 	 * and wither skeletons can spawn in wither roses. If a block added is not in the default
 	 * blacklist, the addition has no effect.
@@ -294,7 +300,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * Sets the dimensional scale of this entity when it is spawned.
 	 * This is currently (as of 1.20.6) only used for the Slime and Magma cube entities.
 	 */
-	public QuiltEntityTypeBuilder<T> spawnDimensionsScale(float scale){
+	public QuiltEntityTypeBuilder<T> spawnDimensionsScale(float scale) {
 		this.spawnDimensionsScale = scale;
 		return this;
 	}
@@ -544,8 +550,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		/**
 		 * Registers a spawn restriction for this entity.
-		 * <p>
-		 * This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
+		 *
+		 * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
 		 *
 		 * @param location the type of location for this entity type to spawn in
 		 * @param heightmap what part of the heightmap for this entity type to spawn in
@@ -561,7 +567,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		@Override
 		public EntityType<T> build() {
-			EntityType<T> type = super.build();
+			final EntityType<T> type = super.build();
 
 			if (this.spawnPredicate != null) {
 				SpawnRestriction.register(type, this.restrictionLocation, this.restrictionHeightmap, this.spawnPredicate);

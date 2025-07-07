@@ -42,11 +42,12 @@ public final class ServerLoginConnectionEvents {
 
 	/**
 	 * An event for the start of login queries of the server login network handler.
-	 * This event may be used to register {@link ServerLoginNetworking.QueryResponseReceiver login query response handlers}
-	 * using {@link ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)}
+	 * This event may be used to register
+	 * {@linkplain ServerLoginNetworking.QueryResponseReceiver login query response handlers} using
+	 * {@link ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)}
 	 * since this event is fired just before the first login query response is processed.
-	 * <p>
-	 * You may send login queries to the connected client using the provided {@link PacketSender}.
+	 *
+	 * <p>You may send login queries to the connected client using the provided {@link PacketSender}.
 	 */
 	public static final Event<QueryStart> QUERY_START = Event.create(QueryStart.class, callbacks -> (handler, server, sender, synchronizer) -> {
 		for (QueryStart callback : callbacks) {
@@ -56,8 +57,8 @@ public final class ServerLoginConnectionEvents {
 
 	/**
 	 * An event for the disconnection of the server login network handler.
-	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 *
+	 * <p>No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, server) -> {
 		for (Disconnect callback : callbacks) {
@@ -81,7 +82,10 @@ public final class ServerLoginConnectionEvents {
 	 */
 	@FunctionalInterface
 	public interface QueryStart extends EventAwareListener {
-		void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, LoginPacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer);
+		void onLoginStart(
+				ServerLoginNetworkHandler handler, MinecraftServer server, LoginPacketSender sender,
+				ServerLoginNetworking.LoginSynchronizer synchronizer
+		);
 	}
 
 	/**

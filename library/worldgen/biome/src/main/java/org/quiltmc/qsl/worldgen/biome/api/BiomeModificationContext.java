@@ -287,7 +287,7 @@ public interface BiomeModificationContext {
 		default boolean removeFeature(RegistryKey<PlacedFeature> placedFeatureKey) {
 			boolean anyFound = false;
 
-			for (GenerationStep.Feature step : GenerationStep.Feature.values()) {
+			for (final GenerationStep.Feature step : GenerationStep.Feature.values()) {
 				if (this.removeFeature(step, placedFeatureKey)) {
 					anyFound = true;
 				}
@@ -345,15 +345,15 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes any spawns matching the given predicate from this biome, and returns true if any matched.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		boolean removeSpawns(BiPredicate<SpawnGroup, SpawnSettings.SpawnEntry> predicate);
 
 		/**
 		 * Removes all spawns of the given entity type.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 *
 		 * @return True if any spawns were removed.
 		 */
@@ -363,8 +363,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes all spawns of the given spawn group.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns(SpawnGroup group) {
 			this.removeSpawns((spawnGroup, spawnEntry) -> spawnGroup == group);
@@ -372,8 +372,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes all spawns.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns() {
 			this.removeSpawns((spawnGroup, spawnEntry) -> true);
@@ -389,8 +389,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes a spawn cost entry for a given entity type.
-		 * <p>
-		 * Associated JSON property: {@code spawn_costs}.
+		 *
+		 * <p>Associated JSON property: {@code spawn_costs}.
 		 */
 		void clearSpawnCost(EntityType<?> entityType);
 	}

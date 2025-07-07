@@ -44,10 +44,10 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	private final HolderLookup.Provider registries;
 
 	BasicRecipeHandlerImpl(
-		RecipeManager recipeManager,
-		Multimap<RecipeType<?>, RecipeHolder<?>> byType,
-		Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
-		HolderLookup.Provider registries
+			RecipeManager recipeManager,
+			Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+			Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+			HolderLookup.Provider registries
 	) {
 		this.recipeManager = recipeManager;
 		this.byType = byType;
@@ -87,8 +87,8 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 		final var typedRecipes = this.byType.get(type);
 
 		if (typedRecipes.isEmpty()) {
-            return null;
-        }
+			return null;
+		}
 
 		return (RecipeHolder<T>) typedRecipes.stream()
 			.filter(holder -> holder.id().getValue().equals(id))

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.entity.extensions.impl.networking.QuiltEntityNetworkingInitializer;
 
 public final class QuiltTrackedDataHandlerRegistry {
@@ -33,7 +34,9 @@ public final class QuiltTrackedDataHandlerRegistry {
 	 * @return the registered tracked data
 	 */
 	@Contract("null, _ -> fail; _, null -> fail; _, _ -> param2")
-	public static <T> TrackedDataHandler<T> register(@NotNull Identifier identifier, @NotNull TrackedDataHandler<T> handler) {
+	public static <T> TrackedDataHandler<T> register(
+			@NotNull Identifier identifier, @NotNull TrackedDataHandler<T> handler
+	) {
 		return QuiltEntityNetworkingInitializer.register(identifier, handler);
 	}
 }

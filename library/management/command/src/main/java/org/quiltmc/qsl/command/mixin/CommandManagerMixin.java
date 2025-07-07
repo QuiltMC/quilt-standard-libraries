@@ -49,7 +49,7 @@ import org.quiltmc.qsl.command.api.ServerArgumentType;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
 
 @Mixin(CommandManager.class)
-public abstract class CommandManagerMixin {
+abstract class CommandManagerMixin {
 	@Shadow
 	@Final
 	private CommandDispatcher<ServerCommandSource> dispatcher;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,7 @@ import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
+import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.server.ServerLoginNetworking;
@@ -65,20 +65,27 @@ public final class NetworkingImpl {
 		return channelName.equals(REGISTER_CHANNEL) || channelName.equals(UNREGISTER_CHANNEL);
 	}
 
-	private static void receiveEarlyRegistration(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender<CustomQueryPayload> sender) {
+	private static void receiveEarlyRegistration(
+			MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf,
+			ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender<CustomQueryPayload> sender
+	) {
 		if (!understood) {
 			// The client is likely a vanilla client.
 			return;
 		}
 
-		int n = buf.readVarInt();
-		List<CustomPayload.Id<?>> ids = new ArrayList<>(n);
+		final int n = buf.readVarInt();
+		final List<CustomPayload.Id<?>> ids = new ArrayList<>(n);
 
 		for (int i = 0; i < n; i++) {
 			ids.add(new CustomPayload.Id<>(buf.readIdentifier()));
 		}
 
-		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).quilt$getPendingChannelsNames(NetworkPhase.LOGIN).addAll(ids);
-		NetworkingImpl.LOGGER.debug("Received accepted channels from the client for \"{}\"", handler.getConnectionInfo());
+		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection())
+				.quilt$getPendingChannelsNames(NetworkPhase.LOGIN).addAll(ids);
+		NetworkingImpl.LOGGER.debug(
+				"Received accepted channels from the client for \"{}\"",
+				handler.getConnectionInfo()
+		);
 	}
 }

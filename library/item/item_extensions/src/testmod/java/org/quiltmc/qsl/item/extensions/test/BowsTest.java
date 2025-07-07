@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
+
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.component.type.ChargedProjectilesComponent;
@@ -33,14 +35,11 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 
-import org.jetbrains.annotations.Range;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
 import org.quiltmc.qsl.item.extensions.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extensions.api.crossbow.ProjectileModifyingCrossbowItem;
-
-import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
 
 public class BowsTest implements ModInitializer {
 	private static final RegistryKey<Item> TEST_BOW_KEY = createItemKey("test_bow");
@@ -65,8 +64,8 @@ public class BowsTest implements ModInitializer {
 	) {
 		@Override
 		public void onProjectileShot(
-			ItemStack crossbowStack, ItemStack projectileStack,
-			LivingEntity entity, @NotNull ProjectileEntity projectileEntity
+				ItemStack crossbowStack, ItemStack projectileStack,
+				LivingEntity entity, @NotNull ProjectileEntity projectileEntity
 		) {
 			if (projectileEntity instanceof PersistentProjectileEntity persistentProjectileEntity) {
 				persistentProjectileEntity.setDamage(1000);
@@ -75,15 +74,15 @@ public class BowsTest implements ModInitializer {
 
 		@Override
 		public float getProjectileSpeed(
-			@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity
+				@NotNull ItemStack stack, @NotNull ChargedProjectilesComponent component, @NotNull LivingEntity entity
 		) {
 			return 10f;
 		}
 	};
 
 	private static PersistentProjectileEntity replaceIllusionerArrowsWithTridents(
-		ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress,
-		PersistentProjectileEntity projectile
+			ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress,
+			PersistentProjectileEntity projectile
 	) {
 		if (user instanceof IllusionerEntity && user.getWorld() instanceof ServerWorld world) {
 			return ProjectileEntity.spawn(TridentEntity::new, world, new ItemStack(Items.TRIDENT), user, 0, 1.5f, 1.0f);
@@ -93,8 +92,8 @@ public class BowsTest implements ModInitializer {
 	}
 
 	private static void makeSkeletonArrowsNoClip(
-		ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress,
-		PersistentProjectileEntity projectile
+			ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress,
+			PersistentProjectileEntity projectile
 	) {
 		if (user instanceof AbstractSkeletonEntity) {
 			projectile.setNoClip(true);

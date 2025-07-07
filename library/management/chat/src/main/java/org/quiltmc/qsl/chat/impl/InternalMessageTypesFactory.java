@@ -21,7 +21,7 @@ import java.util.EnumSet;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
- * Provides some common shortcuts for message type generation
+ * Provides some common shortcuts for message type generation.
  */
 public final class InternalMessageTypesFactory {
 	private InternalMessageTypesFactory() {}

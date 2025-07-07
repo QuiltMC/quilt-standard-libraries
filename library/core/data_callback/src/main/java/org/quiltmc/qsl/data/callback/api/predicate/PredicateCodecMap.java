@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.data.callback.api.predicate;
 
-import com.google.common.collect.HashBiMap;
-import com.mojang.serialization.Codec;
-import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.data.callback.api.CodecMap;
-
 import java.util.Map;
 import java.util.function.Supplier;
+
+import com.google.common.collect.HashBiMap;
+import com.mojang.serialization.Codec;
+
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.data.callback.api.CodecMap;
 
 /**
  * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codecs created by shared providers. This class

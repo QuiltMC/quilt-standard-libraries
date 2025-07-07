@@ -26,12 +26,14 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 /**
- * Converts various callbacks from {@link QuiltChatEvents} into {@link ChatEvent.TypedChatApiHook}s
+ * Converts various callbacks from {@link QuiltChatEvents} into {@link ChatEvent.TypedChatApiHook}s.
  */
 public class InternalChatEventCallbackConverters {
 	private InternalChatEventCallbackConverters() {}
 
-	public static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(QuiltChatEvents.Modify modify, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(
+			QuiltChatEvents.Modify modify, EnumSet<QuiltMessageType> types
+	) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -45,7 +47,9 @@ public class InternalChatEventCallbackConverters {
 		};
 	}
 
-	public static ChatEvent.TypedChatApiHook<Boolean> cancelToHook(QuiltChatEvents.Cancel cancel, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<Boolean> cancelToHook(
+			QuiltChatEvents.Cancel cancel, EnumSet<QuiltMessageType> types
+	) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -59,7 +63,9 @@ public class InternalChatEventCallbackConverters {
 		};
 	}
 
-	public static ChatEvent.TypedChatApiHook<Void> cancelledToHook(QuiltChatEvents.Cancelled cancelled, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<Void> cancelledToHook(
+			QuiltChatEvents.Cancelled cancelled, EnumSet<QuiltMessageType> types
+	) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -74,7 +80,9 @@ public class InternalChatEventCallbackConverters {
 		};
 	}
 
-	public static ChatEvent.TypedChatApiHook<Void> beforeToHook(QuiltChatEvents.Before before, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<Void> beforeToHook(
+			QuiltChatEvents.Before before, EnumSet<QuiltMessageType> types
+	) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -89,7 +97,9 @@ public class InternalChatEventCallbackConverters {
 		};
 	}
 
-	public static ChatEvent.TypedChatApiHook<Void> afterToHook(QuiltChatEvents.After after, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<Void> afterToHook(
+			QuiltChatEvents.After after, EnumSet<QuiltMessageType> types
+	) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {

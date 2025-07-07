@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.random.RandomGenerator;
@@ -32,10 +33,8 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.TradeableItem;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
 @Mixin(TradeOffers.TypeAwareBuyForOneEmeraldFactory.class)
-public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
+abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 	/**
 	 * Vanilla will check the "VillagerType -> Item" map in the stream and throw an exception for villager types not specified in the map.
 	 * This breaks any and all custom villager types.
@@ -54,14 +53,14 @@ public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 			method = "create",
 			at = @At(
 				value = "NEW",
-				target = "(Lnet/minecraft/village/TradeableItem;Lnet/minecraft/item/ItemStack;IIF)" +
-					"Lnet/minecraft/village/TradeOffer;"
+				target = "(Lnet/minecraft/village/TradeableItem;Lnet/minecraft/item/ItemStack;IIF)"
+					+ "Lnet/minecraft/village/TradeOffer;"
 			),
 			cancellable = true
 	)
 	private void failOnNullItem(
-		Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir,
-		@Local TradeableItem buyingItem
+			Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir,
+			@Local TradeableItem buyingItem
 	) {
 		// Will return true for an "empty" item stack that had null passed in the ctor
 		if (buyingItem.count() == 0 || buyingItem.itemStack().isEmpty()) {

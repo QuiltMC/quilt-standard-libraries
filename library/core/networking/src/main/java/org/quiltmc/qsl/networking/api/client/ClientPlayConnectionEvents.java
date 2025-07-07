@@ -19,7 +19,6 @@ package org.quiltmc.qsl.networking.api.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.payload.CustomPayload;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
@@ -44,8 +43,9 @@ public final class ClientPlayConnectionEvents {
 
 	/**
 	 * An event for notification when the client play network handler is ready to send packets to the server.
-	 * <p>
-	 * At this stage, the network handler is ready to send packets to the server since the client's local state has been set up.
+	 *
+	 * <p>At this stage, the network handler is ready to send packets to the server since the client's local state has
+	 * been set up.
 	 */
 	public static final Event<Join> JOIN = Event.create(Join.class, callbacks -> (handler, sender, client) -> {
 		for (Join callback : callbacks) {
@@ -55,8 +55,8 @@ public final class ClientPlayConnectionEvents {
 
 	/**
 	 * An event for the disconnection of the client play network handler.
-	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 *
+	 * <p>No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, client) -> {
 		for (Disconnect callback : callbacks) {

@@ -16,27 +16,20 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.server;
 
-import com.google.common.collect.ImmutableMap;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.jcip.annotations.Immutable;
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.util.Language;
 
 import org.quiltmc.loader.api.minecraft.DedicatedServerOnly;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
-import java.util.Map;
-
 @DedicatedServerOnly
 @Mixin(Language.class)
-public class LanguageMixin {
-
+abstract class LanguageMixin {
 	@ModifyArg(
 			method = "create",
 			at = @At(
@@ -49,5 +42,4 @@ public class LanguageMixin {
 		ResourceLoaderImpl.appendLanguageEntries(map);
 		return map;
 	}
-
 }

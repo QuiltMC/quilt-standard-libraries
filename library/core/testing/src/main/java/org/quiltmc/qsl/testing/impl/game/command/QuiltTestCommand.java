@@ -19,7 +19,6 @@ package org.quiltmc.qsl.testing.impl.game.command;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -39,25 +38,28 @@ import net.minecraft.util.math.BlockPos;
 @ApiStatus.Internal
 public final class QuiltTestCommand {
 	public static int executeExport(ServerCommandSource source) {
-		BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
-		ServerWorld world = source.getWorld();
-		BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
+		final BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
+		final ServerWorld world = source.getWorld();
+		final BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
 
 		if (nearestStructureBlockPos == null) {
 			source.sendError(Text.literal("Couldn't find any structure block within 15 blocks radius."));
 			return 0;
 		} else {
-			var structureBlock = (StructureBlockBlockEntity) world.getBlockEntity(nearestStructureBlockPos);
+			final var structureBlock = (StructureBlockBlockEntity) world.getBlockEntity(nearestStructureBlockPos);
 			return executeExport(source, structureBlock.getStructureName());
 		}
 	}
 
 	public static int executeExport(ServerCommandSource source, String structure) {
-		Path directoryPath = StructureTestUtil.testStructuresDirectoryName;
-		var structureId = Identifier.parse(structure);
+		final Path directoryPath = StructureTestUtil.testStructuresDirectoryName;
+		final var structureId = Identifier.parse(structure);
 
-		Path structurePath = source.getWorld().getStructureTemplateManager().exportStructure(structureId, ".nbt");
-		Path exportedPath = NbtProvider.convertNbtToSnbt(DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath);
+		final Path structurePath = source.getWorld().getStructureTemplateManager()
+				.exportStructure(structureId, ".nbt");
+		final Path exportedPath = NbtProvider.convertNbtToSnbt(
+				DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath
+		);
 
 		if (exportedPath == null) {
 			source.sendError(Text.literal("Failed to export " + structurePath));
@@ -67,7 +69,10 @@ public final class QuiltTestCommand {
 			try {
 				Files.createDirectories(exportedPath.getParent());
 			} catch (IOException error) {
-				source.sendError(Text.literal("Could not create folder " + exportedPath.getParent() + ", a stack trace is available in the logs."));
+				source.sendError(Text.literal(
+						"Could not create folder " + exportedPath.getParent()
+							+ ", a stack trace is available in the logs."
+				));
 				error.printStackTrace();
 				return 1;
 			}

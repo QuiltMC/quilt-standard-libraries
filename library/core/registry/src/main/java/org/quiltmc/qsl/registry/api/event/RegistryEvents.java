@@ -28,11 +28,11 @@ import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 
 /**
  * Events for listening to the manipulation of Minecraft's content registries.
- * <p>
- * The events are to be used for very low-level purposes, and callbacks are only called on registry manipulations
+ *
+ * <p>The events are to be used for very low-level purposes, and callbacks are only called on registry manipulations
  * occurring after the event registration. This means that mod load order can affect what is picked up by these events.
- * <p>
- * For more high-level monitoring of registries, including methods to ease the inconvenience of mod load order,
+ *
+ * <p>For more high-level monitoring of registries, including methods to ease the inconvenience of mod load order,
  * use {@link RegistryMonitor}.
  */
 public final class RegistryEvents {
@@ -41,8 +41,8 @@ public final class RegistryEvents {
 
 	/**
 	 * Gets the entry added event for a specific Minecraft registry.
-	 * <p>
-	 * The event is invoked upon the addition or assignment of an entry in the specified registry.
+	 *
+	 * <p>The event is invoked upon the addition or assignment of an entry in the specified registry.
 	 *
 	 * @param registry the {@link Registry} for this event to listen for. Must be an instance of {@link SimpleRegistry}.
 	 * @param <V>      the entry type of the {@link Registry} to listen for
@@ -56,15 +56,16 @@ public final class RegistryEvents {
 	/**
 	 * This event gets triggered when a new {@link DynamicRegistryManager} gets created,
 	 * but before it gets filled.
-	 * <p>
-	 * This event can be used to register callbacks to dynamic registries, or to pre-fill some values.
-	 * <p>
-	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+	 *
+	 * <p>This event can be used to register callbacks to dynamic registries, or to pre-fill some values.
+	 *
+	 * <p><strong>Important Note</strong>: The passed dynamic registry manager might not
 	 * contain the registry, as this event is invoked for each layer of
 	 * the combined registry manager, and each layer holds different registries.
 	 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.
 	 */
-	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(DynamicRegistrySetupCallback.class,
+	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(
+			DynamicRegistrySetupCallback.class,
 			callbacks -> context -> {
 				for (var callback : callbacks) {
 					callback.onDynamicRegistrySetup(context);
@@ -75,15 +76,16 @@ public final class RegistryEvents {
 	/**
 	 * This event gets triggered when a new {@link DynamicRegistryManager} gets created,
 	 * after it has been filled with the registry entries specified by data packs and after the registries have been frozen.
-	 * <p>
-	 * This event can be used to register callbacks to dynamic registries, or to inspect values.
-	 * <p>
-	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+	 *
+	 * <p>This event can be used to register callbacks to dynamic registries, or to inspect values.
+	 *
+	 * <p><strong>Important Note</strong>: The passed dynamic registry manager might not
 	 * contain the registry, as this event is invoked for each layer of
 	 * the combined registry manager, and each layer holds different registries.
 	 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.
 	 */
-	public static final Event<DynamicRegistryLoadedCallback> DYNAMIC_REGISTRY_LOADED = Event.create(DynamicRegistryLoadedCallback.class,
+	public static final Event<DynamicRegistryLoadedCallback> DYNAMIC_REGISTRY_LOADED = Event.create(
+			DynamicRegistryLoadedCallback.class,
 			callbacks -> registryManager -> {
 				for (var callback : callbacks) {
 					callback.onDynamicRegistryLoaded(registryManager);
@@ -113,11 +115,12 @@ public final class RegistryEvents {
 		/**
 		 * Called when a new {@link DynamicRegistryManager} gets created,
 		 * but before it gets filled.
-		 * <p>
-		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+		 *
+		 * <p><strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of
 		 * the combined registry manager, and each layer holds different registries.
-		 * Use {@link DynamicRegistryManager#getLookup} or other utility methods provided by the context object to prevent crashes.
+		 * Use {@link DynamicRegistryManager#getLookup} or other utility methods provided by the context object to
+		 * prevent crashes.
 		 *
 		 * @param context the dynamic registry manager setup context
 		 */
@@ -129,8 +132,8 @@ public final class RegistryEvents {
 		/**
 		 * Called when a new {@link DynamicRegistryManager} gets created,
 		 * after it has been filled with the registry entries specified by data packs and after the registries have been frozen.
-		 * <p>
-		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+		 *
+		 * <p><strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of
 		 * the combined registry manager, and each layer holds different registries.
 		 * Use {@link DynamicRegistryManager#getLookup} to prevent crashes.

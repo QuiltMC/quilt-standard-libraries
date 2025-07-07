@@ -16,7 +16,10 @@
 
 package org.quiltmc.qsl.item.extensions.mixin.bow;
 
-import org.quiltmc.qsl.item.extensions.impl.BowAttackModificationImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -27,11 +30,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
+import org.quiltmc.qsl.item.extensions.impl.BowAttackModificationImpl;
 
 @Mixin(IllusionerEntity.class)
 abstract class IllusionerBowAttackMixin extends MobEntity implements RangedAttackMob {
@@ -41,17 +40,17 @@ abstract class IllusionerBowAttackMixin extends MobEntity implements RangedAttac
 	}
 
 	@WrapOperation(
-		method = "attack",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/projectile/ProjectileUtil;createArrowProjectile(" +
-				"Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;FLnet/minecraft/item/ItemStack;)" +
-				"Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
-		)
+			method = "attack",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/projectile/ProjectileUtil;createArrowProjectile("
+					+ "Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;FLnet/minecraft/item/ItemStack;"
+					+ ")Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
+			)
 	)
 	private PersistentProjectileEntity modifyShotProjectile(
-		LivingEntity owner, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
-		Operation<PersistentProjectileEntity> original
+			LivingEntity owner, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
+			Operation<PersistentProjectileEntity> original
 	) {
 		return BowAttackModificationImpl.modifyShotProjectile(
 			original.call(owner, arrowStack, pullProgress, bowStack),

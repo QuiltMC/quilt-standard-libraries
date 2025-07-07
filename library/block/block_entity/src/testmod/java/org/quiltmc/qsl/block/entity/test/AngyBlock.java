@@ -16,9 +16,8 @@
 
 package org.quiltmc.qsl.block.entity.test;
 
-import com.mojang.serialization.MapCodec;
-
 import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockRenderType;
@@ -50,12 +49,13 @@ public class AngyBlock extends BlockWithEntity {
 			if (player.isSneaking()) {
 				blockEntity.rollColor();
 				player.sendMessage(Text.literal("Argh! Why did you dance!")
-					.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())), false);
+						.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())), false);
 			} else {
-				player.sendMessage(Text.literal("I'm am angy block!! But I like the color #")
-						.append(Integer.toHexString(blockEntity.getColor())).append("!")
-						.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())),
-					false
+				player.sendMessage(
+						Text.literal("I'm am angy block!! But I like the color #")
+							.append(Integer.toHexString(blockEntity.getColor())).append("!")
+							.styled(style -> style.withColor(0xff000000 | blockEntity.getColor())),
+						false
 				);
 			}
 		}

@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.entity.test;
 
-import java.util.Collections;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -34,7 +32,8 @@ import org.quiltmc.qsl.entity.extensions.api.QuiltEntityTypeBuilder;
 // This test is intentionally not an entrypoint; it only verifies the generics of the entity type builder propagate properly
 final class EntityTypeBuilderGenericsTest {
 	static EntityType<Entity> ENTITY_1 = QuiltEntityTypeBuilder.create("quilt.entity_1").build();
-	static EntityType<LivingEntity> LIVING_ENTITY_1 = QuiltEntityTypeBuilder.createLiving("quilt.living_entity_1").build();
+	static EntityType<LivingEntity> LIVING_ENTITY_1 = QuiltEntityTypeBuilder.createLiving("quilt.living_entity_1")
+			.build();
 	static EntityType<TestEntity> TEST_ENTITY_1 = QuiltEntityTypeBuilder.createLiving("quilt.test_entity_1")
 			.entityFactory(TestEntity::new)
 			.spawnGroup(SpawnGroup.CREATURE)

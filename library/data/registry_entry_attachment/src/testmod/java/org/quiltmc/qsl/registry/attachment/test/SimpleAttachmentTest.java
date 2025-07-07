@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.registry.attachment.test;
 
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.createId;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -28,22 +31,19 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
-import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.createId;
-import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
-
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT = RegistryEntryAttachment
-		.intBuilder(Registries.ITEM, createId("test_attachment"))
-		.build();
+			.intBuilder(Registries.ITEM, createId("test_attachment"))
+			.build();
 	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 = RegistryEntryAttachment
-		.floatBuilder(Registries.ITEM, createId("test_attachment_2"))
-		.build();
+			.floatBuilder(Registries.ITEM, createId("test_attachment_2"))
+			.build();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		registerItemWithExtension(
-			"simple_attachment_test_item", MyItem::new,
-			TEST_ATTACHMENT_2, 2.0f
+				"simple_attachment_test_item", MyItem::new,
+				TEST_ATTACHMENT_2, 2.0f
 		);
 	}
 

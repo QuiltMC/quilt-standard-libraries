@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 
 import com.google.common.collect.Iterables;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
@@ -38,24 +39,23 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-
 @Mixin(RecipeManager.class)
-public class RecipeManagerMixin {
-	@Shadow @Final private HolderLookup.Provider registries;
+abstract class RecipeManagerMixin {
+	@Shadow
+	@Final
+	private HolderLookup.Provider registries;
 
 	@ModifyArg(
-			method = "prepare(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)" +
-				"Lnet/minecraft/recipe/RecipeMap;",
+			method = "prepare(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)"
+				+ "Lnet/minecraft/recipe/RecipeMap;",
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/recipe/RecipeMap;create(Ljava/lang/Iterable;)Lnet/minecraft/recipe/RecipeMap;"
 			)
 	)
 	private Iterable<RecipeHolder<?>> addRecipes(
-		Iterable<RecipeHolder<?>> recipes,
-		@Local SortedMap<Identifier, Recipe<?>> resourceMap
+			Iterable<RecipeHolder<?>> recipes,
+			@Local SortedMap<Identifier, Recipe<?>> resourceMap
 	) {
 		final ArrayList<RecipeHolder<?>> modifiableRecipes;
 		if (recipes instanceof ArrayList<RecipeHolder<?>> arrayList) {
@@ -71,13 +71,13 @@ public class RecipeManagerMixin {
 	}
 
 	@Inject(
-		method = "apply(Lnet/minecraft/recipe/RecipeMap;Lnet/minecraft/resource/ResourceManager;" +
-			"Lnet/minecraft/util/profiler/Profiler;)V",
-		at = @At("HEAD")
+			method = "apply(Lnet/minecraft/recipe/RecipeMap;Lnet/minecraft/resource/ResourceManager;"
+				+ "Lnet/minecraft/util/profiler/Profiler;)V",
+			at = @At("HEAD")
 	)
 	private void applyModifications(CallbackInfo ci, @Local(argsOnly = true) LocalRef<RecipeMap> recipeMap) {
 		recipeMap.set(RecipeManagerImpl.applyModifications(
-			(RecipeManager) (Object) this, recipeMap.get(), this.registries)
+				(RecipeManager) (Object) this, recipeMap.get(), this.registries)
 		);
 	}
 }

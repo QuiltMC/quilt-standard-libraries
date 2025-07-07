@@ -56,8 +56,8 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 
 	/**
 	 * Gets the information of this argument type.
-	 * <p>
-	 * This will only be used on clients who recognize this argument.
+	 *
+	 * <p>This will only be used on clients who recognize this argument.
 	 *
 	 * @return argument type information
 	 */
@@ -91,9 +91,11 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
 			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
 			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
-		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
-		var info = ArgumentTypeInfosAccessor.callRegister(Registries.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
-		RegistrySynchronization.setEntryOptional((SimpleRegistry<ArgumentTypeInfo<?, ?>>) Registries.COMMAND_ARGUMENT_TYPE, info);
+		final var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
+		final var info = ArgumentTypeInfosAccessor
+				.callRegister(Registries.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
+		RegistrySynchronization
+				.setEntryOptional((SimpleRegistry<ArgumentTypeInfo<?, ?>>) Registries.COMMAND_ARGUMENT_TYPE, info);
 		ServerArgumentTypes.register(value);
 		return value;
 	}

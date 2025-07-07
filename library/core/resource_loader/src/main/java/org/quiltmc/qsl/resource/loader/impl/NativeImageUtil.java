@@ -16,22 +16,23 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import com.mojang.blaze3d.texture.NativeImage;
-import org.jetbrains.annotations.ApiStatus;
-import org.lwjgl.stb.STBImage;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.stb.STBImage;
+
+import com.mojang.blaze3d.texture.NativeImage;
+
 @ApiStatus.Internal
 public class NativeImageUtil {
 	public static byte[] getBytes(NativeImage image) throws IOException {
-		byte[] bytes;
+		final byte[] bytes;
 		try (
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			WritableByteChannel writableByteChannel = Channels.newChannel(byteArrayOutputStream);
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				WritableByteChannel writableByteChannel = Channels.newChannel(byteArrayOutputStream);
 		) {
 			if (!image.write(writableByteChannel)) {
 				throw new IOException("Could not write image to byte array: " + STBImage.stbi_failure_reason());

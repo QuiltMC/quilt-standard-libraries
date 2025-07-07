@@ -56,10 +56,12 @@ public abstract class AbstractChatMessage<S> {
 
 	/**
 	 * Returns the player associated with this packet, which changes meaning based on the sidedness and direction.
-	 * <p>
-	 * For System and Profile Independent messages, the player is the target of the message as players cannot send these to the server.
-	 * <p>
-	 * For Chat messages, on the server inbound, it is the sender of the chat message, while outbound it is the player the message will be sent to.
+	 *
+	 * <p>For System and Profile Independent messages, the player is the target of the message as players cannot send
+	 * these to the server.
+	 *
+	 * <p>For Chat messages, on the server inbound, it is the sender of the chat message, while outbound it is the
+	 * player the message will be sent to.
 	 * Chat messages on the client return the client player.
 	 *
 	 * {@return the {@link PlayerEntity} associated with this packet}
@@ -71,8 +73,8 @@ public abstract class AbstractChatMessage<S> {
 
 	/**
 	 * {@return if this message is on the client side or not}
-	 * <p>
-	 * This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
+	 *
+	 * <p>This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
 	 */
 	@Contract(pure = true)
 	public boolean isClient() {

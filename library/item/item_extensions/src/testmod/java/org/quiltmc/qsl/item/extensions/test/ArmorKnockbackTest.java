@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createId;
+
 import java.util.Map;
 import java.util.function.Consumer;
-
 
 import net.minecraft.client.item.TooltipConfig;
 import net.minecraft.item.ArmorMaterial;
@@ -38,30 +39,27 @@ import net.minecraft.util.Rarity;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createId;
-
 public class ArmorKnockbackTest implements ModInitializer {
-
 	private static final ArmorMaterial KNOCKBACK_RESISTANCE_ARMOR = new ArmorMaterial(
-		1000,
-		Map.of(
-			ArmorType.BOOTS, 0,
-			ArmorType.LEGGINGS, 0,
-			ArmorType.CHESTPLATE, 0,
-			ArmorType.HELMET, 0,
-			ArmorType.BODY, 0
-		),
-		// this must be greater than 0
-		1,
-		Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
-		0.0f,
-		200.0F,
-		ItemTags.WOOL,
-		RegistryKey.of(EquipmentAssets.REGISTRY, createId("knockback_armor"))
+			1000,
+			Map.of(
+				ArmorType.BOOTS, 0,
+				ArmorType.LEGGINGS, 0,
+				ArmorType.CHESTPLATE, 0,
+				ArmorType.HELMET, 0,
+				ArmorType.BODY, 0
+			),
+			// this must be greater than 0
+			1,
+			Registries.SOUND_EVENT.wrapAsHolder(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME),
+			0.0f,
+			200.0F,
+			ItemTags.WOOL,
+			RegistryKey.of(EquipmentAssets.REGISTRY, createId("knockback_armor"))
 	);
 
 	private static final RegistryKey<Item> KNOCKBACK_RESISTANCE_CHESTPLATE_KEY =
-		ItemExtensionTestUtil.createItemKey("knockback_resistance_chestplate");
+			ItemExtensionTestUtil.createItemKey("knockback_resistance_chestplate");
 
 	private static final Item KNOCKBACK_RESISTANCE_CHESTPLATE = new Item(
 			new Item.Settings().rarity(Rarity.RARE)
@@ -77,9 +75,9 @@ public class ArmorKnockbackTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(
-			Registries.ITEM,
-			KNOCKBACK_RESISTANCE_CHESTPLATE_KEY,
-			KNOCKBACK_RESISTANCE_CHESTPLATE
+				Registries.ITEM,
+				KNOCKBACK_RESISTANCE_CHESTPLATE_KEY,
+				KNOCKBACK_RESISTANCE_CHESTPLATE
 		);
 	}
 }

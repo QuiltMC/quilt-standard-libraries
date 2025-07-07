@@ -22,12 +22,11 @@ import java.util.concurrent.Executor;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
-import net.minecraft.util.profiler.Profiler;
 
 /**
  * A simplified version of the "resource reloader" interface, hiding the peculiarities of the API.
- * <p>
- * In essence, there are two stages:
+ *
+ * <p>In essence, there are two stages:
  *
  * <ul>
  *     <li>{@linkplain #load(ResourceManager, Executor)}: create an instance of your data object
@@ -36,17 +35,19 @@ import net.minecraft.util.profiler.Profiler;
  * to the game instance.
  * </ul>
  *
- * <p>
- * The load stage should be self-contained as it can run on any thread!
+ *
+ * <p>The load stage should be self-contained as it can run on any thread!
  * However, the apply stage is guaranteed to run on the game thread.
- * <p>
- * For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
+ *
+ * <p>For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *
  * @param <T> the type for the intermediate reloading state
  */
 public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader {
 	@Override
-	default CompletableFuture<Void> reload(ResourceReloader.Synchronizer helper, ResourceManager manager, Executor loadExecutor, Executor applyExecutor) {
+	default CompletableFuture<Void> reload(
+			ResourceReloader.Synchronizer helper, ResourceManager manager, Executor loadExecutor, Executor applyExecutor
+	) {
 		return this.load(manager, loadExecutor).thenCompose(helper::wait)
 			.thenCompose(o -> this.apply(o, manager, applyExecutor));
 	}

@@ -23,9 +23,14 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.block.*;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.FireBlock;
+import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
@@ -56,12 +61,13 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Fill the initial flammable blocks map
-		var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
-		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
-		fireBlock.spreadChances.keySet().forEach(block ->
-				builder.put(block, new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block)))
-		);
-		var initialFlammableBlocks = builder.build();
+		final var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
+		final var fireBlock = ((FireBlock) Blocks.FIRE);
+		fireBlock.spreadChances.keySet().forEach(block -> builder.put(
+				block,
+				new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block))
+		));
+		final ImmutableMap<Block, FlammableBlockEntry> initialFlammableBlocks = builder.build();
 
 		// Force load the maps
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
@@ -81,7 +87,10 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
-			if (context.error().isPresent()) return;
+			if (context.error().isPresent()) {
+				return;
+			}
+
 			resetMaps();
 		});
 	}
@@ -97,7 +106,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 
 		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
 
-		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
+		final var fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
 		fireBlock.spreadChances.clear();
 		BlockContentRegistries.FLAMMABLE.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE.get(entry).ifPresent(v -> {
@@ -132,11 +141,11 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	public static float calculateBookshelfCount(World world, BlockPos pos) {
 		float count = 0;
 
-		for (BlockPos offset : EnchantingTableBlock.POWER_SEARCH_OFFSETS) {
+		for (final BlockPos offset : EnchantingTableBlock.POWER_SEARCH_OFFSETS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
-				var blockPos = pos.add(offset);
-				var state = world.getBlockState(blockPos);
-				var block = state.getBlock();
+				final BlockPos blockPos = pos.add(offset);
+				final BlockState state = world.getBlockState(blockPos);
+				final Block block = state.getBlock();
 				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block)
 						.map(booster -> booster.getEnchantingBoost(world, state, blockPos))
 						.orElse(0.0F);

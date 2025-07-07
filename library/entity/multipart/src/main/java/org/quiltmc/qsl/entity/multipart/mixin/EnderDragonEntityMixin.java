@@ -34,17 +34,17 @@ public abstract class EnderDragonEntityMixin implements EnderDragonMultipartEnti
 	public abstract EnderDragonPart[] getBodyParts();
 
 	@Override
-	public EntityPart<?>[] getEntityParts() {
+	public EntityPart<?>[] qsl$getEntityParts() {
 		return this.getBodyParts();
 	}
 
 	/**
 	 * Fixes <a href="https://bugs.mojang.com/browse/MC-225055">MC-225055</a>
-	 * <p>
-	 * The vanilla method sets the {@link EnderDragonEntity#head} to
+	 *
+	 * <p>The vanilla method sets the {@link EnderDragonEntity#head} to
 	 * the same {@link Entity#getId() id} as the {@link EnderDragonEntity} herself.
-	 * <p>
-	 * This causes an id desync between client and server,
+	 *
+	 * <p>This causes an id desync between client and server,
 	 * and so the server thinks the client is trying to hit the wrong part.
 	 */
 	@ModifyArg(method = "onSpawnPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/boss/dragon/EnderDragonPart;setId(I)V"))

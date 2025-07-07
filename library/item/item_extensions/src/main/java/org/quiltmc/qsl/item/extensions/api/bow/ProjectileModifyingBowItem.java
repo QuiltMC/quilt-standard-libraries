@@ -24,9 +24,11 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 
 /**
- * This is the default implementation for {@link BowExtensions}, allowing for the easy creation of new bows with no new modded functionality.
- * <p>
- * This bow automatically registers itself to modify its arrows with {@link ProjectileModifyingBowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, float, PersistentProjectileEntity)}
+ * This is the default implementation for {@link BowExtensions}, allowing for the easy creation of new bows with no new
+ * modded functionality.
+ *
+ * <p>This bow automatically registers itself to modify its arrows with
+ * {@link ProjectileModifyingBowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, float, PersistentProjectileEntity)}
  */
 public class ProjectileModifyingBowItem extends BowItem implements BowShotProjectileEvents.ModifyProjectileFromBow {
 	public ProjectileModifyingBowItem(Settings settings) {
@@ -34,13 +36,17 @@ public class ProjectileModifyingBowItem extends BowItem implements BowShotProjec
 	}
 
 	@Override
-	public final void modifyProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
-			PersistentProjectileEntity projectile) {
+	public final void modifyProjectileShot(
+			ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
+			PersistentProjectileEntity projectile
+	) {
 		if (bowStack.getItem() == this) {
 			this.onProjectileShot(bowStack, arrowStack, user, pullProgress, projectile);
 		}
 	}
 
-	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
-			PersistentProjectileEntity projectile) {}
+	public void onProjectileShot(
+			ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
+			PersistentProjectileEntity projectile
+	) { }
 }

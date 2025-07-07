@@ -21,9 +21,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
-import net.minecraft.block.MapColor;
 import org.jetbrains.annotations.Contract;
 
+import net.minecraft.block.MapColor;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -51,7 +51,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super();
 
-		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
+		final var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
 		this.hardness(otherAccessor.getHardness());
@@ -336,7 +336,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		super.key(key);
 		return this;
 	}
-
 
 	// region Added by Quilt
 

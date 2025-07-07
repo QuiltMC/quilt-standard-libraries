@@ -16,34 +16,33 @@
 
 package org.quiltmc.qsl.tag.mixin;
 
-import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import java.util.List;
+import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 
 @Mixin(TagGroupLoader.class)
 public class TagGroupLoaderMixin {
 	@WrapOperation(
-		// method_61314 is the lambda in TagGroupLoader::bind
-		method = "method_61314",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/registry/MutableRegistry;bindTag" +
-				"(Lnet/minecraft/registry/tag/TagKey;Ljava/util/List;)V"
-		)
+			// method_61314 is the lambda in TagGroupLoader::bind
+			method = "method_61314",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/registry/MutableRegistry;bindTag"
+					+ "(Lnet/minecraft/registry/tag/TagKey;Ljava/util/List;)V"
+			)
 	)
 	private static void populateTag(
-		MutableRegistry<?> instance, TagKey<?> key, List<Holder<?>> contents, Operation<Void> original
+			MutableRegistry<?> instance, TagKey<?> key, List<Holder<?>> contents, Operation<Void> original
 	) {
 		original.call(instance, key, contents);
 		TagRegistryImpl.populateTag(key, contents);

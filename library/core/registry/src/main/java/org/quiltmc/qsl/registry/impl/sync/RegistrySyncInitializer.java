@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import net.minecraft.registry.RegistryKeys;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.Registries;
@@ -39,28 +38,28 @@ public class RegistrySyncInitializer implements ModInitializer {
 		ModProtocolImpl.loadVersions();
 
 		SynchronizedRegistry.markForSync(
-			Registries.BLOCK,
-			Registries.BLOCK_ENTITY_TYPE,
-			Registries.COMMAND_ARGUMENT_TYPE,
-			Registries.CUSTOM_STAT,
-			Registries.DATA_COMPONENT_TYPE,
-			Registries.ENTITY_ATTRIBUTE,
-			Registries.ENTITY_TYPE,
-			Registries.FLUID,
-			Registries.GAME_EVENT,
-			Registries.ITEM,
-			Registries.NUMBER_FORMAT_TYPE,
-			Registries.MAP_DECORATION_TYPE,
-			Registries.PARTICLE_TYPE,
-			Registries.POSITION_SOURCE_TYPE,
-			Registries.POTION,
-			Registries.RECIPE_SERIALIZER,
-			Registries.SCREEN_HANDLER_TYPE,
-			Registries.SOUND_EVENT,
-			Registries.STAT_TYPE,
-			Registries.STATUS_EFFECT,
-			Registries.VILLAGER_TYPE,
-			Registries.VILLAGER_PROFESSION
+				Registries.BLOCK,
+				Registries.BLOCK_ENTITY_TYPE,
+				Registries.COMMAND_ARGUMENT_TYPE,
+				Registries.CUSTOM_STAT,
+				Registries.DATA_COMPONENT_TYPE,
+				Registries.ENTITY_ATTRIBUTE,
+				Registries.ENTITY_TYPE,
+				Registries.FLUID,
+				Registries.GAME_EVENT,
+				Registries.ITEM,
+				Registries.NUMBER_FORMAT_TYPE,
+				Registries.MAP_DECORATION_TYPE,
+				Registries.PARTICLE_TYPE,
+				Registries.POSITION_SOURCE_TYPE,
+				Registries.POTION,
+				Registries.RECIPE_SERIALIZER,
+				Registries.SCREEN_HANDLER_TYPE,
+				Registries.SOUND_EVENT,
+				Registries.STAT_TYPE,
+				Registries.STATUS_EFFECT,
+				Registries.VILLAGER_TYPE,
+				Registries.VILLAGER_PROFESSION
 		);
 
 		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {

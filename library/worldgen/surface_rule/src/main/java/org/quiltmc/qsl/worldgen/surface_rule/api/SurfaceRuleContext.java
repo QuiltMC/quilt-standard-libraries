@@ -33,20 +33,20 @@ import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 public interface SurfaceRuleContext {
 	/**
 	 * {@return the list of the current surface material rules present}
-	 * <p>
-	 * The list is mutable.
+	 *
+	 * <p>The list is mutable.
 	 */
 	@Contract(pure = true)
 	@NotNull List<SurfaceRules.MaterialRule> materialRules();
 
 	/**
-	 * {@return the resource manager of the current set of loaded data-packs}
+	 * @return the resource manager of the current set of loaded data-packs
 	 */
 	@Contract(pure = true)
 	@NotNull ResourceManager resourceManager();
 
 	/**
-	 * {@return the identifier of the chunk generator settings that have those surface rules}
+	 * @return the identifier of the chunk generator settings that have those surface rules
 	 */
 	@Contract(pure = true)
 	@NotNull Identifier identifier();
@@ -56,19 +56,20 @@ public interface SurfaceRuleContext {
 	 */
 	interface Overworld extends SurfaceRuleContext {
 		/**
-		 * {@return {@code true} if this overworld dimension should have a surface exposed to the sky, or {@code false} otherwise}
+		 * @return {@code true} if this overworld dimension should have a surface exposed to the sky,
+		 * or {@code false} otherwise
 		 */
 		@Contract(pure = true)
 		boolean hasSurface();
 
 		/**
-		 * {@return {@code true} if this overworld dimension should have a bedrock roof, or {@code false} otherwise}
+		 * @return {@code true} if this overworld dimension should have a bedrock roof, or {@code false} otherwise
 		 */
 		@Contract(pure = true)
 		boolean hasBedrockRoof();
 
 		/**
-		 * {@return {@code true} if this overworld dimension should have a bedrock floor, or {@code false} otherwise}
+		 * @return {@code true} if this overworld dimension should have a bedrock floor, or {@code false} otherwise
 		 */
 		@Contract(pure = true)
 		boolean hasBedrockFloor();

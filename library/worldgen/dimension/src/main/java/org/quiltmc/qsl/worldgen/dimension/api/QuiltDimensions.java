@@ -18,9 +18,9 @@
 package org.quiltmc.qsl.worldgen.dimension.api;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.TeleportTarget;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.world.entity.TeleportTarget;
 import net.minecraft.entity.Entity;
 
 import org.quiltmc.qsl.worldgen.dimension.impl.QuiltDimensionsImpl;
@@ -34,12 +34,11 @@ public final class QuiltDimensions {
 		throw new UnsupportedOperationException("QuiltDimensions only contains static definitions.");
 	}
 
-
 	/**
 	 * Directly teleports the specified entity to the specified target in another dimension,
 	 * circumventing the built-in portal logic in vanilla.
-	 * <p>
-	 * Note: When teleporting a non-player entity to another dimension, it may be replaced with
+	 *
+	 * <p>Note: When teleporting a non-player entity to another dimension, it may be replaced with
 	 * a new entity in the target dimension.
 	 *
 	 * @param entity           the entity to teleport
@@ -53,7 +52,10 @@ public final class QuiltDimensions {
 	public static <E extends Entity> @Nullable E teleport(Entity entity, TeleportTarget target) {
 		Preconditions.checkNotNull(entity, "entity may not be null");
 		Preconditions.checkNotNull(target, "target may not be null");
-		Preconditions.checkArgument(!target.newWorld().isClient(), "This method may only be called from the server side");
+		Preconditions.checkArgument(
+				!target.newWorld().isClient(),
+				"This method may only be called from the server side"
+		);
 
 		return QuiltDimensionsImpl.teleport(entity, target);
 	}

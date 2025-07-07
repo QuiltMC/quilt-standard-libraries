@@ -16,22 +16,19 @@
 
 package org.quiltmc.qsl.item.extensions.mixin.bow;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
-import net.minecraft.entity.mob.IllusionerEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.item.extensions.api.bow.BowShotProjectileEvents;
 import org.quiltmc.qsl.item.extensions.impl.BowAttackModificationImpl;
 
 @Mixin(AbstractSkeletonEntity.class)
@@ -42,19 +39,19 @@ abstract class SkeletonBowAttackMixin extends MobEntity implements RangedAttackM
 	}
 
 	@WrapOperation(
-		method = "attack",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/mob/AbstractSkeletonEntity;createArrowProjectile(" +
-				"Lnet/minecraft/item/ItemStack;FLnet/minecraft/item/ItemStack;)" +
-				"Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
-		)
+			method = "attack",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/mob/AbstractSkeletonEntity;createArrowProjectile("
+					+ "Lnet/minecraft/item/ItemStack;FLnet/minecraft/item/ItemStack;)"
+					+ "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"
+			)
 	)
 	private PersistentProjectileEntity modifyShotProjectile(
-		AbstractSkeletonEntity instance, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
-		Operation<PersistentProjectileEntity> original
+			AbstractSkeletonEntity instance, ItemStack arrowStack, float pullProgress, ItemStack bowStack,
+			Operation<PersistentProjectileEntity> original
 	) {
-        return BowAttackModificationImpl.modifyShotProjectile(
+		return BowAttackModificationImpl.modifyShotProjectile(
 			original.call(instance, arrowStack, pullProgress, bowStack),
 			arrowStack, pullProgress, bowStack, this
 		);

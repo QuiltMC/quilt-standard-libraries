@@ -34,27 +34,27 @@ public class VillagerTypeTest1 implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.GOLD_INGOT, 3),
-				Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)),
-				new ItemStack(Items.NETHERITE_INGOT),
-				2, 6, 0.15F
-			))
-		);
-
-        TradeOfferHelper.addToWanderingTraderOfferPool(
-			TradeOfferHelper.VanillaWanderingTraderPoolIds.SELL_SPECIAL_ITEMS,
-			// 100 copies to make it more likely
-			Collections.nCopies(
-				100,
+				VillagerProfession.ARMORER, 1,
 				new SimpleTradeFactory(new TradeOffer(
 					new TradeableItem(Items.GOLD_INGOT, 3),
 					Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)),
 					new ItemStack(Items.NETHERITE_INGOT),
-					2, 6, 0.35F
+					2, 6, 0.15F
 				))
-			)
+		);
+
+		TradeOfferHelper.addToWanderingTraderOfferPool(
+				TradeOfferHelper.VanillaWanderingTraderPoolIds.SELL_SPECIAL_ITEMS,
+				// 100 copies to make it more likely
+				Collections.nCopies(
+					100,
+					new SimpleTradeFactory(new TradeOffer(
+						new TradeableItem(Items.GOLD_INGOT, 3),
+						Optional.of(new TradeableItem(Items.NETHERITE_SCRAP, 4)),
+						new ItemStack(Items.NETHERITE_INGOT),
+						2, 6, 0.35F
+					))
+				)
 		);
 	}
 }

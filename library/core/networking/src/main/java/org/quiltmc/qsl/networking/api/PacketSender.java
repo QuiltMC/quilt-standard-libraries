@@ -20,10 +20,8 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.payload.CustomPayload;
 
 /**
  * Represents something that supports sending packets to channels.

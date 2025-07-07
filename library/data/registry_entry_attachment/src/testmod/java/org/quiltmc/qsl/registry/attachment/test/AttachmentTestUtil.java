@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.registry.attachment.test;
 
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
+import java.util.function.Function;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -26,11 +25,14 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
-import java.util.function.Function;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public final class AttachmentTestUtil {
 	private AttachmentTestUtil() {
-		throw new UnsupportedOperationException(AttachmentTestUtil.class.getSimpleName() + " contains only static members");
+		throw new UnsupportedOperationException(
+			AttachmentTestUtil.class.getSimpleName() + " contains only static members"
+		);
 	}
 
 	public static final String NAMESPACE = "quilt";
@@ -49,7 +51,7 @@ public final class AttachmentTestUtil {
 	}
 
 	public static <I extends Item, V> I registerItemWithExtension(
-		String path, Function<Item.Settings, I> factory, RegistryEntryAttachment<Item, V> attachment, V value
+			String path, Function<Item.Settings, I> factory, RegistryEntryAttachment<Item, V> attachment, V value
 	) {
 		final RegistryKey<Item> key = createItemKey(path);
 		return RegistryExtensions.register(

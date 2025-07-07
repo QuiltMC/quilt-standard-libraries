@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.entity.test.mixin.networking;
 
-import org.quiltmc.qsl.entity.test.networking.CreeperStateWithItem;
-import org.quiltmc.qsl.entity.test.networking.CreeperWithItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,10 +34,13 @@ import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Axis;
 
+import org.quiltmc.qsl.entity.test.networking.CreeperStateWithItem;
+import org.quiltmc.qsl.entity.test.networking.CreeperWithItem;
+
 @Mixin(CreeperEntityRenderer.class)
 abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntity, CreeperRenderState, CreeperEntityModel> {
 	@SuppressWarnings("DataFlowIssue")
-    private CreeperEntityRendererMixin() {
+	private CreeperEntityRendererMixin() {
 		super(null, null, 0);
 		throw new AssertionError("dummy constructor called");
 	}
@@ -50,27 +51,27 @@ abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntit
 
 		final CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
 		final float rotation = extendedState.quilt$getStackRotation();
-        final ItemStack stack = extendedState.quilt$getStack();
+		final ItemStack stack = extendedState.quilt$getStack();
 
-        matrices.push();
+		matrices.push();
 		matrices.translate(0, 2, 0);
 		matrices.scale(0.25f, 0.25f, 0.25f);
 		// method_22907 is rotate
 		matrices.method_22907(Axis.Y_POSITIVE.rotation(rotation));
 		MinecraftClient.getInstance().getItemRenderer().renderItem(
-			stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
-			matrices, vertexConsumers, null, 0
+				stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
+				matrices, vertexConsumers, null, 0
 		);
 		matrices.pop();
 	}
 
 	@Inject(
-		method = "updateState(Lnet/minecraft/entity/mob/CreeperEntity;" +
-			"Lnet/minecraft/client/render/entity/state/CreeperRenderState;F)V",
-		at = @At("TAIL")
+			method = "updateState(Lnet/minecraft/entity/mob/CreeperEntity;"
+				+ "Lnet/minecraft/client/render/entity/state/CreeperRenderState;F)V",
+			at = @At("TAIL")
 	)
 	private void updateStack(
-		CreeperEntity creeper, CreeperRenderState state, float tickDelta, CallbackInfo ci
+			CreeperEntity creeper, CreeperRenderState state, float tickDelta, CallbackInfo ci
 	) {
 		final CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
 		extendedState.quilt$setStack(((CreeperWithItem) creeper).quilt$getStack());

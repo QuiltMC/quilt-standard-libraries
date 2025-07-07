@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.item.test;
 
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.createId;
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registerItem;
+
 import net.minecraft.component.DataComponentType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,13 +34,10 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 
-import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.createId;
-import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registerItem;
-
 public class CustomDamageTest implements ModInitializer {
 	public static final DataComponentType<Integer> WEIRD = Registry.register(
 			Registries.DATA_COMPONENT_TYPE,
-		createId("weird"),
+			createId("weird"),
 			DataComponentType.<Integer>builder()
 				.codec(Codecs.NONNEGATIVE_INT)
 				.packetCodec(PacketCodecs.VAR_INT)

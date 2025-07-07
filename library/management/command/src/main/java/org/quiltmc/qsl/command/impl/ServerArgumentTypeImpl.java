@@ -38,9 +38,9 @@ public record ServerArgumentTypeImpl<A extends ArgumentType<?>, T extends Argume
 ) implements ServerArgumentType<A, T> {
 	@Override
 	public String toString() {
-		return "ServerArgumentType{" +
-				"id=" + this.id +
-				", type=" + this.type +
-				'}';
+		return "ServerArgumentType{"
+			+ "id=" + this.id
+			+ ", type=" + this.type
+			+ '}';
 	}
 }

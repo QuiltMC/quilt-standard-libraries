@@ -24,11 +24,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.util.profiler.ProfilerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import net.minecraft.util.profiler.ProfilerManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
@@ -48,7 +48,8 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 
 @ApiStatus.Internal
-public final class RegistryEntryAttachmentReloader implements SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
+public final class RegistryEntryAttachmentReloader implements
+		SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
 	public static void register(ResourceType source) {
 		if (source == ResourceType.SERVER_DATA) {
 			ResourceLoader.get(source).addReloaderOrdering(ResourceReloaderKeys.Server.TAGS, ID_DATA);
@@ -84,23 +85,25 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			var profiler = ProfilerManager.get();
+			final Profiler profiler = ProfilerManager.get();
 
-			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
+			final var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
-			for (var entry : Registries.ROOT.getEntries()) {
-				Identifier registryId = entry.getKey().getValue();
-				String path = registryId.getNamespace() + "/" + registryId.getPath();
+			for (final var entry : Registries.ROOT.getEntries()) {
+				final Identifier registryId = entry.getKey().getValue();
+				final String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
 
-				Map<Identifier, List<Resource>> resources = manager.findAllResources("attachments/" + path,
-					s -> s.getPath().endsWith(".json"));
+				final Map<Identifier, List<Resource>> resources = manager.findAllResources(
+						"attachments/" + path,
+						s -> s.getPath().endsWith(".json")
+				);
 				if (resources.isEmpty()) {
 					profiler.pop();
 					continue;
 				}
 
-				Registry<?> registry = entry.getValue();
+				final Registry<?> registry = entry.getValue();
 				this.processResources(profiler, attachDicts, resources, registry);
 
 				profiler.pop();
@@ -110,27 +113,31 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		}, executor);
 	}
 
-	private void processResources(Profiler profiler,
-								  Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
-								  Map<Identifier, List<Resource>> resources, Registry<?> registry) {
-		for (var entry : resources.entrySet()) {
-			Identifier attachmentId = this.getAttachmentId(entry.getKey());
-			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
+	private void processResources(
+			Profiler profiler,
+			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
+			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
+		for (final Map.Entry<Identifier, List<Resource>> entry : resources.entrySet()) {
+			final Identifier attachmentId = this.getAttachmentId(entry.getKey());
+			final RegistryEntryAttachment<?, ?> attachment =
+					RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
 				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, entry);
 				continue;
 			}
 
 			if (!attachment.side().shouldLoad(this.source)) {
-				LOGGER.warn("Ignoring attachment {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-					attachmentId, entry, attachment.side().getSource(), this.source);
+				LOGGER.warn(
+						"Ignoring attachment {} (from {}) since it shouldn't be loaded from this source "
+							+ "({}, we're loading from {})",
+						attachmentId, entry, attachment.side().getSource(), this.source);
 				continue;
 			}
 
 			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
-			AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
-			for (var resource : entry.getValue()) {
+			final AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
+			for (final var resource : entry.getValue()) {
 				attachDict.processResource(entry.getKey(), resource);
 			}
 		}
@@ -143,7 +150,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			var profiler = ProfilerManager.get();
+			final Profiler profiler = ProfilerManager.get();
 
 			data.apply(profiler);
 			if (this.source == ResourceType.SERVER_DATA) {
@@ -156,10 +163,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	// "<namespace>:attachments/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
 	private Identifier getAttachmentId(Identifier jsonId) {
 		String path = jsonId.getPath();
-		int lastSlash = path.lastIndexOf('/');
+		final int lastSlash = path.lastIndexOf('/');
 		path = path.substring(lastSlash + 1);
 
-		int lastDot = path.lastIndexOf('.');
+		final int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
 		return Identifier.of(jsonId.getNamespace(), path);
 	}
@@ -175,14 +182,19 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		public void apply(Profiler profiler) {
 			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
 
-			for (var entry : Registries.ROOT.getEntries()) {
+			for (final var entry : Registries.ROOT.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
-					.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
+						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
-			for (var entry : this.attachmentMaps.entrySet()) {
-				profiler.swap(RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}");
-				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
+			for (final var entry : this.attachmentMaps.entrySet()) {
+				profiler.swap(
+						RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}"
+				);
+				this.applyOne(
+						(RegistryEntryAttachment<Object, Object>) entry.getKey(),
+						(AttachmentDictionary<Object, Object>) entry.getValue()
+				);
 			}
 
 			profiler.pop();
@@ -190,13 +202,13 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachAttachment) {
-			var registry = attachment.registry();
+			final Registry<R> registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
-			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
-			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
-				V value = (V) attachmentEntry.getValue();
-				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
+			final RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
+			for (final Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
+				final V value = (V) attachmentEntry.getValue();
+				final AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
 					case ENTRY -> holder.putValue(attachment, registry.get(target.id()), value);
 					case TAG -> holder.putValue(attachment, TagKey.of(registry.getKey(), target.id()), value);

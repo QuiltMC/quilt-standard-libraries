@@ -55,8 +55,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
 
-		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
-		var context = new MutableRegistryEntryContextImpl<>(delayed);
+		final var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
+		final var context = new MutableRegistryEntryContextImpl<>(delayed);
 
 		this.registry.streamHolders().forEach(entry -> {
 			context.set(entry.getRegistryKey().getValue(), entry.getValue());
@@ -82,8 +82,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 
 	/**
 	 * Tests the current filter on the specified entry context.
-	 * <p>
-	 * Accounts for the filter being {@code null} by treating it as always {@code true}.
+	 *
+	 * <p>Accounts for the filter being {@code null} by treating it as always {@code true}.
 	 */
 	private boolean testFilter(RegistryEntryContext<V> context) {
 		if (this.filter == null) {

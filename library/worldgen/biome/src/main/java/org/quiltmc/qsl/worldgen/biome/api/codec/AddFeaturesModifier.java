@@ -35,8 +35,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds features to a biome.
- * <p>
- * The biome modifier identifier is {@code quilt:add_features}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:add_features}.
  *
  * @param step     the feature generation step to add the features to
  * @param features registry keys for the features to add
@@ -60,7 +60,7 @@ public record AddFeaturesModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var feature : this.features) {
+		for (final RegistryKey<PlacedFeature> feature : this.features) {
 			modificationContext.getGenerationSettings().addFeature(this.step, feature);
 		}
 	}

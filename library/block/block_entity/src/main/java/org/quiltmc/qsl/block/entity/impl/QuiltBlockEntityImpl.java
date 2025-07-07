@@ -41,11 +41,11 @@ public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecyc
 
 	/**
 	 * Sets whether adding supported blocks to {@link net.minecraft.block.entity.BlockEntityType} is allowed or not.
-	 * <p>
-	 * Mods that attempt try to add dynamic block registration at runtime might want to access this method,
+	 *
+	 * <p>Mods that attempt try to add dynamic block registration at runtime might want to access this method,
 	 * but please remember this is an implementation detail and may change at any time.
-	 * <p>
-	 * This freezing is done to avoid possible bad behavior from some mods.
+	 *
+	 * <p>This freezing is done to avoid possible bad behavior from some mods.
 	 * Freezing happens in a specific event phase to avoid any issue for those who might want to use lifecycle events.
 	 *
 	 * @param frozen {@code true} if modifying the supported blocks set is forbidden, or {@code false} otherwise

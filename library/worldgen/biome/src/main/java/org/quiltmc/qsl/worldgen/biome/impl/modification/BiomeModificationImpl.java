@@ -107,10 +107,7 @@ public class BiomeModificationImpl {
 	}
 
 	public void updateIdentifiedModifiers() {
-		for (
-			final Map.Entry<ModificationPhase, Map<Identifier, ModifierRecord>> phase
-			: this.identifiedModifiers.entrySet()
-		) {
+		for (final var phase : this.identifiedModifiers.entrySet()) {
 			final List<Identifier> drop = new ArrayList<>();
 			final Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase.getKey());
 
@@ -129,7 +126,7 @@ public class BiomeModificationImpl {
 		for (final ModificationPhase phase : ModificationPhase.values()) {
 			final Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase);
 			final Map<Identifier, ModifierRecord> phaseMap =
-				this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
+					this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
 
 			for (final Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
 				if (!phaseMap.containsKey(entry.getKey())) {
@@ -173,7 +170,7 @@ public class BiomeModificationImpl {
 	}
 
 	public void finalizeWorldGen(
-		DynamicRegistryManager impl, WorldSaveProperties worldSaveProperties, ResourceManager resourceManager
+			DynamicRegistryManager impl, WorldSaveProperties worldSaveProperties, ResourceManager resourceManager
 	) {
 		this.reloader.apply(resourceManager, impl);
 		this.addMissingModifiers();
@@ -241,8 +238,8 @@ public class BiomeModificationImpl {
 
 		if (biomesProcessed > 0) {
 			LOGGER.info(
-				"Applied {} biome modifications to {} of {} new biomes in {}",
-				modifiersApplied, biomesChanged, biomesProcessed, sw
+					"Applied {} biome modifications to {} of {} new biomes in {}",
+					modifiersApplied, biomesChanged, biomesProcessed, sw
 			);
 		}
 	}
@@ -265,8 +262,8 @@ public class BiomeModificationImpl {
 		private boolean canBeDropped = false;
 
 		ModifierRecord(
-			ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
-			Consumer<BiomeModificationContext> modifier
+				ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
+				Consumer<BiomeModificationContext> modifier
 		) {
 			this.phase = phase;
 			this.id = id;
@@ -276,8 +273,8 @@ public class BiomeModificationImpl {
 		}
 
 		ModifierRecord(
-			ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
-			BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier
+				ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
+				BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier
 		) {
 			this.phase = phase;
 			this.id = id;

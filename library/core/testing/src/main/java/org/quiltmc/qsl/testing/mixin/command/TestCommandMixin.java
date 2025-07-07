@@ -16,27 +16,15 @@
 
 package org.quiltmc.qsl.testing.mixin.command;
 
-import java.util.Collection;
-
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.test.GameTestState;
-import net.minecraft.test.StructureTestUtil;
-import net.minecraft.test.TestInstance;
-import net.minecraft.test.TestManager;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.dev.TestCommand;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.testing.impl.game.command.QuiltTestCommand;
 
@@ -54,8 +42,12 @@ public class TestCommandMixin {
 					remap = false
 			)
 	)
-	private static Command<ServerCommandSource> quiltGameTest$replaceExportCommand(Command<ServerCommandSource> original) {
-		return context -> QuiltTestCommand.executeExport(context.getSource(), StringArgumentType.getString(context, "testName"));
+	private static Command<ServerCommandSource> quiltGameTest$replaceExportCommand(
+			Command<ServerCommandSource> original
+	) {
+		return context -> QuiltTestCommand.executeExport(
+				context.getSource(), StringArgumentType.getString(context, "testName")
+		);
 	}
 
 	@ModifyArg(

@@ -16,19 +16,12 @@
 
 package org.quiltmc.qsl.entity.test.networking;
 
-import java.util.Objects;
-
 import net.fabricmc.api.EnvType;
 
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -38,9 +31,12 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity.extensions.api.networking.QuiltTrackedDataHandlerRegistry;
 
 public class TrackedDataTestInitializer implements ModInitializer {
-	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER = TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
-	public static final TrackedDataHandler<StatusEffect> TEST2_HANDLER = TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
-	public static final TrackedDataHandler<StatusEffect> BAD_EXAMPLE_HANDLER = TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
+	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER =
+			TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
+	public static final TrackedDataHandler<StatusEffect> TEST2_HANDLER =
+			TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
+	public static final TrackedDataHandler<StatusEffect> BAD_EXAMPLE_HANDLER =
+			TrackedDataHandler.create(PacketCodecs.entryOf(Registries.STATUS_EFFECT));
 
 	@Override
 	public void onInitialize(ModContainer mod) {

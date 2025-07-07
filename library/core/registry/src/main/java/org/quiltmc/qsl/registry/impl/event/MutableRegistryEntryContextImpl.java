@@ -25,10 +25,10 @@ import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 
 /**
  * The default implementation for {@link RegistryEntryContext}.
- * <p>
- * In order to minimize allocations during event invocation, especially during registry iteration, this class is
- * mutable. The api interface only allows accessing fields of the class, whereas modification methods are reserved for the
- * impl.
+ *
+ * <p>In order to minimize allocations during event invocation, especially during registry iteration, this class is
+ * mutable. The api interface only allows accessing fields of the class, whereas modification methods are reserved for
+ * the impl.
  *
  * @param <V> the type of the relevant {@link Registry}'s entries
  */
@@ -45,8 +45,8 @@ public class MutableRegistryEntryContextImpl<V> implements RegistryEntryContext<
 
 	/**
 	 * Changes the current entry information.
-	 * <p>
-	 * Raw identifier is set to -1 to signify that it should be lazily looked up.
+	 *
+	 * <p>Raw identifier is set to -1 to signify that it should be lazily looked up.
 	 *
 	 * @param id    the namespaced identifier of the new entry
 	 * @param entry the new entry's object

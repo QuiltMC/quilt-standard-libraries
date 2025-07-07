@@ -42,29 +42,28 @@ import org.quiltmc.qsl.base.impl.event.EventRegistry;
 
 /**
  * An object which stores event callbacks.
- * <p>
- * The factory methods for Event allows the user to provide an implementation of {@code T} which is used to
+ *
+ * <p>The factory methods for Event allows the user to provide an implementation of {@code T} which is used to
  * execute the callbacks stored in this event instance. This allows a user to control how iteration works, whether an
  * event is cancelled after a specific callback is executed or to make an event
  * {@link ParameterInvokingEvent parameter invoking}.
- * <p>
- * Generally {@code T} should be a type which is a
+ *
+ * <p>Generally {@code T} should be a type which is a
  * <a href="https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.8">functional interface</a>
  * to allow callbacks registered to the event to be specified in a lambda, method reference form or implemented onto a
  * class. A way to ensure that an interface is a functional interface is to place a {@link FunctionalInterface}
  * annotation on the type. You can let T not be a functional interface, however it heavily complicates the process
  * of implementing an invoker and only allows callback implementations to be done by implementing an interface onto a
  * class or extending a class.
- * <p>
- * An Event can have phases, each callback is attributed to a phase ({@link Event#DEFAULT_PHASE} if unspecified),
+ *
+ * <p>An Event can have phases, each callback is attributed to a phase ({@link Event#DEFAULT_PHASE} if unspecified),
  * and each phase can have a defined ordering. Each event phase is identified by a {@link Identifier}, ordering is done
  * by explicitly stating that event phase A will run before event phase B, for example.
  * See {@link Event#addPhaseOrdering(Identifier, Identifier)} for more information.
  *
- * <h2>Example: Registering callbacks</h2>
- * <p>
- * The most common use of an event will be registering a callback which is executed by the event. To register a callback,
- * pass an instance of {@code T} into {@link #register}.
+ *
+ * <p>The most common use of an event will be registering a callback which is executed by the event. To register a
+ * callback, pass an instance of {@code T} into {@link #register}.
  *
  * <pre>{@code
  * // Events should use a dedicated functional interface for T rather than overloading multiple events to the same type
@@ -105,9 +104,9 @@ import org.quiltmc.qsl.base.impl.event.EventRegistry;
  * }</pre>
  *
  * <h2>Example: Executing an event</h2>
- * <p>
- * Executing an event is done by calling a method on the event invoker. Where {@code T} is Example, executing an event
- * is done through the following:
+ *
+ * <p>Executing an event is done by calling a method on the event invoker. Where {@code T} is Example,
+ * executing an event is done through the following:
  *
  * <pre>{@code
  * EXAMPLE.invoker().doSomething();
@@ -136,8 +135,8 @@ public final class Event<T> {
 
 	/**
 	 * Creates a new instance of {@link Event}.
-	 * <p>
-	 * This method adds a {@code emptyImplementation} parameter which provides an implementation of the invoker
+	 *
+	 * <p>This method adds a {@code emptyImplementation} parameter which provides an implementation of the invoker
 	 * when no callbacks are registered. Generally this method should only be used when the code path is very hot, such
 	 * as the render or tick loops. Otherwise the other {@link #create(Class, Function)} method should work
 	 * in 99% of cases with little to no performance overhead.
@@ -161,20 +160,21 @@ public final class Event<T> {
 	/**
 	 * Create a new instance of {@link Event} with a list of default phases that get invoked in order.
 	 * Exposing the identifiers of the default phases as {@code public static final} constants is encouraged.
-	 * <p>
-	 * An event phase is a named group of callbacks, which may be ordered before or after other groups of callbacks.
+	 *
+	 * <p>An event phase is a named group of callbacks, which may be ordered before or after other groups of callbacks.
 	 * This allows some callbacks to take priority over other callbacks.
 	 * Adding separate events should be considered before making use of multiple event phases.
-	 * <p>
-	 * Phases may be freely added to events created with any of the factory functions,
+	 *
+	 * <p>Phases may be freely added to events created with any of the factory functions,
 	 * however using this function is preferred for widely used event phases.
 	 * If more phases are necessary, discussion with the author of the event is encouraged.
-	 * <p>
-	 * Refer to {@link Event#addPhaseOrdering} for an explanation of event phases.
+	 *
+	 * <p>Refer to {@link Event#addPhaseOrdering} for an explanation of event phases.
 	 *
 	 * @param type           the class representing the type of the invoker that is executed by the event
 	 * @param implementation a function which generates an invoker implementation using an array of callbacks
-	 * @param defaultPhases  the default phases of this event, in the correct order. Must contain {@link Event#DEFAULT_PHASE}
+	 * @param defaultPhases  the default phases of this event, in the correct order.
+	 *                         Must contain {@link Event#DEFAULT_PHASE}
 	 * @param <T>            the type of the invoker executed by the event
 	 * @return a new event instance
 	 */
@@ -183,7 +183,7 @@ public final class Event<T> {
 		QuiltBaseImpl.ensureContainsDefaultPhase(defaultPhases);
 		QuiltAssertions.ensureNoDuplicates(defaultPhases, id -> new IllegalArgumentException("Duplicate event phase: " + id));
 
-		var event = create(type, implementation);
+		final var event = create(type, implementation);
 
 		for (int i = 1; i < defaultPhases.length; ++i) {
 			event.addPhaseOrdering(defaultPhases[i - 1], defaultPhases[i]);
@@ -194,10 +194,10 @@ public final class Event<T> {
 
 	/**
 	 * Registers the given listener of the listed events.
-	 * <p>
-	 * The registration of the listener will be refused if one of the listed event involves generics in its callback type,
-	 * as checking for valid registration is just too expensive, please use the regular {@link #register(Object)} method
-	 * for those as the Java compiler will be able to do the checks itself.
+	 *
+	 * <p>The registration of the listener will be refused if one of the listed event involves generics in its callback
+	 * type, as checking for valid registration is just too expensive, please use the regular {@link #register(Object)}
+	 * method for those as the Java compiler will be able to do the checks itself.
 	 *
 	 * @param listener the listener of events
 	 * @param events   the events to listen
@@ -223,8 +223,9 @@ public final class Event<T> {
 	 * The invoker field used to execute callbacks.
 	 */
 	private volatile T invoker;
+
 	/**
-	 * Registered callbacks
+	 * Registered callbacks.
 	 */
 	private T[] callbacks;
 	/**
@@ -303,12 +304,14 @@ public final class Event<T> {
 	 * Request that callbacks registered for one phase be executed before callbacks registered for another phase.
 	 * Relying on the default phases supplied to {@link Event#createWithPhases} should be preferred over manually
 	 * registering phase ordering dependencies.
-	 * <p>
-	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 *
+	 * <p>Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
 	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
 	 *
-	 * @param firstPhase  the identifier of the phase that should run before the other. It will be created if it didn't exist yet
-	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
+	 * @param firstPhase  the identifier of the phase that should run before the other.
+	 *                      It will be created if it didn't exist yet
+	 * @param secondPhase the identifier of the phase that should run after the other.
+	 *                      It will be created if it didn't exist yet
 	 */
 	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
 		Objects.requireNonNull(firstPhase, "Tried to add an ordering for a null phase.");
@@ -319,8 +322,8 @@ public final class Event<T> {
 		}
 
 		synchronized (this.lock) {
-			var first = this.getOrCreatePhase(firstPhase, false);
-			var second = this.getOrCreatePhase(secondPhase, false);
+			final EventPhaseData<T> first = this.getOrCreatePhase(firstPhase, false);
+			final EventPhaseData<T> second = this.getOrCreatePhase(secondPhase, false);
 			PhaseData.link(first, second);
 			PhaseSorting.sortPhases(this.sortedPhases);
 			this.rebuildInvoker(this.callbacks.length);
@@ -349,14 +352,14 @@ public final class Event<T> {
 		// Rebuild handlers.
 		if (this.sortedPhases.size() == 1) {
 			// Special case with a single phase: use the array of the phase directly.
-			this.callbacks = this.sortedPhases.get(0).getData();
+			this.callbacks = this.sortedPhases.getFirst().getData();
 		} else {
 			@SuppressWarnings("unchecked")
-			var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
+			final var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
 			int newHandlersIndex = 0;
 
-			for (var existingPhase : this.sortedPhases) {
-				int length = existingPhase.getData().length;
+			for (final EventPhaseData<T> existingPhase : this.sortedPhases) {
+				final int length = existingPhase.getData().length;
 				System.arraycopy(existingPhase.getData(), 0, newCallbacks, newHandlersIndex, length);
 				newHandlersIndex += length;
 			}
@@ -376,11 +379,11 @@ public final class Event<T> {
 
 	@Override
 	public String toString() {
-		return "Event{" +
-				"type=" + this.type +
-				", implementation=" + this.implementation +
-				", phases=" + this.phases +
-				", sortedPhases=" + this.sortedPhases +
-				'}';
+		return "Event{"
+			+ "type=" + this.type
+			+ ", implementation=" + this.implementation
+			+ ", phases=" + this.phases
+			+ ", sortedPhases=" + this.sortedPhases
+			+ '}';
 	}
 }

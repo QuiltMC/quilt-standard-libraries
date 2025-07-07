@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -35,9 +37,6 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 
 @ApiStatus.Internal
 public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLogicHandler {
@@ -50,8 +49,10 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	 * @return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed
 	 */
 	@Contract(mutates = "param1, param2")
-	private static boolean tryReturnItemToInventory(ItemStack remainder, DefaultedList<ItemStack> inventory, int index) {
-		ItemStack leftovers = inventory.get(index);
+	private static boolean tryReturnItemToInventory(
+			ItemStack remainder, DefaultedList<ItemStack> inventory, int index
+	) {
+		final ItemStack leftovers = inventory.get(index);
 		if (leftovers.isEmpty()) {
 			inventory.set(index, remainder);
 			return true;
@@ -65,7 +66,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToSlot(ItemStack remainder, Slot slot) {
-		ItemStack leftovers = slot.getStack();
+		final ItemStack leftovers = slot.getStack();
 		if (leftovers.isEmpty()) {
 			slot.setStack(remainder);
 			return true;
@@ -85,19 +86,21 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 			return false;
 		}
 
-		int toTake = Math.min(base.getMaxCount() - base.getCount(), remainder.getCount());
+		final int toTake = Math.min(base.getMaxCount() - base.getCount(), remainder.getCount());
 		remainder.decrement(toTake);
 		base.increment(toTake);
 		return remainder.isEmpty();
 	}
 
 	@Contract(mutates = "param1")
-	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
+	private static ItemStack decrementWithRemainder(
+			ItemStack original, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location
+	) {
 		if (original.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
 
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe, location);
+		final ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe, location);
 
 		original.decrement(amount);
 
@@ -105,8 +108,11 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1, param5, param7")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
-		ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
+	public static void handleRemainderForNonPlayerCraft(
+			ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location,
+			DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure
+	) {
+		final ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
 			failure.accept(remainder);
@@ -114,8 +120,10 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1, param5")
-	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player) {
-		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
+	public static void handleRemainderForScreenHandler(
+			Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
+	) {
+		final ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
 
 		if (!tryReturnItemToSlot(remainder, slot)) {
 			player.getInventory().offerOrDrop(remainder);

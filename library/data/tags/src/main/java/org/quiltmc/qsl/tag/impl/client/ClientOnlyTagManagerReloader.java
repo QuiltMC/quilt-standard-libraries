@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
@@ -46,7 +45,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 	@Override
 	public CompletableFuture<List<Entry>> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			var entries = new ArrayList<Entry>();
+			final var entries = new ArrayList<Entry>();
 
 			ClientTagRegistryManager.forEach(clientTagRegistryManager -> {
 				entries.add(new Entry(clientTagRegistryManager, clientTagRegistryManager.load(manager)));
@@ -63,7 +62,8 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 		}, executor);
 	}
 
-	protected record Entry(ClientTagRegistryManager<?> manager,
-						   Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
-	}
+	protected record Entry(
+			ClientTagRegistryManager<?> manager,
+			Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags
+	) { }
 }

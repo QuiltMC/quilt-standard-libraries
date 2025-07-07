@@ -38,21 +38,21 @@ abstract class ItemsMixin {
 			),
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/item/Item$Settings;recipeRemainder(Lnet/minecraft/item/Item;)" +
-					"Lnet/minecraft/item/Item$Settings;",
+				target = "Lnet/minecraft/item/Item$Settings;recipeRemainder(Lnet/minecraft/item/Item;)"
+					+ "Lnet/minecraft/item/Item$Settings;",
 				ordinal = 0
 			)
 	)
 	private static Item.Settings changeDragonBreathRecipeRemainder(
-		Item.Settings instance, Item recipeRemainder, Operation<Item.Settings> originalCall
+			Item.Settings instance, Item recipeRemainder, Operation<Item.Settings> originalCall
 	) {
 		// See: https://github.com/FabricMC/fabric/issues/2873
 		//      https://bugs.mojang.com/browse/MC-259583
-		return ((QuiltItemSettingsExtensions)((QuiltItemSettingsExtensions) new Item.Settings())
+		return ((QuiltItemSettingsExtensions) ((QuiltItemSettingsExtensions) new Item.Settings())
 			.recipeRemainder((_original, _recipe) -> recipeRemainder.getDefaultStack()))
 			.recipeRemainder(
-				(original, recipe) -> original.getCount() >= 2 ?
-					recipeRemainder.getDefaultStack()
+				(original, recipe) -> original.getCount() >= 2
+					? recipeRemainder.getDefaultStack()
 					: ItemStack.EMPTY, RecipeRemainderLocation.POTION_ADDITION
 			);
 	}

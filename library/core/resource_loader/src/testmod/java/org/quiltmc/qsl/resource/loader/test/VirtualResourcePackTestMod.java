@@ -70,7 +70,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 	}
 
 	private void providePacks(Consumer<PackProfile> profileAdder, ResourceType type) {
-		var pack = new InMemoryPack.Named("activation_test") {
+		final var pack = new InMemoryPack.Named("activation_test") {
 			@Override
 			public @NotNull PackActivationType getActivationType() {
 				return PackActivationType.DEFAULT_ENABLED;
@@ -80,6 +80,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 		pack.putText("pack.mcmeta", String.format("""
 				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
 					""", SharedConstants.getGameVersion().getResourceVersion(type)));
+
 		pack.putText(ResourceType.CLIENT_RESOURCES, Identifier.ofDefault("models/block/dandelion.json"), """
 				{
 					"parent": "minecraft:block/cube_all",

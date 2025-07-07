@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.entity.extensions.impl.networking;
 
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.payload.CustomPayload;
@@ -25,11 +24,15 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
 public record ExtendedEntitySpawnPayload(int entityId, RegistryByteBuf data) implements CustomPayload {
-	public static final CustomPayload.Id<ExtendedEntitySpawnPayload> ID = new CustomPayload.Id<>(Identifier.of("quilt", "extended_entity_spawn_packet"));
-	public static final PacketCodec<RegistryByteBuf, ExtendedEntitySpawnPayload> CODEC = CustomPayload.create(ExtendedEntitySpawnPayload::write, ExtendedEntitySpawnPayload::read);
+	public static final CustomPayload.Id<ExtendedEntitySpawnPayload> ID =
+			new CustomPayload.Id<>(Identifier.of("quilt", "extended_entity_spawn_packet"));
+	public static final PacketCodec<RegistryByteBuf, ExtendedEntitySpawnPayload> CODEC =
+			CustomPayload.create(ExtendedEntitySpawnPayload::write, ExtendedEntitySpawnPayload::read);
 
 	public static ExtendedEntitySpawnPayload read(RegistryByteBuf data) {
-		return new ExtendedEntitySpawnPayload(data.readVarInt(), new RegistryByteBuf(PacketByteBufs.read(data), data.getRegistryManager()));
+		return new ExtendedEntitySpawnPayload(
+			data.readVarInt(), new RegistryByteBuf(PacketByteBufs.read(data), data.getRegistryManager())
+		);
 	}
 
 	public void write(RegistryByteBuf buf) {

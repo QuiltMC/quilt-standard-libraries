@@ -34,57 +34,57 @@ public class VillagerTypeTest2 implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 5),
-				new ItemStack(Items.NETHERITE_INGOT),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 5),
+					new ItemStack(Items.NETHERITE_INGOT),
+					3, 4, 0.15F
+				))
 		);
 
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 6),
-				new ItemStack(Items.ELYTRA),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 6),
+					new ItemStack(Items.ELYTRA),
+					3, 4, 0.15F
+				))
 		);
 
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 7),
-				new ItemStack(Items.CHAINMAIL_BOOTS),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 7),
+					new ItemStack(Items.CHAINMAIL_BOOTS),
+					3, 4, 0.15F
+				))
 		);
 
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 8),
-				new ItemStack(Items.CHAINMAIL_CHESTPLATE),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 8),
+					new ItemStack(Items.CHAINMAIL_CHESTPLATE),
+					3, 4, 0.15F
+				))
 		);
 
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 9),
-				new ItemStack(Items.CHAINMAIL_HELMET),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 9),
+					new ItemStack(Items.CHAINMAIL_HELMET),
+					3, 4, 0.15F
+				))
 		);
 
 		TradeOfferHelper.addToVillagerOfferPool(
-			VillagerProfession.ARMORER, 1,
-			new SimpleTradeFactory(new TradeOffer(
-				new TradeableItem(Items.DIAMOND, 10),
-				new ItemStack(Items.CHAINMAIL_LEGGINGS),
-				3, 4, 0.15F
-			))
+				VillagerProfession.ARMORER, 1,
+				new SimpleTradeFactory(new TradeOffer(
+					new TradeableItem(Items.DIAMOND, 10),
+					new ItemStack(Items.CHAINMAIL_LEGGINGS),
+					3, 4, 0.15F
+				))
 		);
 	}
 }

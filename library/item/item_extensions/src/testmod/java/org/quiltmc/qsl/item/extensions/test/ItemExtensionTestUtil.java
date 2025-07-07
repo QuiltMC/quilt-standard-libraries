@@ -22,17 +22,17 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public final class ItemExtensionTestUtil {
-    private ItemExtensionTestUtil() {
-        throw new UnsupportedOperationException("ItemExtensionTestUtil has only static members");
-    }
+	private ItemExtensionTestUtil() {
+		throw new UnsupportedOperationException("ItemExtensionTestUtil has only static members");
+	}
 
-    public static final String NAMESPACE = "quilt_item_extensions_testmod";
+	public static final String NAMESPACE = "quilt_item_extensions_testmod";
 
-    public static Identifier createId(String path) {
-        return Identifier.of(NAMESPACE, path);
-    }
+	public static Identifier createId(String path) {
+		return Identifier.of(NAMESPACE, path);
+	}
 
-    public static RegistryKey<Item> createItemKey(String path) {
-        return RegistryKey.of(RegistryKeys.ITEM, createId(path));
-    }
+	public static RegistryKey<Item> createItemKey(String path) {
+		return RegistryKey.of(RegistryKeys.ITEM, createId(path));
+	}
 }

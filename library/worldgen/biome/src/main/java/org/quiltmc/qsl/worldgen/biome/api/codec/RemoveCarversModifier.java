@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.worldgen.biome.api.codec;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.serialization.Codec;
@@ -25,7 +24,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 import org.quiltmc.qsl.data.callback.api.CodecHelpers;
@@ -36,8 +34,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes carvers from a biome. If no steps are specified when decoding, carvers will be removed from all steps.
- * <p>
- * The biome modifier identifier is {@code quilt:remove_carvers}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:remove_carvers}.
  *
  * @param carvers registry keys for the carvers to remove
  */
@@ -48,7 +46,8 @@ public record RemoveCarversModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_carvers");
 	public static final Codec<RemoveCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveCarversModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(RemoveCarversModifier::carvers)
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers")
+				.forGetter(RemoveCarversModifier::carvers)
 	).apply(instance, RemoveCarversModifier::new));
 
 	@Override
@@ -58,7 +57,7 @@ public record RemoveCarversModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var carver : this.carvers) {
+		for (final RegistryKey<ConfiguredCarver<?>> carver : this.carvers) {
 			modificationContext.getGenerationSettings().removeCarver(carver);
 		}
 	}

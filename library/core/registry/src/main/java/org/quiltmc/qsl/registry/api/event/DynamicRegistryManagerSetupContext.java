@@ -53,8 +53,8 @@ public interface DynamicRegistryManagerSetupContext {
 
 	/**
 	 * Attempts to safely register a game object into the given registry.
-	 * <p>
-	 * This method is preferred instead of {@link Registry#register(Registry, Identifier, Object)}
+	 *
+	 * <p>This method is preferred instead of {@link Registry#register(Registry, Identifier, Object)}
 	 * as it makes sure to not overwrite data-pack-provided entries, it also makes sure the registry exists.
 	 *
 	 * @param registryKey        the key of the registry to register into
@@ -63,8 +63,10 @@ public interface DynamicRegistryManagerSetupContext {
 	 * @param <V>                the type of game object to register
 	 * @return the optional game object, if the registry is present then the optional is filled, or empty otherwise
 	 */
-	default <V> @NotNull Optional<V> register(@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id,
-											  @NotNull Supplier<V> gameObjectSupplier) {
+	default <V> @NotNull Optional<V> register(
+			@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id,
+			@NotNull Supplier<V> gameObjectSupplier
+	) {
 		return this.registryManager().getLookup(registryKey)
 			.map(registry -> {
 				if (registry.containsId(id)) {
@@ -77,21 +79,22 @@ public interface DynamicRegistryManagerSetupContext {
 
 	/**
 	 * Gets the registries requested by their keys.
-	 * <p>
-	 * If one of the queried registries isn't found, then this method will return {@code null}.
+	 *
+	 * <p>If one of the queried registries isn't found, then this method will return {@code null}.
 	 *
 	 * @param registryKeys the keys of the registries to get
 	 * @return the registry map if all the queried registries have been found, or {@code null} otherwise
 	 */
 	@Contract(pure = true)
 	default @Nullable RegistryMap getRegistries(@NotNull Set<RegistryKey<? extends Registry<?>>> registryKeys) {
-		if (registryKeys.size() == 0)
+		if (registryKeys.isEmpty()) {
 			throw new IllegalArgumentException("Please provide at least one registry to gather.");
+		}
 
 		Map<RegistryKey<? extends Registry<?>>, Registry<?>> foundRegistries = null;
 
-		for (var key : registryKeys) {
-			var maybe = this.registryManager().getLookup(key);
+		for (final RegistryKey<? extends Registry<?>> key : registryKeys) {
+			final Optional<Registry<Object>> maybe = this.registryManager().getLookup(key);
 
 			if (maybe.isPresent()) {
 				if (foundRegistries == null) {
@@ -115,8 +118,10 @@ public interface DynamicRegistryManagerSetupContext {
 	 * @param action       the action
 	 * @param registryKeys the registry keys to check
 	 */
-	default void withRegistries(@NotNull Consumer<RegistryMap> action, @NotNull Set<RegistryKey<? extends Registry<?>>> registryKeys) {
-		var registries = this.getRegistries(registryKeys);
+	default void withRegistries(
+			@NotNull Consumer<RegistryMap> action, @NotNull Set<RegistryKey<? extends Registry<?>>> registryKeys
+	) {
+		final RegistryMap registries = this.getRegistries(registryKeys);
 
 		if (registries != null) {
 			action.accept(registries);
@@ -164,8 +169,9 @@ public interface DynamicRegistryManagerSetupContext {
 		 * @param <V>         the type of values held in the registry
 		 * @return the game object
 		 */
-		public <V> @NotNull V register(@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id,
-									   @NotNull V gameObject) {
+		public <V> @NotNull V register(
+				@NotNull RegistryKey<? extends Registry<V>> registryKey, @NotNull Identifier id, @NotNull V gameObject
+		) {
 			return Registry.register(this.get(registryKey), id, gameObject);
 		}
 	}

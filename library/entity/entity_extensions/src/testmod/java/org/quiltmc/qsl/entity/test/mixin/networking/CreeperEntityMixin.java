@@ -54,10 +54,10 @@ abstract class CreeperEntityMixin extends HostileEntity implements QuiltExtended
 	@SuppressWarnings("WrongEntityDataParameterClass")
 	@Unique
 	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker
-		.registerData(CreeperEntity.class, TrackedDataHandlerRegistry.PARTICLE);
+			.registerData(CreeperEntity.class, TrackedDataHandlerRegistry.PARTICLE);
 
 	@SuppressWarnings("DataFlowIssue")
-    private CreeperEntityMixin() {
+	private CreeperEntityMixin() {
 		super(null, null);
 		throw new AssertionError("dummy constructor called");
 	}
@@ -87,22 +87,26 @@ abstract class CreeperEntityMixin extends HostileEntity implements QuiltExtended
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void storeRandomItem(CallbackInfo ci) {
-        final Item random = Registries.ITEM.getRandom(this.random).orElseThrow().getValue();
+		final Item random = Registries.ITEM.getRandom(this.random).orElseThrow().getValue();
 		this.stackToDrop = new ItemStack(random);
 	}
 
 	@Inject(method = "explode", at = @At("TAIL"))
 	private void dropItemOnExplosion(CallbackInfo ci) {
 		if (this.getWorld() instanceof ServerWorld world) {
-            this.dropStack(world, this.stackToDrop);
+			this.dropStack(world, this.stackToDrop);
 		}
 	}
 
+	// overrides api method
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void writeAdditionalSpawnData(RegistryByteBuf buffer) {
 		ItemStack.OPTIONAL_PACKET_CODEC.encode(buffer, this.stackToDrop);
 	}
 
+	// overrides api method
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void readAdditionalSpawnData(RegistryByteBuf buffer) {
 		this.stackToDrop = ItemStack.PACKET_CODEC.decode(buffer);

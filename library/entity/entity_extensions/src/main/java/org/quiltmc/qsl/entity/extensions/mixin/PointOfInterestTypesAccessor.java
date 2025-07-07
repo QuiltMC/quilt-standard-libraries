@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.entity.extensions.mixin;
 
+import java.util.Map;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.Holder;
 import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-
-import java.util.Map;
 
 @Mixin(PointOfInterestTypes.class)
 public interface PointOfInterestTypesAccessor {
