@@ -60,7 +60,7 @@ abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 			CallbackInfo ci,
 			@Share("lastRecipe") LocalRef<@Nullable Recipe<?>> lastRecipe
 	) {
-		final RecipeHolder<?> lastRecipeHolder = this.result.getLastRecipe();
+		RecipeHolder<?> lastRecipeHolder = this.result.getLastRecipe();
 		lastRecipe.set(lastRecipeHolder == null ? null : lastRecipeHolder.value());
 	}
 

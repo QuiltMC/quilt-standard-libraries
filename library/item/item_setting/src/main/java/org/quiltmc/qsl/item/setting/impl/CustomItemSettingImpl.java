@@ -97,7 +97,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	// Because item settings are reusable, it is possible that the same item settings object will be applied
 	// to multiple items.
 	public static void onBuild(Item.Settings settings, Item item) {
-		for (final CustomItemSettingImpl<?> setting : CUSTOM_SETTINGS.getOrDefault(settings, Collections.emptyList())) {
+		for (CustomItemSettingImpl<?> setting : CUSTOM_SETTINGS.getOrDefault(settings, Collections.emptyList())) {
 			setting.apply(settings, item);
 		}
 	}

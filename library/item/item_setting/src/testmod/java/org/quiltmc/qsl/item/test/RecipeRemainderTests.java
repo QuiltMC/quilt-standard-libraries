@@ -66,7 +66,7 @@ public class RecipeRemainderTests implements ModInitializer {
 				((QuiltItemSettingsExtensions) new Item.Settings())
 					.recipeRemainder(
 						(original, recipe) -> {
-							final ItemStack copy = original.copy();
+							ItemStack copy = original.copy();
 							copy.setCount(2);
 							return copy;
 						},
@@ -80,7 +80,7 @@ public class RecipeRemainderTests implements ModInitializer {
 				((QuiltItemSettingsExtensions) new Item.Settings())
 					.recipeRemainder(
 						(original, recipe) -> {
-							final ItemStack remainder = original.copy();
+							ItemStack remainder = original.copy();
 							if (recipe != null) {
 								if (recipe.getType() == RecipeType.SMELTING) {
 									remainder.setCount(1);

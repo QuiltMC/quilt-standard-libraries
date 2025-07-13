@@ -195,7 +195,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	static <R> Builder<R, Long> longRangeBuilder(Registry<R> registry, Identifier id, long min, long max) {
 		// Codec.longRange(long, long) doesn't exist for some reason
 		// implement it ourselves
-		final Function<Long, DataResult<Long>> checker = Codec.checkRange(min, max);
+		Function<Long, DataResult<Long>> checker = Codec.checkRange(min, max);
 		return builder(registry, id, Long.class, Codec.LONG.flatXmap(checker, checker), PacketCodecs.VAR_LONG.cast());
 	}
 
@@ -620,7 +620,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		 * @return new attachment
 		 */
 		public RegistryEntryAttachment<R, V> build() {
-			final RegistryEntryAttachment<R, V> attachment;
+			RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
 					this.codec, this.packetCodec, this.side, this.defaultValue);

@@ -78,8 +78,8 @@ abstract class DebugHudMixin {
 			@Share("lines") LocalRef<List<String>> lines,
 			@Share("state") LocalRef<BlockState> state
 	) {
-		final Boolean value = ClientAttachmentTest.BASED.getNullable(state.get().getBlock());
-		final String valueStr;
+		Boolean value = ClientAttachmentTest.BASED.getNullable(state.get().getBlock());
+		String valueStr;
 		if (value == null) {
 			valueStr = Formatting.BLUE + "unset";
 		} else if (value) {

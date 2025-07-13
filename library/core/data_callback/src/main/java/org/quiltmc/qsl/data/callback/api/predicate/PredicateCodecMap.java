@@ -111,7 +111,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	}
 
 	private void cacheProviders() {
-		for (final Map.Entry<Identifier, PredicateCodecProvider> entry : PROVIDERS.entrySet()) {
+		for (Map.Entry<Identifier, PredicateCodecProvider> entry : PROVIDERS.entrySet()) {
 			this.register(entry.getKey(), entry.getValue().makeCodec(this.predicateCodec));
 		}
 	}

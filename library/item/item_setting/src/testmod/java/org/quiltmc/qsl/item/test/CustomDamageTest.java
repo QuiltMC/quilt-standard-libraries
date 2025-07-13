@@ -46,7 +46,7 @@ public class CustomDamageTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final Item.Settings weirdPickSettings = new Item.Settings();
+		Item.Settings weirdPickSettings = new Item.Settings();
 		weirdPickSettings
 			// method_66330 is pickaxe
 			// C_bemqmqey.INCORRECT_FOR_GOLD_TOOL is ToolMaterial.GOLD
@@ -74,7 +74,7 @@ public class CustomDamageTest implements ModInitializer {
 
 		@Override
 		public Text getName(ItemStack stack) {
-			final int weirdValue = stack.getOrDefault(WEIRD, 0);
+			int weirdValue = stack.getOrDefault(WEIRD, 0);
 			return super.getName(stack).copy().append(" (Weird Value: " + weirdValue + ")");
 		}
 	}

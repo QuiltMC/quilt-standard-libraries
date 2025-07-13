@@ -178,7 +178,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 						);
 					}
 
-					final Object testObject;
+					Object testObject;
 
 					try {
 						testObject = constructor.newInstance();
@@ -216,11 +216,11 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
 		Stream.of(testClass.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(method -> {
-			final GameTest annotation = method.getAnnotation(GameTest.class);
+			GameTest annotation = method.getAnnotation(GameTest.class);
 			// only consider annotated methods
 			if (annotation != null) {
-				final String methodName = method.getName().toLowerCase(Locale.ROOT);
-				final QuiltTestInstance test =
+				String methodName = method.getName().toLowerCase(Locale.ROOT);
+				QuiltTestInstance test =
 						QuiltGameTestImpl.getTestFunction(method, annotation, Identifier.of(modId, methodName));
 
 				QUILT_TESTS.put(test.id(), test);
@@ -236,7 +236,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final String reportPath = System.getProperty("quilt.game_test.report_file");
+		String reportPath = System.getProperty("quilt.game_test.report_file");
 
 		if (reportPath != null) {
 			try {
@@ -247,15 +247,15 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		final List<EntrypointContainer<Object>> entrypointContainers = QuiltLoader.getEntrypointContainers(
+		List<EntrypointContainer<Object>> entrypointContainers = QuiltLoader.getEntrypointContainers(
 				QuiltGameTest.ENTRYPOINT_KEY, Object.class
 		);
 
 		Registry.register(Registries.TEST_INSTANCE_TYPE, Identifier.of("quilt", "test_instance"), QuiltTestInstance.CODEC);
 
-		for (final EntrypointContainer<Object> container : entrypointContainers) {
-			final Object entrypoint = container.getEntrypoint();
-			final Class<?> testClass = entrypoint.getClass();
+		for (EntrypointContainer<Object> container : entrypointContainers) {
+			Object entrypoint = container.getEntrypoint();
+			Class<?> testClass = entrypoint.getClass();
 
 			registerTestClass(
 					container.getProvider(), testClass,
@@ -264,7 +264,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(event -> {
-			for (final QuiltTestInstance quiltTest : QUILT_TESTS.values()) {
+			for (QuiltTestInstance quiltTest : QUILT_TESTS.values()) {
 				event.register(RegistryKeys.TEST_INSTANCE, quiltTest.id(), () -> quiltTest);
 			}
 		});

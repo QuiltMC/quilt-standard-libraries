@@ -82,7 +82,7 @@ public final class RecipeManagerImpl {
 	public static Collection<RecipeHolder<?>> addRecipes(
 			Map<Identifier, Recipe<?>> resourceMap, HolderLookup.Provider registries
 	) {
-		final var handler = new RegisterRecipeHandlerImpl(resourceMap, registries);
+		var handler = new RegisterRecipeHandlerImpl(resourceMap, registries);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.forEach((id, data) -> {
 			data.createRecipe(registries)
@@ -101,17 +101,17 @@ public final class RecipeManagerImpl {
 			RecipeMap recipes,
 			HolderLookup.Provider registries
 	) {
-		final HashMultimap<RecipeType<?>, RecipeHolder<?>> byType =
+		HashMultimap<RecipeType<?>, RecipeHolder<?>> byType =
 				HashMultimap.create(((RecipeMapAccessor) recipes).quilt$getByType());
-		final HashMap<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey =
+		HashMap<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey =
 				new HashMap<>(((RecipeMapAccessor) recipes).quilt$getByKey());
 
-		final var modifyHandler =
+		var modifyHandler =
 			new ModifyRecipeHandlerImpl(recipeManager, byType, byKey, registries);
 		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(modifyHandler);
 		LOGGER.info("Modified {} recipes.", modifyHandler.counter);
 
-		final var removeHandler =
+		var removeHandler =
 			new RemoveRecipeHandlerImpl(recipeManager, byType, byKey, registries);
 		RecipeLoadingEvents.REMOVE.invoker().removeRecipes(removeHandler);
 		LOGGER.info("Removed {} recipes.", removeHandler.counter);
@@ -125,7 +125,7 @@ public final class RecipeManagerImpl {
 
 	@SuppressWarnings("unchecked")
 	private static void dump(Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> recipes) {
-		final Path debugPath = Paths.get("debug", "quilt", "recipe").normalize();
+		Path debugPath = Paths.get("debug", "quilt", "recipe").normalize();
 
 		if (!Files.exists(debugPath)) {
 			try {
@@ -136,21 +136,21 @@ public final class RecipeManagerImpl {
 			}
 		}
 
-		for (final Map.Entry<RegistryKey<Recipe<?>>, RecipeHolder<?>> recipeEntry : recipes.entrySet()) {
-			final Identifier id = recipeEntry.getKey().getValue();
-			final Recipe<?> recipe = recipeEntry.getValue().value();
+		for (Map.Entry<RegistryKey<Recipe<?>>, RecipeHolder<?>> recipeEntry : recipes.entrySet()) {
+			Identifier id = recipeEntry.getKey().getValue();
+			Recipe<?> recipe = recipeEntry.getValue().value();
 
-			final var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
-			final DataResult<JsonElement> encoded = serializer.getCodec()
+			var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
+			DataResult<JsonElement> encoded = serializer.getCodec()
 					.encode(recipe, JsonOps.INSTANCE, JsonOps.INSTANCE.mapBuilder()).build(new JsonObject());
 			if (encoded.error().isPresent()) {
 				LOGGER.error("Failed to serialize recipe {} with reason {}.", id, encoded.error().get().message());
 			}
 
-			final JsonObject serialized = (JsonObject) encoded.result().orElseThrow();
+			JsonObject serialized = (JsonObject) encoded.result().orElseThrow();
 
-			final Path path = debugPath.resolve(id.getNamespace() + "/recipes/" + id.getPath() + ".json");
-			final Path parent = path.getParent();
+			Path path = debugPath.resolve(id.getNamespace() + "/recipes/" + id.getPath() + ".json");
+			Path parent = path.getParent();
 
 			if (!Files.exists(parent)) {
 				try {
@@ -164,8 +164,8 @@ public final class RecipeManagerImpl {
 				}
 			}
 
-			final var stringWriter = new StringWriter();
-			final var jsonWriter = new JsonWriter(stringWriter);
+			var stringWriter = new StringWriter();
+			var jsonWriter = new JsonWriter(stringWriter);
 			jsonWriter.setStrictness(Strictness.LENIENT);
 			jsonWriter.setIndent("  ");
 

@@ -63,7 +63,7 @@ public final class Initializer implements ModInitializer {
 	private static <B extends Block, S extends AbstractBlock.Settings> B registerBlock(
 			String path, S baseSettings, Function<S, B> factory
 	) {
-		final RegistryKey<Block> key = createBlockKey(path);
+		RegistryKey<Block> key = createBlockKey(path);
 		baseSettings.key(key);
 		return Registry.register(Registries.BLOCK, key, factory.apply(baseSettings));
 	}

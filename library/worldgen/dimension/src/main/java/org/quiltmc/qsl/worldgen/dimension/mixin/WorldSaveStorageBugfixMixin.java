@@ -76,7 +76,7 @@ abstract class WorldSaveStorageBugfixMixin {
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		final String key = "dimensions";
+		String key = "dimensions";
 		NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {

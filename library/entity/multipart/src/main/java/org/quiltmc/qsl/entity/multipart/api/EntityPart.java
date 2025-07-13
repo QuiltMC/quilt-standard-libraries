@@ -48,7 +48,7 @@ public interface EntityPart<E extends Entity> {
 	@ClientOnly
 	default Optional<Hitbox> getHitbox(double ownerX, double ownerY, double ownerZ, Entity owner, float tickDelta) {
 		if (this instanceof Entity entityPart) {
-			final Box bounds = entityPart.getBounds().offset(
+			Box bounds = entityPart.getBounds().offset(
 					-entityPart.getX(),
 					-entityPart.getY(),
 					-entityPart.getZ()

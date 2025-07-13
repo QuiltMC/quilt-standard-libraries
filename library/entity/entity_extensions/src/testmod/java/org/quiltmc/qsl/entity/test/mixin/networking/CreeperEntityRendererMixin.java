@@ -49,9 +49,9 @@ abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntit
 	public void render(CreeperRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		super.render(state, matrices, vertexConsumers, light);
 
-		final CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
-		final float rotation = extendedState.quilt$getStackRotation();
-		final ItemStack stack = extendedState.quilt$getStack();
+		CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
+		float rotation = extendedState.quilt$getStackRotation();
+		ItemStack stack = extendedState.quilt$getStack();
 
 		matrices.push();
 		matrices.translate(0, 2, 0);
@@ -73,7 +73,7 @@ abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntit
 	private void updateStack(
 			CreeperEntity creeper, CreeperRenderState state, float tickDelta, CallbackInfo ci
 	) {
-		final CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
+		CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
 		extendedState.quilt$setStack(((CreeperWithItem) creeper).quilt$getStack());
 		extendedState.quilt$setStackRotation((state.age + tickDelta) / 20);
 	}

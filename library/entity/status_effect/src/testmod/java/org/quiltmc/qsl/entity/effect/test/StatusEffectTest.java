@@ -47,7 +47,7 @@ public final class StatusEffectTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final RegistryKey<Item> bucketKey = RegistryKey.of(RegistryKeys.ITEM, createId("pasteurized_milk_bucket"));
+		RegistryKey<Item> bucketKey = RegistryKey.of(RegistryKeys.ITEM, createId("pasteurized_milk_bucket"));
 		Registry.register(Registries.ITEM, bucketKey, new PasteurizedMilkBucketItem(
 			new Item.Settings()
 				.key(bucketKey)

@@ -54,7 +54,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 					RecipeManagerImpl.LOGGER.error("Error creating replacement recipe {}: [{}]", id, error)
 				)
 				.ifPresent(newRecipe -> {
-					final RecipeHolder<?> oldRecipeHolder = this.getRecipe(id);
+					RecipeHolder<?> oldRecipeHolder = this.getRecipe(id);
 
 					if (oldRecipeHolder == null) {
 						if (RecipeManagerImpl.DEBUG_MODE) {
@@ -64,7 +64,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 							);
 						}
 					} else {
-						final RecipeType<?> oldType = oldRecipeHolder.value().getType();
+						RecipeType<?> oldType = oldRecipeHolder.value().getType();
 
 						if (RecipeManagerImpl.DEBUG_MODE) {
 							if (oldType == newRecipe.getType()) {
@@ -83,7 +83,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 						this.byType.get(oldType).remove(oldRecipeHolder);
 					}
 
-					final RecipeType<? extends Recipe<?>> type = newRecipe.getType();
+					RecipeType<? extends Recipe<?>> type = newRecipe.getType();
 
 					if (!this.byType.containsKey(type)) {
 						throw new IllegalStateException(
@@ -92,7 +92,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 						);
 					}
 
-					final RecipeHolder<Recipe<?>> recipeHolder =
+					RecipeHolder<Recipe<?>> recipeHolder =
 						new RecipeHolder<>(RegistryKey.of(RegistryKeys.RECIPE, id), newRecipe);
 					this.byType.get(type).add(recipeHolder);
 					this.byKey.put(recipeHolder.id(), recipeHolder);

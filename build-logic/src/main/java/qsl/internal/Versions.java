@@ -68,7 +68,7 @@ public final class Versions {
 	private static List<MinecraftVersion> versions(Object... versions) {
 		var list = new ArrayList<MinecraftVersion>();
 
-		for (final Object version : versions) {
+		for (Object version : versions) {
 			if (version instanceof String name) {
 				list.add(new MinecraftVersion(name, MINECRAFT_VERSION.versionEdition()));
 			} else if (version instanceof MinecraftVersion mcVersion) {
