@@ -241,14 +241,14 @@ public final class ClientTagRegistryManager<T> {
 			Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type
 	) {
 		if (TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
-			final var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
-			final Map<Identifier, List<Holder<T>>> built = this.loader.build(tagBuilders);
+			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
+			Map<Identifier, List<Holder<T>>> built = this.loader.build(tagBuilders);
 			built.forEach((id, tag) -> tags.put(QuiltTagKey.of(this.registryKey, id, type), tag));
 			return tags;
 		}
 
-		final var resolver = new TagResolver(type);
-		final var sorter = new DependencySorter<Identifier, TagGroupLoader.SortingEntry>();
+		var resolver = new TagResolver(type);
+		var sorter = new DependencySorter<Identifier, TagGroupLoader.SortingEntry>();
 		tagBuilders.forEach((key, values) -> sorter.addEntry(key, new TagGroupLoader.SortingEntry(values)));
 		sorter.buildOrdered(resolver.getCollector());
 		return resolver.getTags();
@@ -258,17 +258,17 @@ public final class ClientTagRegistryManager<T> {
 	public void bindTags(
 			Map<TagKey<T>, Collection<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer
 	) {
-		final Optional<? extends RegistryLookup<T>> registry = this.lookupProvider.getLookup(this.registryKey);
+		Optional<? extends RegistryLookup<T>> registry = this.lookupProvider.getLookup(this.registryKey);
 
 		if (registry.isEmpty()) {
 			return;
 		}
 
-		final var boundTags = new IdentityHashMap<Holder.Reference<T>, List<TagKey<T>>>();
+		var boundTags = new IdentityHashMap<Holder.Reference<T>, List<TagKey<T>>>();
 		registry.get().streamHolders().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
 
 		map.forEach((tagKey, tag) -> {
-			for (final Holder<T> holder : tag) {
+			for (Holder<T> holder : tag) {
 				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
@@ -340,7 +340,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		private Collection<Holder<T>> buildLenientTag(List<TagGroupLoader.EntryWithSource> tagBuilder) {
-			final ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
+			ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
 
 			tagBuilder.forEach(trackedEntry -> trackedEntry.entry().build(this, builder::add));
 

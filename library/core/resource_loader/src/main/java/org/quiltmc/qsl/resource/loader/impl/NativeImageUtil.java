@@ -29,7 +29,7 @@ import com.mojang.blaze3d.texture.NativeImage;
 @ApiStatus.Internal
 public class NativeImageUtil {
 	public static byte[] getBytes(NativeImage image) throws IOException {
-		final byte[] bytes;
+		byte[] bytes;
 		try (
 				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				WritableByteChannel writableByteChannel = Channels.newChannel(byteArrayOutputStream);

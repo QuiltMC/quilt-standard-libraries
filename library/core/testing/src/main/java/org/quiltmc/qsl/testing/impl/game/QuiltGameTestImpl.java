@@ -109,10 +109,10 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test function
 	 */
 	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, GameTest annotation, Identifier id) {
-		final GameTestData data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
+		GameTestData data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
-		final String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
-		final String testCaseName = data.namespace() + ':' + testSuiteName + '/'
+		String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
+		String testCaseName = data.namespace() + ':' + testSuiteName + '/'
 				+ method.getName().toLowerCase(Locale.ROOT);
 
 		var structureName = testCaseName;
@@ -120,7 +120,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		if (!annotation.structureName().isEmpty()) {
 			structureName = annotation.structureName();
 
-			final TestStructureNamePrefix structurePrefix =
+			TestStructureNamePrefix structurePrefix =
 					method.getDeclaringClass().getAnnotation(TestStructureNamePrefix.class);
 			if (structurePrefix != null) {
 				structureName = structurePrefix.value() + structureName;
@@ -153,21 +153,21 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test method invoker
 	 */
 	private static Consumer<TestContext> getTestMethodInvoker(GameTestData data, Method method) {
-		final var testMethod = new TestMethod(method);
+		var testMethod = new TestMethod(method);
 
-		final Class<?> testClass = testMethod.getDeclaringClass();
-		final boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
+		Class<?> testClass = testMethod.getDeclaringClass();
+		boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
 
 		return testContext -> {
-			final var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
+			var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
 
 			if (testMethod.isStatic() && !isQuilted) {
 				runTest(testMethod, quiltTestContext, null);
 			} else {
-				final QuiltGameTest instance = data.instance();
+				QuiltGameTest instance = data.instance();
 
 				if (instance == null) {
-					final Constructor<?> constructor;
+					Constructor<?> constructor;
 
 					try {
 						constructor = testClass.getConstructor();

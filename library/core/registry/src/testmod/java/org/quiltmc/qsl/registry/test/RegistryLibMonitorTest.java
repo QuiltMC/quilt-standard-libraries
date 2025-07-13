@@ -50,16 +50,16 @@ public class RegistryLibMonitorTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final Block blockA = register(
+		Block blockA = register(
 				TEST_BLOCK_A_KEY,
 				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_A_KEY))
 		);
 
-		final RegistryMonitor<Block> monitor = RegistryMonitor.create(Registries.BLOCK)
+		RegistryMonitor<Block> monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
 
-		final var allSet = new HashSet<Block>();
-		final var upcomingSet = new HashSet<Block>();
+		var allSet = new HashSet<Block>();
+		var upcomingSet = new HashSet<Block>();
 
 		monitor.forAll(context -> {
 			LOGGER.info("[forAll event]: Block {} id={} raw={} had its registration monitored in registry {}",
@@ -72,7 +72,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		final Block blockB = register(
+		Block blockB = register(
 				TEST_BLOCK_B_KEY,
 				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_B_KEY))
 		);

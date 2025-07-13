@@ -88,13 +88,13 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 */
 	@Inject(method = "getOtherEntities", at = @At("RETURN"))
 	private void getOtherEntityParts(Entity except, Box box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir) {
-		final List<Entity> list = cir.getReturnValue();
+		List<Entity> list = cir.getReturnValue();
 
 		// We don't want to check the parts of entities that we already know are invalid
-		final Set<Entity> skippedOwners = new HashSet<>();
+		Set<Entity> skippedOwners = new HashSet<>();
 
-		for (final Entity part : this.quilt$getEntityParts().values()) {
-			final var owner = ((EntityPart<?>) part).getOwner();
+		for (Entity part : this.quilt$getEntityParts().values()) {
+			var owner = ((EntityPart<?>) part).getOwner();
 			if (skippedOwners.contains(owner) || owner == except) {
 				skippedOwners.add(owner);
 				continue;
@@ -134,11 +134,11 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 
 			/* QUILT START */
 			// We don't want to check the parts of entities that we already know are invalid
-			final Set<Entity> skippedOwners = new HashSet<>();
+			Set<Entity> skippedOwners = new HashSet<>();
 
-			for (final Entity part : this.quilt$getEntityParts().values()) {
-				final var owner = ((EntityPart<?>) part).getOwner();
-				final T downcastPart = filter.downcast(part);
+			for (Entity part : this.quilt$getEntityParts().values()) {
+				var owner = ((EntityPart<?>) part).getOwner();
+				T downcastPart = filter.downcast(part);
 
 				if (skippedOwners.contains(owner) || filter.downcast(owner) == null || downcastPart == null) {
 					skippedOwners.add(owner);

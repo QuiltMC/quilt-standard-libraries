@@ -60,22 +60,22 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		this.side = side;
 
 		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
-			for (final ValueAdded<R, V> listener : listeners) {
+			for (ValueAdded<R, V> listener : listeners) {
 				listener.onValueAdded(entry, value);
 			}
 		});
 		this.tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (tag, value) -> {
-			for (final TagValueAdded<R, V> listener : listeners) {
+			for (TagValueAdded<R, V> listener : listeners) {
 				listener.onTagValueAdded(tag, value);
 			}
 		});
 		this.valueRemovedEvent = Event.create(ValueRemoved.class, listeners -> entry -> {
-			for (final ValueRemoved<R> listener : listeners) {
+			for (ValueRemoved<R> listener : listeners) {
 				listener.onValueRemoved(entry);
 			}
 		});
 		this.tagValueRemovedEvent = Event.create(TagValueRemoved.class, listeners -> tag -> {
-			for (final TagValueRemoved<R> listener : listeners) {
+			for (TagValueRemoved<R> listener : listeners) {
 				listener.onTagValueRemoved(tag);
 			}
 		});
@@ -138,7 +138,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		final Set<R> set = new ReferenceOpenHashBigSet<>();
+		Set<R> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
 		return set;
@@ -150,7 +150,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		final Set<TagKey<R>> set = new ReferenceOpenHashBigSet<>();
+		Set<TagKey<R>> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
 		return set;
@@ -160,7 +160,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	public @NotNull Iterator<Entry<R, V>> iterator() {
 		return RegistryEntryAttachmentImpl.this.registry.stream()
 				.map(r -> {
-					final V value = RegistryEntryAttachmentImpl.this.getNullable(r);
+					V value = RegistryEntryAttachmentImpl.this.getNullable(r);
 					return value == null ? null : new Entry<>(r, value);
 				})
 				.filter(Objects::nonNull)
@@ -289,7 +289,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		@SuppressWarnings("unchecked")
 		@Override
 		public Entry<R, V> next() {
-			final R key = this.keyIt.next();
+			R key = this.keyIt.next();
 			V value = (V) this.dataHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
 			if (value == null) {
 				value = (V) this.builtinHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
@@ -317,7 +317,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		@SuppressWarnings("unchecked")
 		@Override
 		public TagEntry<R, V> next() {
-			final TagKey<R> key = this.keyIt.next();
+			TagKey<R> key = this.keyIt.next();
 			V value = (V) this.dataHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
 			if (value == null) {
 				value = (V) this.builtinHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);

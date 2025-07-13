@@ -58,7 +58,7 @@ public class RegistryLibMonitorRegistrationTest implements ModInitializer {
 				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_A_KEY))
 		);
 
-		final var monitor = RegistryMonitor.create(Registries.BLOCK)
+		var monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors_registration"));
 
 		monitor.forAll(context -> {

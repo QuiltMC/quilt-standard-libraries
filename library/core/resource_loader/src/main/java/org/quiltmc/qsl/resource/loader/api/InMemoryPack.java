@@ -77,7 +77,7 @@ public abstract class InMemoryPack implements MutablePack {
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
-		final String actualPath = String.join("/", path);
+		String actualPath = String.join("/", path);
 
 		return this.openResource(this.root, actualPath);
 	}
@@ -88,13 +88,13 @@ public abstract class InMemoryPack implements MutablePack {
 	}
 
 	protected <T> @Nullable ResourceIoSupplier<InputStream> openResource(Map<T, Supplier<byte[]>> map, @NotNull T key) {
-		final Supplier<byte[]> supplier = map.get(key);
+		Supplier<byte[]> supplier = map.get(key);
 
 		if (supplier == null) {
 			return null;
 		}
 
-		final byte[] bytes = supplier.get();
+		byte[] bytes = supplier.get();
 
 		if (bytes == null) {
 			return null;
@@ -111,7 +111,7 @@ public abstract class InMemoryPack implements MutablePack {
 						&& entry.getKey().getPath().startsWith(startingPath)
 				)
 				.forEach(entry -> {
-					final byte[] bytes = entry.getValue().get();
+					byte[] bytes = entry.getValue().get();
 
 					if (bytes != null) {
 						consumer.accept(entry.getKey(), () -> new ByteArrayInputStream(bytes));
@@ -129,14 +129,14 @@ public abstract class InMemoryPack implements MutablePack {
 	@Override
 	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
 		if (!this.root.containsKey(ResourcePack.PACK_METADATA_NAME)) {
-			final var json = new JsonObject();
-			final var packJson = new JsonObject();
+			var json = new JsonObject();
+			var packJson = new JsonObject();
 			packJson.addProperty("description", "A virtual resource pack.");
 			// This is like, not read by any significant system when invisible to users.
 			packJson.addProperty("pack_format", 5);
 			json.add("pack", packJson);
 
-			final String key = metaSectionType.name();
+			String key = metaSectionType.name();
 
 			if (!json.has(key)) {
 				return null;
@@ -150,7 +150,7 @@ public abstract class InMemoryPack implements MutablePack {
 			}
 		}
 
-		final ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
+		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
 		if (resource != null) {
 			try (var stream = resource.get()) {
 				return ResourceLoaderImpl.parseMetadata(metaSectionType, this, stream);
@@ -191,7 +191,7 @@ public abstract class InMemoryPack implements MutablePack {
 	public @NotNull Future<byte[]> putResourceAsync(
 			@NotNull String fileName, @NotNull Function<@NotNull String, byte @NotNull []> resourceFactory
 	) {
-		final Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(fileName));
+		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(fileName));
 		this.putResource(fileName, () -> {
 			try {
 				return future.get();
@@ -207,7 +207,7 @@ public abstract class InMemoryPack implements MutablePack {
 			@NotNull ResourceType type, @NotNull Identifier id,
 			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory
 	) {
-		final Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(id));
+		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(id));
 		this.putResource(type, id, () -> {
 			try {
 				return future.get();
@@ -274,7 +274,7 @@ public abstract class InMemoryPack implements MutablePack {
 
 	protected void dumpResource(Path parentPath, String resourcePath, byte[] resource) {
 		try {
-			final Path p = parentPath.resolve(resourcePath);
+			Path p = parentPath.resolve(resourcePath);
 			Files.createDirectories(p.getParent());
 			Files.write(
 					p, resource, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
@@ -294,7 +294,7 @@ public abstract class InMemoryPack implements MutablePack {
 
 	static {
 		int threads = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
-		final String threadsOverride = System.getProperty(VIRTUAL_ASYNC_THREADS_PROPERTY);
+		String threadsOverride = System.getProperty(VIRTUAL_ASYNC_THREADS_PROPERTY);
 
 		if (threadsOverride != null) {
 			try {

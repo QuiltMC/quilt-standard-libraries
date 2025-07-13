@@ -55,8 +55,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
 
-		final var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
-		final var context = new MutableRegistryEntryContextImpl<>(delayed);
+		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
+		var context = new MutableRegistryEntryContextImpl<>(delayed);
 
 		this.registry.streamHolders().forEach(entry -> {
 			context.set(entry.getRegistryKey().getValue(), entry.getValue());

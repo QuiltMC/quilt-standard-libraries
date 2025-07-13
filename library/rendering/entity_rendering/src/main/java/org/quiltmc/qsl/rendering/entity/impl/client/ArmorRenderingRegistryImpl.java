@@ -49,7 +49,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.TextureProvider> createTextureProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.TextureProvider.class,
 				listeners -> (texture, entity, stack, slot, useSecondTexture) -> {
-					for (final ArmorRenderingRegistry.TextureProvider listener : listeners) {
+					for (ArmorRenderingRegistry.TextureProvider listener : listeners) {
 						texture = listener.getArmorTexture(texture, entity, stack, slot, useSecondTexture);
 					}
 
@@ -61,7 +61,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.ModelProvider> createModelProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.ModelProvider.class,
 				listeners -> (model, entity, stack, slot) -> {
-					for (final ArmorRenderingRegistry.ModelProvider listener : listeners) {
+					for (ArmorRenderingRegistry.ModelProvider listener : listeners) {
 						model = listener.getArmorModel(model, entity, stack, slot);
 					}
 
@@ -73,7 +73,7 @@ public final class ArmorRenderingRegistryImpl {
 	public static @NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> createRenderLayerProviderEvent() {
 		return Event.create(ArmorRenderingRegistry.RenderLayerProvider.class,
 				listeners -> (layer, state, stack, slot, texture) -> {
-					for (final ArmorRenderingRegistry.RenderLayerProvider listener : listeners) {
+					for (ArmorRenderingRegistry.RenderLayerProvider listener : listeners) {
 						layer = listener.getArmorRenderLayer(layer, state, stack, slot, texture);
 					}
 
@@ -116,7 +116,7 @@ public final class ArmorRenderingRegistryImpl {
 			@NotNull BipedRenderState state, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
 			boolean useSecondTexture
 	) {
-		final var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
+		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
 		if (e == null) {
 			return asset;
 		}
@@ -130,7 +130,7 @@ public final class ArmorRenderingRegistryImpl {
 			@NotNull ItemStack stack,
 			@NotNull EquipmentSlot slot
 	) {
-		final var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
+		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
 		if (e == null) {
 			return model;
 		}
@@ -142,7 +142,7 @@ public final class ArmorRenderingRegistryImpl {
 			@NotNull RenderLayer layer, @NotNull BipedRenderState state, @NotNull ItemStack stack,
 			@NotNull EquipmentSlot slot, @NotNull RegistryKey<EquipmentAsset> armorAsset
 	) {
-		final Event<ArmorRenderingRegistry.RenderLayerProvider> event =
+		Event<ArmorRenderingRegistry.RenderLayerProvider> event =
 				((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
 		if (event == null) {
 			return layer;

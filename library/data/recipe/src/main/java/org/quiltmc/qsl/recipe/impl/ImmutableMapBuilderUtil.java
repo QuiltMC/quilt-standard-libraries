@@ -78,11 +78,11 @@ public final class ImmutableMapBuilderUtil {
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> specialBuild(ImmutableMap.Builder<K, V> builder) {
 		try {
-			final var entries = (Map.Entry<K, V>[]) MAP_ENTRIES_GETTER.invoke(builder);
-			final int size = (int) MAP_SIZE_GETTER.invoke(builder);
-			final var map = new Object2ObjectOpenHashMap<K, V>(size);
+			var entries = (Map.Entry<K, V>[]) MAP_ENTRIES_GETTER.invoke(builder);
+			int size = (int) MAP_SIZE_GETTER.invoke(builder);
+			var map = new Object2ObjectOpenHashMap<K, V>(size);
 
-			for (final Map.Entry<K, V> entry : entries) {
+			for (Map.Entry<K, V> entry : entries) {
 				if (entry == null) {
 					continue;
 				}
@@ -110,10 +110,10 @@ public final class ImmutableMapBuilderUtil {
 	@SuppressWarnings("unchecked")
 	public static <K, V> Multimap<K, V> specialBuild(ImmutableMultimap.Builder<K, V> builder) {
 		try {
-			final var entries = (Map<K, Collection<V>>) MULTIMAP_ENTRIES_GETTER.invoke(builder);
-			final var map = HashMultimap.<K, V>create();
+			var entries = (Map<K, Collection<V>>) MULTIMAP_ENTRIES_GETTER.invoke(builder);
+			var map = HashMultimap.<K, V>create();
 
-			for (final Map.Entry<K, Collection<V>> entry : entries.entrySet()) {
+			for (Map.Entry<K, Collection<V>> entry : entries.entrySet()) {
 				if (entry == null) {
 					continue;
 				}

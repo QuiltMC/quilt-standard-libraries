@@ -43,7 +43,7 @@ abstract class KeyboardMixin {
 		}
 
 		ScreenKeyboardEvents.BEFORE_KEY_PRESS.invoker().beforeKeyPress(screen, key, scancode, modifiers);
-		final boolean result = original.call(screen, key, scancode, modifiers);
+		boolean result = original.call(screen, key, scancode, modifiers);
 		ScreenKeyboardEvents.AFTER_KEY_PRESS.invoker().afterKeyPress(screen, key, scancode, modifiers);
 
 		return result;
@@ -60,7 +60,7 @@ abstract class KeyboardMixin {
 		}
 
 		ScreenKeyboardEvents.BEFORE_KEY_RELEASE.invoker().beforeKeyRelease(screen, key, scancode, modifiers);
-		final boolean result = original.call(screen, key, scancode, modifiers);
+		boolean result = original.call(screen, key, scancode, modifiers);
 		ScreenKeyboardEvents.AFTER_KEY_RELEASE.invoker().afterKeyRelease(screen, key, scancode, modifiers);
 
 		return result;

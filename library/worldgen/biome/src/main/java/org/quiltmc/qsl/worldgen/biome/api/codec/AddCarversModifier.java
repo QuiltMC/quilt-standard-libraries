@@ -56,7 +56,7 @@ public record AddCarversModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (final RegistryKey<ConfiguredCarver<?>> carver : this.carvers) {
+		for (RegistryKey<ConfiguredCarver<?>> carver : this.carvers) {
 			modificationContext.getGenerationSettings().addCarver(carver);
 		}
 	}

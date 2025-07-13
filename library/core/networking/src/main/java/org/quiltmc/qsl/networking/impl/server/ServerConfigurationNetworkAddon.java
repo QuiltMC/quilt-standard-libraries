@@ -60,7 +60,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 
 	@Override
 	public void lateInit() {
-		for (final Map.Entry<CustomPayload.Id<?>, ServerConfigurationNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<CustomPayload.Id<?>, ServerConfigurationNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -77,7 +77,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 
 	@Override
 	public <T extends CustomPayload> boolean handle(T payload) {
-		final boolean handled = super.handle(payload);
+		boolean handled = super.handle(payload);
 		if (handled && payload.getId().equals(NetworkingImpl.REGISTER_CHANNEL)) {
 			if (((ServerConfigurationTaskManager) this.handler).getCurrentTask() instanceof SendChannelsTask) {
 				ServerConfigurationConnectionEvents.ADD_TASKS.invoker().onAddTasks(this.handler, this.server);
@@ -124,7 +124,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	@Override
 	protected void handleRegistration(CustomPayload.Id<?> channelName) {
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));
@@ -135,7 +135,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	@Override
 	protected void handleUnregistration(CustomPayload.Id<?> channelName) {
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));

@@ -93,8 +93,8 @@ public interface DynamicRegistryManagerSetupContext {
 
 		Map<RegistryKey<? extends Registry<?>>, Registry<?>> foundRegistries = null;
 
-		for (final RegistryKey<? extends Registry<?>> key : registryKeys) {
-			final Optional<Registry<Object>> maybe = this.registryManager().getLookup(key);
+		for (RegistryKey<? extends Registry<?>> key : registryKeys) {
+			Optional<Registry<Object>> maybe = this.registryManager().getLookup(key);
 
 			if (maybe.isPresent()) {
 				if (foundRegistries == null) {
@@ -121,7 +121,7 @@ public interface DynamicRegistryManagerSetupContext {
 	default void withRegistries(
 			@NotNull Consumer<RegistryMap> action, @NotNull Set<RegistryKey<? extends Registry<?>>> registryKeys
 	) {
-		final RegistryMap registries = this.getRegistries(registryKeys);
+		RegistryMap registries = this.getRegistries(registryKeys);
 
 		if (registries != null) {
 			action.accept(registries);

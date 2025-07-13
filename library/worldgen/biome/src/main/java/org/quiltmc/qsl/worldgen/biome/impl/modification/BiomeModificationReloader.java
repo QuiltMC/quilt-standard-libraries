@@ -65,25 +65,25 @@ public class BiomeModificationReloader {
 	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> combinedListeners = new HashMap<>();
 
 	public void apply(ResourceManager resourceManager, HolderLookup.Provider provider) {
-		final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
-		final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
-		final ResourceFileNamespace resourceFileNamespace =
+		RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
+		Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
+		ResourceFileNamespace resourceFileNamespace =
 				ResourceFileNamespace.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
-		final Set<Map.Entry<Identifier, Resource>> resources =
+		Set<Map.Entry<Identifier, Resource>> resources =
 				resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
-		for (final Map.Entry<Identifier, Resource> entry : resources) {
-			final Identifier id = entry.getKey();
-			final Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
+		for (Map.Entry<Identifier, Resource> entry : resources) {
+			Identifier id = entry.getKey();
+			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
 
-			final Resource resource = entry.getValue();
+			Resource resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
-				final JsonElement json = GSON.fromJson(reader, JsonElement.class);
+				JsonElement json = GSON.fromJson(reader, JsonElement.class);
 				try {
-					final DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
+					DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
 
 					if (result.result().isPresent()) {
-						final Pair<ModificationPhase, BiomeModifier> pair = result.result().get();
+						Pair<ModificationPhase, BiomeModifier> pair = result.result().get();
 						dynamicListeners.put(unwrappedIdentifier, pair);
 					} else {
 						LOGGER.error(

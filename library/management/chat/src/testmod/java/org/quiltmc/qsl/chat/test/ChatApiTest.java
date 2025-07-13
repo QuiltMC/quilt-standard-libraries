@@ -52,7 +52,7 @@ public class ChatApiTest implements ModInitializer {
 				EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND),
 				abstractMessage -> {
 					if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {
-						final Text content = systemS2CMessage.getContent();
+						Text content = systemS2CMessage.getContent();
 						if (new Random().nextBoolean()) {
 							return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
 						}
@@ -62,7 +62,7 @@ public class ChatApiTest implements ModInitializer {
 				}
 		);
 
-		final boolean[] didEnableBad = {false};
+		boolean[] didEnableBad = {false};
 		QuiltChatEvents.CANCEL.register(
 				EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND),
 				abstractMessage -> {

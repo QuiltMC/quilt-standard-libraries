@@ -51,7 +51,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super();
 
-		final var otherAccessor = (AbstractBlockSettingsAccessor) settings;
+		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
 		this.hardness(otherAccessor.getHardness());

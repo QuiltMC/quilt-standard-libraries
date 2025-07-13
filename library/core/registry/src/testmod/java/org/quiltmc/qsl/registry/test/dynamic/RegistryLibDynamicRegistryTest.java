@@ -86,7 +86,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsTagGetLoaded(QuiltTestContext ctx) {
-		final Set<TagRegistry.TagValues<Greetings>> tagValuesSet =
+		Set<TagRegistry.TagValues<Greetings>> tagValuesSet =
 				TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
 		ctx.failIfEver(() -> assertTrue(
 				ctx, tagValuesSet.isEmpty(),
@@ -96,16 +96,16 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 		ctx.succeedIf(() -> assertTrue(
 				ctx,
 				tagValuesSet.stream().anyMatch(tagValues -> {
-					final Registry<Greetings> greetingsRegistry =
+					Registry<Greetings> greetingsRegistry =
 							ctx.getWorld().getRegistryManager().getLookupOrThrow(Greetings.REGISTRY_KEY);
-					final Greetings greetingsA = greetingsRegistry.get(GREETING_A_ID);
+					Greetings greetingsA = greetingsRegistry.get(GREETING_A_ID);
 
 					assertTrue(
 							ctx, Objects.nonNull(greetingsRegistry.get(GREETING_A_ID)),
 							"Registry should contain modded data value from datapack"
 					);
 
-					final Set<Greetings> heldIds = tagValues.values().stream()
+					Set<Greetings> heldIds = tagValues.values().stream()
 							.map(Holder::getValue)
 							.collect(Collectors.toSet());
 					return tagValues.key().equals(GREETING_TEST_TAG) && heldIds.contains(greetingsA);

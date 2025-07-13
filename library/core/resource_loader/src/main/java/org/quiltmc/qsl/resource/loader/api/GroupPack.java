@@ -79,7 +79,7 @@ public abstract class GroupPack implements ResourcePack {
 	 * @return the list of the matching resource packs
 	 */
 	public @UnmodifiableView List<? extends ResourcePack> getPacks(String namespace) {
-		final List<ResourcePack> packs = this.namespacedPacks.get(namespace);
+		List<ResourcePack> packs = this.namespacedPacks.get(namespace);
 
 		if (packs != null) {
 			return Collections.unmodifiableList(packs);
@@ -115,13 +115,13 @@ public abstract class GroupPack implements ResourcePack {
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
-		final List<ResourcePack> packs = this.namespacedPacks.get(id.getNamespace());
+		List<ResourcePack> packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs != null) {
 			// Iterating backwards as higher-priority packs are placed at the end.
 			for (int i = packs.size() - 1; i >= 0; i--) {
-				final ResourcePack pack = packs.get(i);
-				final ResourceIoSupplier<InputStream> supplier = pack.open(type, id);
+				ResourcePack pack = packs.get(i);
+				ResourceIoSupplier<InputStream> supplier = pack.open(type, id);
 
 				if (supplier != null) {
 					return supplier;
@@ -135,11 +135,11 @@ public abstract class GroupPack implements ResourcePack {
 	@Override
 	public void listResources(ResourceType type, String namespace, String startingPath,
 			ResourcePack.ResourceConsumer consumer) {
-		final List<ResourcePack> packs = this.namespacedPacks.get(namespace);
+		List<ResourcePack> packs = this.namespacedPacks.get(namespace);
 
 		if (packs != null) {
 			// Iterating backwards as higher-priority packs are placed at the end.
-			for (final ResourcePack pack : packs) {
+			for (ResourcePack pack : packs) {
 				pack.listResources(type, namespace, startingPath, consumer);
 			}
 		}
@@ -249,7 +249,7 @@ public abstract class GroupPack implements ResourcePack {
 						return Wrapped.this;
 					}
 
-					final List<ResourcePack> overlays = metadata.overlays()
+					List<ResourcePack> overlays = metadata.overlays()
 							.stream()
 							.map(Wrapped.this::createOverlay)
 							.toList();

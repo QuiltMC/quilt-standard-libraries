@@ -61,8 +61,8 @@ public record RemoveFeaturesModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (final RegistryKey<PlacedFeature> feature : this.features) {
-			for (final GenerationStep.Feature step : this.steps) {
+		for (RegistryKey<PlacedFeature> feature : this.features) {
+			for (GenerationStep.Feature step : this.steps) {
 				modificationContext.getGenerationSettings().removeFeature(step, feature);
 			}
 		}

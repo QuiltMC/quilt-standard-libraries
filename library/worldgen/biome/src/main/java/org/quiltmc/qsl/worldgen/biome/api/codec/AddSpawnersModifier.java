@@ -60,7 +60,7 @@ public record AddSpawnersModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (final SpawnSettings.SpawnEntry spawner : this.spawners) {
+		for (SpawnSettings.SpawnEntry spawner : this.spawners) {
 			modificationContext.getSpawnSettings().addSpawn(this.group.orElseGet(spawner.type()::getSpawnGroup), spawner);
 		}
 	}

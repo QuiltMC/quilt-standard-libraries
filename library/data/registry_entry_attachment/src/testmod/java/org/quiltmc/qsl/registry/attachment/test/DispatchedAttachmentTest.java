@@ -71,7 +71,7 @@ public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderE
 		@Override
 		public ActionResult use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient()) {
-				final ServerPlayerEntity player = (ServerPlayerEntity) user;
+				ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.get(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
 						() -> player.sendMessage(Text.literal("No function assigned!")
 								.formatted(Formatting.RED), true));
@@ -115,15 +115,15 @@ public class DispatchedAttachmentTest implements ModInitializer, ResourceLoaderE
 
 		LOGGER.info(" === DATA PACK RELOADED! === ");
 
-		final Iterator<RegistryEntryAttachment.TagEntry<Item, FuncValue>> tagItr = MODULAR_FUNCTION.tagEntryIterator();
+		Iterator<RegistryEntryAttachment.TagEntry<Item, FuncValue>> tagItr = MODULAR_FUNCTION.tagEntryIterator();
 		while (tagItr.hasNext()) {
-			final RegistryEntryAttachment.TagEntry<Item, FuncValue> entry = tagItr.next();
+			RegistryEntryAttachment.TagEntry<Item, FuncValue> entry = tagItr.next();
 			LOGGER.info("Tag #{} is set to {}", entry.tag().id(), entry.value());
 		}
 
-		final Iterator<RegistryEntryAttachment.Entry<Item, FuncValue>> itemItr = MODULAR_FUNCTION.entryIterator();
+		Iterator<RegistryEntryAttachment.Entry<Item, FuncValue>> itemItr = MODULAR_FUNCTION.entryIterator();
 		while (itemItr.hasNext()) {
-			final RegistryEntryAttachment.Entry<Item, FuncValue> entry = itemItr.next();
+			RegistryEntryAttachment.Entry<Item, FuncValue> entry = itemItr.next();
 			LOGGER.info("Entry {} is set to {}", Registries.ITEM.getId(entry.entry()), entry.value());
 		}
 	}

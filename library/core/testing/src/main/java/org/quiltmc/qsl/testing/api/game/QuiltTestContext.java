@@ -67,9 +67,9 @@ public class QuiltTestContext extends TestContext {
 	public void useStackOnBlockAt(
 			@NotNull PlayerEntity player, @NotNull ItemStack stack, @NotNull BlockPos pos, @NotNull Direction sideHit
 	) {
-		final var actualPos = this.getAbsolute(pos);
-		final var blockHitResult = new BlockHitResult(Vec3d.ofCenter(actualPos), sideHit, actualPos, false);
-		final var itemUsageContext = new ItemUsageContext(player, Hand.MAIN_HAND, blockHitResult);
+		var actualPos = this.getAbsolute(pos);
+		var blockHitResult = new BlockHitResult(Vec3d.ofCenter(actualPos), sideHit, actualPos, false);
+		var itemUsageContext = new ItemUsageContext(player, Hand.MAIN_HAND, blockHitResult);
 		stack.useOnBlock(itemUsageContext);
 	}
 }

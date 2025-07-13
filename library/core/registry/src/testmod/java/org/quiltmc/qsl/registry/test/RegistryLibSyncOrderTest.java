@@ -95,8 +95,8 @@ public class RegistryLibSyncOrderTest implements ModInitializer, DedicatedServer
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientConfigurationNetworking.registerGlobalReceiver(PACKET_ID, (client, handler, payload, responseSender) -> {
-			final int aID = Registries.ITEM.getRawId(ITEM_A);
-			final int bID = Registries.ITEM.getRawId(ITEM_B);
+			int aID = Registries.ITEM.getRawId(ITEM_A);
+			int bID = Registries.ITEM.getRawId(ITEM_B);
 			if (payload.early()) {
 				if (aID == payload.a()) {
 					throw new RuntimeException("Item A ID matches!");

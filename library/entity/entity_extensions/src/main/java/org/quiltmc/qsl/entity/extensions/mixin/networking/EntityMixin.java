@@ -40,8 +40,8 @@ public abstract class EntityMixin {
 			EntityTrackerEntry entry, CallbackInfoReturnable<Packet<ClientPlayPacketListener>> cir
 	) {
 		if (this instanceof QuiltExtendedSpawnDataEntity extended) {
-			final Packet<ClientPlayPacketListener> basePacket = cir.getReturnValue();
-			final Packet<ClientPlayPacketListener> extendedPacket = QuiltExtendedSpawnDataEntity
+			Packet<ClientPlayPacketListener> basePacket = cir.getReturnValue();
+			Packet<ClientPlayPacketListener> extendedPacket = QuiltExtendedSpawnDataEntity
 					.createExtendedPacket(extended, basePacket, this.getWorld().getRegistryManager());
 			cir.setReturnValue(extendedPacket);
 		}

@@ -55,10 +55,10 @@ public interface BiomeSelectionContext {
 	 * {@return {@code true} if this biome contains a placed feature referencing a configured feature with the given key, or {@code false} otherwise}
 	 */
 	default boolean hasFeature(RegistryKey<ConfiguredFeature<?, ?>> key) {
-		final List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
+		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
 
-		for (final HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
-			for (final Holder<PlacedFeature> featureSupplier : featureSuppliers) {
+		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
+			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
 				if (
 						featureSupplier.getValue().getDecoratedFeatures()
 							.anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)
@@ -75,10 +75,10 @@ public interface BiomeSelectionContext {
 	 * {@return {@code true} if this biome contains a placed feature with the given key, or {@code false} otherwise}
 	 */
 	default boolean hasPlacedFeature(RegistryKey<PlacedFeature> key) {
-		final List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
+		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
 
-		for (final HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
-			for (final Holder<PlacedFeature> featureSupplier : featureSuppliers) {
+		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
+			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
 				if (this.getPlacedFeatureKey(featureSupplier.getValue()).orElse(null) == key) {
 					return true;
 				}

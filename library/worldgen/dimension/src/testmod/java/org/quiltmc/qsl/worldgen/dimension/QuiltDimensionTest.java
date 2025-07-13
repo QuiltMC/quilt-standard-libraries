@@ -72,27 +72,27 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			return;
 		}
 
-		final ServerWorld overworld = server.getWorld(World.OVERWORLD);
-		final ServerWorld targetWorld = server.getWorld(WORLD_KEY);
+		ServerWorld overworld = server.getWorld(World.OVERWORLD);
+		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 
 		if (targetWorld == null) {
 			throw new AssertionError("Test world somehow doesn't exist.");
 		}
 
-		final CowEntity cow = EntityType.COW.create(overworld, SpawnReason.MOB_SUMMONED);
+		CowEntity cow = EntityType.COW.create(overworld, SpawnReason.MOB_SUMMONED);
 
 		if (!cow.getWorld().getRegistryKey().equals(World.OVERWORLD)) {
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
 		}
 
-		final var transition = new TeleportTarget(
+		var transition = new TeleportTarget(
 				targetWorld,
 				Vec3d.ZERO,
 				new Vec3d(1, 1, 1),
 				45f, 60f,
 				TeleportTarget.NO_OP
 		);
-		final CowEntity teleportedEntity = QuiltDimensions.teleport(cow, transition);
+		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, transition);
 
 		if (teleportedEntity == null || !teleportedEntity.getWorld().getRegistryKey().equals(WORLD_KEY)) {
 			throw new AssertionError("Cow was not teleported correctly.");
@@ -110,22 +110,22 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 	}
 
 	private int swapTargeted(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		final ServerPlayerEntity player = context.getSource().getPlayer();
-		final ServerWorld serverWorld = (ServerWorld) player.getWorld();
-		final ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
+		ServerPlayerEntity player = context.getSource().getPlayer();
+		ServerWorld serverWorld = (ServerWorld) player.getWorld();
+		ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
 
 		if (player.getWorld() != modWorld) {
 			throw new SimpleCommandExceptionType(new LiteralMessage("Teleportation failed!")).create();
 		}
 
 		if (serverWorld != modWorld) {
-			final var transition = new TeleportTarget(modWorld, new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0, TeleportTarget.NO_OP);
+			var transition = new TeleportTarget(modWorld, new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0, TeleportTarget.NO_OP);
 			QuiltDimensions.teleport(player, transition);
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());
 		} else {
-			final var transition = new TeleportTarget(context.getSource().getServer().getWorld(World.END), new Vec3d(0, 100, 0), Vec3d.ZERO,
+			var transition = new TeleportTarget(context.getSource().getServer().getWorld(World.END), new Vec3d(0, 100, 0), Vec3d.ZERO,
 					(float) Math.random() * 360 - 180, (float) Math.random() * 360 - 180, TeleportTarget.NO_OP);
 			QuiltDimensions.teleport(player, transition);
 		}

@@ -124,7 +124,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	@Override
 	public void onPlayerCopy(ServerPlayerEntity newPlayer, ServerPlayerEntity original, boolean wasDeath) {
 		if (wasDeath) {
-			final StatusEffectInstance glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
+			StatusEffectInstance glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
 			if (glowingEffect != null) {
 				newPlayer.addStatusEffect(glowingEffect);
 			}

@@ -57,9 +57,9 @@ public final class PointOfInterestHelper {
 	public static RegistryKey<PointOfInterestType> register(
 			Identifier id, int ticketCount, int searchDistance, Block... blocks
 	) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
+		ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
-		for (final Block block : blocks) {
+		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
@@ -76,7 +76,7 @@ public final class PointOfInterestHelper {
 	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
 	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Iterable<BlockState> states) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
+		ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
 		return register(id, ticketCount, searchDistance, builder.addAll(states));
 	}
@@ -119,10 +119,10 @@ public final class PointOfInterestHelper {
 	 * @return the {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
 	public static RegistryKey<PointOfInterestType> register(Identifier id, PointOfInterestType poiType) {
-		final var key = RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, id);
+		var key = RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, id);
 		Registry.register(Registries.POINT_OF_INTEREST_TYPE, key, poiType);
 		poiType.blockStates().forEach(state -> {
-			final Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
+			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
 					.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(

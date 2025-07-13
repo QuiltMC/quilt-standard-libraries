@@ -45,9 +45,9 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
-		for (final Block block : blocks) {
+		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
@@ -56,7 +56,7 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
 		builder.addAll(states);
 
@@ -65,9 +65,9 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 
 	@Override
 	public void quilt$setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		final ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
+		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
-		for (final Block block : blocks) {
+		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
@@ -82,13 +82,13 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	@Unique
 	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
-			for (final BlockState state : this.blockStates) {
+			for (BlockState state : this.blockStates) {
 				PointOfInterestTypesAccessor.getStateToTypeMap().remove(state);
 			}
 		}
 
-		for (final BlockState state : states) {
-			final Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
+		for (BlockState state : states) {
+			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
 					.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(String.format(

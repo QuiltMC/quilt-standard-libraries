@@ -93,7 +93,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 		this.codec = Codec.lazyInitialized(() -> codecs.createDelegatingCodecPhased(callbackClass.getSimpleName()));
 
 		@SuppressWarnings("unchecked")
-		final var emptyArray = (T[]) Array.newInstance(callbackClass, 0);
+		var emptyArray = (T[]) Array.newInstance(callbackClass, 0);
 		this.emptyArray = emptyArray;
 	}
 
@@ -121,25 +121,25 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	}
 
 	private void updateListeners(Identifier phase) {
-		final var combinedMap = new TreeMap<Identifier, T>();
+		var combinedMap = new TreeMap<Identifier, T>();
 
-		for (final Map.Entry<Identifier, Pair<Identifier, T>> entry : this.listeners.entrySet()) {
+		for (Map.Entry<Identifier, Pair<Identifier, T>> entry : this.listeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
-		for (final Map.Entry<Identifier, Pair<Identifier, T>> entry : this.dynamicListeners.entrySet()) {
+		for (Map.Entry<Identifier, Pair<Identifier, T>> entry : this.dynamicListeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
 		@SuppressWarnings("unchecked")
-		final var array = (T[]) Array.newInstance(this.callbackClass, combinedMap.size());
+		var array = (T[]) Array.newInstance(this.callbackClass, combinedMap.size());
 
 		int i = 0;
-		for (final T t : combinedMap.values()) {
+		for (T t : combinedMap.values()) {
 			array[i] = t;
 			i++;
 		}
@@ -182,23 +182,23 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 * @param ops             the dynamic ops to use to decode data
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
-		final var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
-		final ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace
+		var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
+		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace
 				.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
-		final Set<Map.Entry<Identifier, Resource>> resources =
+		Set<Map.Entry<Identifier, Resource>> resources =
 				resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
-		for (final Map.Entry<Identifier, Resource> entry : resources) {
-			final Identifier id = entry.getKey();
-			final Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
+		for (Map.Entry<Identifier, Resource> entry : resources) {
+			Identifier id = entry.getKey();
+			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
 
-			final Resource resource = entry.getValue();
+			Resource resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
-				final JsonElement json = GSON.fromJson(reader, JsonElement.class);
-				final DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
+				JsonElement json = GSON.fromJson(reader, JsonElement.class);
+				DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
 
 				if (result.result().isPresent()) {
-					final Pair<Identifier, T> pair = result.result().get();
+					Pair<Identifier, T> pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);
 				} else {
 					LOGGER.error(

@@ -111,11 +111,11 @@ public final class PlayerLookup {
 	 */
 	public static Collection<ServerPlayerEntity> tracking(Entity entity) {
 		Objects.requireNonNull(entity, "Entity cannot be null");
-		final ChunkManager manager = entity.getWorld().getChunkManager();
+		ChunkManager manager = entity.getWorld().getChunkManager();
 
 		if (manager instanceof ServerChunkManager serverManager) {
-			final ThreadedChunkManager storage = serverManager.delegate;
-			final EntityTrackerAccessor tracker = ((ThreadedChunkManagerAccessor) storage).getEntityTrackers().get(entity.getId());
+			ThreadedChunkManager storage = serverManager.delegate;
+			EntityTrackerAccessor tracker = ((ThreadedChunkManagerAccessor) storage).getEntityTrackers().get(entity.getId());
 
 			// return an immutable collection to guard against accidental removals.
 			if (tracker != null) {
@@ -171,7 +171,7 @@ public final class PlayerLookup {
 	 * @return the players around the position
 	 */
 	public static Collection<ServerPlayerEntity> around(ServerWorld world, Vec3d pos, double radius) {
-		final double radiusSq = radius * radius;
+		double radiusSq = radius * radius;
 
 		return world(world)
 				.stream()
@@ -190,7 +190,7 @@ public final class PlayerLookup {
 	 * @return the players around the position
 	 */
 	public static Collection<ServerPlayerEntity> around(ServerWorld world, Vec3i pos, double radius) {
-		final double radiusSq = radius * radius;
+		double radiusSq = radius * radius;
 
 		return world(world)
 				.stream()

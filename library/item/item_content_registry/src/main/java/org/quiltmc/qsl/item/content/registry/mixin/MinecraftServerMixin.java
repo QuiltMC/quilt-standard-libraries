@@ -36,7 +36,7 @@ abstract class MinecraftServerMixin {
 	) {
 		ItemContentRegistriesInitializer.startInitialFuelCollection();
 
-		final FuelTimes fuelTimes = original.call(provider, flags);
+		FuelTimes fuelTimes = original.call(provider, flags);
 
 		ItemContentRegistriesInitializer.endInitialFuelCollection();
 

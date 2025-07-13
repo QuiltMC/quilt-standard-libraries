@@ -439,7 +439,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		@Override
 		public EntityType<T> build() {
-			final EntityType<T> type = super.build();
+			EntityType<T> type = super.build();
 
 			if (this.defaultAttributeBuilder != null) {
 				DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.put(type, this.defaultAttributeBuilder.build());
@@ -567,7 +567,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		@Override
 		public EntityType<T> build() {
-			final EntityType<T> type = super.build();
+			EntityType<T> type = super.build();
 
 			if (this.spawnPredicate != null) {
 				SpawnRestriction.register(type, this.restrictionLocation, this.restrictionHeightmap, this.spawnPredicate);

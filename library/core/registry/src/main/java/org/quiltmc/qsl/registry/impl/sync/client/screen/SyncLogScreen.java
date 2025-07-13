@@ -59,17 +59,17 @@ public class SyncLogScreen extends Screen {
 		);
 		this.addDrawableSelectableElement(this.scrollableText);
 
-		final int y = this.height - 40;
+		int y = this.height - 40;
 
 		{
-			final int x = this.width / 2 - 5 - 120;
+			int x = this.width / 2 - 5 - 120;
 			this.addDrawableSelectableElement(ButtonWidget.builder(Text.translatable("chat.copy"), (button) -> {
 				this.client.keyboard.setClipboard(sections);
 			}).positionAndSize(x, y, 120, 20).build());
 		}
 
 		{
-			final int x = this.width / 2 + 5;
+			int x = this.width / 2 + 5;
 			this.addDrawableSelectableElement(ButtonWidget.builder(CommonTexts.BACK, (button) -> {
 				this.client.setScreen(this.parent);
 			}).positionAndSize(x, y, 120, 20).build());

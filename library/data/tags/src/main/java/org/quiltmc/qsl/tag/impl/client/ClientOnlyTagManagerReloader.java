@@ -45,7 +45,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 	@Override
 	public CompletableFuture<List<Entry>> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var entries = new ArrayList<Entry>();
+			var entries = new ArrayList<Entry>();
 
 			ClientTagRegistryManager.forEach(clientTagRegistryManager -> {
 				entries.add(new Entry(clientTagRegistryManager, clientTagRegistryManager.load(manager)));

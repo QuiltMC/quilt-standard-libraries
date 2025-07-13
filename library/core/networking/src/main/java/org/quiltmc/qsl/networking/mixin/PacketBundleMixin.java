@@ -38,14 +38,14 @@ import net.minecraft.network.packet.PacketBundle;
 public class PacketBundleMixin {
 	@ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
 	private static Iterable<Packet<?>> quilt$flattenPackets(Iterable<Packet<?>> packets) {
-		final List<Packet<?>> list = new ArrayList<>();
+		List<Packet<?>> list = new ArrayList<>();
 		quilt$recursivelyCollectBundledPackets(packets, list);
 		return list;
 	}
 
 	@Unique
 	private static void quilt$recursivelyCollectBundledPackets(Iterable<Packet<?>> packets, List<Packet<?>> list) {
-		for (final Packet<?> packet : packets) {
+		for (Packet<?> packet : packets) {
 			if (packet instanceof PacketBundle<?> bundle) {
 				//noinspection unchecked,rawtypes
 				quilt$recursivelyCollectBundledPackets((Iterable) bundle.getPackets(), list);

@@ -66,7 +66,7 @@ public final class Versions {
 	private Versions() {}
 
 	private static List<MinecraftVersion> versions(Object... versions) {
-		final var list = new ArrayList<MinecraftVersion>();
+		var list = new ArrayList<MinecraftVersion>();
 
 		for (final Object version : versions) {
 			if (version instanceof String name) {

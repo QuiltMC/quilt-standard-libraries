@@ -72,7 +72,7 @@ public class TrackedDataHandlerRegistryMixin {
 
 	@Inject(method = "register(Lnet/minecraft/entity/data/TrackedDataHandler;)V", at = @At("HEAD"))
 	private static void quilt$register(TrackedDataHandler<?> handler, CallbackInfo ci) {
-		final String id;
+		String id;
 
 		if (handler == TrackedDataHandlerRegistry.BYTE) {
 			id = "byte";
@@ -159,7 +159,7 @@ public class TrackedDataHandlerRegistryMixin {
 							+ "please call QuiltTrackedDataHandlerRegistry.register. Object: {}, Class: {}",
 						handler.toString(), handler.getClass().getName()
 				);
-				for (final StackTraceElement traceElement : Thread.currentThread().getStackTrace()) {
+				for (StackTraceElement traceElement : Thread.currentThread().getStackTrace()) {
 					quilt$LOGGER.warn("\tat {}", traceElement);
 				}
 			}

@@ -61,13 +61,13 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Fill the initial flammable blocks map
-		final var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
-		final var fireBlock = ((FireBlock) Blocks.FIRE);
+		var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
+		var fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.spreadChances.keySet().forEach(block -> builder.put(
 				block,
 				new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block))
 		));
-		final ImmutableMap<Block, FlammableBlockEntry> initialFlammableBlocks = builder.build();
+		ImmutableMap<Block, FlammableBlockEntry> initialFlammableBlocks = builder.build();
 
 		// Force load the maps
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
@@ -106,7 +106,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 
 		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
 
-		final var fireBlock = ((FireBlock) Blocks.FIRE);
+		var fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
 		fireBlock.spreadChances.clear();
 		BlockContentRegistries.FLAMMABLE.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE.get(entry).ifPresent(v -> {
@@ -141,11 +141,11 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	public static float calculateBookshelfCount(World world, BlockPos pos) {
 		float count = 0;
 
-		for (final BlockPos offset : EnchantingTableBlock.POWER_SEARCH_OFFSETS) {
+		for (BlockPos offset : EnchantingTableBlock.POWER_SEARCH_OFFSETS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
-				final BlockPos blockPos = pos.add(offset);
-				final BlockState state = world.getBlockState(blockPos);
-				final Block block = state.getBlock();
+				BlockPos blockPos = pos.add(offset);
+				BlockState state = world.getBlockState(blockPos);
+				Block block = state.getBlock();
 				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block)
 						.map(booster -> booster.getEnchantingBoost(world, state, blockPos))
 						.orElse(0.0F);

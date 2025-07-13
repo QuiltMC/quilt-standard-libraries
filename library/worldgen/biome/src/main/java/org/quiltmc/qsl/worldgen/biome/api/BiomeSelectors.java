@@ -147,10 +147,10 @@ public final class BiomeSelectors {
 	 */
 	public static Predicate<BiomeSelectionContext> spawnsOneOf(Set<EntityType<?>> entityTypes) {
 		return context -> {
-			final SpawnSettings spawnSettings = context.getBiome().getSpawnSettings();
+			SpawnSettings spawnSettings = context.getBiome().getSpawnSettings();
 
-			for (final SpawnGroup spawnGroup : SpawnGroup.values()) {
-				for (final var spawnEntry : spawnSettings.getSpawnEntries(spawnGroup).getEntries()) {
+			for (SpawnGroup spawnGroup : SpawnGroup.values()) {
+				for (var spawnEntry : spawnSettings.getSpawnEntries(spawnGroup).getEntries()) {
 					if (entityTypes.contains(spawnEntry.value().type())) {
 						return true;
 					}

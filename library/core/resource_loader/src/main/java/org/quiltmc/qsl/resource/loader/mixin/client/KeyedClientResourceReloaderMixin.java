@@ -72,7 +72,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
-			final Object self = this;
+			Object self = this;
 
 			if (self instanceof BakedModelManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.MODELS;
