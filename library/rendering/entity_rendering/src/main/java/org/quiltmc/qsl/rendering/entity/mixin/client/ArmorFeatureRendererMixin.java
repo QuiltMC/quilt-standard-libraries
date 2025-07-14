@@ -84,7 +84,7 @@ abstract class ArmorFeatureRendererMixin<
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
 	private void quilt$getArmorModel(S state, EquipmentSlot slot, CallbackInfoReturnable<A> cir) {
 		@Nullable
-		final ItemStack equippedStack = switch (slot) {
+		ItemStack equippedStack = switch (slot) {
 			case FEET -> state.feetEquipment;
 			case LEGS -> state.legsEquipment;
 			case CHEST -> state.chestEquipment;
@@ -93,8 +93,8 @@ abstract class ArmorFeatureRendererMixin<
 		};
 
 		if (equippedStack != null) {
-			final A model = cir.getReturnValue();
-			final BipedEntityModel<BipedRenderState> modifiedModel = ArmorRenderingRegistryImpl
+			A model = cir.getReturnValue();
+			BipedEntityModel<BipedRenderState> modifiedModel = ArmorRenderingRegistryImpl
 					.getArmorModel((BipedEntityModel<BipedRenderState>) model, state, equippedStack, slot);
 
 			if (modifiedModel != model) {
@@ -125,7 +125,7 @@ abstract class ArmorFeatureRendererMixin<
 			Operation<Void> original,
 			MatrixStack matrices2, VertexConsumerProvider vertexConsumers2, ItemStack stack2, EquipmentSlot armorSlot
 	) {
-		final EquipmentRendererExtensions extendedEquipmentRenderer =
+		EquipmentRendererExtensions extendedEquipmentRenderer =
 				(EquipmentRendererExtensions) this.equipmentRenderer;
 
 		try {

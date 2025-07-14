@@ -91,19 +91,19 @@ public final class ClientCommandInternals {
 			return false; // Incorrect prefix, won't execute anything.
 		}
 
-		final MinecraftClient client = MinecraftClient.getInstance();
+		MinecraftClient client = MinecraftClient.getInstance();
 
 		// The interface is implemented on ClientCommandSource with a mixin.
 		// noinspection ConstantConditions
-		final ClientCommandSource commandSource = client.getNetworkHandler().getCommandSource();
+		ClientCommandSource commandSource = client.getNetworkHandler().getCommandSource();
 
 		ProfilerManager.get().push(message);
 
 		try {
 			// Only run client commands if there are no matching server-side commands.
-			final String command = ignorePrefix ? message : message.substring(1);
-			final CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
-			final ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
+			String command = ignorePrefix ? message : message.substring(1);
+			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
+			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
 
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
 				currentDispatcher.execute(command, commandSource);
@@ -112,7 +112,7 @@ public final class ClientCommandInternals {
 				return false;
 			}
 		} catch (CommandSyntaxException e) {
-			final boolean ignored = shouldIgnore(e.getType());
+			boolean ignored = shouldIgnore(e.getType());
 
 			if (ignored) {
 				LOGGER.debug("Syntax exception for client-side command '{}'", message, e);
@@ -150,8 +150,8 @@ public final class ClientCommandInternals {
 			return true;
 		}
 
-		final String command = parse.getReader().getString();
-		final CommandContext<S> context = parse.getContext().build(command);
+		String command = parse.getReader().getString();
+		CommandContext<S> context = parse.getContext().build(command);
 
 		return context.getCommand() == null || context.getCommand() == DUMMY_COMMAND;
 	}
@@ -164,7 +164,7 @@ public final class ClientCommandInternals {
 	 * @return {@code true} if ignored, {@code false} otherwise
 	 */
 	private static boolean shouldIgnore(CommandExceptionType type) {
-		final BuiltInExceptionProvider builtins = CommandSyntaxException.BUILT_IN_EXCEPTIONS;
+		BuiltInExceptionProvider builtins = CommandSyntaxException.BUILT_IN_EXCEPTIONS;
 
 		// Only ignore unknown commands and node parse exceptions.
 		// The argument-related dispatcher exceptions are not ignored because
@@ -180,8 +180,8 @@ public final class ClientCommandInternals {
 	 * @return the error message as a {@link Text}
 	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
-		final Text message = Text.of(e.getRawMessage());
-		final String context = e.getContext();
+		Text message = Text.of(e.getRawMessage());
+		String context = e.getContext();
 
 		return context != null ? Text.translatable("command.context.parse_error", message, context) : message;
 	}
@@ -222,7 +222,7 @@ public final class ClientCommandInternals {
 		if (!currentDispatcher.getRoot().getChildren().isEmpty()) {
 			// Register the qcc command only if there are other commands;
 			// it is not needed if there are no client commands.
-			final CommandNode<QuiltClientCommandSource> mainNode = currentDispatcher.register(
+			CommandNode<QuiltClientCommandSource> mainNode = currentDispatcher.register(
 					literal(API_COMMAND_NAME)
 							.then(createHelpCommand())
 							.then(createRunCommand())
@@ -239,8 +239,8 @@ public final class ClientCommandInternals {
 	 * @return the {@code run} subcommand for {@code /qcc}
 	 */
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand() {
-		final LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
-		for (final CommandNode<QuiltClientCommandSource> node : currentDispatcher.getRoot().getChildren()) {
+		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
+		for (CommandNode<QuiltClientCommandSource> node : currentDispatcher.getRoot().getChildren()) {
 			runCommand.then(node);
 		}
 
@@ -276,8 +276,8 @@ public final class ClientCommandInternals {
 	 * @throws CommandSyntaxException if no such command as given in the command argument is given
 	 */
 	private static int executeSpecificHelp(CommandContext<QuiltClientCommandSource> context) throws CommandSyntaxException {
-		final ParseResults<QuiltClientCommandSource> parseResults = currentDispatcher.parse(StringArgumentType.getString(context, "command"), context.getSource());
-		final List<ParsedCommandNode<QuiltClientCommandSource>> nodes = parseResults.getContext().getNodes();
+		ParseResults<QuiltClientCommandSource> parseResults = currentDispatcher.parse(StringArgumentType.getString(context, "command"), context.getSource());
+		List<ParsedCommandNode<QuiltClientCommandSource>> nodes = parseResults.getContext().getNodes();
 
 		if (nodes.isEmpty()) {
 			throw HelpCommandAccessor.getFailedException().create();
@@ -297,10 +297,10 @@ public final class ClientCommandInternals {
 	private static int executeHelp(
 			CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context
 	) {
-		final Map<CommandNode<QuiltClientCommandSource>, String> commands =
+		Map<CommandNode<QuiltClientCommandSource>, String> commands =
 				currentDispatcher.getSmartUsage(startNode, context.getSource());
 
-		for (final String command : commands.values()) {
+		for (String command : commands.values()) {
 			context.getSource().sendFeedback(Text.of(PREFIX + command));
 		}
 
@@ -331,7 +331,7 @@ public final class ClientCommandInternals {
 	private static void addDummyCommands(
 			CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source
 	) {
-		final var originalToCopy = new Object2ObjectOpenHashMap
+		var originalToCopy = new Object2ObjectOpenHashMap
 				<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>>();
 		originalToCopy.put(currentDispatcher.getRoot(), target.getRoot());
 		copyChildren(currentDispatcher.getRoot(), target.getRoot(), source, originalToCopy);
@@ -353,7 +353,7 @@ public final class ClientCommandInternals {
 			QuiltClientCommandSource source,
 			Map<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>> originalToCopy
 	) {
-		for (final CommandNode<QuiltClientCommandSource> child : origin.getChildren()) {
+		for (CommandNode<QuiltClientCommandSource> child : origin.getChildren()) {
 			if (!child.canUse(source)) {
 				continue;
 			}
@@ -362,7 +362,7 @@ public final class ClientCommandInternals {
 				continue;
 			}
 
-			final ArgumentBuilder<QuiltClientCommandSource, ?> builder = child.createBuilder();
+			ArgumentBuilder<QuiltClientCommandSource, ?> builder = child.createBuilder();
 
 			// Reset the unnecessary non-completion stuff from the builder
 			builder.requires(s -> true); // This is checked with the if check above.
@@ -376,7 +376,7 @@ public final class ClientCommandInternals {
 				builder.redirect(originalToCopy.get(builder.getRedirect()));
 			}
 
-			final CommandNode<QuiltClientCommandSource> result = builder.build();
+			CommandNode<QuiltClientCommandSource> result = builder.build();
 			originalToCopy.put(child, result);
 			target.addChild(result);
 

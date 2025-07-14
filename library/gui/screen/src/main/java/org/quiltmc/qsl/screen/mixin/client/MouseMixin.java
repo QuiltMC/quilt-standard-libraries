@@ -47,7 +47,7 @@ abstract class MouseMixin {
 		}
 
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(instance, mouseX, mouseY, button);
-		final boolean result = original.call(instance, mouseX, mouseY, button);
+		boolean result = original.call(instance, mouseX, mouseY, button);
 		ScreenMouseEvents.AFTER_MOUSE_CLICK.invoker().afterMouseClick(instance, mouseX, mouseY, button);
 
 		return result;
@@ -69,7 +69,7 @@ abstract class MouseMixin {
 		}
 
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(instance, mouseX, mouseY, button);
-		final boolean result = original.call(instance, mouseX, mouseY, button);
+		boolean result = original.call(instance, mouseX, mouseY, button);
 		ScreenMouseEvents.AFTER_MOUSE_RELEASE.invoker().afterMouseRelease(instance, mouseX, mouseY, button);
 
 		return result;
@@ -92,7 +92,7 @@ abstract class MouseMixin {
 
 		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker()
 				.beforeMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
-		final boolean result = original.call(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		boolean result = original.call(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker()
 				.afterMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 

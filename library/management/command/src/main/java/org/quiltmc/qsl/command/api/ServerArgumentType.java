@@ -91,8 +91,8 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
 			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
 			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
-		final var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
-		final var info = ArgumentTypeInfosAccessor
+		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
+		var info = ArgumentTypeInfosAccessor
 				.callRegister(Registries.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
 		RegistrySynchronization
 				.setEntryOptional((SimpleRegistry<ArgumentTypeInfo<?, ?>>) Registries.COMMAND_ARGUMENT_TYPE, info);

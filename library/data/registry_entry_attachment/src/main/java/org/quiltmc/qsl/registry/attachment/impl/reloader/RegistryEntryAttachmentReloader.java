@@ -85,16 +85,16 @@ public final class RegistryEntryAttachmentReloader implements
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			final Profiler profiler = ProfilerManager.get();
+			Profiler profiler = ProfilerManager.get();
 
-			final var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
+			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
-			for (final var entry : Registries.ROOT.getEntries()) {
-				final Identifier registryId = entry.getKey().getValue();
-				final String path = registryId.getNamespace() + "/" + registryId.getPath();
+			for (var entry : Registries.ROOT.getEntries()) {
+				Identifier registryId = entry.getKey().getValue();
+				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
 
-				final Map<Identifier, List<Resource>> resources = manager.findAllResources(
+				Map<Identifier, List<Resource>> resources = manager.findAllResources(
 						"attachments/" + path,
 						s -> s.getPath().endsWith(".json")
 				);
@@ -103,7 +103,7 @@ public final class RegistryEntryAttachmentReloader implements
 					continue;
 				}
 
-				final Registry<?> registry = entry.getValue();
+				Registry<?> registry = entry.getValue();
 				this.processResources(profiler, attachDicts, resources, registry);
 
 				profiler.pop();
@@ -117,9 +117,9 @@ public final class RegistryEntryAttachmentReloader implements
 			Profiler profiler,
 			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
 			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
-		for (final Map.Entry<Identifier, List<Resource>> entry : resources.entrySet()) {
-			final Identifier attachmentId = this.getAttachmentId(entry.getKey());
-			final RegistryEntryAttachment<?, ?> attachment =
+		for (Map.Entry<Identifier, List<Resource>> entry : resources.entrySet()) {
+			Identifier attachmentId = this.getAttachmentId(entry.getKey());
+			RegistryEntryAttachment<?, ?> attachment =
 					RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
 				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, entry);
@@ -136,8 +136,8 @@ public final class RegistryEntryAttachmentReloader implements
 
 			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
-			final AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
-			for (final var resource : entry.getValue()) {
+			AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
+			for (var resource : entry.getValue()) {
 				attachDict.processResource(entry.getKey(), resource);
 			}
 		}
@@ -150,7 +150,7 @@ public final class RegistryEntryAttachmentReloader implements
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			final Profiler profiler = ProfilerManager.get();
+			Profiler profiler = ProfilerManager.get();
 
 			data.apply(profiler);
 			if (this.source == ResourceType.SERVER_DATA) {
@@ -163,10 +163,10 @@ public final class RegistryEntryAttachmentReloader implements
 	// "<namespace>:attachments/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
 	private Identifier getAttachmentId(Identifier jsonId) {
 		String path = jsonId.getPath();
-		final int lastSlash = path.lastIndexOf('/');
+		int lastSlash = path.lastIndexOf('/');
 		path = path.substring(lastSlash + 1);
 
-		final int lastDot = path.lastIndexOf('.');
+		int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
 		return Identifier.of(jsonId.getNamespace(), path);
 	}
@@ -182,12 +182,12 @@ public final class RegistryEntryAttachmentReloader implements
 		public void apply(Profiler profiler) {
 			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
 
-			for (final var entry : Registries.ROOT.getEntries()) {
+			for (var entry : Registries.ROOT.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
 						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
-			for (final var entry : this.attachmentMaps.entrySet()) {
+			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(
 						RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}"
 				);
@@ -202,13 +202,13 @@ public final class RegistryEntryAttachmentReloader implements
 
 		@SuppressWarnings("unchecked")
 		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachAttachment) {
-			final Registry<R> registry = attachment.registry();
+			Registry<R> registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
-			final RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
-			for (final Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
-				final V value = (V) attachmentEntry.getValue();
-				final AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
+			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
+			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
+				V value = (V) attachmentEntry.getValue();
+				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
 					case ENTRY -> holder.putValue(attachment, registry.get(target.id()), value);
 					case TAG -> holder.putValue(attachment, TagKey.of(registry.getKey(), target.id()), value);

@@ -124,7 +124,7 @@ public class RecipeTestMod implements ModInitializer {
 	}
 
 	private static ItemStack pickRandomStack() {
-		final Item item = RANDOM_ITEMS_POOL.get(RANDOM.nextInt(RANDOM_ITEMS_POOL.size()));
+		Item item = RANDOM_ITEMS_POOL.get(RANDOM.nextInt(RANDOM_ITEMS_POOL.size()));
 		return new ItemStack(item);
 	}
 }

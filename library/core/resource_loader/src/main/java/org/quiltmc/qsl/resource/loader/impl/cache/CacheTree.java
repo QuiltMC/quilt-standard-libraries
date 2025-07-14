@@ -68,7 +68,7 @@ public final class CacheTree {
 		}
 
 		public String getFullPath() {
-			final var list = new ArrayList<String>();
+			var list = new ArrayList<String>();
 			Node elem = this;
 
 			while (!elem.isRoot()) {
@@ -104,27 +104,27 @@ public final class CacheTree {
 		}
 
 		public Branch putBranch(String name) {
-			final var child = new Branch(this, name);
+			var child = new Branch(this, name);
 			this.nodes.put(name, child);
 			return child;
 		}
 
 		public void putEmpty(String name) {
-			final var child = new Leaf(this, name, EntryType.EMPTY);
+			var child = new Leaf(this, name, EntryType.EMPTY);
 			this.nodes.put(name, child);
 		}
 
 		public Leaf putFile(String name) {
-			final var child = new Leaf(this, name, EntryType.FILE);
+			var child = new Leaf(this, name, EntryType.FILE);
 			this.nodes.put(name, child);
 			return child;
 		}
 
 		public @Nullable Node resolveOrCompute(ModIoOps io, String path) {
-			final int firstSeparator = path.indexOf('/');
-			final String childName = firstSeparator == -1 ? path : path.substring(0, firstSeparator);
+			int firstSeparator = path.indexOf('/');
+			String childName = firstSeparator == -1 ? path : path.substring(0, firstSeparator);
 
-			final Node node = this.nodes.get(childName);
+			Node node = this.nodes.get(childName);
 
 			if (node == null) {
 				String absolutePath = childName;
@@ -133,7 +133,7 @@ public final class CacheTree {
 					absolutePath = this.getFullPath() + '/' + absolutePath;
 				}
 
-				final EntryType type = io.getEntryType(absolutePath);
+				EntryType type = io.getEntryType(absolutePath);
 
 				switch (type) {
 					case EMPTY -> {
@@ -141,7 +141,7 @@ public final class CacheTree {
 						return null;
 					}
 					case DIRECTORY -> {
-						final Branch branch = this.putBranch(childName);
+						Branch branch = this.putBranch(childName);
 
 						if (firstSeparator != -1) {
 							return branch.resolveOrCompute(io, path.substring(firstSeparator + 1));
@@ -150,7 +150,7 @@ public final class CacheTree {
 						}
 					}
 					case FILE -> {
-						final Leaf leaf = this.putFile(childName);
+						Leaf leaf = this.putFile(childName);
 
 						if (firstSeparator == -1) {
 							return leaf;

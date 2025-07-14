@@ -58,9 +58,9 @@ abstract class WorldSaveStorageBugfixMixin {
 			Dynamic<?> dynamic, FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry,
 			HolderLookup.Provider lookupProvider, CallbackInfoReturnable<ParsedSaveProperties> cir
 	) {
-		final NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
+		NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
 
-		final String key = "WorldGenSettings";
+		String key = "WorldGenSettings";
 		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		quilt$removeNonVanillaDimensionsFromNbt(worldGenSettings);
@@ -76,14 +76,14 @@ abstract class WorldSaveStorageBugfixMixin {
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		final String key = "dimensions";
-		final NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
+		String key = "dimensions";
+		NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {
-			final var newDimensions = new NbtCompound();
+			var newDimensions = new NbtCompound();
 
-			for (final RegistryKey<DimensionOptions> dimId : BASE_DIMENSIONS) {
-				final String strId = dimId.getValue().toString();
+			for (RegistryKey<DimensionOptions> dimId : BASE_DIMENSIONS) {
+				String strId = dimId.getValue().toString();
 
 				// method_10545 is containsKey
 				if (dimensions.method_10545(strId)) {

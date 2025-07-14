@@ -71,7 +71,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 
 	@Override
 	public boolean contains(Identifier id, RecipeType<?> type) {
-		final Collection<RecipeHolder<?>> typedRecipes = this.byType.get(type);
+		Collection<RecipeHolder<?>> typedRecipes = this.byType.get(type);
 
 		return typedRecipes.stream().anyMatch(holder -> holder.id().getValue().equals(id));
 	}
@@ -84,7 +84,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Recipe<?>> @Nullable RecipeHolder<T> getRecipe(Identifier id, RecipeType<T> type) {
-		final var typedRecipes = this.byType.get(type);
+		var typedRecipes = this.byType.get(type);
 
 		if (typedRecipes.isEmpty()) {
 			return null;
@@ -104,7 +104,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Recipe<?>> Collection<RecipeHolder<T>> getRecipesOfType(RecipeType<T> type) {
-		final Collection<RecipeHolder<?>> recipes = this.byType.get(type);
+		Collection<RecipeHolder<?>> recipes = this.byType.get(type);
 
 		if (recipes.isEmpty()) {
 			return Collections.emptyList();

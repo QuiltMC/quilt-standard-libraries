@@ -287,7 +287,7 @@ public interface BiomeModificationContext {
 		default boolean removeFeature(RegistryKey<PlacedFeature> placedFeatureKey) {
 			boolean anyFound = false;
 
-			for (final GenerationStep.Feature step : GenerationStep.Feature.values()) {
+			for (GenerationStep.Feature step : GenerationStep.Feature.values()) {
 				if (this.removeFeature(step, placedFeatureKey)) {
 					anyFound = true;
 				}

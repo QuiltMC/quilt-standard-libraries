@@ -41,7 +41,7 @@ public final class QuiltBaseImpl {
 	}
 
 	public static void ensureContainsDefaultPhase(Identifier[] defaultPhases) {
-		for (final Identifier id : defaultPhases) {
+		for (Identifier id : defaultPhases) {
 			if (id.equals(Event.DEFAULT_PHASE)) {
 				return;
 			}
@@ -51,7 +51,7 @@ public final class QuiltBaseImpl {
 	}
 
 	static {
-		final String autoTest = System.getProperty("quilt.auto_test");
+		String autoTest = System.getProperty("quilt.auto_test");
 		Integer autoTestTickTime = null;
 
 		if (autoTest != null) {

@@ -45,7 +45,7 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	private static void registerItem(String path, Function<Item.Settings, Item> factory) {
-		final RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, createId(path));
+		RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, createId(path));
 		Registry.register(Registries.ITEM, key, factory.apply(new Item.Settings().key(key)));
 	}
 

@@ -114,7 +114,7 @@ public class DataCallbackTests implements ModInitializer {
 		public void onPlayReady(
 				ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server
 		) {
-			final Text text = Text.literal(this.text()).setStyle(this.style());
+			Text text = Text.literal(this.text()).setStyle(this.style());
 			handler.player.sendSystemMessage(text, true);
 		}
 	}

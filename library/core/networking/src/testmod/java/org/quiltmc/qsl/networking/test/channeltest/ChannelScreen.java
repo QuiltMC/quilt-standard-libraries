@@ -63,9 +63,9 @@ final class ChannelScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
-			final var clickMe = Text.of("Click S2C or C2S to view supported channels");
+			var clickMe = Text.of("Click S2C or C2S to view supported channels");
 
-			final int textWidth = this.textRenderer.getWidth(clickMe);
+			int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions
 			graphics.drawText(
 					this.textRenderer,
@@ -89,7 +89,7 @@ final class ChannelScreen extends Screen {
 		button.active = false;
 		this.channelList.clear();
 
-		for (final CustomPayload.Id<?> receiver : ClientPlayNetworking.getSendable()) {
+		for (CustomPayload.Id<?> receiver : ClientPlayNetworking.getSendable()) {
 			this.channelList.addEntry(this.channelList.new Entry(receiver.id()));
 		}
 	}
@@ -99,7 +99,7 @@ final class ChannelScreen extends Screen {
 		button.active = false;
 		this.channelList.clear();
 
-		for (final CustomPayload.Id<?> receiver : ClientPlayNetworking.getReceived()) {
+		for (CustomPayload.Id<?> receiver : ClientPlayNetworking.getReceived()) {
 			this.channelList.addEntry(this.channelList.new Entry(receiver.id()));
 		}
 	}

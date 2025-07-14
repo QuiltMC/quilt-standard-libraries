@@ -63,8 +63,8 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public EnumArgumentType(String... values) {
 		this.values = new LinkedHashSet<>(values.length);
 
-		for (final String value : values) {
-			final String valueLC = value.toLowerCase(Locale.ROOT);
+		for (String value : values) {
+			String valueLC = value.toLowerCase(Locale.ROOT);
 
 			if (!this.values.add(valueLC)) {
 				throw new IllegalArgumentException(
@@ -109,7 +109,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		}
 
 		if (argType == null) {
-			final E[] constants = enumClass.getEnumConstants();
+			E[] constants = enumClass.getEnumConstants();
 
 			if (constants == null) {
 				throw new IllegalArgumentException(
@@ -117,10 +117,10 @@ public final class EnumArgumentType implements ArgumentType<String> {
 				);
 			}
 
-			final var values = new LinkedHashSet<String>(constants.length);
+			var values = new LinkedHashSet<String>(constants.length);
 
-			for (final E constant : constants) {
-				final var constNameLC = constant.name().toLowerCase(Locale.ROOT);
+			for (E constant : constants) {
+				var constNameLC = constant.name().toLowerCase(Locale.ROOT);
 
 				if (!values.add(constNameLC)) {
 					throw new IllegalArgumentException(
@@ -155,13 +155,13 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 		boolean found = false;
 
-		for (final ParsedCommandNode<?> node : context.getNodes()) {
+		for (ParsedCommandNode<?> node : context.getNodes()) {
 			if (node.getNode().getName().equals(argumentName)) {
-				final CommandNode<?> argChildNode = node.getNode();
+				CommandNode<?> argChildNode = node.getNode();
 
 				if (argChildNode instanceof ArgumentCommandNode<?, ?> argNode) {
 					if (argNode.getType() instanceof EnumArgumentType enumConstantType) {
-						final Class<? extends Enum<? extends Enum<?>>> expectedClass =
+						Class<? extends Enum<? extends Enum<?>>> expectedClass =
 								enumConstantTypes.inverse().get(enumConstantType);
 						if (expectedClass == null) {
 							throw new IllegalArgumentException(
@@ -188,14 +188,14 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			throw new IllegalStateException("Analysis of command nodes failed to find and check for argument " + argumentName);
 		}
 
-		final String value = context.getArgument(argumentName, String.class);
-		final E[] constants = enumClass.getEnumConstants();
+		String value = context.getArgument(argumentName, String.class);
+		E[] constants = enumClass.getEnumConstants();
 
 		if (constants == null) {
 			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
 		}
 
-		for (final E constant : constants) {
+		for (E constant : constants) {
 			if (constant.name().equalsIgnoreCase(value)) {
 				return constant;
 			}
@@ -206,8 +206,8 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 	@Override
 	public String parse(StringReader reader) throws CommandSyntaxException {
-		final int cursor = reader.getCursor();
-		final String value = reader.readUnquotedString().toLowerCase(Locale.ROOT);
+		int cursor = reader.getCursor();
+		String value = reader.readUnquotedString().toLowerCase(Locale.ROOT);
 
 		if (this.values.contains(value)) {
 			return value;
@@ -235,15 +235,15 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 		@Override
 		public Template deserializeFromNetwork(PacketByteBuf buf) {
-			final Set<String> values = buf.readCollection(LinkedHashSet::new, PacketByteBuf::readString);
+			Set<String> values = buf.readCollection(LinkedHashSet::new, PacketByteBuf::readString);
 			return new Template(values);
 		}
 
 		@Override
 		public void serializeToJson(Template type, JsonObject json) {
-			final var valuesArr = new JsonArray();
+			var valuesArr = new JsonArray();
 
-			for (final String value : type.values) {
+			for (String value : type.values) {
 				valuesArr.add(value);
 			}
 

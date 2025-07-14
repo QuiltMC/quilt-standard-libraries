@@ -41,17 +41,17 @@ public class RegistrySyncText {
 	public static Text missingRegistryEntries(
 			Identifier registryId, Collection<SynchronizedRegistry.MissingEntry> missingEntries
 	) {
-		final var namespacesSet = new HashSet<String>(missingEntries.size());
-		for (final SynchronizedRegistry.MissingEntry entry : missingEntries) {
+		var namespacesSet = new HashSet<String>(missingEntries.size());
+		for (SynchronizedRegistry.MissingEntry entry : missingEntries) {
 			if (!RegistryFlag.isOptional(entry.flags())) {
 				namespacesSet.add(entry.identifier().getNamespace());
 			}
 		}
 
-		final var namespacesList = new ArrayList<>(namespacesSet);
+		var namespacesList = new ArrayList<>(namespacesSet);
 		namespacesList.sort(Comparator.naturalOrder());
 
-		final MutableText namespaceText = entryList(namespacesList, Text::literal).formatted(Formatting.GRAY);
+		MutableText namespaceText = entryList(namespacesList, Text::literal).formatted(Formatting.GRAY);
 
 		return Text.translatableWithFallback(
 				"quilt.core.registry_sync.missing_entries",
@@ -62,21 +62,21 @@ public class RegistrySyncText {
 	}
 
 	private static <T> MutableText entryList(List<T> namespacesList, Function<T, Text> toText) {
-		final var namespaceText = Text.empty();
+		var namespaceText = Text.empty();
 
 		var textLength = 0;
 		var lines = 0;
 
 		while (lines < 2 && !namespacesList.isEmpty()) {
-			final int max = lines == 0 ? 38 : 30;
+			int max = lines == 0 ? 38 : 30;
 			while (textLength < max && !namespacesList.isEmpty()) {
-				final Text t = toText.apply(namespacesList.remove(0));
+				Text t = toText.apply(namespacesList.remove(0));
 				namespaceText.append(t);
 
 				textLength += t.getString().length();
 
 				if (!namespacesList.isEmpty()) {
-					final boolean alt = (lines + toText
+					boolean alt = (lines + toText
 							.apply(namespacesList.getFirst()).getString().length() < max && lines == 1);
 					if (namespacesList.size() == 1 || alt) {
 						namespaceText.append(
@@ -134,7 +134,7 @@ public class RegistrySyncText {
 
 	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {
 		if (missingPrioritized != null && !missingPrioritized.versions().isEmpty()) {
-			final MutableText x = Text.translatableWithFallback(
+			MutableText x = Text.translatableWithFallback(
 					"quilt.core.registry_sync.require_modpack_protocol",
 					"This server requires %s with protocol version of %s!",
 					Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
@@ -155,9 +155,9 @@ public class RegistrySyncText {
 			return x;
 		} else {
 			System.out.println(unsupported.size());
-			final var namespacesList = new ArrayList<>(unsupported);
+			var namespacesList = new ArrayList<>(unsupported);
 			namespacesList.sort(Comparator.comparing(ModProtocolDef::displayName));
-			final MutableText namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText)
+			MutableText namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText)
 					.formatted(Formatting.GRAY);
 
 			return Text.translatableWithFallback(
@@ -170,7 +170,7 @@ public class RegistrySyncText {
 
 	private static Text protocolDefEntryText(ModProtocolDef def) {
 		MutableText version;
-		final IntList x = def.versions();
+		IntList x = def.versions();
 		if (x.isEmpty()) {
 			version = Text.literal("WHAT??? HOW???");
 		} else if (x.size() == 1) {

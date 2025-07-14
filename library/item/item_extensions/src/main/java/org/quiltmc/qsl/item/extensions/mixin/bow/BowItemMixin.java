@@ -46,7 +46,7 @@ public abstract class BowItemMixin extends RangedWeaponItemMixin implements BowE
 	) {
 		if (original instanceof PersistentProjectileEntity persistentProjectile) {
 			// speed is calculated from pullProgress * 3 in BowItem::onStoppedUsing
-			final float pullProgress = speed / 3f;
+			float pullProgress = speed / 3f;
 
 			return BowAttackModificationImpl.modifyShotProjectile(
 				persistentProjectile,

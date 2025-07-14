@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2021 The Quilt Project
  *
@@ -44,7 +45,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerPackProfileProvider((profileAdder) -> {
-			final var pack = new TestPack();
+			var pack = new TestPack();
 			profileAdder.accept(PackProfile.of(
 					pack.getLocationInfo(),
 					QuiltPackProfile.wrapToFactory(pack),
@@ -71,9 +72,9 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		}
 
 		private NativeImage createRandomImage() {
-			final var image = new NativeImage(16, 16, true);
+			var image = new NativeImage(16, 16, true);
 
-			final boolean t = this.random.nextBoolean();
+			boolean t = this.random.nextBoolean();
 			for (int y = 0; y < 16; y++) {
 				int color = 0xff << 24;
 				color |= this.random.nextInt(256) << 16;

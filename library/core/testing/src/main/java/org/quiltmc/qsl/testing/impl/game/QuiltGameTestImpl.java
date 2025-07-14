@@ -109,10 +109,10 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test function
 	 */
 	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, GameTest annotation, Identifier id) {
-		final GameTestData data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
+		GameTestData data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
-		final String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
-		final String testCaseName = data.namespace() + ':' + testSuiteName + '/'
+		String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
+		String testCaseName = data.namespace() + ':' + testSuiteName + '/'
 				+ method.getName().toLowerCase(Locale.ROOT);
 
 		var structureName = testCaseName;
@@ -120,7 +120,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		if (!annotation.structureName().isEmpty()) {
 			structureName = annotation.structureName();
 
-			final TestStructureNamePrefix structurePrefix =
+			TestStructureNamePrefix structurePrefix =
 					method.getDeclaringClass().getAnnotation(TestStructureNamePrefix.class);
 			if (structurePrefix != null) {
 				structureName = structurePrefix.value() + structureName;
@@ -153,21 +153,21 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test method invoker
 	 */
 	private static Consumer<TestContext> getTestMethodInvoker(GameTestData data, Method method) {
-		final var testMethod = new TestMethod(method);
+		var testMethod = new TestMethod(method);
 
-		final Class<?> testClass = testMethod.getDeclaringClass();
-		final boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
+		Class<?> testClass = testMethod.getDeclaringClass();
+		boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
 
 		return testContext -> {
-			final var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
+			var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
 
 			if (testMethod.isStatic() && !isQuilted) {
 				runTest(testMethod, quiltTestContext, null);
 			} else {
-				final QuiltGameTest instance = data.instance();
+				QuiltGameTest instance = data.instance();
 
 				if (instance == null) {
-					final Constructor<?> constructor;
+					Constructor<?> constructor;
 
 					try {
 						constructor = testClass.getConstructor();
@@ -178,7 +178,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 						);
 					}
 
-					final Object testObject;
+					Object testObject;
 
 					try {
 						testObject = constructor.newInstance();
@@ -216,11 +216,11 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
 		Stream.of(testClass.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(method -> {
-			final GameTest annotation = method.getAnnotation(GameTest.class);
+			GameTest annotation = method.getAnnotation(GameTest.class);
 			// only consider annotated methods
 			if (annotation != null) {
-				final String methodName = method.getName().toLowerCase(Locale.ROOT);
-				final QuiltTestInstance test =
+				String methodName = method.getName().toLowerCase(Locale.ROOT);
+				QuiltTestInstance test =
 						QuiltGameTestImpl.getTestFunction(method, annotation, Identifier.of(modId, methodName));
 
 				QUILT_TESTS.put(test.id(), test);
@@ -236,7 +236,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		final String reportPath = System.getProperty("quilt.game_test.report_file");
+		String reportPath = System.getProperty("quilt.game_test.report_file");
 
 		if (reportPath != null) {
 			try {
@@ -247,15 +247,15 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		final List<EntrypointContainer<Object>> entrypointContainers = QuiltLoader.getEntrypointContainers(
+		List<EntrypointContainer<Object>> entrypointContainers = QuiltLoader.getEntrypointContainers(
 				QuiltGameTest.ENTRYPOINT_KEY, Object.class
 		);
 
 		Registry.register(Registries.TEST_INSTANCE_TYPE, Identifier.of("quilt", "test_instance"), QuiltTestInstance.CODEC);
 
-		for (final EntrypointContainer<Object> container : entrypointContainers) {
-			final Object entrypoint = container.getEntrypoint();
-			final Class<?> testClass = entrypoint.getClass();
+		for (EntrypointContainer<Object> container : entrypointContainers) {
+			Object entrypoint = container.getEntrypoint();
+			Class<?> testClass = entrypoint.getClass();
 
 			registerTestClass(
 					container.getProvider(), testClass,
@@ -264,7 +264,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(event -> {
-			for (final QuiltTestInstance quiltTest : QUILT_TESTS.values()) {
+			for (QuiltTestInstance quiltTest : QUILT_TESTS.values()) {
 				event.register(RegistryKeys.TEST_INSTANCE, quiltTest.id(), () -> quiltTest);
 			}
 		});

@@ -53,13 +53,13 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 
 	@Override
 	public void remove(Identifier id) {
-		final RecipeType<?> recipeType = this.getTypeOf(id);
+		RecipeType<?> recipeType = this.getTypeOf(id);
 
 		if (recipeType == null) {
 			return;
 		}
 
-		final RegistryKey<Recipe<?>> key = RegistryKey.of(RegistryKeys.RECIPE, id);
+		RegistryKey<Recipe<?>> key = RegistryKey.of(RegistryKeys.RECIPE, id);
 		if (this.byType.get(recipeType).removeIf(holder -> holder.id().equals(key))) {
 			this.byKey.remove(key);
 
@@ -87,7 +87,7 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 
 	@Override
 	public void removeIf(Predicate<RecipeHolder<?>> recipeRemovalPredicate) {
-		for (final Map.Entry<RecipeType<?>, Collection<RecipeHolder<?>>> entry : this.byType.asMap().entrySet()) {
+		for (Map.Entry<RecipeType<?>, Collection<RecipeHolder<?>>> entry : this.byType.asMap().entrySet()) {
 			this.removeIfInternal(entry.getValue(), recipeRemovalPredicate);
 		}
 	}
@@ -99,10 +99,10 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
 			return;
 		}
 
-		final Iterator<R> typedRecipesItr = typedRecipes.iterator();
+		Iterator<R> typedRecipesItr = typedRecipes.iterator();
 
 		while (typedRecipesItr.hasNext()) {
-			final R entry = typedRecipesItr.next();
+			R entry = typedRecipesItr.next();
 
 			if (recipeRemovalPredicate.test(entry)) {
 				if (RecipeManagerImpl.DEBUG_MODE) {

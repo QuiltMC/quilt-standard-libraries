@@ -40,7 +40,7 @@ abstract class PlayerEntityRendererMixin {
 	private static void getArmPose(
 			PlayerEntity player, ItemStack stack, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir
 	) {
-		final ItemStack stackInHand = player.getStackInHand(hand);
+		ItemStack stackInHand = player.getStackInHand(hand);
 
 		if (
 				!player.handSwinging

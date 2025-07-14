@@ -45,7 +45,7 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
-			final Object self = this;
+			Object self = this;
 
 			if (self instanceof RecipeManager) {
 				this.quilt$id = ResourceReloaderKeys.Server.RECIPES;

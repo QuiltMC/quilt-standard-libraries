@@ -46,7 +46,7 @@ abstract class ServerReloadableResourcesMixin {
 	private List<ResourceReloader> onGetResourceReloaders(List<ResourceReloader> original) {
 		// Re-inject resource reloaders server-side.
 		// It is currently unknown why ReloadableResourceManager#reload isn't called anymore.
-		final var list = new ArrayList<>(original);
+		var list = new ArrayList<>(original);
 		ResourceLoaderImpl.sort(ResourceType.SERVER_DATA, list);
 		return list;
 	}

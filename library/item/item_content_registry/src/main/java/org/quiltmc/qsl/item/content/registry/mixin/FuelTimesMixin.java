@@ -51,7 +51,7 @@ abstract class FuelTimesMixin {
 			)
 	)
 	private SequencedSet<Item> validFuelsWithREA(SequencedSet<? extends Item> instance) {
-		final SequencedSet<Item> items = new LinkedHashSet<>();
+		SequencedSet<Item> items = new LinkedHashSet<>();
 		ItemContentRegistries.FUEL_TIMES.forEach((entry) -> items.add(entry.entry()));
 
 		return Collections.unmodifiableSequencedSet(items);

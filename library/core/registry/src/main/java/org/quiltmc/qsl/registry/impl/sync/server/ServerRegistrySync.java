@@ -119,7 +119,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static void readConfig() {
-		final var config = RegistryConfig.INSTANCE.registry_sync;
+		var config = RegistryConfig.INSTANCE.registry_sync;
 
 		noRegistrySyncMessage = text(config.missing_registry_sync_message.value());
 		errorStyleHeader = text(config.mismatched_entries_top_message.value());
@@ -132,15 +132,15 @@ public final class ServerRegistrySync {
 		stateValidation = !config.disable_state_validation.value();
 
 		if (stateValidation) {
-			for (final ModContainer container : QuiltLoader.getAllMods()) {
-				final ModMetadata data = container.metadata();
-				final LoaderValue quiltRegistry = data.value("quilt_registry");
+			for (ModContainer container : QuiltLoader.getAllMods()) {
+				ModMetadata data = container.metadata();
+				LoaderValue quiltRegistry = data.value("quilt_registry");
 
 				if (quiltRegistry == null || quiltRegistry.type() != LoaderValue.LType.OBJECT) {
 					continue;
 				}
 
-				final var value = quiltRegistry.asObject().get("disable_state_validation");
+				var value = quiltRegistry.asObject().get("disable_state_validation");
 
 				if (value != null && value.type() == LoaderValue.LType.BOOLEAN && value.asBoolean()) {
 					stateValidation = false;
@@ -188,7 +188,7 @@ public final class ServerRegistrySync {
 			return true;
 		}
 
-		for (final var registry : Registries.ROOT) {
+		for (var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				return true;
@@ -207,7 +207,7 @@ public final class ServerRegistrySync {
 			return true;
 		}
 
-		for (final var registry : Registries.ROOT) {
+		for (var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
 				return true;
@@ -224,20 +224,20 @@ public final class ServerRegistrySync {
 			sendModProtocol(sender);
 		}
 
-		for (final var registry : Registries.ROOT) {
+		for (var registry : Registries.ROOT) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-				final var map = synchronizedRegistry.quilt$getSyncMap();
+				var map = synchronizedRegistry.quilt$getSyncMap();
 
-				final var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
+				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
 
 				sendStartPacket(sender, registry);
 				int dataLength = 0;
 
-				for (final var key : map.keySet()) {
+				for (var key : map.keySet()) {
 					dataLength += key.length();
-					final var collection = map.get(key);
-					for (final var entry : collection) {
+					var collection = map.get(key);
+					for (var entry : collection) {
 						packetData.computeIfAbsent(key, (k) -> new ArrayList<>()).add(entry);
 						dataLength += entry.path().length() + 4 + 1;
 
@@ -266,22 +266,22 @@ public final class ServerRegistrySync {
 
 	private static <T, B> void sendStateValidationRequest(Consumer<Packet<?>> sender, ServerPackets.ValidateStates.StateType type, Registry<T> registry, IdList<B> stateList, Function<T, Collection<B>> toStates) {
 		int dataLength = 0;
-		final var packetData = new Int2ObjectArrayMap<IntList>();
+		var packetData = new Int2ObjectArrayMap<IntList>();
 
-		for (final var key : registry) {
+		for (var key : registry) {
 			if (RegistrySynchronization.isEntryOptional((SimpleRegistry<? super T>) registry, key)) {
 				continue;
 			}
 
-			final var blockId = registry.getRawId(key);
+			var blockId = registry.getRawId(key);
 			dataLength += VarInts.getSizeBytes(blockId);
-			final var states = toStates.apply(key);
+			var states = toStates.apply(key);
 			var ids = new IntArrayList(states.size());
 			packetData.put(blockId, ids);
 			dataLength += VarInts.getSizeBytes(states.size());
 
-			for (final var entry : states) {
-				final var stateId = stateList.getRawId(entry);
+			for (var entry : states) {
+				var stateId = stateList.getRawId(entry);
 				dataLength += VarInts.getSizeBytes(stateId);
 				ids.add(stateId);
 

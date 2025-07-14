@@ -142,7 +142,7 @@ public interface ResourceLoader {
 	 */
 	default @NotNull ResourcePack newFileSystemPack(@NotNull Identifier id, @NotNull Path rootPath,
 													PackActivationType activationType, @NotNull Text displayName) {
-		final ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
+		ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
 				new IllegalArgumentException("No mod with ID '" + id.getNamespace() + "' could be found")
 		);
 		return this.newFileSystemPack(id, container, rootPath, activationType, displayName);
@@ -245,7 +245,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
 	static boolean registerBuiltinPack(@NotNull Identifier id, @NotNull PackActivationType activationType, Text displayName) {
-		final ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
+		ModContainer container = QuiltLoader.getModContainer(id.getNamespace()).orElseThrow(() ->
 				new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found")
 		);
 		return registerBuiltinPack(id, container, activationType, displayName);

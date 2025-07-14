@@ -92,14 +92,14 @@ public class BiomeModificationImpl {
 		Objects.requireNonNull(modifier);
 
 		this.reloader.addModifier(phase, id, modifier);
-		final var modifierRecord = new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
+		var modifierRecord = new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
 		this.modifiers.add(modifierRecord);
 		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
 		this.modifiersUnsorted = true;
 	}
 
 	private void addLazyModifier(Identifier id, ModificationPhase phase) {
-		final ModifierRecord modifierRecord =
+		ModifierRecord modifierRecord =
 			new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
 		this.modifiers.add(modifierRecord);
 		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
@@ -107,11 +107,11 @@ public class BiomeModificationImpl {
 	}
 
 	public void updateIdentifiedModifiers() {
-		for (final var phase : this.identifiedModifiers.entrySet()) {
-			final List<Identifier> drop = new ArrayList<>();
-			final Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase.getKey());
+		for (var phase : this.identifiedModifiers.entrySet()) {
+			List<Identifier> drop = new ArrayList<>();
+			Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase.getKey());
 
-			for (final Map.Entry<Identifier, ModifierRecord> entry : phase.getValue().entrySet()) {
+			for (Map.Entry<Identifier, ModifierRecord> entry : phase.getValue().entrySet()) {
 				if (!map.containsKey(entry.getKey())) {
 					entry.getValue().canBeDropped = true;
 					drop.add(entry.getKey());
@@ -123,12 +123,12 @@ public class BiomeModificationImpl {
 	}
 
 	public void addMissingModifiers() {
-		for (final ModificationPhase phase : ModificationPhase.values()) {
-			final Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase);
-			final Map<Identifier, ModifierRecord> phaseMap =
+		for (ModificationPhase phase : ModificationPhase.values()) {
+			Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase);
+			Map<Identifier, ModifierRecord> phaseMap =
 					this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
 
-			for (final Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
+			for (Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
 				if (!phaseMap.containsKey(entry.getKey())) {
 					this.addLazyModifier(entry.getKey(), phase);
 					this.modifiersUnsorted = true;
@@ -143,7 +143,7 @@ public class BiomeModificationImpl {
 	void changeOrder(Identifier id, int order) {
 		this.modifiersUnsorted = true;
 
-		for (final ModifierRecord modifierRecord : this.modifiers) {
+		for (ModifierRecord modifierRecord : this.modifiers) {
 			if (id.equals(modifierRecord.id)) {
 				modifierRecord.setOrder(order);
 			}
@@ -177,40 +177,40 @@ public class BiomeModificationImpl {
 		this.updateIdentifiedModifiers();
 		MODIFIED_BIOMES.clear();
 
-		final Stopwatch sw = Stopwatch.createStarted();
+		Stopwatch sw = Stopwatch.createStarted();
 
 		// Now that we apply biome modifications inside the MinecraftServer constructor, we should only ever do
 		// this once for a dynamic registry manager. Marking the dynamic registry manager as modified ensures a crash
 		// if the precondition is violated.
-		final var modificationTracker = (BiomeModificationMarker) impl;
+		var modificationTracker = (BiomeModificationMarker) impl;
 		modificationTracker.quilt$markModified();
 
-		final Registry<Biome> biomes = impl.getLookupOrThrow(RegistryKeys.BIOME);
+		Registry<Biome> biomes = impl.getLookupOrThrow(RegistryKeys.BIOME);
 
 		// Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
 		// someone does something stupid.
-		final List<RegistryKey<Biome>> keys = biomes.getEntries().stream()
+		List<RegistryKey<Biome>> keys = biomes.getEntries().stream()
 				.map(Map.Entry::getKey)
 				.sorted(Comparator.comparingInt(key -> biomes.getRawId(biomes.getOrThrow(key))))
 				.toList();
 
-		final List<ModifierRecord> sortedModifiers = this.getSortedModifiers();
+		List<ModifierRecord> sortedModifiers = this.getSortedModifiers();
 
 		int biomesChanged = 0;
 		int biomesProcessed = 0;
 		int modifiersApplied = 0;
 
-		for (final RegistryKey<Biome> key : keys) {
-			final Biome biome = biomes.getOrThrow(key);
+		for (RegistryKey<Biome> key : keys) {
+			Biome biome = biomes.getOrThrow(key);
 
 			biomesProcessed++;
 
 			// Make a copy of the biome to allow selection contexts to see it unmodified,
 			// But do so only once it's known anything wants to modify the biome at all
-			final var context = new BiomeSelectionContextImpl(impl, key, biome);
+			var context = new BiomeSelectionContextImpl(impl, key, biome);
 			BiomeModificationContextImpl modificationContext = null;
 
-			for (final ModifierRecord modifier : sortedModifiers) {
+			for (ModifierRecord modifier : sortedModifiers) {
 				if (modifier.canBeDropped) {
 					continue;
 				}
@@ -287,7 +287,7 @@ public class BiomeModificationImpl {
 			this.phase = phase;
 			this.id = id;
 			this.selector = ctx -> {
-				final BiomeModifier modifier = modifierFunction.get();
+				BiomeModifier modifier = modifierFunction.get();
 				if (modifier != null) {
 					return modifier.shouldModify(ctx);
 				}
@@ -295,7 +295,7 @@ public class BiomeModificationImpl {
 				return false;
 			};
 			this.contextSensitiveModifier = (selectionCtx, modificationCtx) -> {
-				final BiomeModifier modifier = modifierFunction.get();
+				BiomeModifier modifier = modifierFunction.get();
 				if (modifier != null) {
 					modifier.modify(selectionCtx, modificationCtx);
 				}

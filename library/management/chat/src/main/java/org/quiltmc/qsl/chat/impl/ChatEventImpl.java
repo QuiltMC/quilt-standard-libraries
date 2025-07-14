@@ -52,9 +52,9 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 		public R handleMessage(@NotNull AbstractChatMessage<?> message) {
 			R result = null;
 
-			for (final TypedChatApiHook<@Nullable R> hook : hooks) {
+			for (TypedChatApiHook<@Nullable R> hook : hooks) {
 				if (ChatEventImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					final R tmpResult = hook.handleMessage(message);
+					R tmpResult = hook.handleMessage(message);
 					if (ChatEventImpl.this.shouldPreformAssignableCheck) {
 						if (tmpResult == null) {
 							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
@@ -78,7 +78,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	private boolean shouldPassOnMessageToHook(EnumSet<QuiltMessageType> messageTypes, EnumSet<QuiltMessageType> hookTypes) {
 		// For every message type
-		for (final QuiltMessageType messageType : messageTypes) {
+		for (QuiltMessageType messageType : messageTypes) {
 			// If the hook isn't looking for it
 			if (!hookTypes.contains(messageType)) {
 				// If it doesn't match the complex rule
@@ -95,7 +95,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	private boolean matchesMetaTypeRule(QuiltMessageType.QuiltMetaMessageType metaType, EnumSet<QuiltMessageType> hookTypes) {
 		// For every type the hook is looking for
-		for (final QuiltMessageType hookType : hookTypes) {
+		for (QuiltMessageType hookType : hookTypes) {
 			// Check if they have the same meta type
 			if (hookType.metaType == metaType) {
 				// If so, don't pass it on
@@ -114,7 +114,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	@Override
 	public R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull) {
-		final R result = this.backingEvent.invoker().handleMessage(message);
+		R result = this.backingEvent.invoker().handleMessage(message);
 		return result != null ? result : ifNull;
 	}
 

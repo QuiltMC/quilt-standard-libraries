@@ -81,7 +81,7 @@ public class ClientFabricRegistrySync {
 			combinedBuf = PacketByteBufs.create();
 		}
 
-		final byte[] data = payload.data();
+		byte[] data = payload.data();
 
 		if (data.length != 0) {
 			combinedBuf.writeBytes(data);
@@ -92,32 +92,32 @@ public class ClientFabricRegistrySync {
 
 		computeBufSize(combinedBuf);
 		syncedRegistryMap = new LinkedHashMap<>();
-		final int regNamespaceGroupAmount = combinedBuf.readVarInt();
+		int regNamespaceGroupAmount = combinedBuf.readVarInt();
 
 		for (int i = 0; i < regNamespaceGroupAmount; i++) {
-			final String regNamespace = combinedBuf.readString();
-			final int regNamespaceGroupLength = combinedBuf.readVarInt();
+			String regNamespace = combinedBuf.readString();
+			int regNamespaceGroupLength = combinedBuf.readVarInt();
 
 			for (int j = 0; j < regNamespaceGroupLength; j++) {
-				final String regPath = combinedBuf.readString();
-				final Object2IntMap<Identifier> idMap = new Object2IntLinkedOpenHashMap<>();
-				final int idNamespaceGroupAmount = combinedBuf.readVarInt();
+				String regPath = combinedBuf.readString();
+				Object2IntMap<Identifier> idMap = new Object2IntLinkedOpenHashMap<>();
+				int idNamespaceGroupAmount = combinedBuf.readVarInt();
 
 				int lastBulkLastRawId = 0;
 
 				for (int k = 0; k < idNamespaceGroupAmount; k++) {
-					final String idNamespace = combinedBuf.readString();
-					final int rawIdBulkAmount = combinedBuf.readVarInt();
+					String idNamespace = combinedBuf.readString();
+					int rawIdBulkAmount = combinedBuf.readVarInt();
 
 					for (int l = 0; l < rawIdBulkAmount; l++) {
-						final int bulkRawIdStartDiff = combinedBuf.readVarInt();
-						final int bulkSize = combinedBuf.readVarInt();
+						int bulkRawIdStartDiff = combinedBuf.readVarInt();
+						int bulkSize = combinedBuf.readVarInt();
 
 						int currentRawId = (lastBulkLastRawId + bulkRawIdStartDiff) - 1;
 
 						for (int m = 0; m < bulkSize; m++) {
 							currentRawId++;
-							final String idPath = combinedBuf.readString();
+							String idPath = combinedBuf.readString();
 							idMap.put(Identifier.of(idNamespace, idPath), currentRawId);
 						}
 
@@ -134,25 +134,25 @@ public class ClientFabricRegistrySync {
 	}
 
 	private static void computeBufSize(PacketByteBuf buf) {
-		final byte[] deflateBuffer = new byte[8192];
-		final ByteBuf byteBuf = buf.copy();
-		final Deflater deflater = new Deflater();
+		byte[] deflateBuffer = new byte[8192];
+		ByteBuf byteBuf = buf.copy();
+		Deflater deflater = new Deflater();
 
-		final int i = byteBuf.readableBytes();
-		final PacketByteBuf deflatedBuf = PacketByteBufs.create();
+		int i = byteBuf.readableBytes();
+		PacketByteBuf deflatedBuf = PacketByteBufs.create();
 
 		if (i < 256) {
 			deflatedBuf.writeVarInt(0);
 			deflatedBuf.writeBytes(byteBuf);
 		} else {
-			final byte[] bs = new byte[i];
+			byte[] bs = new byte[i];
 			byteBuf.readBytes(bs);
 			deflatedBuf.writeVarInt(bs.length);
 			deflater.setInput(bs, 0, i);
 			deflater.finish();
 
 			while (!deflater.finished()) {
-				final int j = deflater.deflate(deflateBuffer);
+				int j = deflater.deflate(deflateBuffer);
 				deflatedBuf.writeBytes(deflateBuffer, 0, j);
 			}
 
@@ -162,23 +162,23 @@ public class ClientFabricRegistrySync {
 
 	private static void applyRegistry(ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender) {
 		Preconditions.checkState(isPacketFinished);
-		final Map<Identifier, Object2IntMap<Identifier>> map = syncedRegistryMap;
+		Map<Identifier, Object2IntMap<Identifier>> map = syncedRegistryMap;
 		isPacketFinished = false;
 		syncedRegistryMap = null;
 
-		for (final Map.Entry<Identifier, Object2IntMap<Identifier>> entry : map.entrySet()) {
-			final var registry = Registries.ROOT.get(entry.getKey());
+		for (Map.Entry<Identifier, Object2IntMap<Identifier>> entry : map.entrySet()) {
+			var registry = Registries.ROOT.get(entry.getKey());
 
 			if (registry instanceof SynchronizedRegistry<?> currentRegistry) {
-				final var syncMap = new HashMap<String, Collection<SynchronizedRegistry.SyncEntry>>();
+				var syncMap = new HashMap<String, Collection<SynchronizedRegistry.SyncEntry>>();
 
-				for (final Object2IntMap.Entry<Identifier> entry2 : entry.getValue().object2IntEntrySet()) {
+				for (Object2IntMap.Entry<Identifier> entry2 : entry.getValue().object2IntEntrySet()) {
 					syncMap.computeIfAbsent(entry2.getKey().getNamespace(), (x) -> new ArrayList<>()).add(
 						new SynchronizedRegistry.SyncEntry(entry2.getKey().getPath(), entry2.getIntValue(), (byte) 0)
 					);
 				}
 
-				final Collection<SynchronizedRegistry.MissingEntry> missingEntries =
+				Collection<SynchronizedRegistry.MissingEntry> missingEntries =
 						currentRegistry.quilt$applySyncMap(syncMap);
 
 				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries, sender)) {

@@ -74,8 +74,8 @@ public final class NetworkingImpl {
 			return;
 		}
 
-		final int n = buf.readVarInt();
-		final List<CustomPayload.Id<?>> ids = new ArrayList<>(n);
+		int n = buf.readVarInt();
+		List<CustomPayload.Id<?>> ids = new ArrayList<>(n);
 
 		for (int i = 0; i < n; i++) {
 			ids.add(new CustomPayload.Id<>(buf.readIdentifier()));

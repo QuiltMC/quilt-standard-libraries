@@ -75,16 +75,16 @@ public class BlockEntityTypeTest implements ModInitializer {
 	}
 
 	private static AngyBlock registerAngy(String path, MapColor mapColor) {
-		final Identifier id = createId(path);
+		Identifier id = createId(path);
 
-		final RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, id);
-		final AngyBlock block = Registry.register(Registries.BLOCK, blockKey, new AngyBlock(
+		RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, id);
+		AngyBlock block = Registry.register(Registries.BLOCK, blockKey, new AngyBlock(
 				AbstractBlock.Settings.copy(Blocks.STONE).key(blockKey),
 				mapColor
 		));
 
-		final RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);
-		final var item = new BlockItem(block, new Item.Settings().key(itemKey));
+		RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);
+		var item = new BlockItem(block, new Item.Settings().key(itemKey));
 		Registry.register(Registries.ITEM, itemKey, item);
 
 		ANGY_BLOCKS.add(block);

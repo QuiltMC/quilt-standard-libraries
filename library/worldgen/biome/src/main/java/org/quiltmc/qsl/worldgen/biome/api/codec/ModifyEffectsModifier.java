@@ -81,7 +81,7 @@ public record ModifyEffectsModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		final BiomeModificationContext.EffectsContext effectContext = modificationContext.getEffects();
+		BiomeModificationContext.EffectsContext effectContext = modificationContext.getEffects();
 		this.fogColor.ifPresent(effectContext::setFogColor);
 		this.waterColor.ifPresent(effectContext::setWaterColor);
 		this.waterFogColor.ifPresent(effectContext::setWaterFogColor);

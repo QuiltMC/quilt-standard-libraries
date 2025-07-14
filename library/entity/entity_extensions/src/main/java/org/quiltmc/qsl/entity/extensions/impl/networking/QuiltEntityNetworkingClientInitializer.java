@@ -39,11 +39,11 @@ public final class QuiltEntityNetworkingClientInitializer implements ClientModIn
 				(client, handler, payload, sender) -> {
 					client.execute(() -> {
 						try {
-							final Entity entity = client.world.method_8469(payload.entityId());
+							Entity entity = client.world.method_8469(payload.entityId());
 							if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
 								extended.readAdditionalSpawnData(payload.data());
 							} else {
-								final String id = entity == null
+								String id = entity == null
 										? "null"
 										: Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 								logger.error(

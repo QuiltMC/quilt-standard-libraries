@@ -90,10 +90,10 @@ public final class TradeOfferInternals {
 
 		validateFactories(factories);
 
-		final Int2ObjectMap<TradeOffers.Factory[]> leveledTradeMap = tradesByProfession
+		Int2ObjectMap<TradeOffers.Factory[]> leveledTradeMap = tradesByProfession
 				.computeIfAbsent(profession, key -> new Int2ObjectOpenHashMap<>());
 
-		final TradeOffers.Factory[] oldFactories =
+		TradeOffers.Factory[] oldFactories =
 				leveledTradeMap.computeIfAbsent(level, key -> new TradeOffers.Factory[0]);
 
 		leveledTradeMap.put(level, ArrayUtils.addAll(oldFactories, factories));
@@ -110,9 +110,9 @@ public final class TradeOfferInternals {
 
 		WanderingTraderOffersManager.getPool(id).ifPresentOrElse(
 				oldFactoriesAndCount -> {
-					final TradeOffers.Factory[] mergedFactories =
+					TradeOffers.Factory[] mergedFactories =
 							ArrayUtils.addAll(oldFactoriesAndCount.getLeft(), factories);
-					final Pair<TradeOffers.Factory[], Integer> mergedFactoriesAndCount =
+					Pair<TradeOffers.Factory[], Integer> mergedFactoriesAndCount =
 							Pair.of(mergedFactories, oldFactoriesAndCount.getRight());
 
 					WanderingTraderOffersManager.setPool(id, mergedFactoriesAndCount);
@@ -138,10 +138,10 @@ public final class TradeOfferInternals {
 
 		validateFactories(factories);
 
-		final Collection<TradeOffers.Factory[]> pendingFactories =
+		Collection<TradeOffers.Factory[]> pendingFactories =
 				PENDING_WANDERING_TRADER_FACTORIES_BY_ID.removeAll(id);
 
-		final TradeOffers.Factory[] mergedFactories;
+		TradeOffers.Factory[] mergedFactories;
 		if (pendingFactories.isEmpty()) {
 			mergedFactories = factories;
 		} else {
@@ -153,7 +153,7 @@ public final class TradeOfferInternals {
 				.toArray(TradeOffers.Factory[]::new);
 		}
 
-		final Pair<TradeOffers.Factory[], Integer> factoriesAndCount = Pair.of(mergedFactories, count);
+		Pair<TradeOffers.Factory[], Integer> factoriesAndCount = Pair.of(mergedFactories, count);
 
 		WanderingTraderOffersManager.registerPool(id, factoriesAndCount);
 	}

@@ -50,7 +50,7 @@ public interface RecipeRemainderLogicHandler {
 	 * @return the recipe remainder
 	 */
 	static ItemStack getRemainder(ItemStack original, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
-		final Map<RecipeRemainderLocation, RecipeRemainderProvider> providers =
+		Map<RecipeRemainderLocation, RecipeRemainderProvider> providers =
 				CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(original.getItem());
 
 		RecipeRemainderProvider provider = (_original, _recipe) -> _original.getItem().getRecipeRemainder();
@@ -70,7 +70,7 @@ public interface RecipeRemainderLogicHandler {
 			provider = providers.get(RecipeRemainderLocation.ALL_LOCATIONS);
 		}
 
-		final ItemStack remainder = provider.getRecipeRemainder(original, recipe);
+		ItemStack remainder = provider.getRecipeRemainder(original, recipe);
 
 		return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
 	}

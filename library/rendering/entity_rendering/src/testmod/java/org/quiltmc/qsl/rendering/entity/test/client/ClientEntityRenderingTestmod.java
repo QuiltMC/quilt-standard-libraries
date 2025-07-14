@@ -57,7 +57,7 @@ public final class ClientEntityRenderingTestmod implements
 			.createAssetKey("quilt_leggings");
 
 	private static @NotNull BipedEntityModel<BipedRenderState> getWitchHeadModel() {
-		final ModelPart witchHeadPart = MinecraftClient.getInstance().getEntityModelLoader()
+		ModelPart witchHeadPart = MinecraftClient.getInstance().getEntityModelLoader()
 				.getModelPart(EntityModelLayers.WITCH)
 				.getChild(EntityModelPartNames.HEAD);
 

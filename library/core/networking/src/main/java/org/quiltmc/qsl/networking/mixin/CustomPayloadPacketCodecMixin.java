@@ -59,7 +59,7 @@ public abstract class CustomPayloadPacketCodecMixin<B extends PacketByteBuf> imp
 			Operation<PacketCodec<B, CustomPayload>> original, @Local(argsOnly = true) B packetByteBuf
 	) {
 		if (this.customPayloadTypeProvider != null) {
-			final CustomPayload.Type<B, ? extends CustomPayload> payloadType =
+			CustomPayload.Type<B, ? extends CustomPayload> payloadType =
 					this.customPayloadTypeProvider.get(packetByteBuf, identifier);
 
 			if (payloadType != null) {

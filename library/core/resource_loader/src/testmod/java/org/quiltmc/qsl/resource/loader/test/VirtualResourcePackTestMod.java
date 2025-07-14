@@ -70,7 +70,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 	}
 
 	private void providePacks(Consumer<PackProfile> profileAdder, ResourceType type) {
-		final var pack = new InMemoryPack.Named("activation_test") {
+		var pack = new InMemoryPack.Named("activation_test") {
 			@Override
 			public @NotNull PackActivationType getActivationType() {
 				return PackActivationType.DEFAULT_ENABLED;

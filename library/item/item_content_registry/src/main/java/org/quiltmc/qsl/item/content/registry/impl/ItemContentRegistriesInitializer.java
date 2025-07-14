@@ -96,7 +96,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 			}
 		});
 
-		final Optional<HolderSet.NamedSet<Item>> tag = Registries.ITEM.getTag(FUEL_FILTERS);
+		Optional<HolderSet.NamedSet<Item>> tag = Registries.ITEM.getTag(FUEL_FILTERS);
 		tag.ifPresent(filters -> filters.forEach(filter ->
 				ItemContentRegistries.FUEL_TIMES.remove(filter.getValue())
 		));

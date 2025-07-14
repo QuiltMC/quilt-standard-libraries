@@ -183,7 +183,7 @@ public final class Event<T> {
 		QuiltBaseImpl.ensureContainsDefaultPhase(defaultPhases);
 		QuiltAssertions.ensureNoDuplicates(defaultPhases, id -> new IllegalArgumentException("Duplicate event phase: " + id));
 
-		final var event = create(type, implementation);
+		var event = create(type, implementation);
 
 		for (int i = 1; i < defaultPhases.length; ++i) {
 			event.addPhaseOrdering(defaultPhases[i - 1], defaultPhases[i]);
@@ -322,8 +322,8 @@ public final class Event<T> {
 		}
 
 		synchronized (this.lock) {
-			final EventPhaseData<T> first = this.getOrCreatePhase(firstPhase, false);
-			final EventPhaseData<T> second = this.getOrCreatePhase(secondPhase, false);
+			EventPhaseData<T> first = this.getOrCreatePhase(firstPhase, false);
+			EventPhaseData<T> second = this.getOrCreatePhase(secondPhase, false);
 			PhaseData.link(first, second);
 			PhaseSorting.sortPhases(this.sortedPhases);
 			this.rebuildInvoker(this.callbacks.length);
@@ -355,11 +355,11 @@ public final class Event<T> {
 			this.callbacks = this.sortedPhases.getFirst().getData();
 		} else {
 			@SuppressWarnings("unchecked")
-			final var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
+			var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
 			int newHandlersIndex = 0;
 
-			for (final EventPhaseData<T> existingPhase : this.sortedPhases) {
-				final int length = existingPhase.getData().length;
+			for (EventPhaseData<T> existingPhase : this.sortedPhases) {
+				int length = existingPhase.getData().length;
 				System.arraycopy(existingPhase.getData(), 0, newCallbacks, newHandlersIndex, length);
 				newHandlersIndex += length;
 			}

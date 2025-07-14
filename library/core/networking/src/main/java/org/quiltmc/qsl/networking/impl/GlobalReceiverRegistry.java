@@ -59,7 +59,7 @@ public final class GlobalReceiverRegistry<H> {
 
 	@Nullable
 	public H getReceiver(CustomPayload.Id<?> channelName) {
-		final Lock lock = this.lock.readLock();
+		Lock lock = this.lock.readLock();
 		lock.lock();
 
 		try {
@@ -77,11 +77,11 @@ public final class GlobalReceiverRegistry<H> {
 			throw new IllegalArgumentException(String.format("Cannot register handler for reserved channel with name \"%s\"", channelName));
 		}
 
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			final boolean inserted = this.receivers.putIfAbsent(channelName, handler) == null;
+			boolean inserted = this.receivers.putIfAbsent(channelName, handler) == null;
 
 			if (inserted) {
 				this.handleRegistration(channelName, handler);
@@ -101,11 +101,11 @@ public final class GlobalReceiverRegistry<H> {
 		}
 
 		this.assertPayloadType(channelName);
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			final H removed = this.receivers.remove(channelName);
+			H removed = this.receivers.remove(channelName);
 
 			if (removed != null) {
 				this.handleUnregistration(channelName);
@@ -118,7 +118,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public Map<CustomPayload.Id<?>, H> getReceivers() {
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -129,7 +129,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public Set<CustomPayload.Id<?>> getChannels() {
-		final Lock lock = this.lock.readLock();
+		Lock lock = this.lock.readLock();
 		lock.lock();
 
 		try {
@@ -142,7 +142,7 @@ public final class GlobalReceiverRegistry<H> {
 	// State tracking methods
 
 	public void startSession(AbstractNetworkAddon<H> addon) {
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -153,7 +153,7 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public void endSession(AbstractNetworkAddon<H> addon) {
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
@@ -164,11 +164,11 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	private void handleRegistration(CustomPayload.Id<?> channelName, H handler) {
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			for (final AbstractNetworkAddon<H> addon : this.trackedAddons) {
+			for (AbstractNetworkAddon<H> addon : this.trackedAddons) {
 				addon.registerChannel(channelName, handler);
 			}
 		} finally {
@@ -177,11 +177,11 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	private void handleUnregistration(CustomPayload.Id<?> channelName) {
-		final Lock lock = this.lock.writeLock();
+		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			for (final AbstractNetworkAddon<H> addon : this.trackedAddons) {
+			for (AbstractNetworkAddon<H> addon : this.trackedAddons) {
 				addon.unregisterChannel(channelName);
 			}
 		} finally {

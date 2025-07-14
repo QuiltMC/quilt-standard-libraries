@@ -73,7 +73,7 @@ public class DisconnectedScreenMixin extends Screen {
 	)
 	private void quilt$addLogsButton(CallbackInfo ci) {
 		if (!this.extraLogs.isEmpty()) {
-			final ButtonWidget logsButton = ButtonWidget
+			ButtonWidget logsButton = ButtonWidget
 					.builder(
 							Text.translatableWithFallback(
 								"quilt.core.registry_sync.logs_button", "More Details"
@@ -84,7 +84,7 @@ public class DisconnectedScreenMixin extends Screen {
 					)
 					.build();
 			// I might have committed some horrific crimes here
-			final LayoutSettings settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
+			LayoutSettings settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
 			this.grid.add(logsButton, settings);
 		}
 	}

@@ -51,11 +51,11 @@ public class MultiplayerServerListWidgetServerEntryMixin {
 			)
 	)
 	private ServerInfo.PingResult quilt$checkModProtocol(ServerInfo.PingResult result) {
-		final Map<String, IntList> map = ModProtocolContainer.of(this.server).quilt$getModProtocol();
+		Map<String, IntList> map = ModProtocolContainer.of(this.server).quilt$getModProtocol();
 
 		if (map != null) {
-			for (final Map.Entry<String, IntList> entry : map.entrySet()) {
-				final IntList c = ModProtocolImpl.getVersion(entry.getKey());
+			for (Map.Entry<String, IntList> entry : map.entrySet()) {
+				IntList c = ModProtocolImpl.getVersion(entry.getKey());
 				if (ProtocolVersions.getHighestSupported(c, entry.getValue()) == ProtocolVersions.NO_PROTOCOL) {
 					return ServerInfo.PingResult.INCOMPATIBLE;
 				}

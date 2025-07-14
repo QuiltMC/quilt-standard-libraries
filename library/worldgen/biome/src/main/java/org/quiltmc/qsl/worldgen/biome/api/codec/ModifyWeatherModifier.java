@@ -58,7 +58,7 @@ public record ModifyWeatherModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		final BiomeModificationContext.WeatherContext weatherContext = modificationContext.getWeather();
+		BiomeModificationContext.WeatherContext weatherContext = modificationContext.getWeather();
 		this.downfall.ifPresent(weatherContext::setDownfall);
 		this.temperature.ifPresent(weatherContext::setTemperature);
 		this.hasPrecipitation.ifPresent(weatherContext::setHasPrecipitation);

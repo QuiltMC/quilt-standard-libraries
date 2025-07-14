@@ -60,7 +60,7 @@ public record AddFeaturesModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (final RegistryKey<PlacedFeature> feature : this.features) {
+		for (RegistryKey<PlacedFeature> feature : this.features) {
 			modificationContext.getGenerationSettings().addFeature(this.step, feature);
 		}
 	}

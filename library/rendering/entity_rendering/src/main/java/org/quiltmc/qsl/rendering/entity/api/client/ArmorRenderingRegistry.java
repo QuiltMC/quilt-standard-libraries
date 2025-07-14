@@ -50,7 +50,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerTextureProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerTextureProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -65,7 +65,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void addTextureProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
 			@NotNull ItemConvertible... items) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addTextureProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}
@@ -89,7 +89,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerModelProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerModelProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -104,7 +104,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void addModelProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
 			@NotNull ItemConvertible... items) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addModelProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}
@@ -140,7 +140,7 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerRenderLayerProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.registerRenderLayerProvider(item.asItem(), phaseIdentifier, provider);
 		}
 	}
@@ -157,7 +157,7 @@ public final class ArmorRenderingRegistry {
 			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
 			@NotNull ItemConvertible... items
 	) {
-		for (final ItemConvertible item : items) {
+		for (ItemConvertible item : items) {
 			ArmorRenderingRegistryImpl.addRenderLayerProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
 		}
 	}

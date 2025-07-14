@@ -44,7 +44,7 @@ public final class KnownArgTypesSync {
 				sender.sendPacket(ID, PacketByteBufs.empty()));
 		ServerLoginNetworking.registerGlobalReceiver(ID, (server, handler, understood, buf, synchronizer, responseSender) -> {
 			if (understood) {
-				final var idents = buf.readCollection(HashSet::new, PacketByteBuf::readIdentifier);
+				var idents = buf.readCollection(HashSet::new, PacketByteBuf::readIdentifier);
 				synchronizer.waitFor(server.submit(() -> ServerArgumentTypes.setKnownArgumentTypes(handler, idents)));
 			} else {
 				synchronizer.waitFor(server.submit(() -> ServerArgumentTypes.setKnownArgumentTypes(handler, Set.of())));
@@ -55,8 +55,8 @@ public final class KnownArgTypesSync {
 	@ClientOnly
 	public static void registerClient() {
 		ClientLoginNetworking.registerGlobalReceiver(ID, (client, handler, buf, listenerAdder) -> client.submit(() -> {
-			final Set<Identifier> idents = ServerArgumentTypes.getIds();
-			final var responseBuf = new PacketByteBuf(Unpooled.buffer(idents.size() * 8));
+			Set<Identifier> idents = ServerArgumentTypes.getIds();
+			var responseBuf = new PacketByteBuf(Unpooled.buffer(idents.size() * 8));
 			responseBuf.writeCollection(idents, PacketByteBuf::writeIdentifier);
 			return responseBuf;
 		}));

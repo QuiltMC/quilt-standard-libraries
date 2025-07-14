@@ -39,11 +39,11 @@ public class EnchantingTableBlockMixin {
 	private static void quilt$hasEnchantmentPower(
 			World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir
 	) {
-		final BlockPos blockPos = pos.add(offset);
-		final BlockState state = world.getBlockState(blockPos);
-		final Float power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock())
+		BlockPos blockPos = pos.add(offset);
+		BlockState state = world.getBlockState(blockPos);
+		Float power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock())
 				.map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
-		final boolean hasPower = power >= 0.0f && world
+		boolean hasPower = power >= 0.0f && world
 				.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))
 				.isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
 
@@ -76,13 +76,13 @@ public class EnchantingTableBlockMixin {
 			return false;
 		}
 
-		final BlockPos blockPos = pos.add(offset);
-		final BlockState blockState = world.getBlockState(blockPos);
-		final Block block = blockState.getBlock();
-		final EnchantingBooster booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
+		BlockPos blockPos = pos.add(offset);
+		BlockState blockState = world.getBlockState(blockPos);
+		Block block = blockState.getBlock();
+		EnchantingBooster booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
 
 		if (booster != null) {
-			final float power = booster.getEnchantingBoost(world, blockState, blockPos);
+			float power = booster.getEnchantingBoost(world, blockState, blockPos);
 			return random.nextFloat() * 16f <= power;
 		}
 

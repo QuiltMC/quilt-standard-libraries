@@ -49,9 +49,9 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	private final PackManager resourcePackManager;
 
 	ClientDefaultTagManagerReloader() {
-		final DefaultPack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
+		DefaultPack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
 
-		final GroupPack.Wrapped pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, defaultPack);
+		GroupPack.Wrapped pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, defaultPack);
 		this.resourcePackManager = new PackManager((profileAdder) -> {
 			profileAdder.accept(PackProfile.of(
 					new PackLocationInfo(
@@ -86,7 +86,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 				MinecraftClient.getInstance().getResourcePackManager().getEnabledNames()
 		);
 		this.resourcePackManager.scanPacks();
-		final var manager = new MultiPackResourceManager(
+		var manager = new MultiPackResourceManager(
 				ResourceType.SERVER_DATA, this.resourcePackManager.createResourcePacks()
 		);
 		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();

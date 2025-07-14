@@ -49,7 +49,7 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 		this.wrapped = wrapped;
 
 		if (!this.wrapped.isEmpty()) {
-			for (final Entry<V> entry : this.int2ObjectEntrySet()) {
+			for (Entry<V> entry : this.int2ObjectEntrySet()) {
 				this.updateResilientMap(entry.getIntKey(), entry.getValue());
 			}
 		}
@@ -58,7 +58,7 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 	public void rebuildIds() {
 		this.wrapped.clear();
 
-		for (final Map.Entry<K, V> entry : this.resilientMap.entrySet()) {
+		for (Map.Entry<K, V> entry : this.resilientMap.entrySet()) {
 			this.wrapped.put(this.registry.getRawId(entry.getKey()), entry.getValue());
 		}
 	}
@@ -126,7 +126,7 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 	}
 
 	private void updateResilientMap(int key, V value) {
-		final K entry = this.registry.get(key);
+		K entry = this.registry.get(key);
 
 		if (entry != null) {
 			this.resilientMap.put(entry, value);
@@ -134,7 +134,7 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 	}
 
 	private void onRemoval(int key) {
-		final K entry = this.registry.get(key);
+		K entry = this.registry.get(key);
 
 		if (entry != null) {
 			this.resilientMap.remove(entry);
@@ -143,7 +143,7 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 
 	@Override
 	public V put(int key, V value) {
-		final V result = this.wrapped.put(key, value);
+		V result = this.wrapped.put(key, value);
 		this.updateResilientMap(key, value);
 		return result;
 	}
@@ -152,14 +152,14 @@ public class SynchronizedInt2ObjectMap<V, K> implements Int2ObjectMap<V> {
 	public void putAll(@NotNull Map<? extends Integer, ? extends V> m) {
 		this.wrapped.putAll(m);
 
-		for (final Map.Entry<? extends Integer, ? extends V> entry : m.entrySet()) {
+		for (Map.Entry<? extends Integer, ? extends V> entry : m.entrySet()) {
 			this.updateResilientMap(entry.getKey(), entry.getValue());
 		}
 	}
 
 	@Override
 	public V remove(int key) {
-		final V value = this.wrapped.remove(key);
+		V value = this.wrapped.remove(key);
 		this.onRemoval(key);
 		return value;
 	}

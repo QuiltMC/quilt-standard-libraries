@@ -111,9 +111,9 @@ public class QuiltBiomeTest implements ModInitializer {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> {
 			context.withRegistries(
 					registries -> {
-						final HolderLookup.RegistryLookup<PlacedFeature> placedFeatureRegistryLookup =
+						HolderLookup.RegistryLookup<PlacedFeature> placedFeatureRegistryLookup =
 								context.registryManager().getLookupOrThrow(RegistryKeys.PLACED_FEATURE);
-						final HolderLookup.RegistryLookup<ConfiguredCarver<?>> carverRegistryLookup =
+						HolderLookup.RegistryLookup<ConfiguredCarver<?>> carverRegistryLookup =
 								context.registryManager().getLookupOrThrow(RegistryKeys.CONFIGURED_CARVER);
 
 						context.register(
@@ -145,16 +145,16 @@ public class QuiltBiomeTest implements ModInitializer {
 			);
 
 			context.withRegistries(registries -> {
-				final Registry<ConfiguredFeature<?, ?>> configuredRegistry =
+				Registry<ConfiguredFeature<?, ?>> configuredRegistry =
 						registries.get(RegistryKeys.CONFIGURED_FEATURE);
-				final ConfiguredFeature<?, ?> commonDesertWell =
+				ConfiguredFeature<?, ?> commonDesertWell =
 					new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
 				Registry.register(configuredRegistry, QUILT_DESERT_WELL, commonDesertWell);
-				final Holder<ConfiguredFeature<?, ?>> featureEntry = configuredRegistry
+				Holder<ConfiguredFeature<?, ?>> featureEntry = configuredRegistry
 						.getHolder(configuredRegistry.getKey(commonDesertWell).orElseThrow()).orElseThrow();
 
 				// The placement config is taken from the vanilla desert well, but no randomness
-				final PlacedFeature placedDesertWell = new PlacedFeature(featureEntry, List.of(
+				PlacedFeature placedDesertWell = new PlacedFeature(featureEntry, List.of(
 						InSquarePlacementModifier.getInstance(),
 						PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP,
 						BiomePlacementModifier.getInstance()
@@ -232,13 +232,13 @@ public class QuiltBiomeTest implements ModInitializer {
 		);
 
 		ServerLifecycleEvents.READY.register(server -> {
-			final ServerWorld netherWorld = server.getWorld(World.NETHER);
-			final ServerWorld endWorld = server.getWorld(World.END);
+			ServerWorld netherWorld = server.getWorld(World.NETHER);
+			ServerWorld endWorld = server.getWorld(World.END);
 
 			assert netherWorld != null;
 			assert endWorld != null;
 
-			final var pos = new BlockPos(0, 90, 0);
+			var pos = new BlockPos(0, 90, 0);
 
 			checkBiomeExists(netherWorld, pos, TEST_CRIMSON_FOREST);
 
@@ -249,7 +249,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	private static void checkBiomeExists(ServerWorld world, BlockPos pos, RegistryKey<Biome> biomeKey) {
-		final Pair<BlockPos, Holder<Biome>> posOfBiome =
+		Pair<BlockPos, Holder<Biome>> posOfBiome =
 				world.locateBiome((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
 
 		if (posOfBiome != null) {
@@ -265,7 +265,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 	// These are used for testing the spacing of custom end biomes.
 	private static Biome createEndHighlands(DynamicRegistryManagerSetupContext context) {
-		final GenerationSettings.Builder builder = new GenerationSettings.Builder(
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(
 				context.registryManager().getLookupOrThrow(RegistryKeys.PLACED_FEATURE),
 				context.registryManager().getLookupOrThrow(RegistryKeys.CONFIGURED_CARVER)
 		).feature(GenerationStep.Feature.SURFACE_STRUCTURES, EndPlacedFeatures.END_GATEWAY_RETURN);
@@ -273,7 +273,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	public static Biome createEndMidlands(DynamicRegistryManagerSetupContext context) {
-		final GenerationSettings.Builder builder = new GenerationSettings.Builder(
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(
 				context.registryManager().getLookupOrThrow(RegistryKeys.PLACED_FEATURE),
 				context.registryManager().getLookupOrThrow(RegistryKeys.CONFIGURED_CARVER)
 		);
@@ -281,7 +281,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	public static Biome createEndBarrens(DynamicRegistryManagerSetupContext context) {
-		final GenerationSettings.Builder builder = new GenerationSettings.Builder(
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(
 				context.registryManager().getLookupOrThrow(RegistryKeys.PLACED_FEATURE),
 				context.registryManager().getLookupOrThrow(RegistryKeys.CONFIGURED_CARVER)
 		);
@@ -289,7 +289,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	private static Biome composeEndSpawnSettings(GenerationSettings.Builder builder) {
-		final SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
+		SpawnSettings.Builder spawnBuilder = new SpawnSettings.Builder();
 		DefaultBiomeFeatures.addPlainsMobs(spawnBuilder);
 		return (new Biome.Builder())
 				.temperature(0.5F).downfall(0.5F)

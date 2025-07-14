@@ -58,10 +58,10 @@ abstract class StonecutterOutputSlotMixin extends Slot {
 			)
 	)
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		final Recipe<?> recipe = this.getRecipe();
-		final ItemStack inputStack = slot.getStack();
-		final Item inputItem = inputStack.getItem();
-		final int inputCount = inputStack.getCount();
+		Recipe<?> recipe = this.getRecipe();
+		ItemStack inputStack = slot.getStack();
+		Item inputItem = inputStack.getItem();
+		int inputCount = inputStack.getCount();
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,
@@ -76,13 +76,13 @@ abstract class StonecutterOutputSlotMixin extends Slot {
 
 	@Unique
 	private @Nullable Recipe<?> getRecipe() {
-		final int selectedRecipe = this.field_17639.getSelectedRecipe();
+		int selectedRecipe = this.field_17639.getSelectedRecipe();
 
 		if (selectedRecipe == -1) {
 			return null;
 		}
 
-		final Optional<RecipeHolder<StonecuttingRecipe>> recipe = this.field_17639
+		Optional<RecipeHolder<StonecuttingRecipe>> recipe = this.field_17639
 				.method_17863()
 				.entries()
 				.get(selectedRecipe)

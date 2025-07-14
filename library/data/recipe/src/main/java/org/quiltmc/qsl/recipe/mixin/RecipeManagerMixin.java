@@ -57,7 +57,7 @@ abstract class RecipeManagerMixin {
 			Iterable<RecipeHolder<?>> recipes,
 			@Local SortedMap<Identifier, Recipe<?>> resourceMap
 	) {
-		final ArrayList<RecipeHolder<?>> modifiableRecipes;
+		ArrayList<RecipeHolder<?>> modifiableRecipes;
 		if (recipes instanceof ArrayList<RecipeHolder<?>> arrayList) {
 			modifiableRecipes = arrayList;
 		} else {

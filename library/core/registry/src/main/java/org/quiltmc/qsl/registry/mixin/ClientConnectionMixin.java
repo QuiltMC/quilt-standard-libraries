@@ -76,7 +76,7 @@ abstract class ClientConnectionMixin implements ExtendedConnectionClient {
 
 	@Override
 	public boolean quilt$isUnknownEntry(Registry<?> registry, Object entry) {
-		final ObjectOpenCustomHashSet<Object> set = this.quilt$unknownEntries.get(registry);
+		ObjectOpenCustomHashSet<Object> set = this.quilt$unknownEntries.get(registry);
 
 		return set != null && set.contains(entry);
 	}

@@ -38,26 +38,26 @@ import net.minecraft.util.math.BlockPos;
 @ApiStatus.Internal
 public final class QuiltTestCommand {
 	public static int executeExport(ServerCommandSource source) {
-		final BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
-		final ServerWorld world = source.getWorld();
-		final BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
+		BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
+		ServerWorld world = source.getWorld();
+		BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
 
 		if (nearestStructureBlockPos == null) {
 			source.sendError(Text.literal("Couldn't find any structure block within 15 blocks radius."));
 			return 0;
 		} else {
-			final var structureBlock = (StructureBlockBlockEntity) world.getBlockEntity(nearestStructureBlockPos);
+			var structureBlock = (StructureBlockBlockEntity) world.getBlockEntity(nearestStructureBlockPos);
 			return executeExport(source, structureBlock.getStructureName());
 		}
 	}
 
 	public static int executeExport(ServerCommandSource source, String structure) {
-		final Path directoryPath = StructureTestUtil.testStructuresDirectoryName;
-		final var structureId = Identifier.parse(structure);
+		Path directoryPath = StructureTestUtil.testStructuresDirectoryName;
+		var structureId = Identifier.parse(structure);
 
-		final Path structurePath = source.getWorld().getStructureTemplateManager()
+		Path structurePath = source.getWorld().getStructureTemplateManager()
 				.exportStructure(structureId, ".nbt");
-		final Path exportedPath = NbtProvider.convertNbtToSnbt(
+		Path exportedPath = NbtProvider.convertNbtToSnbt(
 				DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath
 		);
 

@@ -122,7 +122,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
-		final String actualPath = String.join("/", path);
+		String actualPath = String.join("/", path);
 
 		return this.open(actualPath);
 	}
@@ -133,7 +133,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	}
 
 	protected ResourceIoSupplier<InputStream> open(String filePath) {
-		final ResourceAccess.Entry entry = this.cache.getEntry(filePath);
+		ResourceAccess.Entry entry = this.cache.getEntry(filePath);
 
 		if (entry != null && entry.type() == EntryType.FILE) {
 			return ResourceIoSupplier.create(entry.path());
@@ -144,21 +144,21 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public void listResources(ResourceType type, String namespace, String startingPath, ResourceConsumer consumer) {
-		final String namespacePath = type.getDirectory() + '/' + namespace;
-		final String nioPath = startingPath.replace("/", this.io.getSeparator());
+		String namespacePath = type.getDirectory() + '/' + namespace;
+		String nioPath = startingPath.replace("/", this.io.getSeparator());
 
-		final ResourceAccess.Entry namespaceEntry = this.cache.getEntry(namespacePath);
+		ResourceAccess.Entry namespaceEntry = this.cache.getEntry(namespacePath);
 
 		if (namespaceEntry != null) {
-			final ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
+			ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
 
 			if (searchEntry != null) {
 				try (var stream = Files.walk(searchEntry.path())) {
 					stream.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
 							.forEach(p -> {
-								final String idPath = namespaceEntry.path().relativize(p).toString()
+								String idPath = namespaceEntry.path().relativize(p).toString()
 										.replace(this.io.getSeparator(), "/");
-								final Identifier id = Identifier.tryValidate(namespace, idPath);
+								Identifier id = Identifier.tryValidate(namespace, idPath);
 
 								if (id == null) {
 									Util.logAndPause(String.format(
@@ -197,7 +197,7 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	@Override
 	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
-		final ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
+		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
 
 		if (resource == null) {
 			return null;

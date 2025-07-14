@@ -40,7 +40,7 @@ public class AngyBlock extends BlockWithEntity {
 	@Override
 	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 		if (!world.isClient()) {
-			final ColorfulBlockEntity blockEntity = BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.get(world, pos);
+			ColorfulBlockEntity blockEntity = BlockEntityTypeTest.COLORFUL_BLOCK_ENTITY_TYPE.get(world, pos);
 
 			if (blockEntity == null) {
 				throw new AssertionError("Missing block entity for angy block at " + pos);

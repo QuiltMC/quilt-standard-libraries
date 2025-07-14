@@ -52,7 +52,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	private static boolean tryReturnItemToInventory(
 			ItemStack remainder, DefaultedList<ItemStack> inventory, int index
 	) {
-		final ItemStack leftovers = inventory.get(index);
+		ItemStack leftovers = inventory.get(index);
 		if (leftovers.isEmpty()) {
 			inventory.set(index, remainder);
 			return true;
@@ -66,7 +66,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToSlot(ItemStack remainder, Slot slot) {
-		final ItemStack leftovers = slot.getStack();
+		ItemStack leftovers = slot.getStack();
 		if (leftovers.isEmpty()) {
 			slot.setStack(remainder);
 			return true;
@@ -86,7 +86,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 			return false;
 		}
 
-		final int toTake = Math.min(base.getMaxCount() - base.getCount(), remainder.getCount());
+		int toTake = Math.min(base.getMaxCount() - base.getCount(), remainder.getCount());
 		remainder.decrement(toTake);
 		base.increment(toTake);
 		return remainder.isEmpty();
@@ -100,7 +100,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 			return ItemStack.EMPTY;
 		}
 
-		final ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe, location);
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe, location);
 
 		original.decrement(amount);
 
@@ -112,7 +112,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 			ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location,
 			DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure
 	) {
-		final ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
+		ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
 			failure.accept(remainder);
@@ -123,7 +123,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	public static void handleRemainderForScreenHandler(
 			Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
 	) {
-		final ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
+		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
 
 		if (!tryReturnItemToSlot(remainder, slot)) {
 			player.getInventory().offerOrDrop(remainder);

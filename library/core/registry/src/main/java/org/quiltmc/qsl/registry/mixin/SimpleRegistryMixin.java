@@ -111,11 +111,11 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 		this.quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
 			callbacks -> context -> {
-				final Identifier id = context.id();
-				final V value = context.value();
-				final int rawId = context.rawId();
+				Identifier id = context.id();
+				V value = context.value();
+				int rawId = context.rawId();
 
-				for (final RegistryEvents.EntryAdded<V> callback : callbacks) {
+				for (RegistryEvents.EntryAdded<V> callback : callbacks) {
 					// This is done because some events may create recursion, which would corrupt the context for future
 					// queued events.
 					// Storing the values on this stack is much faster than instancing a new context every time.
@@ -178,11 +178,11 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	@Override
 	public Map<String, Collection<SyncEntry>> quilt$getSyncMap() {
 		if (this.quilt$syncMap == null) {
-			final var map = new HashMap<String, Collection<SyncEntry>>();
+			var map = new HashMap<String, Collection<SyncEntry>>();
 
 			this.entryToRawId.forEach((entry, key) -> {
-				final Identifier identifier = this.getId(entry);
-				final byte flag = this.quilt$entryToFlag.getOrDefault(entry, (byte) 0);
+				Identifier identifier = this.getId(entry);
+				byte flag = this.quilt$entryToFlag.getOrDefault(entry, (byte) 0);
 
 				if (!RegistryFlag.isSkipped(flag)) {
 					map.computeIfAbsent(
@@ -202,15 +202,15 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	public Status quilt$getContentStatus() {
 		if (this.quilt$syncStatus == null) {
 			var status = Status.VANILLA;
-			final boolean optional = RegistryFlag.isOptional(this.quilt$flags);
-			for (final Holder.Reference<V> entry : this.rawIdToEntry) {
+			boolean optional = RegistryFlag.isOptional(this.quilt$flags);
+			for (Holder.Reference<V> entry : this.rawIdToEntry) {
 				if (entry == null) {
 					continue;
 				}
 
-				final String namespace = entry.getRegistryKey().getValue().getNamespace();
+				String namespace = entry.getRegistryKey().getValue().getNamespace();
 				if (!ServerRegistrySync.isNamespaceVanilla(namespace)) {
-					final byte flag = this.quilt$entryToFlag.getOrDefault(entry.getValue(), (byte) 0);
+					byte flag = this.quilt$entryToFlag.getOrDefault(entry.getValue(), (byte) 0);
 					if (!RegistryFlag.isSkipped(flag)) {
 						if (RegistryFlag.isOptional(flag)) {
 							status = Status.OPTIONAL;
@@ -237,18 +237,18 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			this.quilt$createIdSnapshot();
 		}
 
-		final var missingEntries = new ArrayList<MissingEntry>();
+		var missingEntries = new ArrayList<MissingEntry>();
 
-		final var holders = new ArrayList<>(this.rawIdToEntry);
+		var holders = new ArrayList<>(this.rawIdToEntry);
 		int currentId = 0;
 
 		this.entryToRawId.clear();
 		this.rawIdToEntry.clear();
 
-		for (final String key : entries.keySet()) {
-			for (final SyncEntry idEntry : entries.get(key)) {
-				final var identifier = Identifier.of(key, idEntry.path());
-				final Holder.Reference<V> holder = this.byId.get(identifier);
+		for (String key : entries.keySet()) {
+			for (SyncEntry idEntry : entries.get(key)) {
+				var identifier = Identifier.of(key, idEntry.path());
+				Holder.Reference<V> holder = this.byId.get(identifier);
 
 				if (holder != null) {
 					this.entryToRawId.put(holder.getValue(), idEntry.rawId());
@@ -271,12 +271,12 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			this.rawIdToEntry.add(null);
 		}
 
-		for (final Holder.Reference<V> holder : holders) {
+		for (Holder.Reference<V> holder : holders) {
 			if (holder == null) {
 				continue;
 			}
 
-			final int id = ++currentId;
+			int id = ++currentId;
 			this.entryToRawId.put(holder.getValue(), id);
 			this.rawIdToEntry.set(id, holder);
 		}
@@ -324,10 +324,10 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 		if (this.quilt$idSnapshot != null) {
 			this.rawIdToEntry.clear();
 			this.rawIdToEntry.addAll(this.quilt$idSnapshot);
-			final int size = this.rawIdToEntry.size();
+			int size = this.rawIdToEntry.size();
 
 			for (int i = 0; i < size; i++) {
-				final Holder.Reference<V> entry = this.rawIdToEntry.get(i);
+				Holder.Reference<V> entry = this.rawIdToEntry.get(i);
 				if (entry != null) {
 					this.entryToRawId.put(entry.getValue(), i);
 				}
