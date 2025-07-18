@@ -54,6 +54,7 @@ import org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
+import org.quiltmc.qsl.registry.impl.TextSerializationUtil;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
@@ -169,7 +170,7 @@ public final class ServerRegistrySync {
 
 		Text text = null;
 		try {
-			text = Text.SerializationUtil.fromJson(string, DynamicRegistryManager.EMPTY);
+			text = TextSerializationUtil.fromJson(string, DynamicRegistryManager.EMPTY);
 		} catch (Exception e) { }
 
 		return text != null ? text : Text.literal(string);

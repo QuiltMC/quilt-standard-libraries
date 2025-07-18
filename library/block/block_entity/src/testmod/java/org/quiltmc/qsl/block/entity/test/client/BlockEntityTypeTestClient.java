@@ -18,7 +18,7 @@ package org.quiltmc.qsl.block.entity.test.client;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.color.block.BlockColorProvider;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.unmapped.C_nihubpux;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -42,6 +42,6 @@ public class BlockEntityTypeTestClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		BlockRenderLayerMap.put(RenderLayer.getCutout(), BlockEntityTypeTest.ANGY_BLOCKS.toArray(Block[]::new));
+		BlockRenderLayerMap.put(C_nihubpux.CUTOUT, BlockEntityTypeTest.ANGY_BLOCKS.toArray(Block[]::new));
 	}
 }

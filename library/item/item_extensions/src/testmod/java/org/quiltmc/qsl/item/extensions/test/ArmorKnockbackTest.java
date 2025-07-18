@@ -64,7 +64,7 @@ public class ArmorKnockbackTest implements ModInitializer {
 	private static final Item KNOCKBACK_RESISTANCE_CHESTPLATE = new Item(
 			new Item.Settings().rarity(Rarity.RARE)
 				.key(KNOCKBACK_RESISTANCE_CHESTPLATE_KEY)
-				.method_66332(KNOCKBACK_RESISTANCE_ARMOR, ArmorType.CHESTPLATE)
+				.armor(KNOCKBACK_RESISTANCE_ARMOR, ArmorType.CHESTPLATE)
 	) {
 		@Override
 		public void appendTooltip(ItemStack stack, TooltipContext context, C_idvlscju c_idvlscju, Consumer<Text> consumer, TooltipConfig config) {

@@ -18,12 +18,12 @@ package org.quiltmc.qsl.block.extensions.mixin.client;
 
 import java.util.Map;
 
+import net.minecraft.unmapped.C_nihubpux;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.fluid.Fluid;
 
@@ -35,12 +35,12 @@ import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 public abstract class RenderLayersMixin {
 	@Shadow
 	@Final
-	private static Map<Block, RenderLayer> BLOCKS;
+	private static Map<Block, C_nihubpux> BLOCKS;
 	@Shadow
 	@Final
-	private static Map<Fluid, RenderLayer> FLUIDS;
+	private static Map<Fluid, C_nihubpux> field_60921;
 
 	static {
-		BlockRenderLayerMapImpl.initialize(BLOCKS::put, FLUIDS::put);
+		BlockRenderLayerMapImpl.initialize(BLOCKS::put, field_60921::put);
 	}
 }

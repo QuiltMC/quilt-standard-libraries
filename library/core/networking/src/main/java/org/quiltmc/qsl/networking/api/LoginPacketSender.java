@@ -19,10 +19,10 @@ package org.quiltmc.qsl.networking.api;
 
 import java.util.Objects;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
@@ -67,7 +67,7 @@ public interface LoginPacketSender extends PacketSender<CustomQueryPayload> {
 	 * @param buf the content of the packet
 	 * @param listener an optional listener containing callbacks to execute after the packet is sent, may be {@code null}
 	 */
-	default void sendPacket(Identifier channel, PacketByteBuf buf, @Nullable PacketSendListener listener) {
+	default void sendPacket(Identifier channel, PacketByteBuf buf, @Nullable ChannelFutureListener listener) {
 		Objects.requireNonNull(channel, "Channel cannot be null");
 		Objects.requireNonNull(buf, "Payload cannot be null");
 

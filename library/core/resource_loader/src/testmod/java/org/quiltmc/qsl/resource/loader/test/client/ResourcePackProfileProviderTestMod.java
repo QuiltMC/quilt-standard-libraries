@@ -51,9 +51,9 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 					QuiltPackProfile.wrapToFactory(pack),
 					ResourceType.CLIENT_RESOURCES,
 					new PackPosition(
-						true,
-						PackProfile.InsertionPosition.TOP,
-						true
+							true,
+							PackProfile.InsertionPosition.TOP,
+							true
 					)));
 		});
 	}
@@ -66,7 +66,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			this.putText("pack.mcmeta", String.format("""
 					{"pack":{"pack_format":%d,"description":"Just testing."}}
 					""",
-					SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
+					SharedConstants.getGameVersion().getPackVersion(ResourceType.CLIENT_RESOURCES)));
 			this.putImage("pack.png", this::createRandomImage);
 			this.putImage(DIRT_IDENTIFIER, this::createRandomImage);
 		}
@@ -91,10 +91,10 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		@Override
 		public PackLocationInfo getLocationInfo() {
 			return new PackLocationInfo(
-				PACK_NAME,
-				this.getDisplayName(),
-				PackSource.PACK_SOURCE_BUILTIN,
-				Optional.empty()
+					PACK_NAME,
+					this.getDisplayName(),
+					PackSource.PACK_SOURCE_BUILTIN,
+					Optional.empty()
 			);
 		}
 

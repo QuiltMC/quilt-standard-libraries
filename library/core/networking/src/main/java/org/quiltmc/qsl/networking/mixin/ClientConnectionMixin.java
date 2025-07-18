@@ -22,19 +22,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkPhase;
 import net.minecraft.network.NetworkSide;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
@@ -51,9 +53,6 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	private PacketListener packetListener;
 
 	@Shadow
-	public abstract void send(Packet<?> packet, PacketSendListener listener);
-
-	@Shadow
 	public abstract void disconnect(Text disconnectReason);
 
 	@Unique
@@ -65,17 +64,17 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	// Must be fully qualified due to mixin not working in production without it
-	@Redirect(
+	@WrapOperation(
 			method = "exceptionCaught",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketSendListener;)V"
+					target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;)V"
 			)
 	)
-	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, PacketSendListener listener,
-			ChannelHandlerContext channelHandlerContext, Throwable throwable) {
+	private void resendOnExceptionCaught(ClientConnection instance, Packet<?> packet, ChannelFutureListener listener, Operation<Void> original, @Local(argsOnly = true) Throwable throwable) {
 		if (this.packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(
+			original.call(
+					instance,
 					dcSource.createDisconnectPacket(
 							Text.translatable("disconnect.genericReason", "Internal Exception: " + throwable)
 					),
@@ -88,7 +87,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-	private void checkPacket(Packet<?> packet, PacketSendListener listener, boolean flush, CallbackInfo ci) {
+	private void checkPacket(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
 		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
 			callbackListener.sent(packet);
 		}

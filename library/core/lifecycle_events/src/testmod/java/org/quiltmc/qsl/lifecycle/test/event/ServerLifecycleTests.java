@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.test.TestManager;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -44,6 +45,9 @@ public final class ServerLifecycleTests implements ModInitializer,
 		ServerWorldLoadEvents.UNLOAD.register((server, world) -> {
 			LOGGER.info("Unloaded world " + world.getRegistryKey().getValue().toString());
 		});
+
+		// method_71664 is startTicking
+		TestManager.INSTANCE.method_71664();
 	}
 
 	@Override

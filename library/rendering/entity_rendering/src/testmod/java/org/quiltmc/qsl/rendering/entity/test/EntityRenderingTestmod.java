@@ -79,7 +79,7 @@ public final class EntityRenderingTestmod implements ModInitializer {
 
 	private static Item.Settings createQuiltArmorSettings(RegistryKey<Item> key, ArmorType type) {
 		// method_66332 is armor
-		return new Item.Settings().key(key).method_66332(QUILT_ARMOR_MATERIAL, type);
+		return new Item.Settings().key(key).armor(QUILT_ARMOR_MATERIAL, type);
 	}
 
 	@Override

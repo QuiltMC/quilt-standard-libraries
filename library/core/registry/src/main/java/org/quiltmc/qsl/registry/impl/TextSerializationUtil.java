@@ -1,0 +1,43 @@
+/*
+ * Copyright 2025 The Quilt Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.registry.impl;
+
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
+import net.minecraft.util.JsonHelper;
+
+public class TextSerializationUtil {
+	public static String toJson(Text text, DynamicRegistryManager registryManager) {
+		var ops = RegistryOps.create(JsonOps.INSTANCE, registryManager);
+		var encodeResult = TextCodecs.CODEC.encodeStart(ops, text);
+
+		return JsonHelper.toSortedString(encodeResult.getOrThrow(message -> new RuntimeException("expected text to be encodeable")));
+	}
+
+	public static Text fromJson(String json, DynamicRegistryManager registryManager) {
+		var element = JsonParser.parseString(json);
+
+		var ops = RegistryOps.create(JsonOps.INSTANCE, registryManager);
+		var encodeResult = TextCodecs.CODEC.decode(ops, element);
+
+		return encodeResult.getOrThrow(message -> new RuntimeException("expected text to be decodeable")).getFirst();
+	}
+}

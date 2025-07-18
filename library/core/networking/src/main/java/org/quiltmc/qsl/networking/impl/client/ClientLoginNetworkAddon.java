@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
@@ -82,13 +82,13 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 		}
 
 		PacketByteBuf buf = PacketByteBufs.slice(originalBuf);
-		var futureListeners = new ArrayList<PacketSendListener>();
+		var futureListeners = new ArrayList<ChannelFutureListener>();
 
 		try {
 			CompletableFuture<PacketByteBuf> future = handler.receive(this.client, this.handler, buf, futureListeners::add);
 			future.thenAccept(result -> {
 				var response = new LoginQueryResponseC2SPacket(queryId, new PacketByteBufLoginQueryResponsePayload(result));
-				PacketSendListener listener = null;
+				ChannelFutureListener listener = null;
 
 				for (var each : futureListeners) {
 					listener = PacketSendListeners.union(listener, each);

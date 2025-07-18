@@ -22,13 +22,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.button.ButtonWidget;
+import net.minecraft.client.render.RenderPipelines;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -65,8 +65,8 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			graphics.drawGuiTexture(
-					RenderLayer::getGuiTextured, ARMOR_FULL_ICON,
+			graphics.drawSprite(
+					RenderPipelines.GUI_TEXTURED, ARMOR_FULL_ICON,
 					(screen.width / 2) - 124, (screen.height / 4) + 96,
 					20, 20
 			);

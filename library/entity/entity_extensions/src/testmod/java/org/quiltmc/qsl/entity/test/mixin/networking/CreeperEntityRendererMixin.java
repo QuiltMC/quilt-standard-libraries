@@ -56,8 +56,7 @@ abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntit
 		matrices.push();
 		matrices.translate(0, 2, 0);
 		matrices.scale(0.25f, 0.25f, 0.25f);
-		// method_22907 is rotate
-		matrices.method_22907(Axis.Y_POSITIVE.rotation(rotation));
+		matrices.rotate(Axis.Y_POSITIVE.rotation(rotation));
 		MinecraftClient.getInstance().getItemRenderer().renderItem(
 				stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
 				matrices, vertexConsumers, null, 0

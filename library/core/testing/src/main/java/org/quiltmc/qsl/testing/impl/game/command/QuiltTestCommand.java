@@ -22,8 +22,8 @@ import java.nio.file.Path;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.data.CachedWriter;
 import net.minecraft.block.entity.StructureBlockBlockEntity;
-import net.minecraft.data.DataWriter;
 import net.minecraft.data.dev.NbtProvider;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
@@ -40,7 +40,7 @@ public final class QuiltTestCommand {
 	public static int executeExport(ServerCommandSource source) {
 		BlockPos currentPos = BlockPos.fromPosition(source.getPosition());
 		ServerWorld world = source.getWorld();
-		BlockPos nearestStructureBlockPos = StructureTestUtil.method_22255(currentPos, 15, world).orElse(null);
+		BlockPos nearestStructureBlockPos = StructureTestUtil.inStructureBoundsOrEmpty(currentPos, 15, world).orElse(null);
 
 		if (nearestStructureBlockPos == null) {
 			source.sendError(Text.literal("Couldn't find any structure block within 15 blocks radius."));
@@ -58,7 +58,7 @@ public final class QuiltTestCommand {
 		Path structurePath = source.getWorld().getStructureTemplateManager()
 				.exportStructure(structureId, ".nbt");
 		Path exportedPath = NbtProvider.convertNbtToSnbt(
-				DataWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath
+				CachedWriter.UNCACHED, structurePath, structure.replace(':', '/'), directoryPath
 		);
 
 		if (exportedPath == null) {

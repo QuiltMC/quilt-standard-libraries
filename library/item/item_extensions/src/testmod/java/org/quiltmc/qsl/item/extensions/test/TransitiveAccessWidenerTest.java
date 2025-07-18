@@ -19,10 +19,10 @@ package org.quiltmc.qsl.item.extensions.test;
 import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.unmapped.C_bemqmqey;
 import net.minecraft.util.Rarity;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -35,8 +35,8 @@ public class TransitiveAccessWidenerTest implements ModInitializer {
 			new Item.Settings()
 				.key(MODDED_MINING_TOOL_KEY)
 				.maxCount(1)
-				.method_66330(
-					C_bemqmqey.INCORRECT_FOR_DIAMOND_TOOL,
+				.pickaxe(
+					ToolMaterial.DIAMOND,
 					1.0F,
 					-2.8F
 				)

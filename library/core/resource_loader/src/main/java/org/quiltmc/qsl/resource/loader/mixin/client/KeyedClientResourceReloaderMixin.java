@@ -43,7 +43,6 @@ import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.texture.PaintingManager;
 import net.minecraft.client.texture.SpriteAtlasHolder;
-import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 
@@ -58,7 +57,7 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 	EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class,
 	FoliageColormapResourceSupplier.class,
 	FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
-	StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
+	SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
 	SpriteAtlasHolder.class, C_fpwiwmrb.class,
 	/* private */
 	GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class,
@@ -86,8 +85,6 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 				this.quilt$id = ResourceReloaderKeys.Client.ENTITY_RENDERERS;
 			} else if (self instanceof C_fpwiwmrb) {
 				this.quilt$id = ResourceReloaderKeys.Client.SHADERS;
-			} else if (self instanceof StatusEffectSpriteManager) {
-				this.quilt$id = ResourceReloaderKeys.Client.STATUS_EFFECTS;
 			} else if (self instanceof SoundManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.SOUNDS;
 			} else if (self instanceof SplashTextResourceSupplier) {

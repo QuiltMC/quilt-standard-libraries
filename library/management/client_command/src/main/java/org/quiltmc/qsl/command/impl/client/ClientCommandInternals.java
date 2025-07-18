@@ -102,8 +102,8 @@ public final class ClientCommandInternals {
 		try {
 			// Only run client commands if there are no matching server-side commands.
 			String command = ignorePrefix ? message : message.substring(1);
-			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
-			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
+			CommandDispatcher<ClientCommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
+			ParseResults<ClientCommandSource> serverResults = serverDispatcher.parse(command, commandSource);
 
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
 				currentDispatcher.execute(command, commandSource);

@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,7 +190,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	@Override
-	public void sendPacket(Packet<?> packet, PacketSendListener listener) {
+	public void sendPacket(Packet<?> packet, ChannelFutureListener listener) {
 		Objects.requireNonNull(packet, "Packet cannot be null");
 
 		this.connection.send(packet, listener);

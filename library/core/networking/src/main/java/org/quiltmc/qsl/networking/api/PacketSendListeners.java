@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.networking.api;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.packet.Packet;
 
 /**
  * Utilities for working with {@link PacketSendListener}s.
@@ -34,12 +34,11 @@ public final class PacketSendListeners {
 	 * @param runnable the runnable to run on success
 	 */
 	@Contract(value = "null -> null; !null -> new", pure = true)
-	public static PacketSendListener ifSuccess(Runnable runnable) {
+	public static ChannelFutureListener ifSuccess(Runnable runnable) {
 		if (runnable == null) return null;
 
-		return new PacketSendListener() {
-			@Override
-			public void onSuccess() {
+		return (channelFuture) -> {
+			if (channelFuture.isSuccess()) {
 				runnable.run();
 			}
 		};
@@ -53,7 +52,7 @@ public final class PacketSendListeners {
 	 * @return the combined packet send listeners, may be {@code null} if both the first and second packet send listeners are {@code null}
 	 */
 	@Contract(value = "_, null -> param1; null, _ -> param2; !null, !null -> new", pure = true)
-	public static PacketSendListener union(@Nullable PacketSendListener first, @Nullable PacketSendListener second) {
+	public static ChannelFutureListener union(@Nullable ChannelFutureListener first, @Nullable ChannelFutureListener second) {
 		if (first == null && second == null) {
 			return null;
 		} else if (second == null) {
@@ -62,24 +61,9 @@ public final class PacketSendListeners {
 			return second;
 		}
 
-		return new PacketSendListener() {
-			@Override
-			public void onSuccess() {
-				first.onSuccess();
-				second.onSuccess();
-			}
-
-			@Override
-			public @Nullable Packet<?> getFailurePacket() {
-				var firstPacket = first.getFailurePacket();
-				var secondPacket = second.getFailurePacket();
-
-				if (firstPacket == null) {
-					return secondPacket;
-				}
-
-				return firstPacket;
-			}
+		return (channelFuture) -> {
+			first.operationComplete(channelFuture);
+			second.operationComplete(channelFuture);
 		};
 	}
 

@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.chat.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import io.netty.channel.ChannelFutureListener;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,6 +35,7 @@ import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
+	@Unique
 	private SystemS2CMessage quilt$sendSystemMessage$storedSystemMessage;
 
 	@Inject(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At("HEAD"))
@@ -42,17 +45,17 @@ public class ServerPlayerEntityMixin {
 		this.quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 	}
 
-	@Redirect(
+	@WrapOperation(
 			method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketSendListener;)V"
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;)V"
 			)
 	)
-	public void quilt$cancelAndBeforeAndAfterOutboundSystemMessage(ServerPlayNetworkHandler instance, Packet<?> packet, PacketSendListener listener) {
+	public void quilt$cancelAndBeforeAndAfterOutboundSystemMessage(ServerPlayNetworkHandler instance, Packet<?> packet, ChannelFutureListener listener, Operation<Void> original) {
 		if (QuiltChatEvents.CANCEL.invoke(this.quilt$sendSystemMessage$storedSystemMessage) != Boolean.TRUE) {
 			QuiltChatEvents.BEFORE_PROCESS.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
-			instance.send(this.quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
+			original.call(instance, packet, listener);
 			QuiltChatEvents.AFTER_PROCESS.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
 		} else {
 			QuiltChatEvents.CANCELLED.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
