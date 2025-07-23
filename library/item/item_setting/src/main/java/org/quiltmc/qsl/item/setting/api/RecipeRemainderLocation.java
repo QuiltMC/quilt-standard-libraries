@@ -27,10 +27,13 @@ import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandlerImpl;
 
 /**
  * Contains the different recipe remainder locations that QSL supports.
- * Calling {@link #getOrCreate(Identifier)} allows mods to create their own remainder locations or get remainder locations without needing to compile against the other mod.
- * The hierarchy of recipe remainder locations is: {@link #DEFAULT_LOCATIONS} &lt; any location &lt; {@link #ALL_LOCATIONS}.
+ * Calling {@link #getOrCreate(Identifier)} allows mods to create their own remainder locations or get remainder
+ * locations without needing to compile against the other mod.
+ * The hierarchy of recipe remainder locations is: {@link #DEFAULT_LOCATIONS} &lt; any location &lt;
+ * {@link #ALL_LOCATIONS}.
  *
- * <p> This class should not be extended.
+ *
+ * <p>This class should not be extended.
  */
 @ApiStatus.NonExtendable
 public interface RecipeRemainderLocation {
@@ -42,7 +45,8 @@ public interface RecipeRemainderLocation {
 	/**
 	 * Remainder location for the furnace fuel slot in the different furnace types.
 	 */
-	RecipeRemainderLocation FURNACE_FUEL = addToDefaultLocations(getOrCreate(Identifier.parse("minecraft:furnace_fuel")));
+	RecipeRemainderLocation FURNACE_FUEL =
+			addToDefaultLocations(getOrCreate(Identifier.parse("minecraft:furnace_fuel")));
 
 	/**
 	 * Remainder location for the furnace ingredient slot in the different furnace types.
@@ -57,7 +61,8 @@ public interface RecipeRemainderLocation {
 	/**
 	 * Remainder location for the potion addition in brewing stands.
 	 */
-	RecipeRemainderLocation POTION_ADDITION = addToDefaultLocations(getOrCreate(Identifier.parse("minecraft:potion_addition")));
+	RecipeRemainderLocation POTION_ADDITION =
+			addToDefaultLocations(getOrCreate(Identifier.parse("minecraft:potion_addition")));
 
 	/**
 	 * Remainder location for the input to the stonecutter.

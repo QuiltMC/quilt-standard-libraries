@@ -44,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.client.network.ClientCommandSource;
+import net.minecraft.util.profiler.ProfilerManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.registry.ClientRegistryLayer;
@@ -52,7 +54,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
@@ -94,9 +95,9 @@ public final class ClientCommandInternals {
 
 		// The interface is implemented on ClientCommandSource with a mixin.
 		// noinspection ConstantConditions
-		var commandSource = client.getNetworkHandler().getCommandSource();
+		ClientCommandSource commandSource = client.getNetworkHandler().getCommandSource();
 
-		client.getProfiler().push(message);
+		ProfilerManager.get().push(message);
 
 		try {
 			// Only run client commands if there are no matching server-side commands.
@@ -130,14 +131,14 @@ public final class ClientCommandInternals {
 			commandSource.sendError(Text.of(e.getMessage()));
 			return true;
 		} finally {
-			client.getProfiler().pop();
+			ProfilerManager.get().pop();
 		}
 	}
 
 	/**
 	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
-	 * <p>
-	 * Used to work out whether a command in the main dispatcher is a dummy command added
+	 *
+	 * <p>Used to work out whether a command in the main dispatcher is a dummy command added
 	 * by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test
@@ -149,8 +150,8 @@ public final class ClientCommandInternals {
 			return true;
 		}
 
-		final String command = parse.getReader().getString();
-		final CommandContext<S> context = parse.getContext().build(command);
+		String command = parse.getReader().getString();
+		CommandContext<S> context = parse.getContext().build(command);
 
 		return context.getCommand() == null || context.getCommand() == DUMMY_COMMAND;
 	}
@@ -179,7 +180,7 @@ public final class ClientCommandInternals {
 	 * @return the error message as a {@link Text}
 	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
-		Text message = Texts.toText(e.getRawMessage());
+		Text message = Text.of(e.getRawMessage());
 		String context = e.getContext();
 
 		return context != null ? Text.translatable("command.context.parse_error", message, context) : message;
@@ -293,10 +294,13 @@ public final class ClientCommandInternals {
 	 * @param context   the command context
 	 * @return the amount of usage hints (i.e. the number of subcommands of startNode)
 	 */
-	private static int executeHelp(CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context) {
-		Map<CommandNode<QuiltClientCommandSource>, String> commands = currentDispatcher.getSmartUsage(startNode, context.getSource());
+	private static int executeHelp(
+			CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context
+	) {
+		Map<CommandNode<QuiltClientCommandSource>, String> commands =
+				currentDispatcher.getSmartUsage(startNode, context.getSource());
 
-		for (var command : commands.values()) {
+		for (String command : commands.values()) {
 			context.getSource().sendFeedback(Text.of(PREFIX + command));
 		}
 
@@ -324,8 +328,11 @@ public final class ClientCommandInternals {
 	 * @param target the target command dispatcher
 	 * @param source the command source - commands which the source cannot use are filtered out
 	 */
-	private static void addDummyCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
-		var originalToCopy = new Object2ObjectOpenHashMap<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>>();
+	private static void addDummyCommands(
+			CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source
+	) {
+		var originalToCopy = new Object2ObjectOpenHashMap
+				<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>>();
 		originalToCopy.put(currentDispatcher.getRoot(), target.getRoot());
 		copyChildren(currentDispatcher.getRoot(), target.getRoot(), source, originalToCopy);
 	}
@@ -347,7 +354,9 @@ public final class ClientCommandInternals {
 			Map<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>> originalToCopy
 	) {
 		for (CommandNode<QuiltClientCommandSource> child : origin.getChildren()) {
-			if (!child.canUse(source)) continue;
+			if (!child.canUse(source)) {
+				continue;
+			}
 
 			if (target.getChild(child.getName()) != null) {
 				continue;

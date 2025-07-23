@@ -33,14 +33,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.resource.pack.KnownPack;
 import net.minecraft.resource.pack.PackLocationInfo;
-import net.minecraft.resource.pack.PackSource;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -61,7 +59,8 @@ import org.quiltmc.qsl.resource.loader.impl.cache.ResourceTreeCache;
 public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final FileSystem DEFAULT_FILESYSTEM = FileSystems.getDefault();
-	private static final boolean DISABLE_CACHING = TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
+	private static final boolean DISABLE_CACHING =
+			TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
 	/* Metadata */
 	private final String name;
 	private final Text displayName;
@@ -76,13 +75,15 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 
 	static ModNioPack ofMod(ModMetadata modInfo, Path path, ResourceType type) {
 		return new ModNioPack(
-				null, modInfo, null, PackActivationType.ALWAYS_ENABLED,
-				path, type, null
+			null, modInfo, null, PackActivationType.ALWAYS_ENABLED,
+			path, type, null
 		);
 	}
 
-	public ModNioPack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
-					  Path path, ResourceType type, @Nullable AutoCloseable closer) {
+	public ModNioPack(
+			@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
+			Path path, ResourceType type, @Nullable AutoCloseable closer
+	) {
 		super(new PackLocationInfo(
 				name,
 				displayName,
@@ -107,7 +108,10 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 		}
 
 		/* Cache */
-		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()) {
+		if (
+				DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM
+					|| path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()
+		) {
 			// The default file system means it's on-disk files that may change
 			this.cache = new ResourceAccess(this.io);
 		} else {
@@ -157,7 +161,8 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 								Identifier id = Identifier.tryValidate(namespace, idPath);
 
 								if (id == null) {
-									Util.logAndPause(String.format(Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
+									Util.logAndPause(String.format(
+											Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
 											this.getName(), this.modInfo.id(), namespace, idPath
 									));
 								} else {
@@ -165,8 +170,10 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
-							+ ", mod " + this.modInfo.id() + " failed!", e);
+					LOGGER.warn(
+							"findResources at {} in namespace {}, mod {} failed!",
+							startingPath, namespace, this.modInfo.id(), e
+					);
 				}
 			}
 		}
@@ -189,14 +196,14 @@ public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	}
 
 	@Override
-	public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
+	public <T> @Nullable T parseMetadata(MetadataSectionType<T> metaSectionType) throws IOException {
 		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
 
 		if (resource == null) {
 			return null;
 		} else {
 			try (InputStream stream = resource.get()) {
-				return ResourceLoaderImpl.parseMetadata(metaReader, this, stream);
+				return ResourceLoaderImpl.parseMetadata(metaSectionType, this, stream);
 			}
 		}
 	}

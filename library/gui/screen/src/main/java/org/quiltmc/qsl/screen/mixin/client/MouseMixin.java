@@ -32,15 +32,16 @@ import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 @ClientOnly
 @Mixin(Mouse.class)
 abstract class MouseMixin {
-	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@WrapOperation(
-			method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "onMouseButton",
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
 			)
 	)
-	private static boolean mouseClickedEvent(Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original) {
+	private boolean mouseClickedEvent(
+			Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_CLICK.invoker().allowMouseClick(instance, mouseX, mouseY, button) == TriState.FALSE) {
 			return true;
 		}
@@ -54,13 +55,15 @@ abstract class MouseMixin {
 
 	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@WrapOperation(
-			method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "onMouseButton",
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
 			)
 	)
-	private static boolean mouseReleasedEvent(Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original) {
+	private boolean mouseReleasedEvent(
+			Screen instance, double mouseX, double mouseY, int button, Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_RELEASE.invoker().allowMouseRelease(instance, mouseX, mouseY, button) == TriState.FALSE) {
 			return true;
 		}
@@ -79,14 +82,19 @@ abstract class MouseMixin {
 				target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDDD)Z"
 			)
 	)
-	private boolean mouseScrolledEvent(Screen instance, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY, Operation<Boolean> original) {
+	private boolean mouseScrolledEvent(
+			Screen instance, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY,
+			Operation<Boolean> original
+	) {
 		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY) == TriState.FALSE) {
 			return true;
 		}
 
-		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker().beforeMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker()
+				.beforeMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 		boolean result = original.call(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
-		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker().afterMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
+		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker()
+				.afterMouseScroll(instance, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 
 		return result;
 	}

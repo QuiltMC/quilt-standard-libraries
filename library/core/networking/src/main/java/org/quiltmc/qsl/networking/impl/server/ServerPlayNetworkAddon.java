@@ -74,7 +74,8 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T extends CustomPayload> void receive(ServerPlayNetworking.CustomChannelReceiver<?> handler, T buf) {
-		((ServerPlayNetworking.CustomChannelReceiver<T>) handler).receive(this.server, this.handler.player, this.handler, buf, this);
+		((ServerPlayNetworking.CustomChannelReceiver<T>) handler)
+				.receive(this.server, this.handler.player, this.handler, buf, this);
 	}
 
 	// impl details
@@ -88,7 +89,6 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	public Packet<?> createPacket(CustomPayload payload) {
 		return ServerNetworkingImpl.createS2CPacket(payload);
 	}
-
 
 	@Override
 	protected void invokeRegisterEvent(List<CustomPayload.Id<?>> ids) {
@@ -104,7 +104,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	protected void handleRegistration(CustomPayload.Id<?> channelName) {
 		// If we can already send packets, immediately send the register packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));
@@ -116,7 +116,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	protected void handleUnregistration(CustomPayload.Id<?> channelName) {
 		// If we can already send packets, immediately send the unregister packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));

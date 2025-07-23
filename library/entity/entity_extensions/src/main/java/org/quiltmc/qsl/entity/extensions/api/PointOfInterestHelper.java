@@ -34,14 +34,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
-import net.minecraft.world.poi.PointOfInterestTypes;
+
 import org.quiltmc.qsl.entity.extensions.impl.PointOfInterestTypeExtensions;
 import org.quiltmc.qsl.entity.extensions.mixin.PointOfInterestTypesAccessor;
 
 /**
  * This class provides utilities to create a {@link PointOfInterestType}.
- * <p>
- * A point of interest is typically used by villagers to specify their workstation blocks, meeting zones and homes.
+ *
+ * <p>A point of interest is typically used by villagers to specify their workstation blocks, meeting zones and homes.
  * Points of interest are also used by bees to specify where their bee hive is and nether portals to find existing portals.
  */
 public final class PointOfInterestHelper {
@@ -54,8 +54,10 @@ public final class PointOfInterestHelper {
 	 * @param blocks         all blocks where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Block... blocks) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
+	public static RegistryKey<PointOfInterestType> register(
+			Identifier id, int ticketCount, int searchDistance, Block... blocks
+	) {
+		ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
 		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
@@ -74,7 +76,7 @@ public final class PointOfInterestHelper {
 	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
 	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Iterable<BlockState> states) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
+		ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
 		return register(id, ticketCount, searchDistance, builder.addAll(states));
 	}
@@ -88,7 +90,9 @@ public final class PointOfInterestHelper {
 	 * @param states         all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Set<BlockState> states) {
+	public static RegistryKey<PointOfInterestType> register(
+			Identifier id, int ticketCount, int searchDistance, Set<BlockState> states
+	) {
 		return register(id, new PointOfInterestType(ImmutableSet.copyOf(states), ticketCount, searchDistance));
 	}
 
@@ -101,7 +105,9 @@ public final class PointOfInterestHelper {
 	 * @param states         all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, ImmutableSet.Builder<BlockState> states) {
+	public static RegistryKey<PointOfInterestType> register(
+			Identifier id, int ticketCount, int searchDistance, ImmutableSet.Builder<BlockState> states
+	) {
 		return register(id, new PointOfInterestType(states.build(), ticketCount, searchDistance));
 	}
 
@@ -116,9 +122,12 @@ public final class PointOfInterestHelper {
 		var key = RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, id);
 		Registry.register(Registries.POINT_OF_INTEREST_TYPE, key, poiType);
 		poiType.blockStates().forEach(state -> {
-			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap().put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
+					.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
-				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
+				throw Util.throwOrPause(new IllegalStateException(
+					String.format("%s is defined in too many tags", state)
+				));
 			}
 		});
 		return key;
@@ -131,7 +140,9 @@ public final class PointOfInterestHelper {
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Block... blocks) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, Arrays.asList(blocks)));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, Arrays.asList(blocks))
+		);
 	}
 
 	/**
@@ -141,7 +152,9 @@ public final class PointOfInterestHelper {
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, blocks));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, blocks)
+		);
 	}
 
 	/**
@@ -151,7 +164,9 @@ public final class PointOfInterestHelper {
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, Arrays.asList(states)));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, Arrays.asList(states))
+		);
 	}
 
 	/**
@@ -161,7 +176,9 @@ public final class PointOfInterestHelper {
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, states));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, states)
+		);
 	}
 
 	/**
@@ -183,7 +200,9 @@ public final class PointOfInterestHelper {
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$setBlocks(key, blocks));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$setBlocks(key, blocks)
+		);
 	}
 
 	/**
@@ -203,6 +222,8 @@ public final class PointOfInterestHelper {
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$setBlockStates(key, states));
+		Registries.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type ->
+				((PointOfInterestTypeExtensions) (Object) type).quilt$setBlockStates(key, states)
+		);
 	}
 }

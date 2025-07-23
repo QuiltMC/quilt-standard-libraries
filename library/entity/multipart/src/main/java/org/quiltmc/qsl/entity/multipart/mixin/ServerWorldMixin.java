@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin;
 
-import java.util.function.Supplier;
-
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +27,6 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -37,10 +34,12 @@ import net.minecraft.world.dimension.DimensionType;
 import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin extends World implements EntityPartTracker {
-	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryKey, DynamicRegistryManager registryManager,
-			Holder<DimensionType> dimension, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long l, int i) {
-		super(properties, registryKey, registryManager, dimension, profiler, isClient, debugWorld, l, i);
+abstract class ServerWorldMixin extends World implements EntityPartTracker {
+	protected ServerWorldMixin(
+			MutableWorldProperties properties, RegistryKey<World> registryKey, DynamicRegistryManager registryManager,
+			Holder<DimensionType> dimension, boolean isClient, boolean debugWorld, long l, int i
+	) {
+		super(properties, registryKey, registryManager, dimension, isClient, debugWorld, l, i);
 	}
 
 	@Redirect(

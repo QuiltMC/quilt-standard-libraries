@@ -21,10 +21,13 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.gui.widget.layout.LayoutSettings;
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.ButtonWidget;
@@ -43,15 +46,22 @@ public class DisconnectedScreenMixin extends Screen {
 	@Final
 	private LinearLayoutWidget grid;
 
-	private List<LogBuilder.Section> quilt$extraLogs;
+	@Unique
+	private List<LogBuilder.Section> extraLogs;
 
 	protected DisconnectedScreenMixin(Text title) {
 		super(title);
 	}
 
-	@Inject(method = "<init>*", at = @At("TAIL"))
-	private void quilt$storeLogs(Screen parent, Text title, Text reason, CallbackInfo ci) {
-		this.quilt$extraLogs = ClientRegistrySync.getAndClearCurrentSyncLogs();
+	@Inject(
+			method = "<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/text/Text;"
+				+ "Lnet/minecraft/network/DisconnectionDetails;Lnet/minecraft/text/Text;)V",
+			at = @At("TAIL")
+	)
+	private void quilt$storeLogs(
+			Screen parent, Text title, DisconnectionDetails details, Text reason, CallbackInfo ci
+	) {
+		this.extraLogs = ClientRegistrySync.getAndClearCurrentSyncLogs();
 	}
 
 	@Inject(
@@ -62,12 +72,19 @@ public class DisconnectedScreenMixin extends Screen {
 			)
 	)
 	private void quilt$addLogsButton(CallbackInfo ci) {
-		if (!this.quilt$extraLogs.isEmpty()) {
-			var logsButton = ButtonWidget.builder(Text.translatableWithFallback("quilt.core.registry_sync.logs_button", "More Details"), (button) -> {
-				this.client.setScreen(new SyncLogScreen(this, this.quilt$extraLogs));
-			}).build();
+		if (!this.extraLogs.isEmpty()) {
+			ButtonWidget logsButton = ButtonWidget
+					.builder(
+							Text.translatableWithFallback(
+								"quilt.core.registry_sync.logs_button", "More Details"
+							),
+							(button) -> {
+								this.client.setScreen(new SyncLogScreen(this, this.extraLogs));
+							}
+					)
+					.build();
 			// I might have committed some horrific crimes here
-			var settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
+			LayoutSettings settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
 			this.grid.add(logsButton, settings);
 		}
 	}

@@ -43,7 +43,8 @@ public class TrackedDataHandlerRegistryMixin {
 	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.debug.unknown_tracked_data_handler").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 
 	// WARNING: These fields aren't set until just before RETURN in <clinit>. Until then they are 0.
-	// I (OroArmor) am abusing that fact for the quilt$pastStaticInit field. Do what you wish to me, this is a good way of solving the problem.
+	// I (OroArmor) am abusing that fact for the quilt$pastStaticInit field. Do what you wish to me, this is a good way
+	// of solving the problem.
 	// Why the two above fields work, my guess is that they are final.
 	@Unique
 	private static int quilt$currentUnknownId = 0;
@@ -99,8 +100,16 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_block_pos";
 		} else if (handler == TrackedDataHandlerRegistry.DIRECTION) {
 			id = "direction";
-		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_UUID) {
+		} else if (handler == TrackedDataHandlerRegistry.field_55584) {
 			id = "optional_uuid";
+		} else if (handler == TrackedDataHandlerRegistry.field_56523) {
+			id = "chicken_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_56413) {
+			id = "cow_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_57073) {
+			id = "wolf_sound_variant";
+		} else if (handler == TrackedDataHandlerRegistry.field_55583) {
+			id = "pig_variant";
 		} else if (handler == TrackedDataHandlerRegistry.BLOCK_STATE) {
 			id = "block_state";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
@@ -109,7 +118,7 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "tag_compound";
 		} else if (handler == TrackedDataHandlerRegistry.PARTICLE) {
 			id = "particle";
-		} else if (handler == TrackedDataHandlerRegistry.PARTICLES){
+		} else if (handler == TrackedDataHandlerRegistry.PARTICLES) {
 			id = "particles";
 		} else if (handler == TrackedDataHandlerRegistry.VILLAGER_DATA) {
 			id = "villager_data";
@@ -119,7 +128,7 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "entity_pose";
 		} else if (handler == TrackedDataHandlerRegistry.CAT_VARIANT) {
 			id = "cat_variant";
-		} else if (handler == TrackedDataHandlerRegistry.WOLF_VARIANT){
+		} else if (handler == TrackedDataHandlerRegistry.WOLF_VARIANT) {
 			id = "wolf_variant";
 		} else if (handler == TrackedDataHandlerRegistry.FROG_VARIANT) {
 			id = "frog_variant";
@@ -129,7 +138,7 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "painting_variant";
 		} else if (handler == TrackedDataHandlerRegistry.SNIFFER_STATE) {
 			id = "sniffer_state";
-		} else if (handler == TrackedDataHandlerRegistry.ARMADILLO_STATE){
+		} else if (handler == TrackedDataHandlerRegistry.ARMADILLO_STATE) {
 			id = "armadillo_state";
 		} else if (handler == TrackedDataHandlerRegistry.VECTOR3F) {
 			id = "vector3f";
@@ -137,18 +146,27 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "quaternionf";
 		} else {
 			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
-				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");
+				throw new RuntimeException(
+					"Unnamed TrackedDataHandler added before static initialize completed. This either means that a new"
+						+ " TrackedDataHandler was added by Minecraft, or a mod injected into a poor place."
+				);
 			}
 
 			id = "unknown_handler/" + (quilt$currentUnknownId++);
 			if (quilt$PRINT_WARNING) {
-				quilt$LOGGER.warn("Detected registration of unknown TrackedDataHandler through vanilla method! If using QSL, please call QuiltTrackedDataHandlerRegistry.register. Object: {}, Class: {}", handler.toString(), handler.getClass().getName());
+				quilt$LOGGER.warn(
+						"Detected registration of unknown TrackedDataHandler through vanilla method! If using QSL, "
+							+ "please call QuiltTrackedDataHandlerRegistry.register. Object: {}, Class: {}",
+						handler.toString(), handler.getClass().getName()
+				);
 				for (StackTraceElement traceElement : Thread.currentThread().getStackTrace()) {
-					quilt$LOGGER.warn("\tat " + traceElement);
+					quilt$LOGGER.warn("\tat {}", traceElement);
 				}
 			}
 		}
 
-		Registry.register(QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY, Identifier.ofDefault(id), handler);
+		Registry.register(
+				QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY, Identifier.ofDefault(id), handler
+		);
 	}
 }

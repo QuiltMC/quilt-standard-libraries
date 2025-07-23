@@ -31,8 +31,7 @@ import net.minecraft.util.collection.DefaultedList;
  * This can be used to allow your item to get damaged instead of
  * getting removed when used in crafting.
  *
- * <p>
- * Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.
+ * <p>Recipe remainder providers can be set with {@link QuiltItemSettingsExtensions#recipeRemainder(RecipeRemainderProvider)}.
  */
 @FunctionalInterface
 public interface RecipeRemainderProvider {

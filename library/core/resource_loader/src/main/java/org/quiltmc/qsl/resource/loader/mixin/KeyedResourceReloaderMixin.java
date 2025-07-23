@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.function.FunctionLoader;
 import net.minecraft.util.Identifier;
@@ -33,15 +33,16 @@ import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
 @Mixin({
-		RecipeManager.class, ServerAdvancementLoader.class, FunctionLoader.class,
-		TagManagerLoader.class
+	RecipeManager.class, ServerAdvancementLoader.class, FunctionLoader.class,
+	TagGroupLoader.class
 })
 public abstract class KeyedResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
 	private Identifier quilt$id;
 
+	// overrides api method
 	@Override
-	@SuppressWarnings({"ConstantConditions"})
+	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
@@ -52,10 +53,12 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 				this.quilt$id = ResourceReloaderKeys.Server.ADVANCEMENTS;
 			} else if (self instanceof FunctionLoader) {
 				this.quilt$id = ResourceReloaderKeys.Server.FUNCTIONS;
-			} else if (self instanceof TagManagerLoader) {
+			} else if (self instanceof TagGroupLoader<?>) {
 				this.quilt$id = ResourceReloaderKeys.Server.TAGS;
 			} else {
-				this.quilt$id = Identifier.ofDefault("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+				this.quilt$id = Identifier.ofDefault(
+					"private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT)
+				);
 			}
 		}
 

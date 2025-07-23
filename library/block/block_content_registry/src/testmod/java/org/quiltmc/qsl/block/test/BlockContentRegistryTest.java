@@ -24,6 +24,9 @@ import com.mojang.serialization.MapCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -37,13 +40,13 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.Properties;
-import net.minecraft.test.GameTest;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
@@ -62,13 +65,14 @@ import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistryTest");
+	public static final RegistryKey<Block> OXIDIZABLE_IRON_BLOCK = RegistryKey.of(Registries.BLOCK.getKey(), Identifier.of(MOD_ID, "oxidizable_iron_block"));
 
 	public static boolean testPassed = false;
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(Registries.BLOCK, Identifier.of(MOD_ID, "oxidizable_iron_block"),
-				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
+		RegistryExtensions.register(Registries.BLOCK, OXIDIZABLE_IRON_BLOCK.getValue(),
+				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).key(OXIDIZABLE_IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, new ConstantBooster(3f));
@@ -83,7 +87,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			Registries.BLOCK.getTagOrThrow(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.getValue(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
 			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
 			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
@@ -129,11 +133,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 
 		@Override
 		public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
-			if (!state.contains(Properties.POWER)) {
-				return 0;
-			}
-
-			return state.get(Properties.POWER) / 15f;
+			return state.getOrDefault(Properties.POWER, 0) / 15f;
 		}
 
 		@Override
@@ -178,15 +178,15 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 		void run(QuiltTestContext context) {
 			this.entries.forEach(entry -> context.setBlockState(entry.pos(), entry.baseState()));
 
-			var player = context.createMockPlayer(GameMode.SURVIVAL);
+			PlayerEntity player = context.createMockPlayer(GameMode.SURVIVAL);
 			this.entries.forEach(entry -> {
 				context.useStackOnBlockAt(player, this.tool, entry.pos(), Direction.UP);
 			});
 
 			context.succeedWhen(() ->
 					this.entries.forEach(entry ->
-							context.checkBlockState(entry.pos(), state -> state.equals(entry.targetState()),
-									() -> "Could not find state " + entry.targetState()
+							context.checkState(entry.pos(), state -> state.equals(entry.targetState()),
+									state -> Text.literal("Could not find state " + entry.targetState())
 							)
 					)
 			);

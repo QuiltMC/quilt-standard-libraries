@@ -31,8 +31,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the weather of a biome.
- * <p>
- * The biome modifier identifier is {@code quilt:modify_weather}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:modify_weather}.
  *
  * @see BiomeModificationContext.WeatherContext
  */
@@ -58,7 +58,7 @@ public record ModifyWeatherModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		var weatherContext = modificationContext.getWeather();
+		BiomeModificationContext.WeatherContext weatherContext = modificationContext.getWeather();
 		this.downfall.ifPresent(weatherContext::setDownfall);
 		this.temperature.ifPresent(weatherContext::setTemperature);
 		this.hasPrecipitation.ifPresent(weatherContext::setHasPrecipitation);

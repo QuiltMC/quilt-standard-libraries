@@ -21,7 +21,6 @@ import java.util.EnumSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
@@ -37,7 +36,9 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 	private final Text message;
 	private final MessageType.Parameters messageType;
 
-	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isClient, ProfileIndependentMessageS2CPacket packet) {
+	public ProfileIndependentS2CMessage(
+			PlayerEntity player, boolean isClient, ProfileIndependentMessageS2CPacket packet
+	) {
 		this(
 				player,
 				isClient,
@@ -46,7 +47,9 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 		);
 	}
 
-	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isClient, Text message, MessageType.Parameters messageType) {
+	public ProfileIndependentS2CMessage(
+			PlayerEntity player, boolean isClient, Text message, MessageType.Parameters messageType
+	) {
 		super(player, isClient);
 		this.message = message;
 		this.messageType = messageType;
@@ -84,10 +87,10 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public String toString() {
-		return "ProfileIndependentS2CMessage{" + "message=" + this.message +
-				", messageType=" + this.messageType +
-				", player=" + this.player +
-				", isClient=" + this.isClient +
-				'}';
+		return "ProfileIndependentS2CMessage{" + "message=" + this.message
+			+ ", messageType=" + this.messageType
+			+ ", player=" + this.player
+			+ ", isClient=" + this.isClient
+			+ '}';
 	}
 }

@@ -53,7 +53,7 @@ public class CommonPacketsImpl {
 
 		// Create a configuration task to send and receive the common packets
 		ServerConfigurationConnectionEvents.ADD_TASKS.register((handler, server) -> {
-			final ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
+			ServerConfigurationNetworkAddon addon = ServerNetworkingImpl.getAddon(handler);
 
 			if (ServerConfigurationNetworking.canSend(handler, CommonVersionPayload.PACKET_ID)) {
 				// Tasks are processed in order.
@@ -81,7 +81,7 @@ public class CommonPacketsImpl {
 			}
 
 			// Play phase hasnt started yet, add them to the pending names.
-			addon.getChannelInfoHolder().getPendingChannelsNames(NetworkPhase.PLAY).addAll(payload.channels());
+			addon.getChannelInfoHolder().quilt$getPendingChannelsNames(NetworkPhase.PLAY).addAll(payload.channels());
 			NetworkingImpl.LOGGER.debug("Received accepted channels from the client for play phase");
 		} else {
 			addon.onCommonRegisterPacket(payload);
@@ -111,7 +111,11 @@ public class CommonPacketsImpl {
 
 		@Override
 		public void start(Consumer<Packet<?>> sender) {
-			addon.sendPayload(new CommonRegisterPayload(addon.getNegotiatedVersion(), CommonRegisterPayload.PLAY_PHASE, ServerPlayNetworking.getGlobalReceivers()));
+			this.addon.sendPayload(new CommonRegisterPayload(
+					this.addon.getNegotiatedVersion(),
+					CommonRegisterPayload.PLAY_PHASE,
+					ServerPlayNetworking.getGlobalReceivers())
+			);
 		}
 
 		@Override

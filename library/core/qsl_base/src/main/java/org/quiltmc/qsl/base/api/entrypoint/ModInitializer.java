@@ -22,10 +22,10 @@ import org.quiltmc.loader.api.ModContainer;
 
 /**
  * A mod initializer.
- * <p>
- * In {@code quilt.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
- * <p>
- * Currently, it is executed in {@link Bootstrap#initialize()}, just before the freezing of built-in registries.
+ *
+ * <p>In {@code quilt.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
+ *
+ * <p>Currently, it is executed in {@link Bootstrap#bootstrap()}, just before the freezing of built-in registries.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer

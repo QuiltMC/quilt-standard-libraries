@@ -24,51 +24,13 @@ qslModule {
 		item {
 			testmodOnly("item_content_registry")
 		}
-	}
-}
-
-// Check that the QuiltItemSettings class has all required methods.
-tasks.register('checkItemSettings') {
-	group "verification"
-	dependsOn jar
-
-	doLast {
-		def moduleJar = project.buildDir.toPath().resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
-
-		try (def moduleFs = FileSystems.newFileSystem(URI.create("jar:${moduleJar.toUri()}"), [create: false])) {
-			try (def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)) {
-				checkItemSettings(moduleFs, mcFs)
-			}
+		gui {
+			// FIXME this shouldn't be necessary since resource_loader already depends on it,
+			//  but it's not actually present for the testmod for some reason
+			testmodOnly("screen")
 		}
 	}
-}
-
-check.dependsOn checkItemSettings
-
-static def checkItemSettings(FileSystem moduleFs, FileSystem mcFs) {
-	def quiltClassName = "org/quiltmc/qsl/item/setting/api/QuiltItemSettings"
-	def mcClassName = 'net/minecraft/item/Item$Settings'
-	def quiltClass = ClassAnalysisUtils.readClass(
-			ClassAnalysisUtils.getClassPath(moduleFs, quiltClassName)
-	)
-	def mcClass = ClassAnalysisUtils.readClass(
-			ClassAnalysisUtils.getClassPath(mcFs, mcClassName)
-	)
-	def mcSettingsClassDesc = "L${mcClassName};"
-	def quiltClassDesc = "L${quiltClassName};"
-	def quiltClassMethods = ClassAnalysisUtils.buildMethodLookup(quiltClass)
-
-	def missingMethods = mcClass.methods.stream().filter {
-		// Only get the methods that are part of the builder pattern.
-		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) == 0)
-				&& it.desc.endsWith(mcSettingsClassDesc)
-	}.map {
-		it.name + it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
-	}.filter {
-		!quiltClassMethods.containsKey(it)
-	}.collect(Collectors.joining(","))
-
-	if (!missingMethods.isEmpty()) {
-		throw new GradleException("Missing QuiltItemSettings builder methods: ${missingMethods}.")
+	injectedInterface('net/minecraft/class_1792$class_1793') {
+		values = ['org/quiltmc/qsl/item/setting/api/QuiltItemSettingsExtensions']
 	}
 }

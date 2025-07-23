@@ -26,9 +26,9 @@ import net.minecraft.server.world.ThreadedChunkManager;
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 @Mixin(ThreadedChunkManager.class)
-public class ThreadedChunkManagerMixin {
-	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class, ordinal = 0))
-	private static boolean cancelEnderDragonCheck(Object targetRef, Class<?> classValue) {
-		return targetRef instanceof EntityPart;
+abstract class ThreadedChunkManagerMixin {
+	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class))
+	private Class cancelEnderDragonCheck(Object instance, Class constant) {
+		return EntityPart.class;
 	}
 }

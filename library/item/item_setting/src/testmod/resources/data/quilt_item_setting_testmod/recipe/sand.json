@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gravel",
+    "quilt_item_setting_testmod:hammer"
+  ],
+  "result": {
+    "id": "minecraft:sand"
+  }
+}

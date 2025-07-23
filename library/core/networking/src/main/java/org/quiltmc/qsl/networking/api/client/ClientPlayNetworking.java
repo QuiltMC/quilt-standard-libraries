@@ -38,11 +38,11 @@ import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
 
 /**
  * Offers access to play stage client-side networking functionalities.
- * <p>
- * Client-side networking functionalities include receiving client-bound packets,
+ *
+ * <p>Client-side networking functionalities include receiving client-bound packets,
  * sending server-bound packets, and events related to client-side network handlers.
- * <p>
- * This class should be only used on the physical client and for the logical client.
+ *
+ * <p>This class should be only used on the physical client and for the logical client.
  *
  * @see ClientLoginNetworking
  * @see ClientConfigurationNetworking
@@ -53,8 +53,9 @@ public final class ClientPlayNetworking {
 	/**
 	 * Registers a handler to a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 *
+	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false},
+	 * and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(CustomPayload.Id)} to unregister the existing handler.
 	 *
 	 * @param channelName    the identifier of the channel
@@ -63,15 +64,17 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(CustomPayload.Id)
 	 * @see ClientPlayNetworking#registerReceiver(CustomPayload.Id, CustomChannelReceiver)
 	 */
-	public static <T extends CustomPayload> boolean registerGlobalReceiver(CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler) {
+	public static <T extends CustomPayload> boolean registerGlobalReceiver(
+			CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler
+	) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
 	/**
 	 * Removes the handler of a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * The {@code channel} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -94,19 +97,24 @@ public final class ClientPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * <p>
-	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 *
+	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false},
+	 * and no change will be made.
 	 * Use {@link #unregisterReceiver(CustomPayload.Id)} to unregister the existing handler.
-	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.QueryRequestReceiver)}
-	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the channel handler.
+	 *
+	 * <p>For example, if you only register a receiver using this method when a
+	 * {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.QueryRequestReceiver)}
+	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the
+	 * channel handler.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
-	public static <T extends CustomPayload> boolean registerReceiver(CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler) {
+	public static <T extends CustomPayload> boolean registerReceiver(
+			CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler
+	) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -118,14 +126,15 @@ public final class ClientPlayNetworking {
 
 	/**
 	 * Removes the handler of a channel.
-	 * <p>
-	 * The {@code channelName} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
-	public static @Nullable CustomChannelReceiver<?> unregisterReceiver(CustomPayload.Id<?> channelName) throws IllegalStateException {
+	public static @Nullable CustomChannelReceiver<?> unregisterReceiver(CustomPayload.Id<?> channelName)
+			throws IllegalStateException {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -148,7 +157,9 @@ public final class ClientPlayNetworking {
 			return addon.getReceivableChannels();
 		}
 
-		throw new IllegalStateException("Cannot get a list of channels the client can receive packets on while not in game!");
+		throw new IllegalStateException(
+			"Cannot get a list of channels the client can receive packets on while not in game!"
+		);
 	}
 
 	/**
@@ -164,7 +175,9 @@ public final class ClientPlayNetworking {
 			return addon.getSendableChannels();
 		}
 
-		throw new IllegalStateException("Cannot get a list of channels the server can receive packets on while not in game!");
+		throw new IllegalStateException(
+			"Cannot get a list of channels the server can receive packets on while not in game!"
+		);
 	}
 
 	/**
@@ -176,7 +189,9 @@ public final class ClientPlayNetworking {
 	public static boolean canSend(CustomPayload.Id<?> channelName) throws IllegalArgumentException {
 		// You cant send without a client player, so this is fine
 		if (MinecraftClient.getInstance().getNetworkHandler() != null) {
-			return ClientNetworkingImpl.getAddon(MinecraftClient.getInstance().getNetworkHandler()).getSendableChannels().contains(channelName);
+			return ClientNetworkingImpl.getAddon(MinecraftClient.getInstance().getNetworkHandler())
+				.getSendableChannels()
+				.contains(channelName);
 		}
 
 		return false;
@@ -234,11 +249,13 @@ public final class ClientPlayNetworking {
 	public interface CustomChannelReceiver<T extends CustomPayload> {
 		/**
 		 * Receives an incoming packet.
-		 * <p>
-		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
-		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.
-		 * <p>
-		 * An example usage of this is to display an overlay message:
+		 *
+		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be
+		 * {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled}
+		 * using the provided Minecraft client instance.
+		 *
+		 * <p>An example usage of this is to display an overlay message:
 		 * <pre>{@code
 		 * ClientPlayNetworking.registerReceiver(Identifier.of("mymod", "overlay"), (client, handler, data, responseSender) -&rt; {
 		 * 	String message = data.readString(32767);
@@ -255,6 +272,9 @@ public final class ClientPlayNetworking {
 		 * @param payload            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
+		void receive(
+				MinecraftClient client, ClientPlayNetworkHandler handler, T payload,
+				PacketSender<CustomPayload> responseSender
+		);
 	}
 }

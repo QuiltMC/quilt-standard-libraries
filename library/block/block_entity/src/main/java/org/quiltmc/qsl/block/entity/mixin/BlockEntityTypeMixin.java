@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -34,27 +33,31 @@ import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityType;
 import org.quiltmc.qsl.block.entity.impl.QuiltBlockEntityImpl;
 
 @Mixin(BlockEntityType.class)
-public class BlockEntityTypeMixin implements QuiltBlockEntityType {
+abstract class BlockEntityTypeMixin implements QuiltBlockEntityType {
 	@Mutable
 	@Shadow
 	@Final
 	private Set<Block> blocks;
 
 	@Unique
-	public Set<Block> quilt$getMutableSupportedBlocks() {
-		if (this.blocks instanceof ImmutableSet) {
+	private Set<Block> quilt$getMutableSupportedBlocks() {
+		if (!(this.blocks instanceof HashSet<Block>)) {
 			this.blocks = new HashSet<>(this.blocks);
 		}
 
 		return this.blocks;
 	}
 
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void addSupportedBlock(Block block) {
 		QuiltBlockEntityImpl.INSTANCE.ensureCanModify();
 		this.quilt$getMutableSupportedBlocks().add(block);
 	}
 
+	// from injected interface
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void addSupportedBlocks(Block... blocks) {
 		QuiltBlockEntityImpl.INSTANCE.ensureCanModify();

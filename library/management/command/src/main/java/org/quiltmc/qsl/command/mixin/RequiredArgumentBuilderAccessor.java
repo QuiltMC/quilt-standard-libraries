@@ -27,5 +27,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface RequiredArgumentBuilderAccessor {
 	@Mutable
 	@Accessor
-	void setType(final ArgumentType<?> type);
+	void setType(ArgumentType<?> type);
 }

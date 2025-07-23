@@ -24,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -109,8 +110,11 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// Entities going to the end are named 'end traveller'
 	@Override
 	public void afterWorldChange(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(RegistryKeys.DIMENSION_TYPE)
-				.get(DimensionTypes.THE_END)) {
+		if (
+				destination.getDimension() == destination.getServer().getRegistryManager()
+					.getLookupOrThrow(RegistryKeys.DIMENSION_TYPE)
+					.get(DimensionTypes.THE_END)
+		) {
 			newEntity.setCustomName(Text.literal("End Traveller"));
 		}
 	}
@@ -120,7 +124,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	@Override
 	public void onPlayerCopy(ServerPlayerEntity newPlayer, ServerPlayerEntity original, boolean wasDeath) {
 		if (wasDeath) {
-			var glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
+			StatusEffectInstance glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
 			if (glowingEffect != null) {
 				newPlayer.addStatusEffect(glowingEffect);
 			}
@@ -135,7 +139,10 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	public void onServerEntityTick(Entity entity, boolean isPassengerTick) {
 		if (entity.getWorld().isRaining() && entity instanceof ZombieEntity) {
 			if (isPassengerTick) {
-				entity.getWorld().setBlockState(entity.getBlockPos().offset(Direction.UP, 3), Blocks.RAW_IRON_BLOCK.getDefaultState());
+				entity.getWorld().setBlockState(
+						entity.getBlockPos().offset(Direction.UP, 3),
+						Blocks.RAW_IRON_BLOCK.getDefaultState()
+				);
 			} else {
 				entity.setVelocity(entity.getVelocity().add(0.0, 0.05, 0.0));
 			}

@@ -23,7 +23,6 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.qsl.data.callback.api.CodecMap;
 
@@ -49,7 +48,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 
 	/**
 	 * Create a new predicate codec map based off of the provided general predicate codec. The provided codec should
-	 * likely be created with {@link Codecs#createLazy(Supplier)} so that it can itself delegate to the constructed map.
+	 * likely be created with {@link Codec#lazyInitialized(Supplier)} so that it can itself delegate to the constructed map.
 	 *
 	 * @param predicateCodec a general codec that can encode any predicate for the specific type T
 	 */

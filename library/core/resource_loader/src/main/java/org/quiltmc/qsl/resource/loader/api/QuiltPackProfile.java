@@ -31,8 +31,8 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 public interface QuiltPackProfile {
 	/**
 	 * Gets the activation type of this resource pack.
-	 * <p>
-	 * This may be influenced by a {@link QuiltPack#getActivationType() resource pack's activation type},
+	 *
+	 * <p>This may be influenced by a {@link QuiltPack#getActivationType() resource pack's activation type},
 	 * but this should return {@link PackActivationType#ALWAYS_ENABLED},
 	 * if {@link PackProfile#isAlwaysEnabled()} returns {@code true}.
 	 *

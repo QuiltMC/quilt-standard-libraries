@@ -26,9 +26,9 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * Events indicating progress through the tick loop of a Minecraft client.
  *
  * <h2>A note of warning</h2>
- * <p>
- * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
- * loop is a very hot code path.
+ *
+ * <p>Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the
+ * tick loop is a very hot code path.
  */
 @ClientOnly
 public final class ClientTickEvents {
@@ -43,8 +43,8 @@ public final class ClientTickEvents {
 
 	/**
 	 * An event indicating the client has finished an iteration of the tick loop.
-	 * <p>
-	 * Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
+	 *
+	 * <p>Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
 	 * for the next tick.
 	 */
 	public static final Event<End> END = Event.create(End.class, callbacks -> client -> {

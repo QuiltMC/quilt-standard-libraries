@@ -25,6 +25,7 @@ import net.fabricmc.api.EnvType;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
@@ -32,6 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 
@@ -65,22 +67,27 @@ public class RegistryLibSyncTest implements ModInitializer {
 				register(i);
 			}
 
-			var opt = register(10);
+			Identifier opt = register(10);
 			RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, opt);
 			RegistrySynchronization.setEntryOptional((SimpleRegistry<Block>) Registries.BLOCK, opt);
 
 			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
-		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registries.ROOT,
+		SimpleRegistry<Path> customRequiredRegistry = Registry.register(
+				(Registry<Registry<Path>>) Registries.ROOT,
 				Identifier.of(NAMESPACE, "synced_registry"),
-				new SimpleRegistry<>(RegistryKey.ofRegistry(Identifier.of(NAMESPACE, "synced_registry")), Lifecycle.stable()));
+				new SimpleRegistry<>(
+					RegistryKey.ofRegistry(Identifier.of(NAMESPACE, "synced_registry")),
+					Lifecycle.stable()
+				)
+		);
 
 		Registry.register(customRequiredRegistry, Identifier.parse("quilt:game_dir"), QuiltLoader.getGameDir());
 		RegistrySynchronization.markForSync(customRequiredRegistry);
 	}
 
-	@SuppressWarnings({"unchecked", "RedundantCast"})
+	@SuppressWarnings({"unchecked"})
 	private void printReg() {
 		try {
 			var writer = Files.newBufferedWriter(
@@ -88,15 +95,18 @@ public class RegistryLibSyncTest implements ModInitializer {
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 			);
 
-			for (var reg : Registries.ROOT) {
+			for (Registry<?> reg : Registries.ROOT) {
 				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registries.ROOT).getId(reg) + "\n");
 				if (reg instanceof SynchronizedRegistry<?> sync) {
 					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
 					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
 				}
 
-				for (var entry : reg) {
-					writer.write("" + ((Registry<Object>) reg).getRawId(entry) + ": " + ((Registry<Object>) reg).getId(entry));
+				for (Object entry : reg) {
+					writer.write(
+							"" + ((Registry<Object>) reg).getRawId(entry) + ": "
+								+ ((Registry<Object>) reg).getId(entry)
+					);
 					writer.write("\n");
 				}
 			}
@@ -105,7 +115,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 			writer.write("=== BlockStates");
 			writer.write("\n");
 
-			for (var entry : Block.STATE_IDS) {
+			for (BlockState entry : Block.STATE_IDS) {
 				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + Registries.BLOCK.getId(entry.getBlock()));
 				writer.write("\n");
 			}
@@ -118,11 +128,16 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
-		var id = Identifier.of(NAMESPACE, "entry_" + i);
-		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK));
+		Identifier id = Identifier.of(NAMESPACE, "entry_" + i);
+		Block block = new Block(
+				AbstractBlock.Settings.copy(Blocks.STONE)
+					.mapColor(MapColor.BLACK)
+					.key(RegistryKey.of(RegistryKeys.BLOCK, id))
+		);
+		BlockItem item = new BlockItem(block, new Item.Settings().key(RegistryKey.of(RegistryKeys.ITEM, id)));
 
 		Registry.register(Registries.BLOCK, id, block);
-		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
+		Registry.register(Registries.ITEM, id, item);
 		RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, id);
 		return id;
 	}

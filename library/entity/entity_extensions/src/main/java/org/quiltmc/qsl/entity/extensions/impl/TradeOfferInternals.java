@@ -17,122 +17,154 @@
 
 package org.quiltmc.qsl.entity.extensions.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
-import org.quiltmc.qsl.entity.extensions.api.TradeOfferHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class TradeOfferInternals {
-	private static final Logger LOGGER = LoggerFactory.getLogger("quilt-entity-extensions");
-
 	private TradeOfferInternals() {
+		throw new UnsupportedOperationException(
+			TradeOfferInternals.class.getSimpleName() + " contains only static members"
+		);
 	}
 
-	/*
-	removed: making the rebalanced map mutable as the rebalanced trades are no longer separated.
-	 */
+	private static final Multimap<Identifier, TradeOffers.Factory[]> PENDING_WANDERING_TRADER_FACTORIES_BY_ID =
+			HashMultimap.create();
 
 	// synchronized guards against concurrent modifications - Vanilla does not mutate the underlying arrays (as of 1.16),
 	// so reads will be fine without locking.
-	public static synchronized void registerVillagerOffers(VillagerProfession profession, int level, TradeOfferHelper.VillagerOffersAdder factory) {
-		Objects.requireNonNull(profession, "VillagerProfession may not be null.");
-		registerOffers(TradeOffers.PROFESSION_TO_LEVELED_TRADE.computeIfAbsent(profession, key -> new Int2ObjectOpenHashMap<>()), level, trades -> factory.onRegister(trades, false));
+	public static synchronized void addToVillagerOfferPool(
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			TradeOffers.Factory[] factories
+	) {
+		addToVillagerOfferPoolImpl(
+				profession, level, factories,
+				TradeOffers.PROFESSION_TO_LEVELED_TRADE
+		);
 	}
 
-	public static synchronized void registerWanderingTraderOffers(int level, Consumer<List<TradeOffers.Factory>> factory) {
-		registerOffers(TradeOffers.WANDERING_TRADER_TRADES, level, factory);
+	public static synchronized void addToExperimentalVillagerOfferPool(
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			TradeOffers.Factory[] factories
+	) {
+		addToVillagerOfferPoolImpl(
+				profession, level, factories,
+				TradeOffers.EXPERIMENTAL_TRADES
+		);
 	}
 
-	// Shared code to register offers for both villagers and wandering traders.
-	private static void registerOffers(Int2ObjectMap<TradeOffers.Factory[]> leveledTradeMap, int level, Consumer<List<TradeOffers.Factory>> factory) {
-		final List<TradeOffers.Factory> list = new ArrayList<>();
-		factory.accept(list);
+	private static synchronized void addToVillagerOfferPoolImpl(
+			@NotNull
+			RegistryKey<VillagerProfession> profession,
+			int level,
+			@NotNull
+			TradeOffers.Factory[] factories,
+			Map<RegistryKey<VillagerProfession>, Int2ObjectMap<TradeOffers.Factory[]>> tradesByProfession
+	) {
+		Objects.requireNonNull(profession, "profession must not be null");
 
-		final TradeOffers.Factory[] originalEntries = leveledTradeMap.computeIfAbsent(level, key -> new TradeOffers.Factory[0]);
-		final TradeOffers.Factory[] addedEntries = list.toArray(new TradeOffers.Factory[0]);
-
-		final TradeOffers.Factory[] allEntries = ArrayUtils.addAll(originalEntries, addedEntries);
-		leveledTradeMap.put(level, allEntries);
-	}
-
-	public static void printRefreshOffersWarning() {
-		Throwable loggingThrowable = new Throwable();
-		LOGGER.warn("TradeOfferHelper#refreshOffers does not do anything, yet it was called! Stack trace:", loggingThrowable);
-	}
-
-	public static class WanderingTraderOffersBuilderImpl implements TradeOfferHelper.WanderingTraderOffersBuilder {
-		private static final Object2IntMap<Identifier> ID_TO_INDEX = Util.make(new Object2IntOpenHashMap<>(), idToIndex -> {
-			idToIndex.put(BUY_ITEMS_POOL, 0);
-			idToIndex.put(SELL_SPECIAL_ITEMS_POOL, 1);
-			idToIndex.put(SELL_COMMON_ITEMS_POOL, 2);
-		});
-
-		private static final Map<Identifier, TradeOffers.Factory[]> DELAYED_MODIFICATIONS = new HashMap<>();
-
-		/**
-		 * Make the trade list modifiable.
-		 */
-		/*static void initWanderingTraderTrades() {
-			if (!(TradeOffers.WANDERING_TRADER_TRADES instanceof ArrayList)) {
-				TradeOffers.WANDERING_TRADER_TRADES = new ArrayList<>(TradeOffers.WANDERING_TRADER_TRADES);
-			}
-		}*/
-
-		@Override
-		public TradeOfferHelper.WanderingTraderOffersBuilder pool(Identifier id, int count, TradeOffers.Factory... factories) {
-			if (factories.length == 0) throw new IllegalArgumentException("cannot add empty pool");
-			if (count <= 0) throw new IllegalArgumentException("count must be positive");
-
-			Objects.requireNonNull(id, "id cannot be null");
-
-			if (ID_TO_INDEX.containsKey(id)) throw new IllegalArgumentException("pool id %s is already registered".formatted(id));
-
-			//initWanderingTraderTrades();
-			ID_TO_INDEX.put(id, count);
-			TradeOffers.WANDERING_TRADER_TRADES.put(count, factories);
-			TradeOffers.Factory[] delayedModifications = DELAYED_MODIFICATIONS.remove(id);
-
-			if (delayedModifications != null) addOffersToPool(id, delayedModifications);
-
-			return this;
+		if (level < 0) {
+			throw new IllegalArgumentException("level must not be negative; was:" + level);
 		}
 
-		@Override
-		public TradeOfferHelper.WanderingTraderOffersBuilder addOffersToPool(Identifier pool, TradeOffers.Factory... factories) {
-			if (!ID_TO_INDEX.containsKey(pool)) {
-				DELAYED_MODIFICATIONS.compute(pool, (id, current) -> {
-					if (current == null) return factories;
+		validateFactories(factories);
 
-					return ArrayUtils.addAll(current, factories);
-				});
-				return this;
-			}
+		Int2ObjectMap<TradeOffers.Factory[]> leveledTradeMap = tradesByProfession
+				.computeIfAbsent(profession, key -> new Int2ObjectOpenHashMap<>());
 
-			int poolIndex = ID_TO_INDEX.getInt(pool);
-			//initWanderingTraderTrades();
-			TradeOffers.Factory[] poolPair = TradeOffers.WANDERING_TRADER_TRADES.get(poolIndex);
-			TradeOffers.Factory[] modified = ArrayUtils.addAll(poolPair, factories);
-			TradeOffers.WANDERING_TRADER_TRADES.replace(poolIndex, modified);
-			return this;
+		TradeOffers.Factory[] oldFactories =
+				leveledTradeMap.computeIfAbsent(level, key -> new TradeOffers.Factory[0]);
+
+		leveledTradeMap.put(level, ArrayUtils.addAll(oldFactories, factories));
+	}
+
+	public static synchronized void addToWanderingTraderOfferPool(
+			@NotNull
+			Identifier id,
+			@NotNull
+			TradeOffers.Factory[] factories
+	) {
+		validateId(id);
+		validateFactories(factories);
+
+		WanderingTraderOffersManager.getPool(id).ifPresentOrElse(
+				oldFactoriesAndCount -> {
+					TradeOffers.Factory[] mergedFactories =
+							ArrayUtils.addAll(oldFactoriesAndCount.getLeft(), factories);
+					Pair<TradeOffers.Factory[], Integer> mergedFactoriesAndCount =
+							Pair.of(mergedFactories, oldFactoriesAndCount.getRight());
+
+					WanderingTraderOffersManager.setPool(id, mergedFactoriesAndCount);
+				},
+				() -> {
+					PENDING_WANDERING_TRADER_FACTORIES_BY_ID.put(id, factories);
+				}
+		);
+	}
+
+	public static synchronized void registerWanderingTraderPool(
+			@NotNull
+			Identifier id,
+			int count,
+			@NotNull
+			TradeOffers.Factory[] factories
+	) {
+		validateId(id);
+
+		if (count <= 0) {
+			throw new IllegalArgumentException("count must be greater than 0; was: " + count);
+		}
+
+		validateFactories(factories);
+
+		Collection<TradeOffers.Factory[]> pendingFactories =
+				PENDING_WANDERING_TRADER_FACTORIES_BY_ID.removeAll(id);
+
+		TradeOffers.Factory[] mergedFactories;
+		if (pendingFactories.isEmpty()) {
+			mergedFactories = factories;
+		} else {
+			mergedFactories = Stream
+				.concat(
+					Arrays.stream(factories),
+					pendingFactories.stream().flatMap(Arrays::stream)
+				)
+				.toArray(TradeOffers.Factory[]::new);
+		}
+
+		Pair<TradeOffers.Factory[], Integer> factoriesAndCount = Pair.of(mergedFactories, count);
+
+		WanderingTraderOffersManager.registerPool(id, factoriesAndCount);
+	}
+
+	private static void validateId(@NotNull Identifier id) {
+		Objects.requireNonNull(id, "id must not be null");
+	}
+
+	private static void validateFactories(TradeOffers.Factory[] factories) {
+		if (Objects.requireNonNull(factories, "factories must not be null").length == 0) {
+			throw new IllegalArgumentException("factories must not be empty");
 		}
 	}
 }

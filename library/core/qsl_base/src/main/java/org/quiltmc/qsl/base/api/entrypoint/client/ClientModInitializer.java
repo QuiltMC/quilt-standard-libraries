@@ -20,14 +20,14 @@ import org.quiltmc.loader.api.ModContainer;
 
 /**
  * A mod initializer which is run only on {@link net.fabricmc.api.EnvType#CLIENT}.
- * <p>
- * This entrypoint is suitable for setting up client-specific logic, such as rendering
+ *
+ * <p>This entrypoint is suitable for setting up client-specific logic, such as rendering
  * or integrated server tweaks.
- * <p>
- * In {@code quilt.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
- * <p>
- * Currently, it is executed in the {@link net.minecraft.client.MinecraftClient} constructor, just before the initialization of
- * the {@link net.minecraft.client.option.GameOptions}.
+ *
+ * <p>In {@code quilt.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
+ *
+ * <p>Currently, it is executed in the {@link net.minecraft.client.MinecraftClient} constructor, just before the
+ * initialization of the {@link net.minecraft.client.option.GameOptions}.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.ModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer

@@ -41,8 +41,9 @@ public final class ClientResourceLoaderEvents {
 
 	/**
 	 * An event indicating the start of the reloading of resource packs on the Minecraft client.
-	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
+	 *
+	 * <p>This event should not be used to load resources, use
+	 * {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<StartPackReload> START_PACK_RELOAD = Event.create(StartPackReload.class,
 			callbacks -> context -> {
@@ -53,8 +54,9 @@ public final class ClientResourceLoaderEvents {
 
 	/**
 	 * An event indicating the end of the reloading of resource packs on the Minecraft client.
-	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
+	 *
+	 * <p>This event should not be used to load resources, use
+	 * {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<EndPackReload> END_PACK_RELOAD = Event.create(EndPackReload.class,
 			callbacks -> context -> {
@@ -112,8 +114,8 @@ public final class ClientResourceLoaderEvents {
 	public interface EndPackReload extends ClientEventAwareListener {
 		/**
 		 * Called after resource packs on the Minecraft client have been reloaded.
-		 * <p>
-		 * If the reload was not successful, the old resource packs will be kept.
+		 *
+		 * <p>If the reload was not successful, the old resource packs will be kept.
 		 *
 		 * @param context the resource reload context
 		 */

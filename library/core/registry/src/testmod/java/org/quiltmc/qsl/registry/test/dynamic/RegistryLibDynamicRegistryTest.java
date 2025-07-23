@@ -17,16 +17,19 @@
 package org.quiltmc.qsl.registry.test.dynamic;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 
 import net.minecraft.registry.DynamicRegistrySync;
 import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
+import net.minecraft.test.TestContext;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -37,6 +40,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 
 public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_testmod";
@@ -59,47 +63,73 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetLoaded(QuiltTestContext ctx) {
-		var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
+		var greetingsRegistry = ctx.getWorld().getRegistryManager().getLookupOrThrow(Greetings.REGISTRY_KEY);
 
 		ctx.succeedIf(() -> {
-			ctx.assertTrue(DynamicRegistryFlag.isOptional(Greetings.REGISTRY_KEY.getValue()), "Registry should always have the OPTIONAL flag enabled");
-			ctx.assertTrue(greetingsRegistry.containsId(GREETING_A_ID), "Registry should contain modded data value from datapack");
-			ctx.assertTrue(Objects.requireNonNull(greetingsRegistry.get(GREETING_A_ID)).equals(GREETING_A), "Modded value should be properly parsed from data file");
-			ctx.assertTrue(GREETING_B.equals(greetingsRegistry.get(GREETING_B_ID)), "Registry should contain modded data value from event");
+			assertTrue(ctx, DynamicRegistryFlag.isOptional(Greetings.REGISTRY_KEY.getValue()), "Registry should always have the OPTIONAL flag enabled");
+			assertTrue(ctx, greetingsRegistry.containsId(GREETING_A_ID), "Registry should contain modded data value from datapack");
+			assertTrue(ctx, Objects.requireNonNull(greetingsRegistry.get(GREETING_A_ID)).equals(GREETING_A), "Modded value should be properly parsed from data file");
+			assertTrue(ctx, GREETING_B.equals(greetingsRegistry.get(GREETING_B_ID)), "Registry should contain modded data value from event");
 		});
 	}
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetSynced(QuiltTestContext ctx) {
-		ctx.succeedIf(() -> ctx.assertTrue(
-			DynamicRegistrySync.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
-			"Modded registry key should appear in the list of synced dynamic registries"
+		ctx.succeedIf(() -> assertTrue(
+				ctx,
+				DynamicRegistrySync
+					.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager())
+					.anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
+				"Modded registry key should appear in the list of synced dynamic registries"
 		));
 	}
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsTagGetLoaded(QuiltTestContext ctx) {
-		var tagValuesSet = TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
-		ctx.failIf(() -> ctx.assertTrue(tagValuesSet.isEmpty(), "tagValuesSet should always be populated with at least 1 object"));
+		Set<TagRegistry.TagValues<Greetings>> tagValuesSet =
+				TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
+		ctx.failIfEver(() -> assertTrue(
+				ctx, tagValuesSet.isEmpty(),
+				"tagValuesSet should always be populated with at least 1 object"
+		));
 
-		ctx.succeedIf(() -> ctx.assertTrue(tagValuesSet.stream().anyMatch(tagValues -> {
-			var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
-			var greetingsA = greetingsRegistry.getOrEmpty(GREETING_A_ID).orElse(null);
+		ctx.succeedIf(() -> assertTrue(
+				ctx,
+				tagValuesSet.stream().anyMatch(tagValues -> {
+					Registry<Greetings> greetingsRegistry =
+							ctx.getWorld().getRegistryManager().getLookupOrThrow(Greetings.REGISTRY_KEY);
+					Greetings greetingsA = greetingsRegistry.get(GREETING_A_ID);
 
-			ctx.assertTrue(Objects.nonNull(greetingsRegistry.get(GREETING_A_ID)), "Registry should contain modded data value from datapack");
+					assertTrue(
+							ctx, Objects.nonNull(greetingsRegistry.get(GREETING_A_ID)),
+							"Registry should contain modded data value from datapack"
+					);
 
-			var heldIds = tagValues.values().stream().map(Holder::value).collect(Collectors.toSet());
-			return tagValues.key().equals(GREETING_TEST_TAG) && heldIds.contains(greetingsA);
-		}), "tagValuesSet should always contain a tag loaded from tags/quilt_registry_testmod/greetings/test_tag.json, and said tag should contain a value pointing to GREETING_A"));
+					Set<Greetings> heldIds = tagValues.values().stream()
+							.map(Holder::getValue)
+							.collect(Collectors.toSet());
+					return tagValues.key().equals(GREETING_TEST_TAG) && heldIds.contains(greetingsA);
+				}),
+				"tagValuesSet should always contain a tag loaded from "
+					+ "tags/quilt_registry_testmod/greetings/test_tag.json, and said tag should contain a value "
+					+ "pointing to GREETING_A"
+		));
 	}
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
-	public void dynamicMetaregistryFreezes(QuiltTestContext ctx) {
+	public void dynamicMetaRegistryFreezes(QuiltTestContext ctx) {
 		ctx.succeedIf(() -> {
 			try {
 				DynamicMetaRegistry.register(RegistryKey.ofRegistry(id("a")), Codec.INT);
-				throw new GameTestException("DynamicMetaRegistry should not allow registration after init");
-			} catch (IllegalStateException ignored) {}
+				throw new GameTestException(
+					Text.literal("DynamicMetaRegistry should not allow registration after init"),
+					(int) ctx.getTick()
+				);
+			} catch (IllegalStateException ignored) { }
 		});
+	}
+
+	private static void assertTrue(TestContext context, boolean value, String error) {
+		context.assertTrue(value, Text.literal(error));
 	}
 }

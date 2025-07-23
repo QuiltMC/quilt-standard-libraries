@@ -33,8 +33,8 @@ import net.minecraft.world.gen.feature.PlacedFeature;
 
 /**
  * Provides an API to modify Biomes after they have been loaded and before they are used in the World.
- * <p>
- * Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
+ *
+ * <p>Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
  * or the demo level.
  */
 public final class BiomeModifications {
@@ -54,9 +54,9 @@ public final class BiomeModifications {
 	 *
 	 * @see BiomeSelectors
 	 */
-	public static void addCarver(Predicate<BiomeSelectionContext> biomeSelector, GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
+	public static void addCarver(Predicate<BiomeSelectionContext> biomeSelector, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 		create(configuredCarverKey.getValue()).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {
-			context.getGenerationSettings().addCarver(step, configuredCarverKey);
+			context.getGenerationSettings().addCarver(configuredCarverKey);
 		});
 	}
 
@@ -64,7 +64,7 @@ public final class BiomeModifications {
 	 * Convenience method to add an entity spawn to one or more biomes.
 	 *
 	 * @see BiomeSelectors
-	 * @see SpawnSettings.Builder#spawn(SpawnGroup, SpawnSettings.SpawnEntry)
+	 * @see SpawnSettings.Builder#spawn(SpawnGroup, int, SpawnSettings.SpawnEntry)
 	 */
 	public static void addSpawn(Predicate<BiomeSelectionContext> biomeSelector,
 			SpawnGroup spawnGroup, EntityType<?> entityType,
@@ -78,7 +78,7 @@ public final class BiomeModifications {
 		Preconditions.checkState(id != Registries.ENTITY_TYPE.getDefaultId(), "Unregistered entity type: %s", entityType);
 
 		create(id).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {
-			context.getSpawnSettings().addSpawn(spawnGroup, new SpawnSettings.SpawnEntry(entityType, weight, minGroupSize, maxGroupSize));
+			context.getSpawnSettings().addSpawn(spawnGroup, new SpawnSettings.SpawnEntry(entityType, minGroupSize, maxGroupSize));
 		});
 	}
 

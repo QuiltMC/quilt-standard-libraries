@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.entity.extensions.mixin;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,26 +25,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.registry.DefaultedRegistry;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.TradeableItem;
-import net.minecraft.village.VillagerDataContainer;
 
 @Mixin(TradeOffers.TypeAwareBuyForOneEmeraldFactory.class)
-public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
+abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 	/**
 	 * Vanilla will check the "VillagerType -> Item" map in the stream and throw an exception for villager types not specified in the map.
 	 * This breaks any and all custom villager types.
 	 * We want to prevent this default logic so modded villager types will work.
 	 * So we return an empty stream so an exception is never thrown.
 	 */
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/DefaultedRegistry;stream()Ljava/util/stream/Stream;"))
-	private <T> Stream<T> disableVanillaCheck(DefaultedRegistry<T> registry) {
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/util/Set;stream()Ljava/util/stream/Stream;"))
+	private <T> Stream<T> disableVanillaCheck(Set<?> instance) {
 		return Stream.empty();
 	}
 
@@ -54,14 +53,19 @@ public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 			method = "create",
 			at = @At(
 				value = "NEW",
-				target = "(Lnet/minecraft/village/TradeableItem;Lnet/minecraft/item/ItemStack;IIF)Lnet/minecraft/village/TradeOffer;"
+				target = "(Lnet/minecraft/village/TradeableItem;Lnet/minecraft/item/ItemStack;IIF)"
+					+ "Lnet/minecraft/village/TradeOffer;"
 			),
-			locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			cancellable = true
 	)
-	private void failOnNullItem(Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir, VillagerDataContainer villagerDataContainer, TradeableItem buyingItem) {
-		if (buyingItem.count() == 0 || buyingItem.itemStack().isEmpty()) { // Will return true for an "empty" item stack that had null passed in the ctor
-			cir.setReturnValue(null); // Return null to prevent creation of empty trades
+	private void failOnNullItem(
+			Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir,
+			@Local TradeableItem buyingItem
+	) {
+		// Will return true for an "empty" item stack that had null passed in the ctor
+		if (buyingItem.count() == 0 || buyingItem.itemStack().isEmpty()) {
+			// Return null to prevent creation of empty trades
+			cir.setReturnValue(null);
 		}
 	}
 }

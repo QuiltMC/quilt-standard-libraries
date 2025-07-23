@@ -37,8 +37,8 @@ public interface PackRegistrationContext {
 
 	/**
 	 * Adds a new resource pack.
-	 * <p>
-	 * The resource pack will not be visible to users.
+	 *
+	 * <p>The resource pack will not be visible to users.
 	 *
 	 * @param pack the pack to add
 	 */

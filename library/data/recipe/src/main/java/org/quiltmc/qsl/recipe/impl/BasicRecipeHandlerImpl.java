@@ -29,29 +29,36 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.BaseRecipeHandler;
 
 class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final RecipeManager recipeManager;
-	final Multimap<RecipeType<?>, RecipeHolder<?>> recipes;
-	final Map<Identifier, RecipeHolder<?>> globalRecipes;
-	private final DynamicRegistryManager registryManager;
+	final Multimap<RecipeType<?>, RecipeHolder<?>> byType;
+	final Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey;
 
-	BasicRecipeHandlerImpl(RecipeManager recipeManager, Multimap<RecipeType<?>, RecipeHolder<?>> recipes,
-						   Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	private final HolderLookup.Provider registries;
+
+	BasicRecipeHandlerImpl(
+			RecipeManager recipeManager,
+			Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+			Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+			HolderLookup.Provider registries
+	) {
 		this.recipeManager = recipeManager;
-		this.recipes = recipes;
-		this.globalRecipes = globalRecipes;
-		this.registryManager = registryManager;
+		this.byType = byType;
+		this.byKey = byKey;
+		this.registries = registries;
 	}
 
 	@Override
 	public @Nullable RecipeType<?> getTypeOf(Identifier id) {
-		return recipes.entries().stream()
-			.filter(entry -> entry.getValue().id().equals(id))
+		return this.byType.entries().stream()
+			.filter(entry -> entry.getValue().id().getValue().equals(id))
 			.findFirst()
 			.map(Map.Entry::getKey)
 			.orElse(null);
@@ -59,42 +66,45 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 
 	@Override
 	public boolean contains(Identifier id) {
-		return this.globalRecipes.containsKey(id);
+		return this.byKey.containsKey(RegistryKey.of(RegistryKeys.RECIPE, id));
 	}
 
 	@Override
 	public boolean contains(Identifier id, RecipeType<?> type) {
-		Collection<RecipeHolder<?>> recipe = this.recipes.get(type);
+		Collection<RecipeHolder<?>> typedRecipes = this.byType.get(type);
 
-		if (recipe.isEmpty()) return false;
-
-		return recipe.stream().anyMatch(holder -> holder.id().equals(id));
+		return typedRecipes.stream().anyMatch(holder -> holder.id().getValue().equals(id));
 	}
 
 	@Override
 	public @Nullable RecipeHolder<?> getRecipe(Identifier id) {
-		return this.globalRecipes.get(id);
+		return this.byKey.get(RegistryKey.of(RegistryKeys.RECIPE, id));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Recipe<?>> @Nullable RecipeHolder<T> getRecipe(Identifier id, RecipeType<T> type) {
-		Collection<RecipeHolder<?>> recipes = this.recipes.get(type);
+		var typedRecipes = this.byType.get(type);
 
-		if (recipes.isEmpty()) return null;
+		if (typedRecipes.isEmpty()) {
+			return null;
+		}
 
-		return (RecipeHolder<T>) recipes.stream().filter(holder -> holder.id().equals(id)).findFirst().orElse(null);
+		return (RecipeHolder<T>) typedRecipes.stream()
+			.filter(holder -> holder.id().getValue().equals(id))
+			.findFirst()
+			.orElse(null);
 	}
 
 	@Override
 	public ImmutableMultimap<RecipeType<?>, RecipeHolder<?>> getRecipes() {
-		return ImmutableMultimap.copyOf(this.recipes);
+		return ImmutableMultimap.copyOf(this.byType);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Recipe<?>> Collection<RecipeHolder<T>> getRecipesOfType(RecipeType<T> type) {
-		Collection<RecipeHolder<?>> recipes = this.recipes.get(type);
+		Collection<RecipeHolder<?>> recipes = this.byType.get(type);
 
 		if (recipes.isEmpty()) {
 			return Collections.emptyList();
@@ -104,7 +114,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	}
 
 	@Override
-	public @NotNull DynamicRegistryManager getRegistryManager() {
-		return this.registryManager;
+	public @NotNull HolderLookup.Provider getRegistries() {
+		return this.registries;
 	}
 }

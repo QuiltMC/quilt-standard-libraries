@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
-
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,18 +29,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.resource.AutoCloseableResourceManager;
-import net.minecraft.resource.pack.PackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.integrated.IntegratedServerLoader;
-import net.minecraft.world.SaveProperties;
 import net.minecraft.world.storage.WorldSaveStorage;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -90,22 +88,25 @@ public abstract class IntegratedServerLoaderMixin {
 		return exception; // noop
 	}
 
-	@Inject(
-			method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;Lnet/minecraft/server/WorldStem;Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
+	@WrapOperation(
+			method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;"
+				+ "Lnet/minecraft/server/WorldStem;Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
 			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup(Lnet/minecraft/world/storage/WorldSaveStorage$Session;ZLjava/lang/Runnable;Ljava/lang/Runnable;)V"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
-			cancellable = true
+				value = "INVOKE",
+				target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup("
+					+ "Lnet/minecraft/world/storage/WorldSaveStorage$Session;ZLjava/lang/Runnable;"
+					+ "Ljava/lang/Runnable;)V"
+			)
 	)
-	private void onBackupExperimentalWarning(WorldSaveStorage.Session session, WorldStem worldStem, PackManager packManager, Runnable runnable, CallbackInfo ci, SaveProperties saveProperties, boolean legacyCustomized, boolean unstable) {
+	private void onBackupExperimentalWarning(
+			IntegratedServerLoader instance, WorldSaveStorage.Session session, boolean legacyCustomized,
+			Runnable onProceeded, Runnable onCancelled,
+			Operation<Void> original
+	) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && !legacyCustomized) {
-			// Copied from the second lambda in askForBackup
-			worldStem.close();
-			session.method_54532();
-			runnable.run();
-			ci.cancel();
+			onCancelled.run();
+		} else {
+			original.call(instance, session, legacyCustomized, onProceeded, onCancelled);
 		}
 	}
 
@@ -115,8 +116,8 @@ public abstract class IntegratedServerLoaderMixin {
 			cancellable = true
 	)
 	private static void onExperimentalWarning(
-			MinecraftClient client, CreateWorldScreen parentScreen, Lifecycle dynamicRegistryLifecycle, Runnable successCallback, boolean bl,
-			CallbackInfo ci
+			MinecraftClient client, CreateWorldScreen parentScreen, Lifecycle dynamicRegistryLifecycle,
+			Runnable successCallback, boolean bl, CallbackInfo ci
 	) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) {
 			successCallback.run();

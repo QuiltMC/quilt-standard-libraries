@@ -34,8 +34,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds mob spawners to biomes.
- * <p>
- * The biome modifier identifier is {@code quilt:add_spawners}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:add_spawners}.
  *
  * @param spawners the spawners to add
  * @param group    the spawn group to add the spawners to; if not provided, this is determined by the spawner's entity
@@ -49,7 +49,7 @@ public record AddSpawnersModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_spawners");
 	public static final Codec<AddSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddSpawnersModifier::selector),
-			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
+			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC.codec()).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
 			SpawnGroup.CODEC.optionalFieldOf("group").forGetter(AddSpawnersModifier::group)
 	).apply(instance, AddSpawnersModifier::new));
 
@@ -61,7 +61,7 @@ public record AddSpawnersModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		for (SpawnSettings.SpawnEntry spawner : this.spawners) {
-			modificationContext.getSpawnSettings().addSpawn(this.group.orElseGet(spawner.type::getSpawnGroup), spawner);
+			modificationContext.getSpawnSettings().addSpawn(this.group.orElseGet(spawner.type()::getSpawnGroup), spawner);
 		}
 	}
 

@@ -17,10 +17,14 @@
 
 package org.quiltmc.qsl.entity.extensions.impl;
 
+import java.util.Optional;
+
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.loot.LootTable;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -32,8 +36,19 @@ import net.minecraft.feature_flags.FeatureFlagBitSet;
 public class QuiltEntityType<T extends Entity> extends EntityType<T> {
 	private final @Nullable Boolean alwaysUpdateVelocity;
 
-	public QuiltEntityType(EntityType.EntityFactory<T> factory, SpawnGroup spawnGroup, boolean saveable, boolean summonable, boolean fireImmune, boolean spawnableFarFromPlayer, ImmutableSet<Block> spawnBlocks, EntityDimensions entityDimensions, float spawnDimensionsScale, int maxTrackDistance, int trackTickInterval, @Nullable Boolean alwaysUpdateVelocity, FeatureFlagBitSet requiredFlags) {
-		super(factory, spawnGroup, saveable, summonable, fireImmune, spawnableFarFromPlayer, spawnBlocks, entityDimensions, spawnDimensionsScale, maxTrackDistance, trackTickInterval, requiredFlags);
+	public QuiltEntityType(
+			EntityType.EntityFactory<T> factory, SpawnGroup spawnGroup, boolean saveable, boolean summonable,
+			boolean fireImmune, boolean spawnableFarFromPlayer, ImmutableSet<Block> spawnBlocks,
+			EntityDimensions entityDimensions, float spawnDimensionsScale, int maxTrackDistance, int trackTickInterval,
+			@Nullable Boolean alwaysUpdateVelocity, String translationKey, Optional<RegistryKey<LootTable>> lootTable,
+			FeatureFlagBitSet requiredFlags
+	) {
+		super(
+				factory, spawnGroup, saveable, summonable, fireImmune, spawnableFarFromPlayer, spawnBlocks,
+				entityDimensions, spawnDimensionsScale, maxTrackDistance, trackTickInterval, translationKey, lootTable,
+				requiredFlags
+		);
+
 		this.alwaysUpdateVelocity = alwaysUpdateVelocity;
 	}
 

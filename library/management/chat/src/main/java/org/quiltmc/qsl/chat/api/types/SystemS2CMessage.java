@@ -82,11 +82,11 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 
 	@Override
 	public String toString() {
-		return "SystemS2CMessage{" + "player=" + this.player +
-				", content=" + this.content +
-				", overlay=" + this.overlay +
-				", player=" + this.player +
-				", isClient=" + this.isClient +
-				'}';
+		return "SystemS2CMessage{" + "player=" + this.player
+			+ ", content=" + this.content
+			+ ", overlay=" + this.overlay
+			+ ", player=" + this.player
+			+ ", isClient=" + this.isClient
+			+ '}';
 	}
 }

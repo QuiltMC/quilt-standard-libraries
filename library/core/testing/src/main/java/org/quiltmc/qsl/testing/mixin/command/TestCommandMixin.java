@@ -16,52 +16,20 @@
 
 package org.quiltmc.qsl.testing.mixin.command;
 
-import java.util.Collection;
-
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.dev.TestCommand;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.test.GameTestState;
-import net.minecraft.test.TestFunction;
-import net.minecraft.test.TestManager;
-import net.minecraft.test.TestUtil;
-import net.minecraft.text.Text;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 
 import org.quiltmc.qsl.testing.impl.game.command.QuiltTestCommand;
-import org.quiltmc.qsl.testing.impl.game.command.TestNameArgumentType;
 
 @Mixin(TestCommand.class)
 public class TestCommandMixin {
-	@ModifyArg(
-			method = "register",
-			slice = @Slice(
-					from = @At(value = "CONSTANT", args = "stringValue=export"),
-					to = @At(value = "CONSTANT", args = "stringValue=pos")
-			),
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/command/CommandManager;argument(Ljava/lang/String;Lcom/mojang/brigadier/arguments/ArgumentType;)Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;"
-			),
-			index = 1
-	)
-	private static ArgumentType<String> quiltGameTest$replaceExportImportTestNameArgumentType(ArgumentType<String> name) {
-		return new TestNameArgumentType();
-	}
-
 	@ModifyArg(
 			method = "register",
 			slice = @Slice(
@@ -74,15 +42,19 @@ public class TestCommandMixin {
 					remap = false
 			)
 	)
-	private static Command<ServerCommandSource> quiltGameTest$replaceExportCommand(Command<ServerCommandSource> original) {
-		return context -> QuiltTestCommand.executeExport(context.getSource(), StringArgumentType.getString(context, "testName"));
+	private static Command<ServerCommandSource> quiltGameTest$replaceExportCommand(
+			Command<ServerCommandSource> original
+	) {
+		return context -> QuiltTestCommand.executeExport(
+				context.getSource(), StringArgumentType.getString(context, "testName")
+		);
 	}
 
 	@ModifyArg(
 			method = "register",
 			slice = @Slice(
 					from = @At(value = "CONSTANT", args = "stringValue=exportthese"),
-					to = @At(value = "CONSTANT", args = "stringValue=import")
+					to = @At(value = "CONSTANT", args = "stringValue=exportthat")
 			),
 			at = @At(
 					value = "INVOKE",
@@ -92,22 +64,6 @@ public class TestCommandMixin {
 	)
 	private static Command<ServerCommandSource> quiltGameTest$replaceExportThisCommand(Command<ServerCommandSource> original) {
 		return context -> QuiltTestCommand.executeExport(context.getSource());
-	}
-
-	@ModifyArg(
-			method = "register",
-			slice = @Slice(
-					from = @At(value = "CONSTANT", args = "stringValue=create"),
-					to = @At(value = "CONSTANT", args = "stringValue=width")
-			),
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/command/CommandManager;argument(Ljava/lang/String;Lcom/mojang/brigadier/arguments/ArgumentType;)Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;"
-			),
-			index = 1
-	)
-	private static ArgumentType<String> quiltGameTest$replaceCreateTestNameArgumentType(ArgumentType<String> name) {
-		return new TestNameArgumentType();
 	}
 
 	// TODO find a solution... there's a possibility this isn't needed anymore.
@@ -150,23 +106,4 @@ public class TestCommandMixin {
 			throw e;
 		}
 	}*/
-
-	@Redirect(
-			method = {"executeImport"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;ofDefault(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"),
-			expect = 2
-	)
-	private static Identifier quiltGameTest$fixStructureIdentifierImport(String structure) {
-		return Identifier.parse(structure);
-	}
-
-	@ModifyArg(
-			method = "executeImport",
-			at = @At(value = "INVOKE", target = "Ljava/nio/file/Paths;get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;"),
-			index = 1
-	)
-	private static String[] quiltGameTest$fixImportPath(String[] more) {
-		more[0] = more[0].replace(':', '/');
-		return more;
-	}
 }

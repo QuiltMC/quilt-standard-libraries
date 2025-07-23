@@ -16,19 +16,21 @@
 
 /**
  * <h2>The Networking API.</h2>
- * <p>
- * For login stage networking see {@link org.quiltmc.qsl.networking.api.server.ServerLoginNetworking}.
+ *
+ * <p>For login stage networking see {@link org.quiltmc.qsl.networking.api.server.ServerLoginNetworking}.
  * For configuration stage networking see {@link org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking}.
  * For play stage networking see {@link org.quiltmc.qsl.networking.api.server.ServerPlayNetworking}.
- * <p>
- * For events related to the connection to a client see:
+ *
+ * <p>For events related to the connection to a client see:
  * <ul>
  * <li>{@link org.quiltmc.qsl.networking.api.server.ServerLoginConnectionEvents} for login stage. </li>
  * <li>{@link org.quiltmc.qsl.networking.api.server.ServerConfigurationConnectionEvents} for configuration stage. </li>
  * <li>{@link org.quiltmc.qsl.networking.api.server.ServerPlayConnectionEvents} for play stage. </li>
  * </ul>
- * <p>
- * For events related to the ability of a client to receive packets on a channel of a specific name see {@link org.quiltmc.qsl.networking.api.server.S2CPlayChannelEvents} or {@link org.quiltmc.qsl.networking.api.server.S2CConfigurationChannelEvents}.
+ *
+ * <p>For events related to the ability of a client to receive packets on a channel of a specific name see
+ * {@link org.quiltmc.qsl.networking.api.server.S2CPlayChannelEvents} or
+ * {@link org.quiltmc.qsl.networking.api.server.S2CConfigurationChannelEvents}.
  */
 
 package org.quiltmc.qsl.networking.api.server;

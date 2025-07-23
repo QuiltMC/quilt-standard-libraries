@@ -52,7 +52,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 		public R handleMessage(@NotNull AbstractChatMessage<?> message) {
 			R result = null;
 
-			for (var hook : hooks) {
+			for (TypedChatApiHook<@Nullable R> hook : hooks) {
 				if (ChatEventImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					R tmpResult = hook.handleMessage(message);
 					if (ChatEventImpl.this.shouldPreformAssignableCheck) {
@@ -60,8 +60,10 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
 						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
 							throw new IllegalArgumentException(
-									"Callback attached to a ChatEvent returned a non-similar value! " +
-											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
+									"Callback attached to a ChatEvent returned a non-similar value! "
+										+ "Expected a subclass or instance of "
+										+ message.getClass().getName() + " but got a "
+										+ tmpResult.getClass().getName() + "!"
 							);
 						}
 					}
@@ -76,7 +78,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	private boolean shouldPassOnMessageToHook(EnumSet<QuiltMessageType> messageTypes, EnumSet<QuiltMessageType> hookTypes) {
 		// For every message type
-		for (var messageType : messageTypes) {
+		for (QuiltMessageType messageType : messageTypes) {
 			// If the hook isn't looking for it
 			if (!hookTypes.contains(messageType)) {
 				// If it doesn't match the complex rule
@@ -93,7 +95,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	private boolean matchesMetaTypeRule(QuiltMessageType.QuiltMetaMessageType metaType, EnumSet<QuiltMessageType> hookTypes) {
 		// For every type the hook is looking for
-		for (var hookType : hookTypes) {
+		for (QuiltMessageType hookType : hookTypes) {
 			// Check if they have the same meta type
 			if (hookType.metaType == metaType) {
 				// If so, don't pass it on
@@ -122,7 +124,9 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 	}
 
 	@Override
-	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
+	public void register(
+			@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback
+	) {
 		this.backingEvent.register(phaseIdentifier, this.converter.apply(callback, types));
 	}
 

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.spongepowered.asm.mixin.Mixin;

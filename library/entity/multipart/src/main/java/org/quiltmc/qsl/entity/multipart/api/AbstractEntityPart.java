@@ -26,6 +26,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.EntityTrackerEntry;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -55,13 +56,16 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	protected void initDataTracker(DataTracker.Builder builder) {}
+	protected void initDataTracker(DataTracker.Builder builder) {
+	}
 
 	@Override
-	protected void readCustomDataFromNbt(NbtCompound nbt) {}
+	protected void readCustomDataFromNbt(NbtCompound nbt) {
+	}
 
 	@Override
-	protected void writeCustomDataToNbt(NbtCompound nbt) {}
+	protected void writeCustomDataToNbt(NbtCompound nbt) {
+	}
 
 	@Override
 	public boolean collides() {
@@ -244,8 +248,8 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	public boolean damage(DamageSource source, float amount) {
-		return !this.isInvulnerableTo(source) && this.owner.damage(source, amount);
+	public boolean damage(ServerWorld world, DamageSource source, float amount) {
+		return !this.isAlwaysInvulnerableTo(source) && this.owner.damage(world, source, amount);
 	}
 
 	@Override

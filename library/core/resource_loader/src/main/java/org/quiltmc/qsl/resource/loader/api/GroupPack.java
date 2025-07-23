@@ -31,20 +31,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
+import net.minecraft.resource.pack.metadata.MetadataSectionType;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.CompositeResourcePack;
 import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
  * Represents a group resource pack, which holds multiple resource packs as one.
- * <p>
- * The possible use cases are:
+ *
+ * <p>The possible use cases are:
  * <ul>
  *   <li>bundling multiple resource packs as one to reduce pollution of the user's UI</li>
  *   <li>replacing the default resource pack with a combination of the default one and all mods' resource packs</li>
@@ -79,7 +79,7 @@ public abstract class GroupPack implements ResourcePack {
 	 * @return the list of the matching resource packs
 	 */
 	public @UnmodifiableView List<? extends ResourcePack> getPacks(String namespace) {
-		var packs = this.namespacedPacks.get(namespace);
+		List<ResourcePack> packs = this.namespacedPacks.get(namespace);
 
 		if (packs != null) {
 			return Collections.unmodifiableList(packs);
@@ -115,13 +115,13 @@ public abstract class GroupPack implements ResourcePack {
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
-		var packs = this.namespacedPacks.get(id.getNamespace());
+		List<ResourcePack> packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs != null) {
 			// Iterating backwards as higher-priority packs are placed at the end.
 			for (int i = packs.size() - 1; i >= 0; i--) {
 				ResourcePack pack = packs.get(i);
-				var supplier = pack.open(type, id);
+				ResourceIoSupplier<InputStream> supplier = pack.open(type, id);
 
 				if (supplier != null) {
 					return supplier;
@@ -135,11 +135,11 @@ public abstract class GroupPack implements ResourcePack {
 	@Override
 	public void listResources(ResourceType type, String namespace, String startingPath,
 			ResourcePack.ResourceConsumer consumer) {
-		var packs = this.namespacedPacks.get(namespace);
+		List<ResourcePack> packs = this.namespacedPacks.get(namespace);
 
 		if (packs != null) {
 			// Iterating backwards as higher-priority packs are placed at the end.
-			for (var pack : packs) {
+			for (ResourcePack pack : packs) {
 				pack.listResources(type, namespace, startingPath, consumer);
 			}
 		}
@@ -187,7 +187,7 @@ public abstract class GroupPack implements ResourcePack {
 				if (basePriority) {
 					packs.add(basePack);
 				} else {
-					packs.add(0, basePack);
+					packs.addFirst(basePack);
 				}
 			}
 
@@ -200,8 +200,8 @@ public abstract class GroupPack implements ResourcePack {
 		}
 
 		@Override
-		public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
-			return this.basePack.parseMetadata(metaReader);
+		public <T> @Nullable T parseMetadata(MetadataSectionType<T> metadataSectionType) throws IOException {
+			return this.basePack.parseMetadata(metadataSectionType);
 		}
 
 		@Override

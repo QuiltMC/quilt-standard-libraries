@@ -16,27 +16,30 @@
 
 package org.quiltmc.qsl.block.entity.api;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-
-import com.mojang.datafixers.types.Type;
-import org.jetbrains.annotations.Nullable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 
+import org.quiltmc.qsl.block.entity.mixin.accessor.BlockEntityTypeAccessor;
+
 /**
- * Provides a way to build {@link BlockEntityType} with more features than {@link BlockEntityType.Builder}.
+ * Provides a way to build {@link BlockEntityType} with more features than {@link BlockEntityType.BlockEntityFactory}.
  *
  * @param <BE> the block entity Java type
  */
 public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	private final BlockEntityType.BlockEntityFactory<? extends BE> factory;
-	private final List<Block> supportedBlocks;
+	private final Set<Block> supportedBlocks;
 
-	private QuiltBlockEntityTypeBuilder(BlockEntityType.BlockEntityFactory<? extends BE> factory, List<Block> supportedBlocks) {
+	private QuiltBlockEntityTypeBuilder(
+			BlockEntityType.BlockEntityFactory<? extends BE> factory, Set<Block> supportedBlocks
+	) {
 		this.factory = factory;
 		this.supportedBlocks = supportedBlocks;
 	}
@@ -49,12 +52,14 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	 * @param <BE>            the block entity Java type
 	 * @return a new block entity type builder
 	 */
-	public static <BE extends BlockEntity> QuiltBlockEntityTypeBuilder<BE> create(BlockEntityType.BlockEntityFactory<? extends BE> factory,
-			Block... supportedBlocks) {
-		var blocks = new ArrayList<Block>(supportedBlocks.length);
-		Collections.addAll(blocks, supportedBlocks);
-
-		return new QuiltBlockEntityTypeBuilder<>(factory, blocks);
+	public static <BE extends BlockEntity> QuiltBlockEntityTypeBuilder<BE> create(
+			BlockEntityType.BlockEntityFactory<? extends BE> factory, Block... supportedBlocks
+	) {
+		return new QuiltBlockEntityTypeBuilder<>(
+			factory,
+			Arrays.stream(supportedBlocks)
+				.collect(Collectors.toCollection(HashSet::new))
+		);
 	}
 
 	/**
@@ -82,21 +87,9 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	/**
 	 * Builds the block entity type.
 	 *
-	 * @param type the DFU type, this may be used for datafixers
-	 * @return the built block entity type
-	 * @see #build() build without any care for datafixers
-	 */
-	public BlockEntityType<BE> build(@Nullable Type<?> type) {
-		return BlockEntityType.Builder.<BE>create(this.factory, this.supportedBlocks.toArray(Block[]::new))
-				.build(type);
-	}
-
-	/**
-	 * Builds the block entity type.
-	 *
 	 * @return the built block entity type
 	 */
 	public BlockEntityType<BE> build() {
-		return this.build(null);
+		return BlockEntityTypeAccessor.quilt$create(this.factory, Set.copyOf(this.supportedBlocks));
 	}
 }

@@ -16,10 +16,7 @@
 
 package org.quiltmc.qsl.item.content.registry.api;
 
-import com.mojang.serialization.Codec;
-
 import net.minecraft.item.Item;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -27,8 +24,8 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
  * Holds {@link RegistryEntryAttachment}s for different properties that items can hold.
- * <p>
- * Current properties:
+ *
+ * <p>Current properties:
  * <ul>
  *     <li>{@link #FUEL_TIMES}</li>
  *     <li>{@link #COMPOST_CHANCES}</li>
@@ -42,8 +39,9 @@ public class ItemContentRegistries {
 
 	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a furnace. The value is stored in ticks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/fuel_times.json}
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/item/fuel_times.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIMES = RegistryEntryAttachment
 			.intRangeBuilder(Registries.ITEM,
@@ -53,9 +51,11 @@ public class ItemContentRegistries {
 			.build();
 
 	/**
-	 * A {@link RegistryEntryAttachment} for the chance that the composter level increases when compositing an item. The value is stored as a value 0 to 1.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/compost_chances.json}
+	 * A {@link RegistryEntryAttachment} for the chance that the composter level increases when compositing an item.
+	 * The value is stored as a value 0 to 1.
+	 *
+	 * <p>Values can be set via code and through a data-pack with the file
+	 * {@code data/quilt/attachments/minecraft/item/compost_chances.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCES = RegistryEntryAttachment
 			.floatRangeBuilder(Registries.ITEM,

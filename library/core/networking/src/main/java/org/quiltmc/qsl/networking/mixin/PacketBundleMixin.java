@@ -31,8 +31,8 @@ import net.minecraft.network.packet.PacketBundle;
  * This mixin allows for nesting PacketBundles inside each other. Normally, that
  * would throw a messy error deep in packet code. This is particularly important
  * for the Entity Networking module, and could be generally beneficial for modders.
- * <p>
- * The flattening is only needed on the server side. Packets are not re-flattened on the client.
+ *
+ * <p>The flattening is only needed on the server side. Packets are not re-flattened on the client.
  */
 @Mixin(PacketBundle.class)
 public class PacketBundleMixin {

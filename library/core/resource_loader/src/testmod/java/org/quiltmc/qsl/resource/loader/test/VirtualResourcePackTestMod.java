@@ -80,6 +80,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 		pack.putText("pack.mcmeta", String.format("""
 				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
 					""", SharedConstants.getGameVersion().getResourceVersion(type)));
+
 		pack.putText(ResourceType.CLIENT_RESOURCES, Identifier.ofDefault("models/block/dandelion.json"), """
 				{
 					"parent": "minecraft:block/cube_all",

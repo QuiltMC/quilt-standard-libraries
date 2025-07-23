@@ -90,8 +90,11 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T extends CustomPayload> void receive(ServerConfigurationNetworking.CustomChannelReceiver<?> handler, T buf) {
-		((ServerConfigurationNetworking.CustomChannelReceiver<T>) handler).receive(this.server, this.handler, buf, this);
+	protected <T extends CustomPayload> void receive(
+			ServerConfigurationNetworking.CustomChannelReceiver<?> handler, T buf
+	) {
+		((ServerConfigurationNetworking.CustomChannelReceiver<T>) handler)
+				.receive(this.server, this.handler, buf, this);
 	}
 
 	// impl details
@@ -106,21 +109,22 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 		return ServerConfigurationNetworking.createS2CPacket(payload);
 	}
 
-
 	@Override
 	protected void invokeRegisterEvent(List<CustomPayload.Id<?>> ids) {
-		S2CConfigurationChannelEvents.REGISTER.invoker().onChannelRegister(this.handler, this, this.server, ids);
+		S2CConfigurationChannelEvents.REGISTER.invoker()
+				.onChannelRegister(this.handler, this, this.server, ids);
 	}
 
 	@Override
 	protected void invokeUnregisterEvent(List<CustomPayload.Id<?>> ids) {
-		S2CConfigurationChannelEvents.UNREGISTER.invoker().onChannelUnregister(this.handler, this, this.server, ids);
+		S2CConfigurationChannelEvents.UNREGISTER.invoker()
+				.onChannelUnregister(this.handler, this, this.server, ids);
 	}
 
 	@Override
 	protected void handleRegistration(CustomPayload.Id<?> channelName) {
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));
@@ -131,7 +135,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	@Override
 	protected void handleUnregistration(CustomPayload.Id<?> channelName) {
 		if (this.sentInitialRegisterPacket) {
-			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
+			ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
 
 			if (payload != null) {
 				this.sendPacket(new CustomPayloadS2CPacket(payload));

@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import org.quiltmc.qsl.entity.extensions.impl.PointOfInterestTypeExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -35,6 +34,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.poi.PointOfInterestType;
 
+import org.quiltmc.qsl.entity.extensions.impl.PointOfInterestTypeExtensions;
 
 @Mixin(PointOfInterestType.class)
 public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
@@ -88,9 +88,13 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 		}
 
 		for (BlockState state : states) {
-			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap().put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap()
+					.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
-				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in more than one PoI type: %s and %s!", state, key.getValue().toString(), replaced.getKey().toString())));
+				throw Util.throwOrPause(new IllegalStateException(String.format(
+					"%s is defined in more than one PoI type: %s and %s!",
+					state, key.getValue().toString(), replaced.getKey().toString()
+				)));
 			}
 		}
 

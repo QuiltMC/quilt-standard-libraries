@@ -38,17 +38,14 @@ public class RegistrySyncInitializer implements ModInitializer {
 		ModProtocolImpl.loadVersions();
 
 		SynchronizedRegistry.markForSync(
-				Registries.ARMOR_MATERIAL,
 				Registries.BLOCK,
 				Registries.BLOCK_ENTITY_TYPE,
-				Registries.CAT_VARIANT,
 				Registries.COMMAND_ARGUMENT_TYPE,
 				Registries.CUSTOM_STAT,
 				Registries.DATA_COMPONENT_TYPE,
 				Registries.ENTITY_ATTRIBUTE,
 				Registries.ENTITY_TYPE,
 				Registries.FLUID,
-				Registries.FROG_VARIANT,
 				Registries.GAME_EVENT,
 				Registries.ITEM,
 				Registries.NUMBER_FORMAT_TYPE,

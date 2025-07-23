@@ -69,8 +69,8 @@ public final class BiomeSelectors {
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether.
 	 * This method is compatible with biomes defined in the {@code minecraft:is_nether} tag.
-	 * <p>
-	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
+	 *
+	 * <p>This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
 		return context -> context.isIn(BiomeTags.NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
@@ -79,8 +79,8 @@ public final class BiomeSelectors {
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the End.
 	 * This method is compatible with biomes defined in the {@code minecraft:is_end} tag.
-	 * <p>
-	 * This selector will also match modded biomes that have been added to the End using {@link TheEndBiomes}.
+	 *
+	 * <p>This selector will also match modded biomes that have been added to the End using {@link TheEndBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
 		return context -> context.isIn(BiomeTags.END) || context.canGenerateIn(DimensionOptions.END);
@@ -105,8 +105,8 @@ public final class BiomeSelectors {
 
 	/**
 	 * {@return a selector that will reject any biome whose keys are in the given collection of keys}
-	 * <p>
-	 * This is useful for allowing a list of biomes to be defined in the config file, where
+	 *
+	 * <p>This is useful for allowing a list of biomes to be defined in the config file, where
 	 * a certain feature should not spawn.
 	 */
 	public static Predicate<BiomeSelectionContext> excludeByKey(Collection<RegistryKey<Biome>> keys) {
@@ -123,8 +123,8 @@ public final class BiomeSelectors {
 
 	/**
 	 * {@return a selector that will accept only biomes whos keys are in the given collection of keys}
-	 * <p>
-	 * This is useful for allowing a list of biomes to be defined in the config file, where
+	 *
+	 * <p>This is useful for allowing a list of biomes to be defined in the config file, where
 	 * a certain feature should spawn exclusively.
 	 */
 	public static Predicate<BiomeSelectionContext> includeByKey(Collection<RegistryKey<Biome>> keys) {
@@ -133,8 +133,8 @@ public final class BiomeSelectors {
 
 	/**
 	 * {@return a biome selector that will match biomes in which one of the given entity types can spawn}
-	 * <p>
-	 * Matches spawns in all {@link SpawnGroup spawn groups}.
+	 *
+	 * <p>Matches spawns in all {@link SpawnGroup spawn groups}.
 	 */
 	public static Predicate<BiomeSelectionContext> spawnsOneOf(EntityType<?>... entityTypes) {
 		return spawnsOneOf(ImmutableSet.copyOf(entityTypes));
@@ -142,16 +142,16 @@ public final class BiomeSelectors {
 
 	/**
 	 * {@return a biome selector that will match biomes in which one of the given entity types can spawn}
-	 * <p>
-	 * Matches spawns in all {@link SpawnGroup spawn groups}.
+	 *
+	 * <p>Matches spawns in all {@link SpawnGroup spawn groups}.
 	 */
 	public static Predicate<BiomeSelectionContext> spawnsOneOf(Set<EntityType<?>> entityTypes) {
 		return context -> {
 			SpawnSettings spawnSettings = context.getBiome().getSpawnSettings();
 
 			for (SpawnGroup spawnGroup : SpawnGroup.values()) {
-				for (SpawnSettings.SpawnEntry spawnEntry : spawnSettings.getSpawnEntries(spawnGroup).getEntries()) {
-					if (entityTypes.contains(spawnEntry.type)) {
+				for (var spawnEntry : spawnSettings.getSpawnEntries(spawnGroup).getEntries()) {
+					if (entityTypes.contains(spawnEntry.value().type())) {
 						return true;
 					}
 				}

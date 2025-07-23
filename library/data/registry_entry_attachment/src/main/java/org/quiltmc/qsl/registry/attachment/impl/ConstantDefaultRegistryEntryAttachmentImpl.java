@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.RegistryByteBuf;
@@ -28,8 +27,10 @@ import net.minecraft.util.Identifier;
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
 	private final @Nullable V defaultValue;
 
-	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-													  Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec, Side side, @Nullable V defaultValue) {
+	public ConstantDefaultRegistryEntryAttachmentImpl(
+			Registry<R> registry, Identifier id, Class<V> valueClass,
+			Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec, Side side, @Nullable V defaultValue
+	) {
 		super(registry, id, valueClass, codec, packetCodec, side);
 
 		if (defaultValue != null) {

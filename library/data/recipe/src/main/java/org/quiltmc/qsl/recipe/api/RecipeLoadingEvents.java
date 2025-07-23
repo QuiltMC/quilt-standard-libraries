@@ -25,19 +25,21 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
 
 /**
  * Represents the recipe loading events.
- * <p>
- * Triggered when the recipes are being loaded in the {@link net.minecraft.recipe.RecipeManager}.
- * <p>
- * Events are triggered in the following order:
+ *
+ * <p>Triggered when the recipes are being loaded in the {@link RecipeManager}.
+ *
+ * <p>Events are triggered in the following order:
  * <ol>
  *     <li>{@link #ADD}</li>
  *     <li>{@link #MODIFY}</li>
@@ -46,9 +48,9 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  */
 public final class RecipeLoadingEvents {
 	/**
-	 * Event to add new recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
-	 * <p>
-	 * Triggered before {@link #MODIFY} and {@link #REMOVE}.
+	 * Event to add new recipes while the {@link RecipeManager} is being built.
+	 *
+	 * <p>Triggered before {@link #MODIFY} and {@link #REMOVE}.
 	 */
 	public static final Event<AddRecipesCallback> ADD = Event.create(AddRecipesCallback.class,
 			callbacks -> handler -> {
@@ -57,9 +59,9 @@ public final class RecipeLoadingEvents {
 				}
 			});
 	/**
-	 * Event to modify recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
-	 * <p>
-	 * Triggered after {@link #ADD} and before {@link #REMOVE}.
+	 * Event to modify recipes while the {@link RecipeManager} is being built.
+	 *
+	 * <p>Triggered after {@link #ADD} and before {@link #REMOVE}.
 	 */
 	public static final Event<ModifyRecipesCallback> MODIFY = Event.create(ModifyRecipesCallback.class,
 			callbacks -> handler -> {
@@ -68,9 +70,9 @@ public final class RecipeLoadingEvents {
 				}
 			});
 	/**
-	 * Event to remove recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
-	 * <p>
-	 * Triggered after {@link #ADD} and {@link #MODIFY}.
+	 * Event to remove recipes while the {@link RecipeManager} is being built.
+	 *
+	 * <p>Triggered after {@link #ADD} and {@link #MODIFY}.
 	 */
 	public static final Event<RemoveRecipesCallback> REMOVE = Event.create(RemoveRecipesCallback.class,
 			callbacks -> handler -> {
@@ -90,8 +92,8 @@ public final class RecipeLoadingEvents {
 	public interface AddRecipesCallback extends EventAwareListener {
 		/**
 		 * Called when recipes are loaded.
-		 * <p>
-		 * {@code handler} is used to add recipes into the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}.
+		 *
+		 * <p>{@code handler} is used to add recipes into the {@linkplain RecipeManager recipe manager}.
 		 *
 		 * @param handler the recipe handler
 		 */
@@ -103,20 +105,20 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler {
 			/**
-			 * Registers a recipe into the {@link net.minecraft.recipe.RecipeManager}.
-			 * <p>
-			 * The recipe factory is only called if the recipe is not already present.
+			 * Registers a recipe into the {@link RecipeManager}.
+			 *
+			 * <p>The recipe factory is only called if the recipe is not already present.
 			 *
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
 			 */
-			void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory);
+			void register(Identifier id, Function<Identifier, RecipeData<?, ?>> factory);
 
 			/**
-			 * {@return the dynamic registry manager}
+			 * @return the lookup provider; allows for safe access to the game's registries and content
 			 */
 			@Contract(pure = true)
-			@NotNull DynamicRegistryManager getRegistryManager();
+			@NotNull HolderLookup.Provider getRegistries();
 		}
 	}
 
@@ -138,11 +140,12 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler extends BaseRecipeHandler {
 			/**
-			 * Replaces a recipe in the {@link net.minecraft.recipe.RecipeManager}.
+			 * Replaces a recipe in the {@link RecipeManager}.
 			 *
-			 * @param recipeHolder the recipe
+			 * @param id the identifier of the recipe
+			 * @param recipe the recipe
 			 */
-			void replace(RecipeHolder<?> recipeHolder);
+			void replace(Identifier id, RecipeData<?, ?> recipe);
 		}
 	}
 
@@ -164,7 +167,7 @@ public final class RecipeLoadingEvents {
 		@ApiStatus.NonExtendable
 		interface RecipeHandler extends BaseRecipeHandler {
 			/**
-			 * Removes a recipe in the {@link net.minecraft.recipe.RecipeManager}.
+			 * Removes a recipe in the {@link RecipeManager}.
 			 *
 			 * @param recipe the recipe identifier
 			 */
@@ -177,7 +180,9 @@ public final class RecipeLoadingEvents {
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 * @param <T>                    the type of the recipe
 			 */
-			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate);
+			<T extends Recipe<?>> void removeIf(
+					RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
+			);
 
 			/**
 			 * Removes a recipe if the predicate returns {@code true}.

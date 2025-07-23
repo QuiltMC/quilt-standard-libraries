@@ -48,8 +48,10 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<ValueRemoved<R>> valueRemovedEvent;
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
 
-	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
-									   PacketCodec<RegistryByteBuf, V> packetCodec, Side side) {
+	public RegistryEntryAttachmentImpl(
+			Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
+			PacketCodec<RegistryByteBuf, V> packetCodec, Side side
+	) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
@@ -58,22 +60,22 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		this.side = side;
 
 		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
-			for (var listener : listeners) {
+			for (ValueAdded<R, V> listener : listeners) {
 				listener.onValueAdded(entry, value);
 			}
 		});
 		this.tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (tag, value) -> {
-			for (var listener : listeners) {
+			for (TagValueAdded<R, V> listener : listeners) {
 				listener.onTagValueAdded(tag, value);
 			}
 		});
 		this.valueRemovedEvent = Event.create(ValueRemoved.class, listeners -> entry -> {
-			for (var listener : listeners) {
+			for (ValueRemoved<R> listener : listeners) {
 				listener.onValueRemoved(entry);
 			}
 		});
 		this.tagValueRemovedEvent = Event.create(TagValueRemoved.class, listeners -> tag -> {
-			for (var listener : listeners) {
+			for (TagValueRemoved<R> listener : listeners) {
 				listener.onTagValueRemoved(tag);
 			}
 		});
@@ -244,8 +246,14 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof RegistryEntryAttachmentImpl<?, ?> that)) return false;
+		if (this == o) {
+			return true;
+		}
+
+		if (!(o instanceof RegistryEntryAttachmentImpl<?, ?> that)) {
+			return false;
+		}
+
 		return Objects.equals(this.registry.getKey(), that.registry.getKey()) && Objects.equals(this.id, that.id);
 	}
 

@@ -23,40 +23,43 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.extensions.api.networking.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.qsl.entity.test.networking.CreeperWithItem;
-import org.quiltmc.qsl.entity.test.networking.TrackedDataTestInitializer;
 
 /**
  * In actual mods, do not add tracked data to existing entities, and do not replace spawn packets.
  * This is purely for testing QSL easily.
  */
 @Mixin(CreeperEntity.class)
-public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSpawnDataEntity, CreeperWithItem {
+abstract class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSpawnDataEntity, CreeperWithItem {
 	// Make creepers store a particle effect to test a custom tracked data handler
 
 	@SuppressWarnings("WrongEntityDataParameterClass")
-	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker.registerData(CreeperEntity.class, TrackedDataHandlerRegistry.PARTICLE);
+	@Unique
+	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker
+			.registerData(CreeperEntity.class, TrackedDataHandlerRegistry.PARTICLE);
 
-	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
-		super(entityType, world);
+	@SuppressWarnings("DataFlowIssue")
+	private CreeperEntityMixin() {
+		super(null, null);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	@Inject(method = "initDataTracker", at = @At("TAIL"))
@@ -80,33 +83,37 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 	// Make creepers drop a random item on explosion and render it over their head to test extended spawn data
 
 	@Unique
-	private ItemStack quilt$stackToDrop;
+	private ItemStack stackToDrop;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
-		var random = Registries.ITEM.getRandom(this.random).get().value();
-		this.quilt$stackToDrop = new ItemStack(random);
+	private void storeRandomItem(CallbackInfo ci) {
+		final Item random = Registries.ITEM.getRandom(this.random).orElseThrow().getValue();
+		this.stackToDrop = new ItemStack(random);
 	}
 
 	@Inject(method = "explode", at = @At("TAIL"))
-	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
-		if (!this.getWorld().isClient) {
-			dropStack(this.quilt$stackToDrop);
+	private void dropItemOnExplosion(CallbackInfo ci) {
+		if (this.getWorld() instanceof ServerWorld world) {
+			this.dropStack(world, this.stackToDrop);
 		}
 	}
 
+	// overrides api method
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void writeAdditionalSpawnData(RegistryByteBuf buffer) {
-		ItemStack.PACKET_CODEC.encode(buffer, this.quilt$stackToDrop);
+		ItemStack.OPTIONAL_PACKET_CODEC.encode(buffer, this.stackToDrop);
 	}
 
+	// overrides api method
+	@SuppressWarnings("AddedMixinMembersNamePattern")
 	@Override
 	public void readAdditionalSpawnData(RegistryByteBuf buffer) {
-		this.quilt$stackToDrop = ItemStack.PACKET_CODEC.decode(buffer);
+		this.stackToDrop = ItemStack.PACKET_CODEC.decode(buffer);
 	}
 
 	@Override
-	public ItemStack getStack() {
-		return this.quilt$stackToDrop;
+	public ItemStack quilt$getStack() {
+		return this.stackToDrop;
 	}
 }

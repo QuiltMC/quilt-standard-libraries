@@ -18,13 +18,23 @@
 package org.quiltmc.qsl.entity.extensions.api;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnLocation;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.loot.LootTable;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.block.Block;
-import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.mob.MobEntity;
@@ -45,6 +55,7 @@ import org.quiltmc.qsl.entity.extensions.impl.QuiltEntityType;
 public class QuiltEntityTypeBuilder<T extends Entity> {
 	private EntityType.EntityFactory<T> factory;
 	private @NotNull SpawnGroup spawnGroup;
+	private @NotNull String translationKey;
 	private ImmutableSet<Block> canSpawnInside = ImmutableSet.of();
 	private boolean saveable = true;
 	private boolean summonable = true;
@@ -56,8 +67,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	private Boolean alwaysUpdateVelocity = null;
 	private EntityDimensions dimensions = EntityDimensions.changing(0.6F, 1.8F);
 	private float spawnDimensionsScale = 1.0f;
+	@Nullable private RegistryKey<LootTable> lootTable;
 
-	protected QuiltEntityTypeBuilder(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory) {
+	protected QuiltEntityTypeBuilder(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory, String translationKey) {
 		this.spawnGroup = spawnGroup;
 		this.factory = factory;
 		this.spawnableFarFromPlayer = spawnGroup == SpawnGroup.CREATURE || spawnGroup == SpawnGroup.MISC;
@@ -65,14 +77,14 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Creates an entity type builder.
-	 * <p>
-	 * This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 *
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
 	 *
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create() {
-		return create(SpawnGroup.MISC);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull String translationKey) {
+		return create(SpawnGroup.MISC, translationKey);
 	}
 
 	/**
@@ -82,8 +94,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup) {
-		return create(spawnGroup, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull String translationKey) {
+		return create(spawnGroup, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -94,20 +106,20 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new entity type builder
 	 */
-	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory) {
-		return new QuiltEntityTypeBuilder<>(spawnGroup, factory);
+	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> factory, @NotNull String translationKey) {
+		return new QuiltEntityTypeBuilder<>(spawnGroup, factory, translationKey);
 	}
 
 	/**
 	 * Creates an entity type builder for a living entity.
-	 * <p>
-	 * This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 *
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
 	 *
 	 * @param <T> the type of entity
 	 * @return a new living entity type builder
 	 */
-	public static <T extends LivingEntity> QuiltEntityTypeBuilder.Living<T> createLiving() {
-		return new QuiltEntityTypeBuilder.Living<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends LivingEntity> QuiltEntityTypeBuilder.Living<T> createLiving(String translationKey) {
+		return new QuiltEntityTypeBuilder.Living<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -116,8 +128,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> the type of entity
 	 * @return a new mob entity type builder
 	 */
-	public static <T extends MobEntity> QuiltEntityTypeBuilder.Mob<T> createMob() {
-		return new QuiltEntityTypeBuilder.Mob<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory);
+	public static <T extends MobEntity> QuiltEntityTypeBuilder.Mob<T> createMob(String translationKey) {
+		return new QuiltEntityTypeBuilder.Mob<>(SpawnGroup.MISC, QuiltEntityTypeBuilder::emptyFactory, translationKey);
 	}
 
 	/**
@@ -224,8 +236,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Sets the maximum block range at which players can see this entity type.
-	 * <p>
-	 * This gets rounded up to the next integer radius in chunks.
+	 *
+	 * <p>This gets rounded up to the next integer radius in chunks.
 	 *
 	 * @param range the tracking range in blocks
 	 * @return this builder for chaining
@@ -247,10 +259,11 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Sets whether this entity type should always update velocity to the client on a tracked tick.
-	 * <p>
-	 * This respects {@link QuiltEntityTypeBuilder#trackingTickInterval}.
 	 *
-	 * @param alwaysUpdateVelocity {@code true} if this entity type should always update velocity to the client on a tracked tick, or {@code false} otherwise
+	 * <p>This respects {@link QuiltEntityTypeBuilder#trackingTickInterval}.
+	 *
+	 * @param alwaysUpdateVelocity {@code true} if this entity type should always update velocity to the client on a
+	 *                                           tracked tick, or {@code false} otherwise
 	 * @return this builder for chaining
 	 */
 	public QuiltEntityTypeBuilder<T> alwaysUpdateVelocity(boolean alwaysUpdateVelocity) {
@@ -263,8 +276,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * wither rose, sweet berry bush, cactus, and fire-damage-dealing blocks for
 	 * non-fire-resistant mobs.
 	 *
-	 * <p>
-	 * {@code minecraft:prevent_mob_spawning_inside} tag overrides this.
+	 * <p>{@code minecraft:prevent_mob_spawning_inside} tag overrides this.
 	 * With this setting, fire-resistant mobs can spawn on/in fire damage dealing blocks,
 	 * and wither skeletons can spawn in wither roses. If a block added is not in the default
 	 * blacklist, the addition has no effect.
@@ -288,7 +300,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * Sets the dimensional scale of this entity when it is spawned.
 	 * This is currently (as of 1.20.6) only used for the Slime and Magma cube entities.
 	 */
-	public QuiltEntityTypeBuilder<T> spawnDimensionsScale(float scale){
+	public QuiltEntityTypeBuilder<T> spawnDimensionsScale(float scale) {
 		this.spawnDimensionsScale = scale;
 		return this;
 	}
@@ -303,7 +315,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 			// TODO: Implement once DataFixer API is available.
 		}
 
-		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.spawnDimensionsScale, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity, this.requiredFlags);
+		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.spawnDimensionsScale, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity, this.translationKey, Optional.ofNullable(this.lootTable), this.requiredFlags);
 	}
 
 	/**
@@ -314,8 +326,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	public static class Living<T extends LivingEntity> extends QuiltEntityTypeBuilder<T> {
 		private DefaultAttributeContainer.Builder defaultAttributeBuilder;
 
-		protected Living(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function) {
-			super(spawnGroup, function);
+		protected Living(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function, String translationKey) {
+			super(spawnGroup, function, translationKey);
 		}
 
 		/**
@@ -427,7 +439,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		@Override
 		public EntityType<T> build() {
-			final EntityType<T> type = super.build();
+			EntityType<T> type = super.build();
 
 			if (this.defaultAttributeBuilder != null) {
 				DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.put(type, this.defaultAttributeBuilder.build());
@@ -447,8 +459,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		private Heightmap.Type restrictionHeightmap;
 		private SpawnRestriction.SpawnPredicate<T> spawnPredicate;
 
-		protected Mob(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function) {
-			super(spawnGroup, function);
+		protected Mob(@NotNull SpawnGroup spawnGroup, @NotNull EntityType.EntityFactory<T> function, String translationKey) {
+			super(spawnGroup, function, translationKey);
 		}
 
 		@Override
@@ -538,8 +550,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		/**
 		 * Registers a spawn restriction for this entity.
-		 * <p>
-		 * This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
+		 *
+		 * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
 		 *
 		 * @param location the type of location for this entity type to spawn in
 		 * @param heightmap what part of the heightmap for this entity type to spawn in

@@ -22,6 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
@@ -51,8 +52,8 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 
 			buttons.add(
 					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
-							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
-							.build()
+						.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
+						.build()
 			);
 
 			this.actualScreen = screen;
@@ -64,7 +65,11 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			graphics.drawGuiTexture(ARMOR_FULL_ICON, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20);
+			graphics.drawGuiTexture(
+					RenderLayer::getGuiTextured, ARMOR_FULL_ICON,
+					(screen.width / 2) - 124, (screen.height / 4) + 96,
+					20, 20
+			);
 		}
 	}
 }

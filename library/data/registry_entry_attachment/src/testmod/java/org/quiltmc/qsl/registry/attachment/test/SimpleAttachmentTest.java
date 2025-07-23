@@ -16,36 +16,35 @@
 
 package org.quiltmc.qsl.registry.attachment.test;
 
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.createId;
+import static org.quiltmc.qsl.registry.attachment.test.AttachmentTestUtil.registerItemWithExtension;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public class SimpleAttachmentTest implements ModInitializer {
-	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =
-			RegistryEntryAttachment.intBuilder(Registries.ITEM,
-					Identifier.of("quilt", "test_attachment")).build();
-	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 =
-			RegistryEntryAttachment.floatBuilder(Registries.ITEM,
-					Identifier.of("quilt", "test_attachment_2")).build();
-
-	public static final MyItem MY_ITEM = RegistryExtensions.register(Registries.ITEM,
-			Identifier.of("quilt", "simple_attachment_test_item"),
-			new MyItem(new Item.Settings()),
-			TEST_ATTACHMENT_2, 2.0f);
+	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT = RegistryEntryAttachment
+			.intBuilder(Registries.ITEM, createId("test_attachment"))
+			.build();
+	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 = RegistryEntryAttachment
+			.floatBuilder(Registries.ITEM, createId("test_attachment_2"))
+			.build();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		registerItemWithExtension(
+				"simple_attachment_test_item", MyItem::new,
+				TEST_ATTACHMENT_2, 2.0f
+		);
 	}
 
 	public static final class MyItem extends Item {
@@ -54,7 +53,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 		}
 
 		@Override
-		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		public ActionResult use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
 				int one = TEST_ATTACHMENT.get(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTACHMENT + " not set via datapack!"));
@@ -63,7 +62,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}
 
-			return TypedActionResult.pass(user.getStackInHand(hand));
+			return ActionResult.PASS;
 		}
 	}
 }

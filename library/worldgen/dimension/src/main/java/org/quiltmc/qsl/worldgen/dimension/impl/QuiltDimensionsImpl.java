@@ -20,9 +20,9 @@ package org.quiltmc.qsl.worldgen.dimension.impl;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.world.entity.TeleportTarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.DimensionTransition;
 
 @ApiStatus.Internal
 public class QuiltDimensionsImpl {
@@ -31,26 +31,26 @@ public class QuiltDimensionsImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Entity> E teleport(Entity entity, DimensionTransition transition) {
+	public static <E extends Entity> E teleport(Entity entity, TeleportTarget target) {
 		Preconditions.checkArgument(
 				Thread.currentThread() == entity.getServer().getThread(),
 				"This method may only be called from the main server thread"
 		);
 
 		// Fast path for teleporting within the same dimension.
-		if (entity.getWorld() == transition.newWorld()) {
+		if (entity.getWorld() == target.newWorld()) {
 			if (entity instanceof ServerPlayerEntity serverPlayerEntity) {
-				serverPlayerEntity.networkHandler.requestTeleport(transition.pos().x, transition.pos().y, transition.pos().z, transition.xRot(), entity.getPitch());
+				serverPlayerEntity.networkHandler.requestTeleport(target.position().x, target.position().y, target.position().z, target.yaw(), entity.getPitch());
 			} else {
-				entity.refreshPositionAndAngles(transition.pos().x, transition.pos().y, transition.pos().z, transition.xRot(), entity.getPitch());
+				entity.setPosAndAngles(target.position().x, target.position().y, target.position().z, target.yaw(), entity.getPitch());
 			}
 
-			entity.setVelocity(transition.speed());
-			entity.setHeadYaw(transition.yRot());
+			entity.setVelocity(target.deltaMovement());
+			entity.setHeadYaw(target.yaw());
 
 			return (E) entity;
 		}
 
-		return (E) entity.moveToWorld(transition);
+		return (E) entity.teleport(target);
 	}
 }

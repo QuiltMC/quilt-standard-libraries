@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -41,11 +43,15 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	public static final Map<Identifier, RecipeRemainderLocation> LOCATIONS = new HashMap<>();
 	public static final Set<RecipeRemainderLocation> DEFAULT_LOCATIONS = new HashSet<>();
 
+	public static final Logger LOGGER = LogUtils.getLogger();
+
 	/**
 	 * @return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed
 	 */
 	@Contract(mutates = "param1, param2")
-	private static boolean tryReturnItemToInventory(ItemStack remainder, DefaultedList<ItemStack> inventory, int index) {
+	private static boolean tryReturnItemToInventory(
+			ItemStack remainder, DefaultedList<ItemStack> inventory, int index
+	) {
 		ItemStack leftovers = inventory.get(index);
 		if (leftovers.isEmpty()) {
 			inventory.set(index, remainder);
@@ -87,7 +93,9 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1")
-	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location) {
+	private static ItemStack decrementWithRemainder(
+			ItemStack original, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location
+	) {
 		if (original.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
@@ -100,7 +108,10 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1, param5, param7")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
+	public static void handleRemainderForNonPlayerCraft(
+			ItemStack input, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location,
+			DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure
+	) {
 		ItemStack remainder = decrementWithRemainder(input, amount, recipe, location);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
@@ -109,7 +120,9 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1, param5")
-	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player) {
+	public static void handleRemainderForScreenHandler(
+			Slot slot, int amount, @Nullable Recipe<?> recipe, RecipeRemainderLocation location, PlayerEntity player
+	) {
 		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe, location);
 
 		if (!tryReturnItemToSlot(remainder, slot)) {

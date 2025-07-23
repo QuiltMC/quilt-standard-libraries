@@ -46,7 +46,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 		this.dynamicRegistries = dynamicRegistries;
 		this.key = key;
 		this.biome = biome;
-		this.entry = dynamicRegistries.get(RegistryKeys.BIOME).getHolderOrThrow(this.key);
+		this.entry = dynamicRegistries.getLookupOrThrow(RegistryKeys.BIOME).getHolderOrThrow(this.key);
 	}
 
 	@Override
@@ -66,19 +66,19 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<ConfiguredFeature<?, ?>>> getFeatureKey(ConfiguredFeature<?, ?> configuredFeature) {
-		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.get(RegistryKeys.CONFIGURED_FEATURE);
+		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.CONFIGURED_FEATURE);
 		return registry.getKey(configuredFeature);
 	}
 
 	@Override
 	public Optional<RegistryKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature) {
-		Registry<PlacedFeature> registry = this.dynamicRegistries.get(RegistryKeys.PLACED_FEATURE);
+		Registry<PlacedFeature> registry = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.PLACED_FEATURE);
 		return registry.getKey(placedFeature);
 	}
 
 	@Override
 	public boolean validForStructure(RegistryKey<StructureFeature> key) {
-		StructureFeature instance = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE).get(key);
+		StructureFeature instance = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.STRUCTURE_FEATURE).get(key);
 
 		if (instance == null) {
 			return false;
@@ -89,29 +89,29 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<StructureFeature>> getStructureKey(StructureFeature configuredStructure) {
-		Registry<StructureFeature> registry = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE);
+		Registry<StructureFeature> registry = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.STRUCTURE_FEATURE);
 		return registry.getKey(configuredStructure);
 	}
 
 	@Override
 	public boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey) {
-		DimensionOptions dimension = this.dynamicRegistries.get(RegistryKeys.DIMENSION).get(dimensionKey);
+		DimensionOptions dimension = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.DIMENSION).get(dimensionKey);
 
 		if (dimension == null) {
 			return false;
 		}
 
-		return dimension.getChunkGenerator().getBiomeSource().getBiomes().stream().anyMatch(entry -> entry.value() == this.biome);
+		return dimension.getChunkGenerator().getBiomeSource().getBiomes().stream().anyMatch(entry -> entry.getValue() == this.biome);
 	}
 
 	@Override
 	public boolean isIn(TagKey<Biome> tag) {
-		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(RegistryKeys.BIOME);
+		Registry<Biome> biomeRegistry = this.dynamicRegistries.getLookupOrThrow(RegistryKeys.BIOME);
 		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).isIn(tag);
 	}
 
 	@Override
 	public <T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey) {
-		return this.dynamicRegistries.getOptional(registryKey).map(registry -> registry.contains(entryKey)).orElse(false);
+		return this.dynamicRegistries.getLookup(registryKey).map(registry -> registry.contains(entryKey)).orElse(false);
 	}
 }

@@ -16,31 +16,39 @@
 
 package org.quiltmc.qsl.recipe.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 @ApiStatus.Internal
-final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler {
+final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements
+		RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler {
 	int counter = 0;
 
-	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Multimap<RecipeType<?>, RecipeHolder<?>> recipes,
-							Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
-		super(recipeManager, recipes, globalRecipes, registryManager);
+	RemoveRecipeHandlerImpl(
+			RecipeManager recipeManager,
+			Multimap<RecipeType<?>, RecipeHolder<?>> byType,
+			Map<RegistryKey<Recipe<?>>, RecipeHolder<?>> byKey,
+			HolderLookup.Provider registries
+	) {
+		super(recipeManager, byType, byKey, registries);
 	}
 
 	@Override
@@ -51,11 +59,15 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 			return;
 		}
 
-		if (this.recipes.get(recipeType).removeIf(holder -> holder.id().equals(id))) {
-			this.globalRecipes.remove(id);
+		RegistryKey<Recipe<?>> key = RegistryKey.of(RegistryKeys.RECIPE, id);
+		if (this.byType.get(recipeType).removeIf(holder -> holder.id().equals(key))) {
+			this.byKey.remove(key);
 
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", id, recipeType);
+				RecipeManagerImpl.LOGGER.info(
+						"Remove recipe {} with type {} in removal phase.",
+						id, recipeType
+				);
 			}
 
 			this.counter++;
@@ -64,40 +76,81 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate) {
+	public <T extends Recipe<?>> void removeIf(
+			RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate
+	) {
 		this.removeIfInternal(
-				this.recipes
-					.get(recipeType)
-					.stream()
-					.map(holder -> (RecipeHolder<T>) holder)
-					.collect(Collectors.toCollection(ArrayList::new)),
+				new TypedView<>(this.byType.get(recipeType), holder -> (RecipeHolder<T>) holder),
 				recipeRemovalPredicate
 		);
 	}
 
 	@Override
 	public void removeIf(Predicate<RecipeHolder<?>> recipeRemovalPredicate) {
-		for (var entry : this.getRecipes().asMap().entrySet()) {
+		for (Map.Entry<RecipeType<?>, Collection<RecipeHolder<?>>> entry : this.byType.asMap().entrySet()) {
 			this.removeIfInternal(entry.getValue(), recipeRemovalPredicate);
 		}
 	}
 
-	private <T extends RecipeHolder<?>> void removeIfInternal(Collection<T> recipeMap, Predicate<T> recipeRemovalPredicate) {
-		if (recipeMap == null) return;
+	private <R extends RecipeHolder<?>> void removeIfInternal(
+			Iterable<R> typedRecipes, Predicate<R> recipeRemovalPredicate
+	) {
+		if (typedRecipes == null) {
+			return;
+		}
 
-		var it = recipeMap.iterator();
+		Iterator<R> typedRecipesItr = typedRecipes.iterator();
 
-		while (it.hasNext()) {
-			var entry = it.next();
+		while (typedRecipesItr.hasNext()) {
+			R entry = typedRecipesItr.next();
 
 			if (recipeRemovalPredicate.test(entry)) {
 				if (RecipeManagerImpl.DEBUG_MODE) {
-					RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", entry.id(), entry.value().getType());
+					RecipeManagerImpl.LOGGER.info(
+							"Remove recipe matching predicate {} with type {} in removal phase.",
+							entry.id(), entry.value().getType()
+					);
 				}
 
-				this.globalRecipes.remove(entry.id());
-				it.remove();
+				this.byKey.remove(entry.id());
+				typedRecipesItr.remove();
 				this.counter++;
+			}
+		}
+	}
+
+	/**
+	 * Provides a typed iterable view of recipe holders.
+	 */
+	private record TypedView<R extends RecipeHolder<?>>(
+			Iterable<RecipeHolder<?>> untyped,
+			Function<RecipeHolder<?>, R> cast
+	) implements Iterable<R> {
+		@Override
+		public @NotNull java.util.Iterator<R> iterator() {
+			return new Iterator();
+		}
+
+		private final class Iterator implements java.util.Iterator<R> {
+			private final java.util.Iterator<RecipeHolder<?>> untyped;
+
+			private Iterator() {
+				this.untyped = TypedView.this.untyped.iterator();
+			}
+
+			@Override
+			public boolean hasNext() {
+				return this.untyped.hasNext();
+			}
+
+			@Override
+			public R next() {
+				return TypedView.this.cast.apply(this.untyped.next());
+			}
+
+			@Override
+			public void remove() {
+				this.untyped.remove();
 			}
 		}
 	}

@@ -1,0 +1,9 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "quilt_entity_rendering_testmod:models/armor/quilt_layer_1"
+      }
+    ]
+  }
+}

@@ -16,32 +16,36 @@
 
 package org.quiltmc.qsl.block.content.registry.mixin;
 
-import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.unmapped.C_dicxqeuf;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
 
-@Mixin(C_dicxqeuf.class)
+@Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
-	@Dynamic("method_40445: isValidForBookshelf")
-	@Inject(method = "method_40445", at = @At("HEAD"), cancellable = true)
-	private static void quilt$hasEnchantmentPower(World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir) {
-		var blockPos = pos.add(offset);
-		var state = world.getBlockState(blockPos);
-		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock())
+	@Inject(method = "powerProvidedFrom", at = @At("HEAD"), cancellable = true)
+	private static void quilt$hasEnchantmentPower(
+			World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir
+	) {
+		BlockPos blockPos = pos.add(offset);
+		BlockState state = world.getBlockState(blockPos);
+		Float power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock())
 				.map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
-		var hasPower = power >= 0.0f && world.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2)).isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
+		boolean hasPower = power >= 0.0f && world
+				.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))
+				.isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
 
 		if (hasPower) {
 			cir.setReturnValue(true);
@@ -58,23 +62,27 @@ public class EnchantingTableBlockMixin {
 			method = "randomDisplayTick",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_dicxqeuf;method_40445(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"
+					target = "Lnet/minecraft/block/EnchantingTableBlock;powerProvidedFrom(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"
 			)
 	)
 	private boolean quilt$changeParticleChance(
-			World world, BlockPos pos, BlockPos offset, BlockState ignoredState, World ignoredWorld, BlockPos ignoredPos, RandomGenerator random
+			World world, BlockPos pos, BlockPos offset, BlockState ignoredState, World ignoredWorld,
+			BlockPos ignoredPos, RandomGenerator random
 	) {
-		if (!world.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2)).isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER)) {
+		if (
+				!world.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))
+					.isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER)
+		) {
 			return false;
 		}
 
-		var blockPos = pos.add(offset);
-		var blockState = world.getBlockState(blockPos);
-		var block = blockState.getBlock();
-		var booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
+		BlockPos blockPos = pos.add(offset);
+		BlockState blockState = world.getBlockState(blockPos);
+		Block block = blockState.getBlock();
+		EnchantingBooster booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
 
 		if (booster != null) {
-			var power = booster.getEnchantingBoost(world, blockState, blockPos);
+			float power = booster.getEnchantingBoost(world, blockState, blockPos);
 			return random.nextFloat() * 16f <= power;
 		}
 

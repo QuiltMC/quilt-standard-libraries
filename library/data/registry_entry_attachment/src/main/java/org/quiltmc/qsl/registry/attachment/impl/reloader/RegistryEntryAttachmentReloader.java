@@ -28,6 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import net.minecraft.util.profiler.ProfilerManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
@@ -47,7 +48,8 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 
 @ApiStatus.Internal
-public final class RegistryEntryAttachmentReloader implements SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
+public final class RegistryEntryAttachmentReloader implements
+		SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
 	public static void register(ResourceType source) {
 		if (source == ResourceType.SERVER_DATA) {
 			ResourceLoader.get(source).addReloaderOrdering(ResourceReloaderKeys.Server.TAGS, ID_DATA);
@@ -81,8 +83,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
+			Profiler profiler = ProfilerManager.get();
+
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : Registries.ROOT.getEntries()) {
@@ -90,8 +94,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
 
-				Map<Identifier, List<Resource>> resources = manager.findAllResources("attachments/" + path,
-						s -> s.getPath().endsWith(".json"));
+				Map<Identifier, List<Resource>> resources = manager.findAllResources(
+						"attachments/" + path,
+						s -> s.getPath().endsWith(".json")
+				);
 				if (resources.isEmpty()) {
 					profiler.pop();
 					continue;
@@ -107,19 +113,23 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		}, executor);
 	}
 
-	private void processResources(Profiler profiler,
+	private void processResources(
+			Profiler profiler,
 			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
 			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
-		for (var entry : resources.entrySet()) {
+		for (Map.Entry<Identifier, List<Resource>> entry : resources.entrySet()) {
 			Identifier attachmentId = this.getAttachmentId(entry.getKey());
-			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
+			RegistryEntryAttachment<?, ?> attachment =
+					RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
 				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, entry);
 				continue;
 			}
 
 			if (!attachment.side().shouldLoad(this.source)) {
-				LOGGER.warn("Ignoring attachment {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
+				LOGGER.warn(
+						"Ignoring attachment {} (from {}) since it shouldn't be loaded from this source "
+							+ "({}, we're loading from {})",
 						attachmentId, entry, attachment.side().getSource(), this.source);
 				continue;
 			}
@@ -138,8 +148,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
+			Profiler profiler = ProfilerManager.get();
+
 			data.apply(profiler);
 			if (this.source == ResourceType.SERVER_DATA) {
 				RegistryEntryAttachmentSync.clearEncodedValuesCache();
@@ -176,8 +188,13 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {
-				profiler.swap(RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}");
-				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
+				profiler.swap(
+						RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}"
+				);
+				this.applyOne(
+						(RegistryEntryAttachment<Object, Object>) entry.getKey(),
+						(AttachmentDictionary<Object, Object>) entry.getValue()
+				);
 			}
 
 			profiler.pop();
@@ -185,7 +202,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachAttachment) {
-			var registry = attachment.registry();
+			Registry<R> registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);

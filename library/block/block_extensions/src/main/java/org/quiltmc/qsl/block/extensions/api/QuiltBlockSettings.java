@@ -17,16 +17,16 @@
 
 package org.quiltmc.qsl.block.extensions.api;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 import org.jetbrains.annotations.Contract;
 
+import net.minecraft.block.MapColor;
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
@@ -82,7 +82,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 		// also copy other stuff Vanilla doesn't bother with
 		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
-		this.drops(otherAccessor.getLootTableId());
+		((AbstractBlockSettingsAccessor) this).setLootTable(otherAccessor.getLootTable());
 		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
 		this.solidBlock(otherAccessor.getSolidBlockPredicate());
 		this.suffocates(otherAccessor.getSuffocationPredicate());
@@ -186,12 +186,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	@Override
 	public QuiltBlockSettings dropsNothing() {
 		super.dropsNothing();
-		return this;
-	}
-
-	@Override
-	public QuiltBlockSettings dropsLike(Block source) {
-		super.dropsLike(source);
 		return this;
 	}
 
@@ -337,6 +331,12 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
+	@Override
+	public QuiltBlockSettings key(RegistryKey<Block> key) {
+		super.key(key);
+		return this;
+	}
+
 	// region Added by Quilt
 
 	public QuiltBlockSettings collidable(boolean collidable) {
@@ -414,8 +414,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings drops(RegistryKey<LootTable> dropTableId) {
-		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
-		return this;
+		return this.lootTable(Optional.of(dropTableId));
 	}
 
 	public QuiltBlockSettings spawnsDustParticles(boolean spawnsDustParticles) {
@@ -423,13 +422,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	public Settings requiredFlags(FeatureFlagBitSet flags) {
-		((AbstractBlockSettingsAccessor) this).setRequiredFlags(flags);
+	public QuiltBlockSettings requiredFlags(FeatureFlagBitSet flags) {
+		((AbstractBlockSettingsAccessor) (Object) this).setRequiredFlags(flags);
 		return this;
 	}
 
 	public QuiltBlockSettings replaceable(boolean replaceable) {
-		((AbstractBlockSettingsAccessor) this).setReplaceable(replaceable);
+		((AbstractBlockSettingsAccessor) (Object) this).setReplaceable(replaceable);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings lootTable(Optional<RegistryKey<LootTable>> value) {
+		super.lootTable(value);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings translationKey(String translationKey) {
+		super.translationKey(translationKey);
 		return this;
 	}
 

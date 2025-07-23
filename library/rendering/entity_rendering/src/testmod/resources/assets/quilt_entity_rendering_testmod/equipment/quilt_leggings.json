@@ -1,0 +1,9 @@
+{
+  "layers": {
+    "humanoid_leggings": [
+      {
+        "texture": "quilt_entity_rendering_testmod:models/armor/overpowered_pants_of_queerness"
+      }
+    ]
+  }
+}

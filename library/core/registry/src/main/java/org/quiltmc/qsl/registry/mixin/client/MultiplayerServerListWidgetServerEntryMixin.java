@@ -16,12 +16,15 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import net.minecraft.client.gui.widget.list.multiplayer.ServerEntryListWidget;
 import net.minecraft.client.network.ServerInfo;
@@ -39,18 +42,26 @@ public class MultiplayerServerListWidgetServerEntryMixin {
 	private ServerInfo server;
 
 	@Dynamic("method_55816: second lambda in getServerListPinger().add(...) in render(...)")
-	@ModifyArg(method = "method_55816", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ServerInfo;setPingResult(Lnet/minecraft/client/network/ServerInfo$PingResult;)V"))
+	@ModifyArg(
+			method = "method_55816",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/network/ServerInfo;setPingResult("
+					+ "Lnet/minecraft/client/network/ServerInfo$PingResult;)V"
+			)
+	)
 	private ServerInfo.PingResult quilt$checkModProtocol(ServerInfo.PingResult result) {
-		var map = ModProtocolContainer.of(this.server).quilt$getModProtocol();
+		Map<String, IntList> map = ModProtocolContainer.of(this.server).quilt$getModProtocol();
 
 		if (map != null) {
-			for (var entry : map.entrySet()) {
-				var c = ModProtocolImpl.getVersion(entry.getKey());
+			for (Map.Entry<String, IntList> entry : map.entrySet()) {
+				IntList c = ModProtocolImpl.getVersion(entry.getKey());
 				if (ProtocolVersions.getHighestSupported(c, entry.getValue()) == ProtocolVersions.NO_PROTOCOL) {
 					return ServerInfo.PingResult.INCOMPATIBLE;
 				}
 			}
 		}
+
 		return result;
 	}
 }

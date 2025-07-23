@@ -18,11 +18,12 @@ package org.quiltmc.qsl.entity.extensions.impl.networking;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.entity.extensions.api.networking.QuiltExtendedSpawnDataEntity;
 import org.slf4j.Logger;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registries;
 
+import org.quiltmc.qsl.entity.extensions.api.networking.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
@@ -38,16 +39,17 @@ public final class QuiltEntityNetworkingClientInitializer implements ClientModIn
 				(client, handler, payload, sender) -> {
 					client.execute(() -> {
 						try {
-							var entity = client.world.getEntityById(payload.entityId());
+							Entity entity = client.world.method_8469(payload.entityId());
 							if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
 								extended.readAdditionalSpawnData(payload.data());
 							} else {
-								var id = entity == null
+								String id = entity == null
 										? "null"
 										: Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 								logger.error(
-										"[Quilt] invalid entity received for extended spawn packet: entity ["
-										+ id + "] does not implement QuiltCustomSpawnDataEntity!"
+										"[Quilt] invalid entity received for extended spawn packet: entity [{}] does"
+											+ " not implement QuiltCustomSpawnDataEntity!",
+										id
 								);
 							}
 						} finally { // make sure the buffer is released after

@@ -47,8 +47,8 @@ import org.quiltmc.qsl.registry.impl.sync.server.ServerFabricRegistrySync;
 
 /**
  * Legacy (Fabric) registry sync.
- * <p>
- * Direct port from Fabric API
+ *
+ * <p>Direct port from Fabric API
  */
 @ApiStatus.Internal
 @Deprecated
@@ -134,7 +134,7 @@ public class ClientFabricRegistrySync {
 	}
 
 	private static void computeBufSize(PacketByteBuf buf) {
-		final byte[] deflateBuffer = new byte[8192];
+		byte[] deflateBuffer = new byte[8192];
 		ByteBuf byteBuf = buf.copy();
 		Deflater deflater = new Deflater();
 
@@ -166,18 +166,20 @@ public class ClientFabricRegistrySync {
 		isPacketFinished = false;
 		syncedRegistryMap = null;
 
-		for (var entry : map.entrySet()) {
+		for (Map.Entry<Identifier, Object2IntMap<Identifier>> entry : map.entrySet()) {
 			var registry = Registries.ROOT.get(entry.getKey());
 
 			if (registry instanceof SynchronizedRegistry<?> currentRegistry) {
 				var syncMap = new HashMap<String, Collection<SynchronizedRegistry.SyncEntry>>();
 
-				for (var entry2 : entry.getValue().object2IntEntrySet()) {
-					syncMap.computeIfAbsent(entry2.getKey().getNamespace(), (x) -> new ArrayList<>())
-							.add(new SynchronizedRegistry.SyncEntry(entry2.getKey().getPath(), entry2.getIntValue(), (byte) 0));
+				for (Object2IntMap.Entry<Identifier> entry2 : entry.getValue().object2IntEntrySet()) {
+					syncMap.computeIfAbsent(entry2.getKey().getNamespace(), (x) -> new ArrayList<>()).add(
+						new SynchronizedRegistry.SyncEntry(entry2.getKey().getPath(), entry2.getIntValue(), (byte) 0)
+					);
 				}
 
-				var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
+				Collection<SynchronizedRegistry.MissingEntry> missingEntries =
+						currentRegistry.quilt$applySyncMap(syncMap);
 
 				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries, sender)) {
 					break;

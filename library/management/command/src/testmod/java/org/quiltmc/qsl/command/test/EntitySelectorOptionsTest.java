@@ -33,7 +33,7 @@ public class EntitySelectorOptionsTest implements ModInitializer {
 				optionReader -> {
 					var reader = optionReader.getReader();
 					float health = reader.readFloat();
-					optionReader.setPredicate(e -> e instanceof LivingEntity l && l.getHealth() >= health);
+					optionReader.addPredicate(e -> e instanceof LivingEntity l && l.getHealth() >= health);
 					((QuiltEntitySelectorReader) optionReader).setFlag("selectsHealth", true);
 				},
 				optionReader -> !((QuiltEntitySelectorReader) optionReader).getFlag("selectsHealth"),

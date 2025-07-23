@@ -21,8 +21,8 @@ import net.minecraft.util.Identifier;
 
 /**
  * Represents information about a registry entry.
- * <p>
- * Underlying implementations may be mutable; do not store this object in your own fields directly.
+ *
+ * <p>Underlying implementations may be mutable; do not store this object in your own fields directly.
  *
  * @param <V> the entry type used by the relevant {@link Registry}
  */
@@ -49,8 +49,8 @@ public interface RegistryEntryContext<V> {
 
 	/**
 	 * Safely registers a new entry in the registry of this context.
-	 * <p>
-	 * Registration may be delayed when called from {@link RegistryMonitor#forAll(RegistryEvents.EntryAdded)}.
+	 *
+	 * <p>Registration may be delayed when called from {@link RegistryMonitor#forAll(RegistryEvents.EntryAdded)}.
 	 *
 	 * @param id    the identifier of the entry
 	 * @param value the value to register

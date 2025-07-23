@@ -55,7 +55,10 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 		);
 	}
 
-	public ChatC2SMessage(PlayerEntity player, boolean isClient, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
+	public ChatC2SMessage(
+			PlayerEntity player, boolean isClient, String message, Instant timestamp, long salt,
+			@Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments
+	) {
 		super(player, isClient);
 		this.message = message;
 		this.timestamp = timestamp;
@@ -71,7 +74,9 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public @NotNull ChatMessageC2SPacket serialized() {
-		return new ChatMessageC2SPacket(this.message, this.timestamp, this.salt, this.signature, this.messageAcknowledgments);
+		return new ChatMessageC2SPacket(
+			this.message, this.timestamp, this.salt, this.signature, this.messageAcknowledgments
+		);
 	}
 
 	@Contract(pure = true)
@@ -101,38 +106,53 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withMessage(String message) {
-		return new ChatC2SMessage(this.player, this.isClient, message, this.timestamp, this.salt, this.signature, this.messageAcknowledgments);
+		return new ChatC2SMessage(
+			this.player, this.isClient, message,
+			this.timestamp, this.salt, this.signature, this.messageAcknowledgments
+		);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withTimestamp(Instant timestamp) {
-		return new ChatC2SMessage(this.player, this.isClient, this.message, timestamp, this.salt, this.signature, this.messageAcknowledgments);
+		return new ChatC2SMessage(
+			this.player, this.isClient, this.message,
+			timestamp, this.salt, this.signature, this.messageAcknowledgments
+		);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withSalt(long salt) {
-		return new ChatC2SMessage(this.player, this.isClient, this.message, this.timestamp, salt, this.signature, this.messageAcknowledgments);
+		return new ChatC2SMessage(
+			this.player, this.isClient, this.message,
+			this.timestamp, salt, this.signature, this.messageAcknowledgments
+		);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withSignature(@Nullable MessageSignature signature) {
-		return new ChatC2SMessage(this.player, this.isClient, this.message, this.timestamp, this.salt, signature, this.messageAcknowledgments);
+		return new ChatC2SMessage(
+			this.player, this.isClient, this.message,
+			this.timestamp, this.salt, signature, this.messageAcknowledgments
+		);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		return new ChatC2SMessage(this.player, this.isClient, this.message, this.timestamp, this.salt, this.signature, messageAcknowledgments);
+		return new ChatC2SMessage(
+			this.player, this.isClient, this.message,
+			this.timestamp, this.salt, this.signature, messageAcknowledgments
+		);
 	}
 
 	@Override
 	public String toString() {
-		return "ChatC2SMessage{" + "message='" + this.message + '\'' +
-				", timestamp=" + this.timestamp +
-				", salt=" + this.salt +
-				", signature=" + this.signature +
-				", messageAcknowledgments=" + this.messageAcknowledgments +
-				", player=" + this.player +
-				", isClient=" + this.isClient +
-				'}';
+		return "ChatC2SMessage{" + "message='" + this.message + '\''
+			+ ", timestamp=" + this.timestamp
+			+ ", salt=" + this.salt
+			+ ", signature=" + this.signature
+			+ ", messageAcknowledgments=" + this.messageAcknowledgments
+			+ ", player=" + this.player
+			+ ", isClient=" + this.isClient
+			+ '}';
 	}
 }

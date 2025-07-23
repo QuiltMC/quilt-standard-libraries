@@ -19,5 +19,5 @@ package org.quiltmc.qsl.entity.test.networking;
 import net.minecraft.item.ItemStack;
 
 public interface CreeperWithItem {
-	ItemStack getStack();
+	ItemStack quilt$getStack();
 }

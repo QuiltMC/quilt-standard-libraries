@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2021 The Quilt Project
  *
@@ -63,8 +64,8 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 		TestPack() {
 			this.putText("pack.mcmeta", String.format("""
-							{"pack":{"pack_format":%d,"description":"Just testing."}}
-							""",
+					{"pack":{"pack_format":%d,"description":"Just testing."}}
+					""",
 					SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
 			this.putImage("pack.png", this::createRandomImage);
 			this.putImage(DIRT_IDENTIFIER, this::createRandomImage);
@@ -80,7 +81,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 				color |= this.random.nextInt(256) << 8;
 				color |= this.random.nextInt(256);
 				for (int x = 0; x < 16; x++) {
-					image.setPixelColor(t ? x : y, t ? y : x, color);
+					image.method_61941(t ? x : y, t ? y : x, color);
 				}
 			}
 

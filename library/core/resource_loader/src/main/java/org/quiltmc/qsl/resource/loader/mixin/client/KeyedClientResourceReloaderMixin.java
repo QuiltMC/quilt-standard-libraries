@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.unmapped.C_fpwiwmrb;
 import net.minecraft.client.PeriodicNotificationManager;
 import net.minecraft.client.font.FontManager;
 import net.minecraft.client.particle.ParticleManager;
@@ -32,7 +33,6 @@ import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
-import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.resource.FoliageColormapResourceSupplier;
@@ -53,21 +53,23 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
 @ClientOnly
 @Mixin({
-		/* public */
-		BakedModelManager.class, BlockEntityRenderDispatcher.class, BlockRenderManager.class, BuiltinModelItemRenderer.class,
-		EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class, FoliageColormapResourceSupplier.class,
-		FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
-		StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
-		SpriteAtlasHolder.class,
-		/* private */
-		GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class,
+	/* public */
+	BakedModelManager.class, BlockEntityRenderDispatcher.class, BlockRenderManager.class,
+	EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class,
+	FoliageColormapResourceSupplier.class,
+	FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
+	StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
+	SpriteAtlasHolder.class, C_fpwiwmrb.class,
+	/* private */
+	GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class,
 })
 public abstract class KeyedClientResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
 	private Identifier quilt$id;
 
+	// overrides api method
 	@Override
-	@SuppressWarnings({"ConstantConditions"})
+	@SuppressWarnings({"ConstantConditions", "AddedMixinMembersNamePattern"})
 	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
@@ -78,12 +80,12 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 				this.quilt$id = ResourceReloaderKeys.Client.BLOCK_ENTITY_RENDERERS;
 			} else if (self instanceof BlockRenderManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.BLOCK_RENDER_MANAGER;
-			} else if (self instanceof BuiltinModelItemRenderer) {
-				this.quilt$id = ResourceReloaderKeys.Client.BUILTIN_ITEM_MODELS;
 			} else if (self instanceof EntityModelLoader) {
 				this.quilt$id = ResourceReloaderKeys.Client.ENTITY_MODELS;
 			} else if (self instanceof EntityRenderDispatcher) {
 				this.quilt$id = ResourceReloaderKeys.Client.ENTITY_RENDERERS;
+			} else if (self instanceof C_fpwiwmrb) {
+				this.quilt$id = ResourceReloaderKeys.Client.SHADERS;
 			} else if (self instanceof StatusEffectSpriteManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.STATUS_EFFECTS;
 			} else if (self instanceof SoundManager) {

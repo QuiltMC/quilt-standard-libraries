@@ -46,6 +46,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.LoaderValue;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking;
@@ -81,23 +83,38 @@ public final class ServerRegistrySync {
 		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.End.ID, ServerRegistrySync::handleEnd);
 	}
 
-	public static void handleHandshake(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.Handshake handshake, PacketSender<CustomPayload> responseSender) {
+	public static void handleHandshake(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.Handshake handshake,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleHandshake(handshake);
 	}
 
-	public static void handleSyncFailed(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.SyncFailed syncFailed, PacketSender<CustomPayload> responseSender) {
+	public static void handleSyncFailed(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.SyncFailed syncFailed,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleSyncFailed(syncFailed);
 	}
 
-	public static void handleModProtocol(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.ModProtocol modProtocol, PacketSender<CustomPayload> responseSender) {
+	public static void handleModProtocol(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.ModProtocol modProtocol,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleModProtocol(modProtocol);
 	}
 
-	public static void handleUnknownEntry(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.UnknownEntry unknownEntry, PacketSender<CustomPayload> responseSender) {
+	public static void handleUnknownEntry(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.UnknownEntry unknownEntry,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleUnknownEntry(unknownEntry);
 	}
 
-	public static void handleEnd(MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.End end, PacketSender<CustomPayload> responseSender) {
+	public static void handleEnd(
+			MinecraftServer server, ServerConfigurationNetworkHandler handler, ClientPackets.End end,
+			PacketSender<CustomPayload> responseSender
+	) {
 		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleEnd(end);
 	}
 
@@ -115,9 +132,9 @@ public final class ServerRegistrySync {
 		stateValidation = !config.disable_state_validation.value();
 
 		if (stateValidation) {
-			for (var container : QuiltLoader.getAllMods()) {
-				var data = container.metadata();
-				var quiltRegistry = data.value("quilt_registry");
+			for (ModContainer container : QuiltLoader.getAllMods()) {
+				ModMetadata data = container.metadata();
+				LoaderValue quiltRegistry = data.value("quilt_registry");
 
 				if (quiltRegistry == null || quiltRegistry.type() != LoaderValue.LType.OBJECT) {
 					continue;
@@ -153,7 +170,7 @@ public final class ServerRegistrySync {
 		Text text = null;
 		try {
 			text = Text.SerializationUtil.fromJson(string, DynamicRegistryManager.EMPTY);
-		} catch (Exception e) {}
+		} catch (Exception e) { }
 
 		return text != null ? text : Text.literal(string);
 	}

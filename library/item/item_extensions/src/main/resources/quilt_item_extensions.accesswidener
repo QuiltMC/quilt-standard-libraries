@@ -2,4 +2,3 @@ accessWidener v2 named
 
 ### Generated access wideners below
 # Constructors of non-abstract item classes
-transitive-accessible method net/minecraft/item/MiningToolItem <init> (Lnet/minecraft/item/ToolMaterial;Lnet/minecraft/registry/tag/TagKey;Lnet/minecraft/item/Item$Settings;)V

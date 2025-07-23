@@ -18,6 +18,7 @@ package org.quiltmc.qsl.testing.api.game;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.text.Text;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -32,8 +33,8 @@ import net.minecraft.util.math.Vec3d;
 
 /**
  * Represents Quilt-provided extensions to {@link TestContext}.
- * <p>
- * This is the class that is passed in tests with default handling.
+ *
+ * <p>This is the class that is passed in tests with default handling.
  */
 public class QuiltTestContext extends TestContext {
 	public QuiltTestContext(GameTestState test) {
@@ -47,7 +48,12 @@ public class QuiltTestContext extends TestContext {
 	 * @param pos   the position to check for
 	 */
 	public void expectBlockState(@NotNull BlockState state, @NotNull BlockPos pos) {
-		this.checkBlockState(pos, s -> s.equals(state), () -> "Expected block state " + state + " at position " + pos.toShortString() + '.');
+		this.checkState(
+				pos, actualState -> actualState.equals(state),
+				actualState -> Text.literal(
+					"Expected block state " + state + " at position " + pos.toShortString() + '.'
+				)
+		);
 	}
 
 	/**
@@ -58,8 +64,10 @@ public class QuiltTestContext extends TestContext {
 	 * @param pos     the position of the use hit
 	 * @param sideHit the side that's being hit for using the item
 	 */
-	public void useStackOnBlockAt(@NotNull PlayerEntity player, @NotNull ItemStack stack, @NotNull BlockPos pos, @NotNull Direction sideHit) {
-		var actualPos = this.getAbsolutePos(pos);
+	public void useStackOnBlockAt(
+			@NotNull PlayerEntity player, @NotNull ItemStack stack, @NotNull BlockPos pos, @NotNull Direction sideHit
+	) {
+		var actualPos = this.getAbsolute(pos);
 		var blockHitResult = new BlockHitResult(Vec3d.ofCenter(actualPos), sideHit, actualPos, false);
 		var itemUsageContext = new ItemUsageContext(player, Hand.MAIN_HAND, blockHitResult);
 		stack.useOnBlock(itemUsageContext);

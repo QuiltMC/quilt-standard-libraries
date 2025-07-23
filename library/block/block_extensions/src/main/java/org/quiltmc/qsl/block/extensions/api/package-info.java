@@ -17,7 +17,6 @@
 /**
  * <h2>Block Extensions</h2>
  *
- * <p>
  * <h3>{@linkplain org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings Extended block settings}</h3>
  * <ul>
  *     <li>Provides additional methods to make creating blocks a bit easier.</li>

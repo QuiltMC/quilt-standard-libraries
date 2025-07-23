@@ -27,8 +27,8 @@ import org.quiltmc.qsl.resource.loader.impl.ModIoOps;
 
 /**
  * Contains the definition of a tree structure for caching, each node represents either a directory, a file, or a missing entry.
- * <p>
- * This may be dangerous if someone does a lot of one-time access.
+ *
+ * <p>This may be dangerous if someone does a lot of one-time access.
  *
  * @author LambdAurora
  */
@@ -69,10 +69,10 @@ public final class CacheTree {
 
 		public String getFullPath() {
 			var list = new ArrayList<String>();
-			var elem = this;
+			Node elem = this;
 
 			while (!elem.isRoot()) {
-				list.add(0, elem.getPathPart());
+				list.addFirst(elem.getPathPart());
 
 				elem = elem.getParent();
 			}
@@ -85,7 +85,9 @@ public final class CacheTree {
 		}
 
 		public @Nullable ResourceAccess.Entry toEntry(ModIoOps ops) {
-			if (this.type == EntryType.EMPTY) return null;
+			if (this.type == EntryType.EMPTY) {
+				return null;
+			}
 
 			return new ResourceAccess.Entry(ops.getNormalizedPath(this.getFullPath()), this.type);
 		}
@@ -131,7 +133,7 @@ public final class CacheTree {
 					absolutePath = this.getFullPath() + '/' + absolutePath;
 				}
 
-				var type = io.getEntryType(absolutePath);
+				EntryType type = io.getEntryType(absolutePath);
 
 				switch (type) {
 					case EMPTY -> {

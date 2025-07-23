@@ -16,26 +16,28 @@
 
 package org.quiltmc.qsl.item.test;
 
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.createId;
+import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registerItem;
+
 import net.minecraft.component.DataComponentType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
-import net.minecraft.item.ToolMaterials;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.unmapped.C_bemqmqey;
 import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettingsExtensions;
 
 public class CustomDamageTest implements ModInitializer {
 	public static final DataComponentType<Integer> WEIRD = Registry.register(
 			Registries.DATA_COMPONENT_TYPE,
-			Identifier.of("quilt-item-api-testmod", "weird"),
+			createId("weird"),
 			DataComponentType.<Integer>builder()
 				.codec(Codecs.NONNEGATIVE_INT)
 				.packetCodec(PacketCodecs.VAR_INT)
@@ -44,28 +46,36 @@ public class CustomDamageTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ITEM, Identifier.of(QuiltItemSettingsTests.NAMESPACE, "weird_pickaxe"), new WeirdPick());
+		Item.Settings weirdPickSettings = new Item.Settings();
+		weirdPickSettings
+			// method_66330 is pickaxe
+			// C_bemqmqey.INCORRECT_FOR_GOLD_TOOL is ToolMaterial.GOLD
+			.method_66330(C_bemqmqey.INCORRECT_FOR_GOLD_TOOL, 1.0F, -2.8F);
+
+		registerItem("weird_pickaxe", WeirdPick::new, weirdPickSettings);
 	}
 
 	public static final CustomDamageHandler WEIRD_DAMAGE_HANDLER = (stack, amount, entity, slot, breakCallback) -> {
-		// If sneaking, apply all damage to vanilla. Otherwise, increment a tag on the stack by one and don't apply any damage
+		// If sneaking, apply all damage to vanilla. Otherwise,
+		// increment a tag on the stack by one and don't apply any damage.
 		if (entity.isSneaking()) {
 			return amount;
 		} else {
-			stack.set(WEIRD, Math.max(0, stack.getOrDefault(WEIRD, 0) + 1)); // Need the max because the value could wrap around Integer.MAX_VALUE
+			// Need the max because the value could wrap around Integer.MAX_VALUE
+			stack.set(WEIRD, Math.max(0, stack.getOrDefault(WEIRD, 0) + 1));
 			return 0;
 		}
 	};
 
-	public static class WeirdPick extends PickaxeItem {
-		protected WeirdPick() {
-			super(ToolMaterials.GOLD, new QuiltItemSettings().customDamage(WEIRD_DAMAGE_HANDLER));
+	public static class WeirdPick extends Item {
+		protected WeirdPick(Item.Settings settings) {
+			super(((QuiltItemSettingsExtensions) settings).customDamage(WEIRD_DAMAGE_HANDLER));
 		}
 
 		@Override
 		public Text getName(ItemStack stack) {
-			int v = stack.getOrDefault(WEIRD, 0);
-			return super.getName(stack).copy().append(" (Weird Value: " + v + ")");
+			int weirdValue = stack.getOrDefault(WEIRD, 0);
+			return super.getName(stack).copy().append(" (Weird Value: " + weirdValue + ")");
 		}
 	}
 }

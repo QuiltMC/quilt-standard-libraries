@@ -18,8 +18,7 @@ package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BookCloningRecipe;
@@ -31,11 +30,12 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @Mixin(BookCloningRecipe.class)
-public abstract class BookCloningRecipeMixin implements Recipe<CraftingRecipeInput> {
-	@Inject(method = "getRemainder(Lnet/minecraft/recipe/CraftingRecipeInput;)Lnet/minecraft/util/collection/DefaultedList;", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
-	private void interceptGetRemainingStacks(CraftingRecipeInput input, CallbackInfoReturnable<DefaultedList<ItemStack>> cir) {
-		cir.setReturnValue(
-				RecipeRemainderProvider.getRemainingStacks(input, this, RecipeRemainderLocation.CRAFTING, cir.getReturnValue())
-		);
+abstract class BookCloningRecipeMixin implements Recipe<CraftingRecipeInput> {
+	@ModifyReturnValue(method = "getRecipeRemainders", at = @At(value = "RETURN", ordinal = 0))
+	private DefaultedList<ItemStack> interceptGetRemainingStacks(
+			DefaultedList<ItemStack> original, CraftingRecipeInput input
+	) {
+		return RecipeRemainderProvider
+			.getRemainingStacks(input, this, RecipeRemainderLocation.CRAFTING, original);
 	}
 }

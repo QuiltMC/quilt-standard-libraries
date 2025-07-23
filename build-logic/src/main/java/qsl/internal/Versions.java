@@ -7,8 +7,8 @@ import java.util.Optional;
 
 /**
  * Version constants used across the convention build scripts.
- * <p>
- * To use inside of convention build scripts, simply import this class and refer to the public static final fields.
+ *
+ * <p>To use inside of convention build scripts, simply import this class and refer to the public static final fields.
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class Versions {
@@ -21,7 +21,7 @@ public final class Versions {
 	 */
 
 	/**
-	 * The QSL version
+	 * The QSL version.
 	 */
 	// Note: Make sure this matches QFAPI's gradle.properties entry for qsl_version
 	public static final String QSL_VERSION = "10.0.0-alpha.4";
@@ -29,22 +29,22 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.21.1");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.21.5");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.
 	 */
-	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions("1.21");
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions("1.21.5");
 
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 2;
+	public static final int MAPPINGS_BUILD = 7;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.25.0";
+	public static final String LOADER_VERSION = "0.27.1";
 
 	/**
 	 * The target Java version.
@@ -68,13 +68,15 @@ public final class Versions {
 	private static List<MinecraftVersion> versions(Object... versions) {
 		var list = new ArrayList<MinecraftVersion>();
 
-		for (var version : versions) {
+		for (Object version : versions) {
 			if (version instanceof String name) {
 				list.add(new MinecraftVersion(name, MINECRAFT_VERSION.versionEdition()));
 			} else if (version instanceof MinecraftVersion mcVersion) {
 				list.add(mcVersion);
 			} else {
-				throw new IllegalArgumentException("Unexpected version \"" + version + "\", only String and MinecraftVersion are accepted.");
+				throw new IllegalArgumentException(
+						"Unexpected version \"" + version + "\", only String and MinecraftVersion are accepted."
+				);
 			}
 		}
 

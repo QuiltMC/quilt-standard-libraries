@@ -16,8 +16,11 @@
 
 package org.quiltmc.qsl.recipe.api;
 
-import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeInput;
+import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.recipe.api.data.RecipeData;
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
 /**
@@ -30,30 +33,34 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Registers a static recipe.
-	 * <p>
-	 * A static recipe is a recipe that is registered at mod startup (or later) and is kept during the whole lifecycle
-	 * of the game.
-	 * <p>
-	 * Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
-	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already loaded.
-	 * <p>
-	 * Static recipes can be added at any time, but are only applied after a data pack reload.
 	 *
-	 * @param recipeHolder the recipe to register
+	 * <p>A static recipe is a recipe that is registered at mod startup (or later) and is kept during the whole
+	 * lifecycle of the game.
+	 *
+	 * <p>Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
+	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already loaded.
+	 *
+	 * <p>Static recipes can be added at any time, but are only applied after a data pack reload.
+	 *
+	 * @param id the identifier of the recipe
+	 * @param recipe the recipe data to register
+	 *
 	 * @return the registered recipe
 	 * @throws IllegalStateException if another recipe with the same identifier is already registered
 	 */
-	public static RecipeHolder<?> registerStaticRecipe(RecipeHolder<?> recipeHolder) {
-		RecipeManagerImpl.registerStaticRecipe(recipeHolder);
-		return recipeHolder;
+	public static <I extends RecipeInput, R extends Recipe<I>> RecipeData<?, ?> registerStaticRecipe(
+			Identifier id, RecipeData<I, R> recipe
+	) {
+		RecipeManagerImpl.registerStaticRecipe(id, recipe);
+		return recipe;
 	}
 
 	/**
 	 * Registers a dynamic recipe provider.
-	 * <p>
-	 * The dynamic recipe provider is called when the recipes are loaded.
-	 * <p>
-	 * Triggered before {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}
+	 *
+	 * <p>The dynamic recipe provider is called when the recipes are loaded.
+	 *
+	 * <p>Triggered before {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}
 	 * and {@link #removeRecipes(RecipeLoadingEvents.RemoveRecipesCallback)}.
 	 *
 	 * @param callback the callback to add recipes
@@ -65,8 +72,8 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Modifies recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
-	 * <p>
-	 * Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
+	 *
+	 * <p>Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
 	 * and before {@link #removeRecipes(RecipeLoadingEvents.RemoveRecipesCallback)}.
 	 *
 	 * @param callback the callback to modify recipes
@@ -78,8 +85,8 @@ public final class RecipeManagerHelper {
 
 	/**
 	 * Removes recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
-	 * <p>
-	 * Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
+	 *
+	 * <p>Triggered after {@link #addRecipes(RecipeLoadingEvents.AddRecipesCallback)}
 	 * and {@link #modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback)}.
 	 *
 	 * @param callback the callback to remove recipes

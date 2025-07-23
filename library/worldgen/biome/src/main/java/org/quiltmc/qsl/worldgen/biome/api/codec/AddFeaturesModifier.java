@@ -35,8 +35,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds features to a biome.
- * <p>
- * The biome modifier identifier is {@code quilt:add_features}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:add_features}.
  *
  * @param step     the feature generation step to add the features to
  * @param features registry keys for the features to add
@@ -49,7 +49,7 @@ public record AddFeaturesModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "add_features");
 	public static final Codec<AddFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddFeaturesModifier::selector),
-			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(AddFeaturesModifier::features),
+			CodecHelpers.listOrValue(RegistryKey.createCodec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(AddFeaturesModifier::features),
 			GenerationStep.Feature.CODEC.fieldOf("step").forGetter(AddFeaturesModifier::step)
 	).apply(instance, AddFeaturesModifier::new));
 
@@ -60,7 +60,7 @@ public record AddFeaturesModifier(
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var feature : this.features) {
+		for (RegistryKey<PlacedFeature> feature : this.features) {
 			modificationContext.getGenerationSettings().addFeature(this.step, feature);
 		}
 	}

@@ -18,10 +18,9 @@
 package org.quiltmc.qsl.worldgen.dimension.mixin;
 
 import java.util.List;
+import java.util.function.Supplier;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.Lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,13 +29,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.dimension.DimensionOptions;
-import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.storage.WorldSaveStorage;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.nbt.NbtException;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.FeatureAndDataSettings;
+import net.minecraft.world.dimension.DimensionOptions;
+import net.minecraft.world.storage.ParsedSaveProperties;
+import net.minecraft.world.storage.WorldSaveStorage;
 
 /**
  * After removing a dimension mod or a dimension data pack, Minecraft may fail to enter
@@ -44,23 +44,24 @@ import net.minecraft.server.world.FeatureAndDataSettings;
  * This mixin will remove the custom dimensions from the nbt tag, so the deserializer and DFU cannot see custom
  * dimensions and won't cause errors.
  * The custom dimensions will be re-added later.
- * <p>
- * This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
+ *
+ * <p>This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
  * is not removed after uninstalling the dimension data pack.
  * This makes custom dimensions non-removable. Most players don't want this behavior.
  * With this Mixin, custom dimensions will be removed when its data pack is removed.
  */
 @Mixin(WorldSaveStorage.class)
-public class WorldSaveStorageBugfixMixin {
+abstract class WorldSaveStorageBugfixMixin {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "method_54523", at = @At("HEAD"))
-	private static <T> void onReadGeneratorProperties(
-			Dynamic<T> nbt, FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry, DynamicRegistryManager.Frozen frozen,
-			CallbackInfoReturnable<Pair<GeneratorOptions, Lifecycle>> cir
+	private static void onReadGeneratorProperties(
+			Dynamic<?> dynamic, FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry,
+			HolderLookup.Provider lookupProvider, CallbackInfoReturnable<ParsedSaveProperties> cir
 	) {
-		NbtElement nbtTag = ((Dynamic<NbtElement>) nbt).getValue();
+		NbtElement nbtTag = ((Dynamic<NbtElement>) dynamic).getValue();
 
-		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound("WorldGenSettings");
+		String key = "WorldGenSettings";
+		NbtCompound worldGenSettings = ((NbtCompound) nbtTag).getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		quilt$removeNonVanillaDimensionsFromNbt(worldGenSettings);
 	}
@@ -75,20 +76,27 @@ public class WorldSaveStorageBugfixMixin {
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		NbtCompound dimensions = worldGenSettings.getCompound("dimensions");
+		String key = "dimensions";
+		NbtCompound dimensions = worldGenSettings.getCompound(key).orElseThrow(supplyNbtMissingException(key));
 
 		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {
 			var newDimensions = new NbtCompound();
 
-			for (var dimId : BASE_DIMENSIONS) {
-				var strId = dimId.getValue().toString();
+			for (RegistryKey<DimensionOptions> dimId : BASE_DIMENSIONS) {
+				String strId = dimId.getValue().toString();
 
-				if (dimensions.contains(strId)) {
-					newDimensions.put(strId, dimensions.getCompound(strId));
+				// method_10545 is containsKey
+				if (dimensions.method_10545(strId)) {
+					newDimensions.put(strId, dimensions.getCompound(strId).orElseThrow());
 				}
 			}
 
-			worldGenSettings.put("dimensions", newDimensions);
+			worldGenSettings.put(key, newDimensions);
 		}
+	}
+
+	@Unique
+	private static Supplier<NbtException> supplyNbtMissingException(String key) {
+		return () -> new NbtException("missing " + key);
 	}
 }

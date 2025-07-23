@@ -30,11 +30,13 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
@@ -44,8 +46,8 @@ import net.minecraft.text.Text;
 
 /**
  * An {@link ArgumentType} that allows an arbitrary set of (case-insensitive) strings.
- * <p>
- * This argument type is compatible with Vanilla clients.
+ *
+ * <p>This argument type is compatible with Vanilla clients.
  */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
@@ -62,10 +64,12 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		this.values = new LinkedHashSet<>(values.length);
 
 		for (String value : values) {
-			var valueLC = value.toLowerCase(Locale.ROOT);
+			String valueLC = value.toLowerCase(Locale.ROOT);
 
 			if (!this.values.add(valueLC)) {
-				throw new IllegalArgumentException("Duplicate value \"%s\" (after converting to lowercase)".formatted(valueLC));
+				throw new IllegalArgumentException(
+					"Duplicate value \"%s\" (after converting to lowercase)".formatted(valueLC)
+				);
 			}
 		}
 	}
@@ -108,7 +112,9 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			E[] constants = enumClass.getEnumConstants();
 
 			if (constants == null) {
-				throw new IllegalArgumentException("%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass));
+				throw new IllegalArgumentException(
+					"%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass)
+				);
 			}
 
 			var values = new LinkedHashSet<String>(constants.length);
@@ -117,8 +123,10 @@ public final class EnumArgumentType implements ArgumentType<String> {
 				var constNameLC = constant.name().toLowerCase(Locale.ROOT);
 
 				if (!values.add(constNameLC)) {
-					throw new IllegalArgumentException(("%s contains 2 constants with the same name after converting to lowercase " +
-							"(\"%s\")").formatted(enumClass, constNameLC));
+					throw new IllegalArgumentException(
+						"%s contains 2 constants with the same name after converting to lowercase (\"%s\")"
+							.formatted(enumClass, constNameLC)
+					);
 				}
 			}
 
@@ -147,18 +155,22 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 		boolean found = false;
 
-		for (var node : context.getNodes()) {
+		for (ParsedCommandNode<?> node : context.getNodes()) {
 			if (node.getNode().getName().equals(argumentName)) {
-				var argChildNode = node.getNode();
+				CommandNode<?> argChildNode = node.getNode();
 
 				if (argChildNode instanceof ArgumentCommandNode<?, ?> argNode) {
 					if (argNode.getType() instanceof EnumArgumentType enumConstantType) {
-						var expectedClass = enumConstantTypes.inverse().get(enumConstantType);
+						Class<? extends Enum<? extends Enum<?>>> expectedClass =
+								enumConstantTypes.inverse().get(enumConstantType);
 						if (expectedClass == null) {
-							throw new IllegalArgumentException(argumentName + "'s type does not have an associated enum class");
+							throw new IllegalArgumentException(
+								argumentName + "'s type does not have an associated enum class"
+							);
 						} else if (expectedClass != enumClass) {
-							throw new IllegalArgumentException(argumentName + "'s type is derived from  " + expectedClass
-									+ ", not from " + enumClass);
+							throw new IllegalArgumentException(
+								argumentName + "'s type is derived from  " + expectedClass + ", not from " + enumClass
+							);
 						}
 
 						found = true;
@@ -183,7 +195,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
 		}
 
-		for (var constant : constants) {
+		for (E constant : constants) {
 			if (constant.name().equalsIgnoreCase(value)) {
 				return constant;
 			}
@@ -231,7 +243,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		public void serializeToJson(Template type, JsonObject json) {
 			var valuesArr = new JsonArray();
 
-			for (var value : type.values) {
+			for (String value : type.values) {
 				valuesArr.add(value);
 			}
 

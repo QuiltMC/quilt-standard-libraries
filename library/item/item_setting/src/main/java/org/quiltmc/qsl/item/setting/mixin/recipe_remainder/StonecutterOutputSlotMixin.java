@@ -16,39 +16,52 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
+import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.StonecuttingRecipe;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLocation;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
-@Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
-public class StonecutterOutputSlotMixin extends Slot {
+@Mixin(targets = {"net/minecraft/screen/StonecutterScreenHandler$C_biccipxg"})
+abstract class StonecutterOutputSlotMixin extends Slot {
 	@Shadow
 	@Dynamic
 	StonecutterScreenHandler field_17639;
 
-	public StonecutterOutputSlotMixin(Inventory inventory, int i, int j, int k) {
-		super(inventory, i, j, k);
+	private StonecutterOutputSlotMixin() {
+		super(null, 0, 0, 0);
+		throw new AssertionError("dummy constructor called");
 	}
 
-	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+	// MCDev erroneously says this method and target are incorrect; the anonymous class is probably confusing it
+	@Redirect(
+			method = "onTakeItem",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"
+			)
+	)
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		int selectedRecipe = this.field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe).value() : null;
-		Item inputItem = slot.getStack().getItem();
-		int inputCount = slot.getStack().getCount();
+		Recipe<?> recipe = this.getRecipe();
+		ItemStack inputStack = slot.getStack();
+		Item inputItem = inputStack.getItem();
+		int inputCount = inputStack.getCount();
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,
@@ -59,5 +72,23 @@ public class StonecutterOutputSlotMixin extends Slot {
 		);
 
 		return new ItemStack(inputItem, Math.min(amount, inputCount));
+	}
+
+	@Unique
+	private @Nullable Recipe<?> getRecipe() {
+		int selectedRecipe = this.field_17639.getSelectedRecipe();
+
+		if (selectedRecipe == -1) {
+			return null;
+		}
+
+		Optional<RecipeHolder<StonecuttingRecipe>> recipe = this.field_17639
+				.method_17863()
+				.entries()
+				.get(selectedRecipe)
+				.recipe()
+				.recipe();
+
+		return recipe.map(RecipeHolder::value).orElse(null);
 	}
 }

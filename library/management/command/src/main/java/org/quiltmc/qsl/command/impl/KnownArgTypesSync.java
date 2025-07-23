@@ -21,9 +21,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.network.PacketByteBuf;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -55,7 +55,7 @@ public final class KnownArgTypesSync {
 	@ClientOnly
 	public static void registerClient() {
 		ClientLoginNetworking.registerGlobalReceiver(ID, (client, handler, buf, listenerAdder) -> client.submit(() -> {
-			var idents = ServerArgumentTypes.getIds();
+			Set<Identifier> idents = ServerArgumentTypes.getIds();
 			var responseBuf = new PacketByteBuf(Unpooled.buffer(idents.size() * 8));
 			responseBuf.writeCollection(idents, PacketByteBuf::writeIdentifier);
 			return responseBuf;

@@ -21,10 +21,14 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -35,17 +39,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import net.minecraft.resource.pack.PackManager;
-import net.minecraft.test.GameTest;
-import net.minecraft.test.StructureTestUtil;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.test.TestContext;
+import net.minecraft.test.TestData;
+import net.minecraft.test.TestEnvironmentDefinition;
 import net.minecraft.test.TestFailureLogger;
-import net.minecraft.test.TestFunction;
-import net.minecraft.test.TestFunctions;
 import net.minecraft.test.TestServer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Identifier;
+import net.minecraft.resource.pack.PackManager;
 import net.minecraft.world.storage.WorldSaveStorage;
 
+import org.quiltmc.loader.api.entrypoint.EntrypointContainer;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.testing.api.game.annotation.GameTest;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -62,6 +71,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	public static final boolean ENABLED = TriState.fromProperty("quilt.game_test").toBooleanOrElse(false);
 	public static final boolean COMMAND_ENABLED = TriState.fromProperty("quilt.game_test.command").toBooleanOrElse(ENABLED);
 	private static final Map<Class<?>, GameTestData> GAME_TESTS = new Reference2ObjectOpenHashMap<>();
+	public static final Map<Identifier, QuiltTestInstance> QUILT_TESTS = new HashMap<>();
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	/**
@@ -75,7 +85,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		LOGGER.info("By starting a Minecraft server you agree to its EULA.");
 
 		try (var server = TestServer.startServer(
-				thread -> TestServer.create(thread, storageSession, resourcePackManager, getTestFunctions(), BlockPos.ORIGIN)
+				thread -> TestServer.create(thread, storageSession, resourcePackManager, Optional.empty(), false)
 		)) {
 			// Server runs.
 			server.getThread().join();
@@ -84,12 +94,12 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 	}
 
-	private static Collection<TestFunction> getTestFunctions() {
-		return TestFunctions.getTestFunctions();
-	}
-
 	public static GameTestData getDataForTestClass(Class<?> declaringClass) {
 		return GAME_TESTS.get(declaringClass);
+	}
+
+	public static QuiltTestInstance getQuiltTest(Identifier id) {
+		return QUILT_TESTS.get(id);
 	}
 
 	/**
@@ -98,37 +108,40 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @param method the method that executes the test
 	 * @return the test function
 	 */
-	public static @NotNull TestFunction getTestFunction(@NotNull Method method) {
-		var data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
+	public static @NotNull QuiltTestInstance getTestFunction(@NotNull Method method, GameTest annotation, Identifier id) {
+		GameTestData data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
-		var gameTest = method.getAnnotation(GameTest.class);
 		String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
-		var testCaseName = data.namespace() + ':' + testSuiteName + '/' + method.getName().toLowerCase(Locale.ROOT);
+		String testCaseName = data.namespace() + ':' + testSuiteName + '/'
+				+ method.getName().toLowerCase(Locale.ROOT);
 
 		var structureName = testCaseName;
 
-		if (!gameTest.structureName().isEmpty()) {
-			structureName = gameTest.structureName();
+		if (!annotation.structureName().isEmpty()) {
+			structureName = annotation.structureName();
 
-			var structurePrefix = method.getDeclaringClass().getAnnotation(TestStructureNamePrefix.class);
+			TestStructureNamePrefix structurePrefix =
+					method.getDeclaringClass().getAnnotation(TestStructureNamePrefix.class);
 			if (structurePrefix != null) {
 				structureName = structurePrefix.value() + structureName;
 			}
 		}
 
-		return new QuiltTestFunction(
-				gameTest.batchId(),
-				testCaseName,
-				structureName,
-				StructureTestUtil.getRotation(gameTest.rotation()),
-				gameTest.timeout(),
-				gameTest.startDelay(),
-				gameTest.required(),
-				gameTest.method_57962(),
-				gameTest.requiredSuccesses(),
-				gameTest.maxAttempts(),
-				gameTest.method_57098(),
+		return new QuiltTestInstance(
+				new TestData<>(
+					Holder.createDirect(new TestEnvironmentDefinition.AllOf(List.of())),
+					Identifier.parse(structureName),
+					annotation.timeout(),
+					(int) annotation.startDelay(),
+					annotation.required(),
+					annotation.rotation(),
+					annotation.manualOnly(),
+					annotation.maxAttempts(),
+					annotation.requiredSuccesses(),
+					annotation.skyAccess()
+				),
 				QuiltGameTestImpl.getTestMethodInvoker(data, method),
+				id,
 				method.getDeclaringClass()
 		);
 	}
@@ -140,10 +153,10 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test method invoker
 	 */
 	private static Consumer<TestContext> getTestMethodInvoker(GameTestData data, Method method) {
-		final var testMethod = new TestMethod(method);
+		var testMethod = new TestMethod(method);
 
-		final Class<?> testClass = testMethod.getDeclaringClass();
-		final boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
+		Class<?> testClass = testMethod.getDeclaringClass();
+		boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
 
 		return testContext -> {
 			var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
@@ -159,7 +172,8 @@ public final class QuiltGameTestImpl implements ModInitializer {
 					try {
 						constructor = testClass.getConstructor();
 					} catch (NoSuchMethodException e) {
-						throw new RuntimeException("Test class (%s) provided by (%s) must have a public default or no args constructor"
+						throw new RuntimeException(
+							"Test class (%s) provided by (%s) must have a public default or no args constructor"
 								.formatted(testClass.getSimpleName(), data.namespace())
 						);
 					}
@@ -201,7 +215,17 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 
 		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
-		TestFunctions.register(testClass);
+		Stream.of(testClass.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(method -> {
+			GameTest annotation = method.getAnnotation(GameTest.class);
+			// only consider annotated methods
+			if (annotation != null) {
+				String methodName = method.getName().toLowerCase(Locale.ROOT);
+				QuiltTestInstance test =
+						QuiltGameTestImpl.getTestFunction(method, annotation, Identifier.of(modId, methodName));
+
+				QUILT_TESTS.put(test.id(), test);
+			}
+		});
 
 		LOGGER.debug("Registered test class {} for mod {}", testClass.getCanonicalName(), modId);
 
@@ -216,21 +240,33 @@ public final class QuiltGameTestImpl implements ModInitializer {
 
 		if (reportPath != null) {
 			try {
-				TestFailureLogger.setCompletionListener(new SavingXmlReportingTestCompletionListener(new File(reportPath)));
+				TestFailureLogger
+					.setCompletionListener(new SavingXmlReportingTestCompletionListener(new File(reportPath)));
 			} catch (ParserConfigurationException e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		var entrypointContainers = QuiltLoader.getEntrypointContainers(
+		List<EntrypointContainer<Object>> entrypointContainers = QuiltLoader.getEntrypointContainers(
 				QuiltGameTest.ENTRYPOINT_KEY, Object.class
 		);
 
-		for (var container : entrypointContainers) {
-			var entrypoint = container.getEntrypoint();
+		Registry.register(Registries.TEST_INSTANCE_TYPE, Identifier.of("quilt", "test_instance"), QuiltTestInstance.CODEC);
+
+		for (EntrypointContainer<Object> container : entrypointContainers) {
+			Object entrypoint = container.getEntrypoint();
 			Class<?> testClass = entrypoint.getClass();
 
-			registerTestClass(container.getProvider(), testClass, entrypoint instanceof QuiltGameTest gameTest ? gameTest : null);
+			registerTestClass(
+					container.getProvider(), testClass,
+					entrypoint instanceof QuiltGameTest gameTest ? gameTest : null
+			);
 		}
+
+		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(event -> {
+			for (QuiltTestInstance quiltTest : QUILT_TESTS.values()) {
+				event.register(RegistryKeys.TEST_INSTANCE, quiltTest.id(), () -> quiltTest);
+			}
+		});
 	}
 }

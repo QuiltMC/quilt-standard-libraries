@@ -56,8 +56,9 @@ public final class ImmutableMapBuilderUtil {
 		}
 
 		try {
-			 MULTIMAP_ENTRIES_GETTER = MethodHandles.privateLookupIn(ImmutableMultimap.Builder.class, MethodHandles.lookup())
-				 .findGetter(ImmutableMultimap.Builder.class, "builderMap", Map.class);
+			MULTIMAP_ENTRIES_GETTER = MethodHandles
+				.privateLookupIn(ImmutableMultimap.Builder.class, MethodHandles.lookup())
+				.findGetter(ImmutableMultimap.Builder.class, "builderMap", Map.class);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			LOGGER.error("Could not access ImmutableMultimap$Builder builderMap field, which is necessary for the Recipe API.");
 			throw new IllegalStateException(e);
@@ -66,6 +67,7 @@ public final class ImmutableMapBuilderUtil {
 
 	/**
 	 * Builds a mutable map from an immutable map.
+	 *
 	 * <p>This exists only because a builder will throw if a value is added 2 times. And copying a map is a bit bad.</p>
 	 *
 	 * @param builder the builder
@@ -80,7 +82,7 @@ public final class ImmutableMapBuilderUtil {
 			int size = (int) MAP_SIZE_GETTER.invoke(builder);
 			var map = new Object2ObjectOpenHashMap<K, V>(size);
 
-			for (var entry : entries) {
+			for (Map.Entry<K, V> entry : entries) {
 				if (entry == null) {
 					continue;
 				}
@@ -97,6 +99,7 @@ public final class ImmutableMapBuilderUtil {
 
 	/**
 	 * Builds a mutable map from an immutable map.
+	 *
 	 * <p>This exists only because a builder will throw if a value is added 2 times. And copying a map is a bit bad.</p>
 	 *
 	 * @param builder the builder
@@ -110,7 +113,7 @@ public final class ImmutableMapBuilderUtil {
 			var entries = (Map<K, Collection<V>>) MULTIMAP_ENTRIES_GETTER.invoke(builder);
 			var map = HashMultimap.<K, V>create();
 
-			for (var entry : entries.entrySet()) {
+			for (Map.Entry<K, Collection<V>> entry : entries.entrySet()) {
 				if (entry == null) {
 					continue;
 				}

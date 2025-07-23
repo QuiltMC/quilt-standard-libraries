@@ -59,7 +59,10 @@ public interface BiomeSelectionContext {
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (featureSupplier.value().getDecoratedFeatures().anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)) {
+				if (
+						featureSupplier.getValue().getDecoratedFeatures()
+							.anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)
+				) {
 					return true;
 				}
 			}
@@ -76,7 +79,7 @@ public interface BiomeSelectionContext {
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (this.getPlacedFeatureKey(featureSupplier.value()).orElse(null) == key) {
+				if (this.getPlacedFeatureKey(featureSupplier.getValue()).orElse(null) == key) {
 					return true;
 				}
 			}
@@ -115,8 +118,8 @@ public interface BiomeSelectionContext {
 	/**
 	 * Tries to determine whether this biome generates in a specific dimension, based on the {@link net.minecraft.world.gen.GeneratorOptions}
 	 * used by the current world-save.
-	 * <p>
-	 * If no dimension options exist for the given dimension key, {@code false} is returned.
+	 *
+	 * <p>If no dimension options exist for the given dimension key, {@code false} is returned.
 	 */
 	boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey);
 
@@ -133,7 +136,9 @@ public interface BiomeSelectionContext {
 	 * @param <T>         the type of the registry entry
 	 * @return {@code true} if the registry entry exists, or {@code false} otherwise
 	 */
-	<T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey);
+	<T> boolean doesRegistryEntryExist(
+			RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey
+	);
 
 	/**
 	 * {@return {@code true} if the given placed feature key exists in the registry, or {@code false} otherwise}

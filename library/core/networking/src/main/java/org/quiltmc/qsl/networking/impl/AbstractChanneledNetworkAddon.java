@@ -60,7 +60,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	public abstract void lateInit();
 
 	protected void registerPendingChannels(ChannelInfoHolder holder, NetworkPhase state) {
-		final Collection<CustomPayload.Id<?>> pending = holder.getPendingChannelsNames(state);
+		Collection<CustomPayload.Id<?>> pending = holder.quilt$getPendingChannelsNames(state);
 
 		if (!pending.isEmpty()) {
 			this.register(new ArrayList<>(pending));
@@ -102,7 +102,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	protected abstract <T extends CustomPayload> void receive(H handler, T buf);
 
 	protected void sendInitialChannelRegistrationPacket() {
-		final ChannelPayload payload = this.createRegistrationPacket(List.copyOf(this.getReceivableChannels()), true);
+		ChannelPayload payload = this.createRegistrationPacket(List.copyOf(this.getReceivableChannels()), true);
 
 		if (payload != null) {
 			this.sendPacket(this.createPacket(payload));
@@ -177,7 +177,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 			throw new IllegalStateException("Negotiated common packet version: %d but received packet with version: %d".formatted(this.commonVersion, payload.version()));
 		}
 
-		final String currentPhase = this.getPhase();
+		String currentPhase = this.getPhase();
 
 		if (currentPhase == null) {
 			// We don't support receiving the register packet during this phase. See getPhase() for supported phases.

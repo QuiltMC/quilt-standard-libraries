@@ -38,7 +38,7 @@ public class TestServerMixin {
 			method = "tick",
 			constant = @Constant(stringValue = "All {} required tests passed :)")
 	)
-	private static String replaceSuccessMessage(String original) {
+	private String replaceSuccessMessage(String original) {
 		// You may ask why, it's simple.
 		// The original emoticon is a bit... weird.
 		// And QSL members expressed some kind of interest into replacing it.

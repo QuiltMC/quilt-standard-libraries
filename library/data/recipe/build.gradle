@@ -15,9 +15,4 @@ qslModule {
 			testmodOnly("lifecycle_events")
 		}
 	}
-	entrypoints {
-		events {
-			values = ["org.quiltmc.qsl.recipe.impl.RecipeManagerImpl"]
-		}
-	}
 }

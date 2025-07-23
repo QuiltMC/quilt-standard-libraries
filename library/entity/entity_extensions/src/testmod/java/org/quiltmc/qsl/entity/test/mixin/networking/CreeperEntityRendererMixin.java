@@ -16,44 +16,65 @@
 
 package org.quiltmc.qsl.entity.test.mixin.networking;
 
-import org.quiltmc.qsl.entity.test.networking.CreeperWithItem;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.CreeperEntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.CreeperEntityModel;
+import net.minecraft.client.render.entity.state.CreeperRenderState;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Axis;
 
+import org.quiltmc.qsl.entity.test.networking.CreeperStateWithItem;
+import org.quiltmc.qsl.entity.test.networking.CreeperWithItem;
+
 @Mixin(CreeperEntityRenderer.class)
-public abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntity, CreeperEntityModel<CreeperEntity>> {
-	public CreeperEntityRendererMixin(Context context, CreeperEntityModel<CreeperEntity> entityModel, float f) {
-		super(context, entityModel, f);
+abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntity, CreeperRenderState, CreeperEntityModel> {
+	@SuppressWarnings("DataFlowIssue")
+	private CreeperEntityRendererMixin() {
+		super(null, null, 0);
+		throw new AssertionError("dummy constructor called");
 	}
 
 	@Override
-	public void render(CreeperEntity creeper, float yaw, float tickDelta, MatrixStack matrixStack,
-					   VertexConsumerProvider vertexConsumerProvider, int light) {
-		super.render(creeper, yaw, tickDelta, matrixStack, vertexConsumerProvider, light);
+	public void render(CreeperRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+		super.render(state, matrices, vertexConsumers, light);
 
-		float rotation = (creeper.age + tickDelta) / 20;
-		var stack = ((CreeperWithItem) creeper).getStack();
-		var itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+		CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
+		float rotation = extendedState.quilt$getStackRotation();
+		ItemStack stack = extendedState.quilt$getStack();
 
-		matrixStack.push();
-		matrixStack.translate(0, 2, 0);
-		matrixStack.scale(0.25f, 0.25f, 0.25f);
-		matrixStack.rotate(Axis.Y_POSITIVE.rotation(rotation));
-		itemRenderer.renderItem(
+		matrices.push();
+		matrices.translate(0, 2, 0);
+		matrices.scale(0.25f, 0.25f, 0.25f);
+		// method_22907 is rotate
+		matrices.method_22907(Axis.Y_POSITIVE.rotation(rotation));
+		MinecraftClient.getInstance().getItemRenderer().renderItem(
 				stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
-				matrixStack, vertexConsumerProvider, creeper.getWorld(), 0
+				matrices, vertexConsumers, null, 0
 		);
-		matrixStack.pop();
+		matrices.pop();
+	}
+
+	@Inject(
+			method = "updateState(Lnet/minecraft/entity/mob/CreeperEntity;"
+				+ "Lnet/minecraft/client/render/entity/state/CreeperRenderState;F)V",
+			at = @At("TAIL")
+	)
+	private void updateStack(
+			CreeperEntity creeper, CreeperRenderState state, float tickDelta, CallbackInfo ci
+	) {
+		CreeperStateWithItem extendedState = (CreeperStateWithItem) state;
+		extendedState.quilt$setStack(((CreeperWithItem) creeper).quilt$getStack());
+		extendedState.quilt$setStackRotation((state.age + tickDelta) / 20);
 	}
 }

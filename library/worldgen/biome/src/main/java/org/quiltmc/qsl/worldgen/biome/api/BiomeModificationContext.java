@@ -254,13 +254,13 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		void setMusic(Optional<MusicSound> sound);
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		default void setMusic(@NotNull MusicSound sound) {
 			this.setMusic(Optional.of(sound));
@@ -268,7 +268,7 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getMusic()
-		 * @see BiomeEffects.Builder#music(MusicSound)
+		 * @see BiomeEffects.Builder#method_27346(MusicSound)
 		 */
 		default void clearMusic() {
 			this.setMusic(Optional.empty());
@@ -304,33 +304,16 @@ public interface BiomeModificationContext {
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
 
 		/**
-		 * Adds a configured carver to one of this biomes generation steps.
+		 * Adds a configured carver to this biome.
 		 */
-		void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> carverKey);
-
-		/**
-		 * Removes all carvers with the given key from one of this biomes generation steps.
-		 *
-		 * @return True if any carvers were removed.
-		 */
-		boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey);
+		void addCarver(RegistryKey<ConfiguredCarver<?>> carverKey);
 
 		/**
 		 * Removes all carvers with the given key from all of this biomes generation steps.
 		 *
 		 * @return {@code true} if any carvers were removed, or {@code false} otherwise
 		 */
-		default boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
-			boolean anyFound = false;
-
-			for (GenerationStep.Carver step : GenerationStep.Carver.values()) {
-				if (this.removeCarver(step, configuredCarverKey)) {
-					anyFound = true;
-				}
-			}
-
-			return anyFound;
-		}
+		boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey);
 	}
 
 	interface SpawnSettingsContext {
@@ -346,32 +329,42 @@ public interface BiomeModificationContext {
 		 * Associated JSON property: {@code spawners}.
 		 *
 		 * @see SpawnSettings#getSpawnEntries(SpawnGroup)
-		 * @see SpawnSettings.Builder#spawn(SpawnGroup, SpawnSettings.SpawnEntry)
+		 * @see SpawnSettings.Builder#spawn(SpawnGroup, int, SpawnSettings.SpawnEntry)
 		 */
-		void addSpawn(SpawnGroup spawnGroup, SpawnSettings.SpawnEntry spawnEntry);
+		void addSpawn(SpawnGroup spawnGroup, SpawnSettings.SpawnEntry spawnEntry, int weight);
+
+		/**
+		 * Associated JSON property: {@code spawners}.
+		 *
+		 * @see SpawnSettings#getSpawnEntries(SpawnGroup)
+		 * @see SpawnSettings.Builder#spawn(SpawnGroup, int, SpawnSettings.SpawnEntry)
+		 */
+		default void addSpawn(SpawnGroup spawnGroup, SpawnSettings.SpawnEntry spawnEntry) {
+			this.addSpawn(spawnGroup, spawnEntry, 1);
+		}
 
 		/**
 		 * Removes any spawns matching the given predicate from this biome, and returns true if any matched.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		boolean removeSpawns(BiPredicate<SpawnGroup, SpawnSettings.SpawnEntry> predicate);
 
 		/**
 		 * Removes all spawns of the given entity type.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 *
 		 * @return True if any spawns were removed.
 		 */
 		default boolean removeSpawnsOfEntityType(EntityType<?> entityType) {
-			return this.removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type == entityType);
+			return this.removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type() == entityType);
 		}
 
 		/**
 		 * Removes all spawns of the given spawn group.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns(SpawnGroup group) {
 			this.removeSpawns((spawnGroup, spawnEntry) -> spawnGroup == group);
@@ -379,8 +372,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes all spawns.
-		 * <p>
-		 * Associated JSON property: {@code spawners}.
+		 *
+		 * <p>Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns() {
 			this.removeSpawns((spawnGroup, spawnEntry) -> true);
@@ -396,8 +389,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes a spawn cost entry for a given entity type.
-		 * <p>
-		 * Associated JSON property: {@code spawn_costs}.
+		 *
+		 * <p>Associated JSON property: {@code spawn_costs}.
 		 */
 		void clearSpawnCost(EntityType<?> entityType);
 	}

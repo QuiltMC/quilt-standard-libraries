@@ -16,28 +16,69 @@
 
 package org.quiltmc.qsl.registry.attachment.test.mixin.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.hud.debug.DebugHud;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
 
 import org.quiltmc.qsl.registry.attachment.test.client.ClientAttachmentTest;
 
 @Mixin(DebugHud.class)
-public abstract class DebugHudMixin {
-	@Inject(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
-			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
-			List<String> list, BlockPos blockPos, BlockState blockState) {
-		Boolean value = ClientAttachmentTest.BASED.getNullable(blockState.getBlock());
+abstract class DebugHudMixin {
+	@ModifyExpressionValue(
+			method = "getRightText", require = 1, allow = 1,
+			at = @At(
+				value = "INVOKE", remap = false,
+				target = "Lcom/google/common/collect/Lists;newArrayList([Ljava/lang/Object;)Ljava/util/ArrayList;"
+			)
+	)
+	private ArrayList<String> shareLines(ArrayList<String> list, @Share("lines") LocalRef<List<String>> lines) {
+		lines.set(list);
+		return list;
+	}
+
+	@ModifyExpressionValue(
+			method = "getRightText", require = 1, allow = 1,
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/world/ClientWorld;getBlockState(Lnet/minecraft/util/math/BlockPos;)"
+					+ "Lnet/minecraft/block/BlockState;"
+			)
+	)
+	private BlockState shareState(BlockState blockState, @Share("state") LocalRef<BlockState> state) {
+		state.set(blockState);
+		return blockState;
+	}
+
+	// puts BASED after block state
+	@Inject(
+			method = "getRightText",
+			slice = @Slice(from = @At(
+				value = "FIELD",
+				target = "Lnet/minecraft/registry/Registries;BLOCK:Lnet/minecraft/registry/DefaultedRegistry;"
+			)),
+			at = @At(
+				value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER,
+				target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
+			)
+	)
+	public void quilt$addTestAttachment(
+			CallbackInfoReturnable<List<String>> cir,
+			@Share("lines") LocalRef<List<String>> lines,
+			@Share("state") LocalRef<BlockState> state
+	) {
+		Boolean value = ClientAttachmentTest.BASED.getNullable(state.get().getBlock());
 		String valueStr;
 		if (value == null) {
 			valueStr = Formatting.BLUE + "unset";
@@ -47,6 +88,6 @@ public abstract class DebugHudMixin {
 			valueStr = Formatting.RED + "no";
 		}
 
-		list.add("[Quilt] based: " + valueStr);
+		lines.get().add("[Quilt] based: " + valueStr);
 	}
 }

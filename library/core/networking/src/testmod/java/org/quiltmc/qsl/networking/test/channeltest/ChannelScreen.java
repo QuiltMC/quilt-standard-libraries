@@ -23,7 +23,6 @@ import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
@@ -49,7 +48,12 @@ final class ChannelScreen extends Screen {
 		this.addDrawableSelectableElement(ButtonWidget.builder(Text.literal("Close"), button -> this.closeScreen())
 				.positionAndSize(this.width / 2 - 60, this.height - 25, 120, 20)
 				.build());
-		this.channelList = this.addDrawable(new ChannelList(this.client, this.width, this.height - 60, 30, this.height - 30, this.textRenderer.fontHeight + 2));
+		this.channelList = this.addDrawable(new ChannelList(
+			this.client,
+			this.width, this.height - 60,
+			30, this.height - 30,
+			this.textRenderer.fontHeight + 2
+		));
 	}
 
 	@Override
@@ -59,9 +63,9 @@ final class ChannelScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
-			final var clickMe = Text.of("Click S2C or C2S to view supported channels");
+			var clickMe = Text.of("Click S2C or C2S to view supported channels");
 
-			final int textWidth = this.textRenderer.getWidth(clickMe);
+			int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions
 			graphics.drawText(
 					this.textRenderer,

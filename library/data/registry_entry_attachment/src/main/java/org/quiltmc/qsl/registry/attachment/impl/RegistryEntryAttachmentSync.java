@@ -56,8 +56,7 @@ public final class RegistryEntryAttachmentSync {
 	/**
 	 * Indicates the packet version.
 	 *
-	 * <p>
-	 * This value should be updated whenever packet formats are changed.
+	 * <p>This value should be updated whenever packet formats are changed.
 	 */
 	private static final byte PACKET_VERSION = 2;
 

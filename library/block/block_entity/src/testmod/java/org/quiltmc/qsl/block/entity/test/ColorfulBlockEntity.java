@@ -59,7 +59,7 @@ public class ColorfulBlockEntity extends BlockEntity implements QuiltBlockEntity
 		super.readNbtImpl(nbt, lookupProvider);
 
 		try {
-			this.color = Integer.parseInt(nbt.getString("color"), 16);
+			this.color = Integer.parseInt(nbt.getString("color").orElseThrow(), 16);
 		} catch (NumberFormatException e) {
 			this.color = 0;
 		}

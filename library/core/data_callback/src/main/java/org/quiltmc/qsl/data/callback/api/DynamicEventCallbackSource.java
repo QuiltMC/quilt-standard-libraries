@@ -36,6 +36,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import com.google.gson.Strictness;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -43,7 +44,6 @@ import net.minecraft.registry.ResourceFileNamespace;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.qsl.base.api.event.Event;
 
@@ -58,7 +58,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 public class DynamicEventCallbackSource<T extends CodecAware> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private static final Gson GSON = new GsonBuilder().setLenient().create();
+	private static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT).create();
 
 	protected final @NotNull Identifier resourcePath;
 
@@ -123,13 +123,13 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	private void updateListeners(Identifier phase) {
 		var combinedMap = new TreeMap<Identifier, T>();
 
-		for (var entry : this.listeners.entrySet()) {
+		for (Map.Entry<Identifier, Pair<Identifier, T>> entry : this.listeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
-		for (var entry : this.dynamicListeners.entrySet()) {
+		for (Map.Entry<Identifier, Pair<Identifier, T>> entry : this.dynamicListeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
@@ -183,23 +183,28 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
 		var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
-		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
+		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace
+				.createJson(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
-		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
+		Set<Map.Entry<Identifier, Resource>> resources =
+				resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
 			Identifier id = entry.getKey();
 			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
 
-			var resource = entry.getValue();
+			Resource resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
-				var json = GSON.fromJson(reader, JsonElement.class);
+				JsonElement json = GSON.fromJson(reader, JsonElement.class);
 				DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
 
 				if (result.result().isPresent()) {
-					var pair = result.result().get();
+					Pair<Identifier, T> pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);
 				} else {
-					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, id, result.error().get().message());
+					LOGGER.error(
+							"Couldn't parse data file {} from {}: {}",
+							unwrappedIdentifier, id, result.error().orElseThrow().message()
+					);
 				}
 			} catch (IOException e) {
 				LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, id, e);

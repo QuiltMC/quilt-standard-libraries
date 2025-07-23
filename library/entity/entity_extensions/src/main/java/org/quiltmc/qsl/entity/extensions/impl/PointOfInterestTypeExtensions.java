@@ -46,7 +46,7 @@ public interface PointOfInterestTypeExtensions {
 	void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states);
 
 	/**
-	 * Replaces the existing {@link PointOfInterestType#blockStates} after construction.
+	 * Replaces the existing {@link PointOfInterestType#blockStates()} after construction.
 	 *
 	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
 	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.

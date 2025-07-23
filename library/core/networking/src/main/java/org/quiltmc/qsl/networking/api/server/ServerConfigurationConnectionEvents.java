@@ -19,7 +19,6 @@ package org.quiltmc.qsl.networking.api.server;
 import net.minecraft.server.network.ServerConfigurationNetworkHandler;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
@@ -43,8 +42,8 @@ public final class ServerConfigurationConnectionEvents {
 
 	/**
 	 * An event for notification when the server configuration network handler is ready to send packets to the client.
-	 * <p>
-	 * At this stage, the network handler is ready to send packets to the client.
+	 *
+	 * <p>At this stage, the network handler is ready to send packets to the client.
 	 */
 	public static final Event<Join> READY = Event.create(Join.class, callbacks -> (handler, sender, server) -> {
 		for (Join callback : callbacks) {
@@ -54,8 +53,8 @@ public final class ServerConfigurationConnectionEvents {
 
 	/**
 	 * An event for the disconnection of the server configuration network handler.
-	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 *
+	 * <p>No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, server) -> {
 		for (Disconnect callback : callbacks) {
@@ -89,7 +88,9 @@ public final class ServerConfigurationConnectionEvents {
 	 */
 	@FunctionalInterface
 	public interface Join extends EventAwareListener {
-		void onConfigurationReady(ServerConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server);
+		void onConfigurationReady(
+				ServerConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server
+		);
 	}
 
 	/**

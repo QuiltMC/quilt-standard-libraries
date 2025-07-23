@@ -54,8 +54,8 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 		return !Registries.ROOT.contains((RegistryKey) registryKey);
 	}
 
-	public static void populateTags(Map<TagKey<?>, List<Holder<?>>> tags) {
-		TAGS.putAll(tags);
+	public static void populateTag(TagKey<?> key, List<Holder<?>> contents) {
+		TAGS.put(key, contents);
 	}
 
 	public static void resetTags() {

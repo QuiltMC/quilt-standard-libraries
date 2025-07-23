@@ -60,7 +60,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 					).then(literal("biome")
 							.executes(context -> {
 								TagsTestMod.displayTag(TEST_CLIENT_BIOME_TAG,
-										context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
+										context.getSource().getRegistryManager().getLookupOrThrow(RegistryKeys.BIOME),
 										FEEDBACK_CONSUMER
 								);
 								return 0;

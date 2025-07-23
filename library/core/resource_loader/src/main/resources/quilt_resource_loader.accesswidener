@@ -8,3 +8,5 @@ accessible  class   net/minecraft/client/MinecraftClient$LoadingContext
 # accessible  method  net/minecraft/resource/pack/PackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/PackProfile$PackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/PackProfile$Info;Lnet/minecraft/resource/pack/PackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/PackSource;)V
 accessible  method  net/minecraft/resource/pack/BuiltinPackProvider wrapToFactory (Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/PackProfile$PackFactory;
 accessible  method  net/minecraft/client/gui/widget/list/EntryListWidget getHoveredEntry  ()Lnet/minecraft/client/gui/widget/list/EntryListWidget$Entry;
+
+accessible  method  com/mojang/blaze3d/texture/NativeImage write (Ljava/nio/channels/WritableByteChannel;)Z

@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.mixin;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,18 +31,21 @@ import net.minecraft.registry.Registries;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @Mixin(Blocks.class)
-public abstract class BlocksMixin {
-	private static final Logger quilt$LOGGER = LogUtils.getLogger();
+abstract class BlocksMixin {
+	@Unique
+	private static final Logger LOGGER = LogUtils.getLogger();
 
+	// Adds a block registration event that ensures any blocks registered after Block::<clinit> (most modded blocks)
+	// are added to STATE_IDS and their states' caches get initialized.
 	@Inject(method = "<clinit>", at = @At("RETURN"))
-	private static void onInit(CallbackInfo ci) {
+	private static void addLateRegistrationEvent(CallbackInfo ci) {
 		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
-			context.value().getLootTableId();
 			context.value().getStateManager().getStates().forEach((state) -> {
 				if (Block.STATE_IDS.getRawId(state) == -1) {
 					Block.STATE_IDS.add(state);
+					state.initShapeCache();
 				} else {
-					quilt$LOGGER.warn("BlockState " + state.toString() + " has been added twice!");
+					LOGGER.warn("BlockState {} has been added twice!", state.toString());
 				}
 			});
 		});

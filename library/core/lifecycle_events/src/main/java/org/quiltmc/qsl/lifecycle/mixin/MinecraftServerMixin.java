@@ -17,17 +17,15 @@
 package org.quiltmc.qsl.lifecycle.mixin;
 
 import java.util.Iterator;
-import java.util.Map;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.server.WorldGenerationProgressListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.llamalad7.mixinextras.sugar.Local;
 
+import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
@@ -49,7 +47,8 @@ abstract class MinecraftServerMixin {
 			method = "runServer",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/MinecraftServer;createServerMetadata()Lnet/minecraft/server/ServerMetadata;",
+					target = "Lnet/minecraft/server/MinecraftServer;createServerMetadata()"
+						+ "Lnet/minecraft/server/ServerMetadata;",
 					ordinal = 0,
 					shift = At.Shift.AFTER
 			)
@@ -72,7 +71,10 @@ abstract class MinecraftServerMixin {
 
 	@Inject(
 			method = "tick",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V")
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V"
+			)
 	)
 	private void startServerTick(CallbackInfo info) {
 		ServerTickEvents.START.invoker().startServerTick((MinecraftServer) (Object) this);
@@ -85,9 +87,18 @@ abstract class MinecraftServerMixin {
 
 	// Loading/unloading worlds
 
-	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-	private void loadWorld(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, @Local ServerWorld world) {
-		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, (ServerWorld) world);
+	@Inject(
+			method = "createWorlds",
+			at = @At(
+				value = "INVOKE",
+				target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+			)
+	)
+	private void loadWorld(
+			WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci,
+			@Local(ordinal = 0) ServerWorld world
+	) {
+		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, world);
 	}
 
 	@Inject(

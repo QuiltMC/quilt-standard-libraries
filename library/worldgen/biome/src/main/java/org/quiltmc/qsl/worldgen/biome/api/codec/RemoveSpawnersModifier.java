@@ -35,8 +35,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes mob spawners from biomes.
- * <p>
- * The biome modifier identifier is {@code quilt:remove_spawners}.
+ *
+ * <p>The biome modifier identifier is {@code quilt:remove_spawners}.
  *
  * @param entityTypes identifiers of the entity types to remove
  * @param groups      the spawn groups to remove the spawners from; if not provided, defaults to all spawn groups
@@ -49,8 +49,10 @@ public record RemoveSpawnersModifier(
 	public static final Identifier CODEC_ID = Identifier.of("quilt", "remove_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),
-			CodecHelpers.listOrValue(Identifier.CODEC).xmap(Set::copyOf, List::copyOf).fieldOf("entity_types").forGetter(RemoveSpawnersModifier::entityTypes),
-			CodecHelpers.listOrValue(SpawnGroup.CODEC).optionalFieldOf("groups", Arrays.asList(SpawnGroup.values()))
+			CodecHelpers.listOrValue(Identifier.CODEC).xmap(Set::copyOf, List::copyOf).fieldOf("entity_types")
+					.forGetter(RemoveSpawnersModifier::entityTypes),
+			CodecHelpers.listOrValue(SpawnGroup.CODEC)
+					.optionalFieldOf("groups", Arrays.asList(SpawnGroup.values()))
 					.xmap(Set::copyOf, List::copyOf)
 					.forGetter(RemoveSpawnersModifier::groups)
 	).apply(instance, RemoveSpawnersModifier::new));
@@ -63,7 +65,7 @@ public record RemoveSpawnersModifier(
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		modificationContext.getSpawnSettings().removeSpawns((group, entry) ->
-				this.groups.contains(group) && this.entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type)));
+				this.groups.contains(group) && this.entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type())));
 	}
 
 	@Override

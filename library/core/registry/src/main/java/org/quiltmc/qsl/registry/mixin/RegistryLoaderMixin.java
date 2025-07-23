@@ -18,31 +18,33 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.llamalad7.mixinextras.sugar.Local;
 
-import net.minecraft.registry.*;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryLoader;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
-import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 
 @Mixin(RegistryLoader.class)
-public abstract class RegistryLoaderMixin {
+abstract class RegistryLoaderMixin {
 	@Shadow
 	@Final
 	@Mutable
 	public static List<RegistryLoader.DecodingData<?>> WORLDGEN_REGISTRIES;
 
 	@Shadow
-	@Final
 	@Mutable
 	public static List<RegistryLoader.DecodingData<?>> SYNCED_REGISTRIES;
 
@@ -57,43 +59,40 @@ public abstract class RegistryLoaderMixin {
 	// TODO is there a better solution for acquiring the used resource manager?
 	@Inject(method = "loadFromResource", at = @At("HEAD"))
 	private static void cacheResourceManager(
-			ResourceManager resourceManager,
-			DynamicRegistryManager registryManager,
-			List<RegistryLoader.DecodingData<?>> entries,
-			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
+			ResourceManager resourceManager, List<HolderLookup.RegistryLookup<?>> lookups,
+			List<RegistryLoader.DecodingData<?>> registryDatas,
+			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir
+	) {
 		cachedResourceManager.set(resourceManager);
 	}
 
 	@Inject(
 			method = "load",
-			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = At.Shift.AFTER),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			at = @At(
+				value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER,
+				target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V"
+			)
 	)
 	private static void onBeforeLoad(
-			RegistryLoader.LoadingFunction function,
-			DynamicRegistryManager registryManager,
-			List<RegistryLoader.DecodingData<?>> data,
+			RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups,
+			List<RegistryLoader.DecodingData<?>> registryDatas,
 			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
-			Map<RegistryKey<?>, Exception> map, List<RegistryLoader.ContentLoader<?>> list, RegistryOps.RegistryInfoLookup registryInfoLookup) {
+			@Local(ordinal = 2) List<RegistryLoader.ContentLoader<?>> list
+	) {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
-				new DynamicRegistryManagerSetupContextImpl(cachedResourceManager.get(), list.stream().map(RegistryLoader.ContentLoader::registry))
+			new DynamicRegistryManagerSetupContextImpl(
+				cachedResourceManager.get(), list.stream().map(RegistryLoader.ContentLoader::registry)
+			)
 		);
 		cachedResourceManager.remove();
 	}
 
-	@Inject(
-			method = "load",
-			at = @At(
-					value = "INVOKE",
-					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
-					ordinal = 1,
-					shift = At.Shift.AFTER
-			)
-	)
-	private static void onAfterLoad(RegistryLoader.LoadingFunction function,
-									DynamicRegistryManager registryManager,
-									List<RegistryLoader.DecodingData<?>> data,
-									CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
-		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);
+	@Inject(method = "load", at = @At(value = "RETURN"))
+	private static void onAfterLoad(
+			RegistryLoader.LoadingFunction loadingFunction, List<HolderLookup.RegistryLookup<?>> lookups,
+			List<RegistryLoader.DecodingData<?>> registryDatas,
+			CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir
+	) {
+		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(cir.getReturnValue());
 	}
 }

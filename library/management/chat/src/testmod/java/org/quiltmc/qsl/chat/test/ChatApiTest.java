@@ -37,43 +37,62 @@ public class ChatApiTest implements ModInitializer {
 			System.out.println(message.getTypes());
 		});
 
-		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof RawChatC2SMessage raw) {
-				return raw.withMessage(raw.getMessage() + ", wow!");
-			}
-
-			return abstractMessage;
-		});
-
-		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {
-				Text content = systemS2CMessage.getContent();
-				if (new Random().nextBoolean()) {
-					return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
-				}
-			}
-
-			return abstractMessage;
-		});
-
-		final boolean[] didEnableBad = {false};
-		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof ChatC2SMessage chatC2SMessage) {
-				if (chatC2SMessage.getMessage().startsWith("!register_bad")) {
-					if (!didEnableBad[0]) {
-						didEnableBad[0] = true;
-						this.registerBadEvents();
-						return true;
+		QuiltChatEvents.MODIFY.register(
+				EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND),
+				abstractMessage -> {
+					if (abstractMessage instanceof RawChatC2SMessage raw) {
+						return raw.withMessage(raw.getMessage() + ", wow!");
 					}
-				}
-			}
 
-			return false;
-		});
+					return abstractMessage;
+				}
+		);
+
+		QuiltChatEvents.MODIFY.register(
+				EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND),
+				abstractMessage -> {
+					if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {
+						Text content = systemS2CMessage.getContent();
+						if (new Random().nextBoolean()) {
+							return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
+						}
+					}
+
+					return abstractMessage;
+				}
+		);
+
+		boolean[] didEnableBad = {false};
+		QuiltChatEvents.CANCEL.register(
+				EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND),
+				abstractMessage -> {
+					if (abstractMessage instanceof ChatC2SMessage chatC2SMessage) {
+						if (chatC2SMessage.getMessage().startsWith("!register_bad")) {
+							if (!didEnableBad[0]) {
+								didEnableBad[0] = true;
+								this.registerBadEvents();
+								return true;
+							}
+						}
+					}
+
+					return false;
+				}
+		);
 	}
 
 	private void registerBadEvents() {
-		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new SystemS2CMessage(abstractMessage.getPlayer(), abstractMessage.isClient(), Text.literal("im an evil event, muhahah"), false));
-		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new Random().nextInt(3) == 0 ? null : abstractMessage );
+		QuiltChatEvents.MODIFY.register(
+				EnumSet.allOf(QuiltMessageType.class),
+				abstractMessage -> new SystemS2CMessage(
+					abstractMessage.getPlayer(), abstractMessage.isClient(),
+					Text.literal("im an evil event, muhahah"),
+					false
+				)
+		);
+		QuiltChatEvents.MODIFY.register(
+				EnumSet.allOf(QuiltMessageType.class),
+				abstractMessage -> new Random().nextInt(3) == 0 ? null : abstractMessage
+		);
 	}
 }

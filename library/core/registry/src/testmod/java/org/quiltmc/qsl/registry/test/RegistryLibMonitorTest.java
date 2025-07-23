@@ -28,6 +28,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -37,14 +39,23 @@ import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 public class RegistryLibMonitorTest implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Registry Lib Monitor Test");
 
-	private static final Identifier TEST_BLOCK_A_ID = Identifier.of("quilt_registry_test_monitors", "test_block_a");
-	private static final Identifier TEST_BLOCK_B_ID = Identifier.of("quilt_registry_test_monitors", "test_block_b");
+	private static final RegistryKey<Block> TEST_BLOCK_A_KEY = RegistryKey.of(
+			RegistryKeys.BLOCK,
+			Identifier.of("quilt_registry_test_monitors", "test_block_a")
+	);
+	private static final RegistryKey<Block> TEST_BLOCK_B_KEY = RegistryKey.of(
+			RegistryKeys.BLOCK,
+			Identifier.of("quilt_registry_test_monitors", "test_block_b")
+	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
+		Block blockA = register(
+				TEST_BLOCK_A_KEY,
+				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_A_KEY))
+		);
 
-		var monitor = RegistryMonitor.create(Registries.BLOCK)
+		RegistryMonitor<Block> monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
 
 		var allSet = new HashSet<Block>();
@@ -61,14 +72,21 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
+		Block blockB = register(
+				TEST_BLOCK_B_KEY,
+				new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK).key(TEST_BLOCK_B_KEY))
+		);
 
 		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
-			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");
+			throw new AssertionError(
+				"Entries " + allSet + " found by RegistryMonitor via forAll were not as expected"
+			);
 		}
 
 		if (upcomingSet.contains(blockA) || !upcomingSet.contains(blockB)) {
-			throw new AssertionError("Entries " + upcomingSet + " found by RegistryMonitor via forUpcoming were not as expected");
+			throw new AssertionError(
+				"Entries " + upcomingSet + " found by RegistryMonitor via forUpcoming were not as expected"
+			);
 		}
 	}
 }

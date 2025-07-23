@@ -16,28 +16,36 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import static org.quiltmc.qsl.item.extensions.test.ItemExtensionTestUtil.createItemKey;
+
 import net.minecraft.item.Item;
-import net.minecraft.item.MiningToolItem;
-import net.minecraft.item.ToolMaterials;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.unmapped.C_bemqmqey;
 import net.minecraft.util.Rarity;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class TransitiveAccessWidenerTest implements ModInitializer {
-	public static final Item MODDED_MINING_TOOL = new MiningToolItem(
-			ToolMaterials.DIAMOND,
-			BlockTags.CORAL_BLOCKS,
-			new Item.Settings().maxCount(1).rarity(Rarity.RARE)
+	private static final RegistryKey<Item> MODDED_MINING_TOOL_KEY = createItemKey("modded_mining_tool");
+
+	public static final Item MODDED_MINING_TOOL = new Item(
+			new Item.Settings()
+				.key(MODDED_MINING_TOOL_KEY)
+				.maxCount(1)
+				.method_66330(
+					C_bemqmqey.INCORRECT_FOR_DIAMOND_TOOL,
+					1.0F,
+					-2.8F
+				)
+				.rarity(Rarity.RARE)
 	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Registers a custom mining tool, which is not possible without an access widener.
-		Registry.register(Registries.ITEM, Identifier.of(mod.metadata().id(), "modded_mining_tool"), MODDED_MINING_TOOL);
+		Registry.register(Registries.ITEM, MODDED_MINING_TOOL_KEY, MODDED_MINING_TOOL);
 	}
 }

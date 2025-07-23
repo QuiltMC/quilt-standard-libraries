@@ -23,11 +23,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.server.network.ServerConfigurationNetworkHandler;
 import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerConfigurationNetworkHandler;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
@@ -36,11 +38,11 @@ import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAcce
 
 /**
  * Offers access to configuration stage server-side networking functionalities.
- * <p>
- * Server-side networking functionalities include receiving server-bound packets, sending client-bound packets,
+ *
+ * <p>Server-side networking functionalities include receiving server-bound packets, sending client-bound packets,
  * and events related to server-side network handlers.
- * <p>
- * This class should be only used for the logical server.
+ *
+ * <p>This class should be only used for the logical server.
  *
  * @see ServerLoginNetworking
  * @see ServerPlayNetworking
@@ -50,9 +52,11 @@ public final class ServerConfigurationNetworking {
 	/**
 	 * Registers a handler to a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
-	 * Use {@link #unregisterReceiver(ServerConfigurationNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
+	 *
+	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no
+	 * change will be made.
+	 * Use {@link #unregisterReceiver(ServerConfigurationNetworkHandler, CustomPayload.Id)} to unregister the existing
+	 * handler.
 	 *
 	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
@@ -67,8 +71,8 @@ public final class ServerConfigurationNetworking {
 	/**
 	 * Removes the handler of a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * The {@code channel} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -76,7 +80,9 @@ public final class ServerConfigurationNetworking {
 	 * @see ServerConfigurationNetworking#unregisterReceiver(ServerConfigurationNetworkHandler, CustomPayload.Id)
 	 */
 	@Nullable
-	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterGlobalReceiver(CustomPayload.Id<?> channelName) {
+	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterGlobalReceiver(
+			CustomPayload.Id<?> channelName
+	) {
 		return ServerNetworkingImpl.CONFIGURATION.unregisterGlobalReceiver(channelName);
 	}
 
@@ -92,14 +98,20 @@ public final class ServerConfigurationNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerConfigurationNetworking#registerGlobalReceiver(CustomPayload.Id, CustomChannelReceiver)} since
-	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationNetworkHandler}.
-	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(CustomPayload.Id, ServerLoginNetworking.QueryResponseReceiver)}
-	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT} to register the channel handler.
-	 * <p>
-	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
-	 * Use {@link #unregisterReceiver(ServerConfigurationNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
+	 * This method differs from
+	 * {@link ServerConfigurationNetworking#registerGlobalReceiver(CustomPayload.Id, CustomChannelReceiver)} since
+	 * the channel handler will only be applied to the client represented by the
+	 * {@link ServerConfigurationNetworkHandler}.
+	 *
+	 * <p>For example, if you only register a receiver using this method when a
+	 * {@linkplain ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)}
+	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT}
+	 * to register the channel handler.
+	 *
+	 * <p>If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no
+	 * change will be made.
+	 * Use {@link #unregisterReceiver(ServerConfigurationNetworkHandler, CustomPayload.Id)} to unregister the existing
+	 * handler.
 	 *
 	 * @param networkHandler the handler
 	 * @param channelName    the identifier of the channel
@@ -107,7 +119,10 @@ public final class ServerConfigurationNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerConfigurationConnectionEvents#INIT
 	 */
-	public static <T extends CustomPayload> boolean registerReceiver(ServerConfigurationNetworkHandler networkHandler, CustomPayload.Id<T> channelName, CustomChannelReceiver<T> channelHandler) {
+	public static <T extends CustomPayload> boolean registerReceiver(
+			ServerConfigurationNetworkHandler networkHandler, CustomPayload.Id<T> channelName,
+			CustomChannelReceiver<T> channelHandler
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
@@ -115,14 +130,16 @@ public final class ServerConfigurationNetworking {
 
 	/**
 	 * Removes the handler of a channel.
-	 * <p>
-	 * The {@code channelName} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterReceiver(ServerConfigurationNetworkHandler networkHandler, CustomPayload.Id<?> channelName) {
+	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterReceiver(
+			ServerConfigurationNetworkHandler networkHandler, CustomPayload.Id<?> channelName
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -165,7 +182,6 @@ public final class ServerConfigurationNetworking {
 
 		return ServerNetworkingImpl.getAddon(handler).getSendableChannels().contains(channelName);
 	}
-
 
 	/**
 	 * Creates a packet from a payload which may be sent to a connected client.
@@ -226,9 +242,11 @@ public final class ServerConfigurationNetworking {
 	public interface CustomChannelReceiver<T extends CustomPayload> {
 		/**
 		 * Receives an incoming packet.
-		 * <p>
-		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
-		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft server instance.
+		 *
+		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be
+		 * {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft
+		 * server instance.
 		 * <pre>{@code
 		 * ServerConfigurationNetworking.registerReceiver(Identifier.of("mymod", "boom"), (server, handler, data, responseSender) -> {
 		 * 	boolean fire = data.readBoolean();
@@ -241,10 +259,14 @@ public final class ServerConfigurationNetworking {
 		 * }</pre>
 		 *
 		 * @param server         the server
-		 * @param handler        the network handler that received this packet, representing the client who sent the packet
+		 * @param handler        the network handler that received this packet, representing the client who sent the
+		 *                            packet
 		 * @param payload        the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerConfigurationNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
+		void receive(
+				MinecraftServer server, ServerConfigurationNetworkHandler handler, T payload,
+				PacketSender<CustomPayload> responseSender
+		);
 	}
 }

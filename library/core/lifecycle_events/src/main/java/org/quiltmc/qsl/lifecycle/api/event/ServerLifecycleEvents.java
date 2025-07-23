@@ -74,8 +74,8 @@ public final class ServerLifecycleEvents {
 	 * and players are still connected to the server.
 	 *
 	 * <h2>What should mods do when this event is executed</h2>
-	 * <p>
-	 * Mods may do clean up work when this event is executed, such as shutting down any asynchronous executors,
+	 *
+	 * <p>Mods may do clean up work when this event is executed, such as shutting down any asynchronous executors,
 	 * databases and saving auxiliary mod data.
 	 */
 	public static final Event<Stopping> STOPPING = Event.create(Stopping.class, callbacks -> server -> {
@@ -97,8 +97,8 @@ public final class ServerLifecycleEvents {
 	 * </ul>
 	 *
 	 * <h2>What should mods do when this event is executed?</h2>
-	 * <p>
-	 * Mods should stop referencing this Minecraft server or else the dead server will continue to be tracked on the
+	 *
+	 * <p>Mods should stop referencing this Minecraft server or else the dead server will continue to be tracked on the
 	 * heap and will leak memory. Though this doesn't matter when the server is a dedicated server, it is good principle
 	 * to clean up references you no longer need regardless.
 	 */

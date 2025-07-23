@@ -20,9 +20,11 @@ package org.quiltmc.qsl.worldgen.biome.impl.modification;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -56,13 +58,19 @@ public class BiomeModificationImpl {
 
 	public static final BiomeModificationImpl INSTANCE = new BiomeModificationImpl();
 
+	private static final Set<RegistryKey<Biome>> MODIFIED_BIOMES = new HashSet<>();
+
+	public static boolean wasModified(RegistryKey<?> biome) {
+		return MODIFIED_BIOMES.contains(biome);
+	}
+
 	private final List<ModifierRecord> modifiers = new ArrayList<>();
 
 	private boolean modifiersUnsorted = true;
 
 	final BiomeModificationReloader reloader = new BiomeModificationReloader();
 
-	private BiomeModificationImpl() {}
+	private BiomeModificationImpl() { }
 
 	public void addModifier(Identifier id, ModificationPhase phase, Predicate<BiomeSelectionContext> selector, BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier) {
 		Objects.requireNonNull(selector);
@@ -91,7 +99,8 @@ public class BiomeModificationImpl {
 	}
 
 	private void addLazyModifier(Identifier id, ModificationPhase phase) {
-		var modifierRecord = new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
+		ModifierRecord modifierRecord =
+			new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
 		this.modifiers.add(modifierRecord);
 		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
 		this.modifiersUnsorted = true;
@@ -100,9 +109,9 @@ public class BiomeModificationImpl {
 	public void updateIdentifiedModifiers() {
 		for (var phase : this.identifiedModifiers.entrySet()) {
 			List<Identifier> drop = new ArrayList<>();
-			var map = this.reloader.getCombinedMap(phase.getKey());
+			Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase.getKey());
 
-			for (var entry : phase.getValue().entrySet()) {
+			for (Map.Entry<Identifier, ModifierRecord> entry : phase.getValue().entrySet()) {
 				if (!map.containsKey(entry.getKey())) {
 					entry.getValue().canBeDropped = true;
 					drop.add(entry.getKey());
@@ -115,8 +124,9 @@ public class BiomeModificationImpl {
 
 	public void addMissingModifiers() {
 		for (ModificationPhase phase : ModificationPhase.values()) {
-			var map = this.reloader.getCombinedMap(phase);
-			var phaseMap = this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
+			Map<Identifier, BiomeModifier> map = this.reloader.getCombinedMap(phase);
+			Map<Identifier, ModifierRecord> phaseMap =
+					this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
 
 			for (Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
 				if (!phaseMap.containsKey(entry.getKey())) {
@@ -159,10 +169,13 @@ public class BiomeModificationImpl {
 		return this.modifiers;
 	}
 
-	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties worldSaveProperties, ResourceManager resourceManager) {
+	public void finalizeWorldGen(
+			DynamicRegistryManager impl, WorldSaveProperties worldSaveProperties, ResourceManager resourceManager
+	) {
 		this.reloader.apply(resourceManager, impl);
 		this.addMissingModifiers();
 		this.updateIdentifiedModifiers();
+		MODIFIED_BIOMES.clear();
 
 		Stopwatch sw = Stopwatch.createStarted();
 
@@ -172,7 +185,7 @@ public class BiomeModificationImpl {
 		var modificationTracker = (BiomeModificationMarker) impl;
 		modificationTracker.quilt$markModified();
 
-		Registry<Biome> biomes = impl.get(RegistryKeys.BIOME);
+		Registry<Biome> biomes = impl.getLookupOrThrow(RegistryKeys.BIOME);
 
 		// Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
 		// someone does something stupid.
@@ -212,6 +225,7 @@ public class BiomeModificationImpl {
 					}
 
 					modifier.apply(context, modificationContext);
+					MODIFIED_BIOMES.add(context.getBiomeKey());
 					modifiersApplied++;
 				}
 			}
@@ -223,8 +237,10 @@ public class BiomeModificationImpl {
 		}
 
 		if (biomesProcessed > 0) {
-			LOGGER.info("Applied {} biome modifications to {} of {} new biomes in {}", modifiersApplied, biomesChanged,
-					biomesProcessed, sw);
+			LOGGER.info(
+					"Applied {} biome modifications to {} of {} new biomes in {}",
+					modifiersApplied, biomesChanged, biomesProcessed, sw
+			);
 		}
 	}
 
@@ -245,7 +261,10 @@ public class BiomeModificationImpl {
 		// Whenever this is true, the modifier will be dropped from the list on the next reorder
 		private boolean canBeDropped = false;
 
-		ModifierRecord(ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector, Consumer<BiomeModificationContext> modifier) {
+		ModifierRecord(
+				ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
+				Consumer<BiomeModificationContext> modifier
+		) {
 			this.phase = phase;
 			this.id = id;
 			this.selector = selector;
@@ -253,7 +272,10 @@ public class BiomeModificationImpl {
 			this.contextSensitiveModifier = null;
 		}
 
-		ModifierRecord(ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector, BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier) {
+		ModifierRecord(
+				ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector,
+				BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier
+		) {
 			this.phase = phase;
 			this.id = id;
 			this.selector = selector;
@@ -265,7 +287,7 @@ public class BiomeModificationImpl {
 			this.phase = phase;
 			this.id = id;
 			this.selector = ctx -> {
-				var modifier = modifierFunction.get();
+				BiomeModifier modifier = modifierFunction.get();
 				if (modifier != null) {
 					return modifier.shouldModify(ctx);
 				}
@@ -273,7 +295,7 @@ public class BiomeModificationImpl {
 				return false;
 			};
 			this.contextSensitiveModifier = (selectionCtx, modificationCtx) -> {
-				var modifier = modifierFunction.get();
+				BiomeModifier modifier = modifierFunction.get();
 				if (modifier != null) {
 					modifier.modify(selectionCtx, modificationCtx);
 				}

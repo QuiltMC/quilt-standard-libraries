@@ -53,7 +53,8 @@ public class DataCallbackTests implements ModInitializer {
 		}
 	}, BEFORE_PHASE, Event.DEFAULT_PHASE, AFTER_PHASE);
 
-	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {});
+	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {
+	});
 	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(Identifier.of("quilt_data_callback_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
 		for (ServerJoin callback : callbacks.get()) {
 			callback.onPlayReady(handler, sender, server);
@@ -67,7 +68,10 @@ public class DataCallbackTests implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
 				SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
 
-		JOIN_SERVER_DATA.register(Identifier.of(mod.metadata().id(), "after"), new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE);
+		JOIN_SERVER_DATA.register(
+				Identifier.of(mod.metadata().id(), "after"),
+				new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE
+		);
 		// This callback is overridden by data and should not fire.
 		JOIN_SERVER_DATA.register(Identifier.of(mod.metadata().id(), "overridden"), (handler, sender, server) -> {
 			throw new RuntimeException("This callback should have been overridden by data!");
@@ -92,7 +96,13 @@ public class DataCallbackTests implements ModInitializer {
 	}
 
 	public record ServerJoinChat(String text, Style style) implements ServerJoin {
-		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text), Style.Serializer.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)).apply(instance, ServerJoinChat::new));
+		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance
+				.group(
+					Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text),
+					Style.Serializer.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)
+				)
+				.apply(instance, ServerJoinChat::new)
+		);
 		public static final Identifier CODEC_ID = Identifier.of("quilt_data_callback_testmod", "chat");
 
 		@Override
@@ -101,9 +111,11 @@ public class DataCallbackTests implements ModInitializer {
 		}
 
 		@Override
-		public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server) {
-			Text text = Text.literal(text()).setStyle(style());
-			handler.player.sendSystemMessage(text);
+		public void onPlayReady(
+				ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server
+		) {
+			Text text = Text.literal(this.text()).setStyle(this.style());
+			handler.player.sendSystemMessage(text, true);
 		}
 	}
 }

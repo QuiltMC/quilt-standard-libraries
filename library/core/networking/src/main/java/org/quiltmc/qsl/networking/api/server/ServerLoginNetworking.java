@@ -36,8 +36,9 @@ import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccess
 
 /**
  * Offers access to login stage server-side networking functionalities.
- * <p>
- * Server-side networking functionalities include receiving serverbound query responses and sending clientbound query requests.
+ *
+ * <p>Server-side networking functionalities include receiving serverbound query responses and sending clientbound query
+ * requests.
  *
  * @see ServerPlayNetworking
  * @see ClientLoginNetworking
@@ -46,8 +47,9 @@ public final class ServerLoginNetworking {
 	/**
 	 * Registers a handler to a query response channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 *
+	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no
+	 * change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
 	 * @param channelName    the identifier of the channel
@@ -63,13 +65,13 @@ public final class ServerLoginNetworking {
 	/**
 	 * Removes the handler of a query response channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 * <p>
-	 * The {@code channel} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerLoginNetworking#registerGlobalReceiver(CustomPayload.Id, QueryResponseReceiver)
-	 * @see ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, CustomPayload.Id)
+	 * @see ServerLoginNetworking#registerGlobalReceiver(Identifier, QueryResponseReceiver)
+	 * @see ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, Identifier)
 	 */
 	@Nullable
 	public static ServerLoginNetworking.QueryResponseReceiver unregisterGlobalReceiver(Identifier channelName) {
@@ -88,31 +90,38 @@ public final class ServerLoginNetworking {
 
 	/**
 	 * Registers a handler to a query response channel.
-	 * <p>
-	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
-	 * Use {@link #unregisterReceiver(ServerLoginNetworkHandler, CustomPayload.Id)} to unregister the existing handler.
+	 *
+	 * <p>If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no
+	 * change will be made.
+	 * Use {@link ServerLoginNetworking#unregisterReceiver(ServerLoginNetworkHandler, Identifier)} to unregister the
+	 * existing handler.
 	 *
 	 * @param networkHandler  the handler
 	 * @param channelName     the identifier of the channel
 	 * @param responseHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 */
-	public static boolean registerReceiver(ServerLoginNetworkHandler networkHandler, Identifier channelName, QueryResponseReceiver responseHandler) {
+	public static boolean registerReceiver(
+			ServerLoginNetworkHandler networkHandler, Identifier channelName, QueryResponseReceiver responseHandler
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
-		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(new CustomPayload.Id<>(channelName), responseHandler);
+		return ServerNetworkingImpl.getAddon(networkHandler)
+				.registerChannel(new CustomPayload.Id<>(channelName), responseHandler);
 	}
 
 	/**
 	 * Removes the handler of a query response channel.
-	 * <p>
-	 * The {@code channelName} is guaranteed not to have a handler after this call.
+	 *
+	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerLoginNetworking.QueryResponseReceiver unregisterReceiver(ServerLoginNetworkHandler networkHandler, Identifier channelName) {
+	public static ServerLoginNetworking.QueryResponseReceiver unregisterReceiver(
+			ServerLoginNetworkHandler networkHandler, Identifier channelName
+	) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(new CustomPayload.Id<>(channelName));
@@ -138,20 +147,27 @@ public final class ServerLoginNetworking {
 	public interface QueryResponseReceiver {
 		/**
 		 * Handles an incoming query response from a client.
-		 * <p>
-		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
-		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.
-		 * <p>
-		 * <b>Whether the client understood the query should be checked before reading from the payload of the packet.</b>
+		 *
+		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be
+		 * {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided
+		 * Minecraft client instance.
+		 *
+		 * <p><b>Whether the client understood the query should be checked before reading from the payload of the
+		 * packet.</b>
 		 *
 		 * @param server         the server
-		 * @param handler        the network handler that received this packet, representing the player/client who sent the response
+		 * @param handler        the network handler that received this packet, representing the player/client who sent
+		 *                            the response
 		 * @param understood     whether the client understood the packet
 		 * @param buf            the payload of the packet
 		 * @param synchronizer   the synchronizer which may be used to delay log-in till a {@link Future} is completed.
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, LoginSynchronizer synchronizer, LoginPacketSender responseSender);
+		void receive(
+				MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf,
+				LoginSynchronizer synchronizer, LoginPacketSender responseSender
+		);
 	}
 
 	/**
@@ -163,12 +179,12 @@ public final class ServerLoginNetworking {
 	public interface LoginSynchronizer {
 		/**
 		 * Allows blocking client log-in until the {@code future} is {@link Future#isDone() done}.
-		 * <p>
-		 * Since packet reception happens on netty's event loops, this allows handlers to
+		 *
+		 * <p>Since packet reception happens on netty's event loops, this allows handlers to
 		 * perform logic on the Server Thread, etc. For instance, a handler can prepare an
 		 * upcoming query request or check necessary login data on the server thread.</p>
-		 * <p>
-		 * Here is an example where the player log-in is blocked so that a credential check and
+		 *
+		 * <p>Here is an example where the player log-in is blocked so that a credential check and
 		 * building of a followup query request can be performed properly on the logical server
 		 * thread before the player successfully logs in:
 		 * <pre>{@code
@@ -193,7 +209,8 @@ public final class ServerLoginNetworking {
 		 *    }));
 		 * });
 		 * }</pre>
-		 * Usually it is enough to pass the return value for {@link net.minecraft.util.thread.ThreadExecutor#submit(Runnable)} for {@code future}.</p>
+		 * Usually it is enough to pass the return value for
+		 * {@link net.minecraft.util.thread.ThreadExecutor#submit(Runnable)} for {@code future}.</p>
 		 *
 		 * @param future the future that must be done before the player can log in
 		 */

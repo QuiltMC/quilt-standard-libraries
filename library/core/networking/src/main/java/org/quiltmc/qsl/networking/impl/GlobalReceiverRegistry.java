@@ -26,12 +26,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import net.minecraft.network.NetworkPhase;
-import net.minecraft.network.NetworkSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.NetworkPhase;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.packet.payload.CustomPayload;
 
 @ApiStatus.Internal
@@ -82,7 +81,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			final boolean inserted = this.receivers.putIfAbsent(channelName, handler) == null;
+			boolean inserted = this.receivers.putIfAbsent(channelName, handler) == null;
 
 			if (inserted) {
 				this.handleRegistration(channelName, handler);
@@ -106,7 +105,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			final H removed = this.receivers.remove(channelName);
+			H removed = this.receivers.remove(channelName);
 
 			if (removed != null) {
 				this.handleUnregistration(channelName);
@@ -196,11 +195,17 @@ public final class GlobalReceiverRegistry<H> {
 		}
 
 		if (this.payloadTypeRegistry.get(channelName) == null) {
-			throw new IllegalArgumentException(String.format("Cannot register handler as no payload type has been registered with name \"%s\" for %s %s", channelName, this.side, this.phase));
+			throw new IllegalArgumentException(String.format(
+				"Cannot register handler as no payload type has been registered with name \"%s\" for %s %s",
+				channelName, this.side, this.phase
+			));
 		}
 
 		if (channelName.toString().length() > DEFAULT_CHANNEL_NAME_MAX_LENGTH) {
-			throw new IllegalArgumentException(String.format("Cannot register handler for channel with name \"%s\" as it exceeds the maximum length of 128 characters", channelName));
+			throw new IllegalArgumentException(String.format(
+				"Cannot register handler for channel with name \"%s\" as it exceeds the maximum length of 128 characters",
+				channelName
+			));
 		}
 	}
 

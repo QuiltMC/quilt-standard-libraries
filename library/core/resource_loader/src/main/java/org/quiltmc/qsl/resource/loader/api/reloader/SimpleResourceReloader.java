@@ -22,35 +22,34 @@ import java.util.concurrent.Executor;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
-import net.minecraft.util.profiler.Profiler;
 
 /**
  * A simplified version of the "resource reloader" interface, hiding the peculiarities of the API.
- * <p>
- * In essence, there are two stages:
+ *
+ * <p>In essence, there are two stages:
  *
  * <ul>
- *     <li>{@linkplain #load(ResourceManager, Profiler, Executor)}: create an instance of your data object
+ *     <li>{@linkplain #load(ResourceManager, Executor)}: create an instance of your data object
  * containing all loaded and processed information,
- *     <li>{@linkplain #apply(Object, ResourceManager, Profiler, Executor)}: apply the information from the data object
+ *     <li>{@linkplain #apply(Object, ResourceManager, Executor)}: apply the information from the data object
  * to the game instance.
  * </ul>
  *
- * <p>
- * The load stage should be self-contained as it can run on any thread!
+ *
+ * <p>The load stage should be self-contained as it can run on any thread!
  * However, the apply stage is guaranteed to run on the game thread.
- * <p>
- * For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
+ *
+ * <p>For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *
  * @param <T> the type for the intermediate reloading state
  */
 public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader {
 	@Override
-	default CompletableFuture<Void> reload(ResourceReloader.Synchronizer helper, ResourceManager manager,
-			Profiler loadProfiler, Profiler applyProfiler,
-			Executor loadExecutor, Executor applyExecutor) {
-		return this.load(manager, loadProfiler, loadExecutor).thenCompose(helper::whenPrepared)
-				.thenCompose(o -> this.apply(o, manager, applyProfiler, applyExecutor));
+	default CompletableFuture<Void> reload(
+			ResourceReloader.Synchronizer helper, ResourceManager manager, Executor loadExecutor, Executor applyExecutor
+	) {
+		return this.load(manager, loadExecutor).thenCompose(helper::wait)
+			.thenCompose(o -> this.apply(o, manager, applyExecutor));
 	}
 
 	/**
@@ -58,19 +57,17 @@ public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader 
 	 * must be thread-safe and not modify game state!
 	 *
 	 * @param manager  the resource manager used during reloading
-	 * @param profiler the profiler which may be used for this stage
 	 * @param executor the executor which should be used for this stage
 	 * @return a CompletableFuture representing the "data loading" stage
 	 */
-	CompletableFuture<T> load(ResourceManager manager, Profiler profiler, Executor executor);
+	CompletableFuture<T> load(ResourceManager manager, Executor executor);
 
 	/**
 	 * Synchronously apply loaded data to the game state.
 	 *
 	 * @param manager  the resource manager used during reloading
-	 * @param profiler the profiler which may be used for this stage
 	 * @param executor the executor which should be used for this stage
 	 * @return a CompletableFuture representing the "data applying" stage
 	 */
-	CompletableFuture<Void> apply(T data, ResourceManager manager, Profiler profiler, Executor executor);
+	CompletableFuture<Void> apply(T data, ResourceManager manager, Executor executor);
 }

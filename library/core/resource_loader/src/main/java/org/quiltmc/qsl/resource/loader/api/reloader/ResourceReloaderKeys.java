@@ -27,16 +27,16 @@ import net.minecraft.util.Identifier;
 public final class ResourceReloaderKeys {
 	/**
 	 * Represents the application phase before Vanilla resource reloaders are invoked.
-	 * <p>
-	 * No resource reloaders are assigned to this identifier.
+	 *
+	 * <p>No resource reloaders are assigned to this identifier.
 	 *
 	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
 	 */
 	public static final Identifier BEFORE_VANILLA = Identifier.of("quilt", "before_vanilla");
 	/**
 	 * Represents the application phase after Vanilla resource reloaders are invoked.
-	 * <p>
-	 * No resource reloaders are assigned to this identifier.
+	 *
+	 * <p>No resource reloaders are assigned to this identifier.
 	 *
 	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
 	 */
@@ -48,7 +48,6 @@ public final class ResourceReloaderKeys {
 	public static final class Client {
 		public static final Identifier BLOCK_ENTITY_RENDERERS = id("block_entity_renderers");
 		public static final Identifier BLOCK_RENDER_MANAGER = id("block_render_manager");
-		public static final Identifier BUILTIN_ITEM_MODELS = id("builtin_item_models");
 		public static final Identifier ENTITY_MODELS = id("entity_models");
 		public static final Identifier ENTITY_RENDERERS = id("entity_renderers");
 		public static final Identifier FOLIAGE_COLORMAP = id("foliage_colormap");
