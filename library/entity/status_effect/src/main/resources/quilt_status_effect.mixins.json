@@ -6,6 +6,7 @@
     "ClearAllEffectsComponentMixin",
     "EffectCommandMixin",
     "LivingEntityMixin",
+    "RemoveEffectsComponentMixin",
     "StatusEffectAccessor",
     "StatusEffectMixin"
   ],
