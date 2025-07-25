@@ -91,6 +91,7 @@ public final class StatusEffectTest implements ModInitializer {
 			new Item.Settings()
 				.key(bucketKey)
 				.recipeRemainder(Items.BUCKET)
+				.useRemainder(Items.BUCKET)
 				.maxCount(1)
 				.component(DataComponentTypes.CONSUMABLE,
 					ConsumableComponent.builder()
