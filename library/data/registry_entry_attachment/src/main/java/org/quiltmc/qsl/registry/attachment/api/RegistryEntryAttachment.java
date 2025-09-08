@@ -71,7 +71,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param id          attachment identifier
 	 * @param valueClass  attached value class
 	 * @param codec       attached value codec
-	 * @param packetCodec type to packet codec mapper
+	 * @param packetCodec attached value packet codec
 	 * @return a builder
 	 */
 	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, PacketCodec<RegistryByteBuf, V> packetCodec) {
