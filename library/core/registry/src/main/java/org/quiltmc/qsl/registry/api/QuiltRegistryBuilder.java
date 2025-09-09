@@ -39,7 +39,7 @@ public final class QuiltRegistryBuilder<T> {
 	private boolean useIntrusiveHolders;
 	private Consumer<Registry<T>> bootstrap;
 	private Identifier defaultId;
-	private RegistrySynchronizationBehavior syncBehavior;
+	private SyncBehavior syncBehavior;
 
 	/**
 	 * Creates a new {@code QuiltRegistryBuilder}.
@@ -50,7 +50,7 @@ public final class QuiltRegistryBuilder<T> {
 		this.key = key;
 
 		this.lifecycle = Lifecycle.stable();
-		this.syncBehavior = RegistrySynchronizationBehavior.SKIPPED;
+		this.syncBehavior = SyncBehavior.SKIPPED;
 	}
 
 	/**
@@ -152,13 +152,13 @@ public final class QuiltRegistryBuilder<T> {
 	/**
 	 * Sets the synchronization behavior of this registry.
 	 * <p>
-	 * By default, this is {@link RegistrySynchronizationBehavior#SKIPPED}.
+	 * By default, this is {@link SyncBehavior#SKIPPED}.
 	 *
 	 * @param syncBehavior the new synchronization behavior
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> withSyncBehavior(@NotNull RegistrySynchronizationBehavior syncBehavior) {
+	public @NotNull QuiltRegistryBuilder<T> withSyncBehavior(@NotNull QuiltRegistryBuilder.SyncBehavior syncBehavior) {
 		this.syncBehavior = syncBehavior;
 		return this;
 	}
@@ -167,12 +167,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * Sets the registry to <em>not</em> be synchronized at all.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(RegistrySynchronizationBehavior)
-	 * @see RegistrySynchronizationBehavior#SKIPPED
+	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see SyncBehavior#SKIPPED
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> withSyncSkipped() {
-		return this.withSyncBehavior(RegistrySynchronizationBehavior.SKIPPED);
+		return this.withSyncBehavior(SyncBehavior.SKIPPED);
 	}
 
 	/**
@@ -180,12 +180,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * <em>will</em> be kicked.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(RegistrySynchronizationBehavior)
-	 * @see RegistrySynchronizationBehavior#REQUIRED
+	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see SyncBehavior#REQUIRED
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> withSyncRequired() {
-		return this.withSyncBehavior(RegistrySynchronizationBehavior.REQUIRED);
+		return this.withSyncBehavior(SyncBehavior.REQUIRED);
 	}
 
 	/**
@@ -193,12 +193,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * <em>will not</em> be kicked.
 	 *
 	 * @return this builder.
-	 * @see #withSyncBehavior(RegistrySynchronizationBehavior)
-	 * @see RegistrySynchronizationBehavior#OPTIONAL
+	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see SyncBehavior#OPTIONAL
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> withSyncOptional() {
-		return this.withSyncBehavior(RegistrySynchronizationBehavior.OPTIONAL);
+		return this.withSyncBehavior(SyncBehavior.OPTIONAL);
 	}
 
 	/**
@@ -219,10 +219,10 @@ public final class QuiltRegistryBuilder<T> {
 
 		Registry.register((Registry<Registry<Object>>) Registries.ROOT, this.key.getValue(), (Registry<Object>) registry);
 
-		if (this.syncBehavior == RegistrySynchronizationBehavior.REQUIRED || this.syncBehavior == RegistrySynchronizationBehavior.OPTIONAL) {
+		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
 			RegistrySynchronization.markForSync(registry);
 
-			if (this.syncBehavior == RegistrySynchronizationBehavior.OPTIONAL) {
+			if (this.syncBehavior == SyncBehavior.OPTIONAL) {
 				RegistrySynchronization.setRegistryOptional(registry);
 			}
 		}
@@ -232,6 +232,26 @@ public final class QuiltRegistryBuilder<T> {
 		}
 
 		return registry;
+	}
+
+	/**
+	 * Specifies the behavior for synchronizing a registry and its contents.
+	 */
+	public enum SyncBehavior {
+		/**
+		 * The registry <em>will not</em> be synchronized to the client.
+		 */
+		SKIPPED,
+		/**
+		 * The registry <em>will</em> be synchronized to the client,
+		 * and clients who do not have this registry on their side <em>will</em> be kicked.
+		 */
+		REQUIRED,
+		/**
+		 * The registry <em>will</em> be synchronized to the client,
+		 * and clients who do not have this registry on their side <em>will not</em> be kicked.
+		 */
+		OPTIONAL
 	}
 }
 
