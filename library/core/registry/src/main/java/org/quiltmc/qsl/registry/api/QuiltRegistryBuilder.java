@@ -45,8 +45,15 @@ public final class QuiltRegistryBuilder<T> {
 	 * Creates a new {@code QuiltRegistryBuilder}.
 	 *
 	 * @param key the key of the registry
+	 * @param <T> the entry type tracked by this registry
+	 * @return the newly created builder
 	 */
-	public QuiltRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
+	@Contract(value = "_ -> new", pure = true)
+	public static <T> @NotNull QuiltRegistryBuilder<T> of(@NotNull RegistryKey<Registry<T>> key) {
+		return new QuiltRegistryBuilder<>(key);
+	}
+
+	private QuiltRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
 		this.key = key;
 
 		this.lifecycle = Lifecycle.stable();
