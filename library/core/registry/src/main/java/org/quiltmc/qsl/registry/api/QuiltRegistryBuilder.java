@@ -143,7 +143,7 @@ public final class QuiltRegistryBuilder<T> {
 	 * Sets the default identifier of this registry.
 	 * <p>
 	 * Should a nonexistent entry be referenced in some way, the registry will instead reference the entry identified
-	 * by this instead.
+	 * by this.
 	 * <p>
 	 * By default, this is {@code null} - the registry will simply return {@code null} when a nonexistent entry is referenced.
 	 *
@@ -256,7 +256,7 @@ public final class QuiltRegistryBuilder<T> {
 		REQUIRED,
 		/**
 		 * The registry <em>will</em> be synchronized to the client,
-		 * and clients who do not have this registry on their side <em>will not</em> be kicked.
+		 * but clients who do not have this registry on their side <em>will not</em> be kicked.
 		 */
 		OPTIONAL
 	}
