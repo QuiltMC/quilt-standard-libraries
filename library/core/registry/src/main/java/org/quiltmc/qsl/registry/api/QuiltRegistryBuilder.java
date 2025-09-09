@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.api;
 import java.util.function.Consumer;
 
 import com.mojang.serialization.Lifecycle;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,7 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
  *
  * @param <T>    the entry type tracked by this registry
  */
+@ApiStatus.Experimental
 public final class QuiltRegistryBuilder<T> {
 	private final RegistryKey<Registry<T>> key;
 	private Lifecycle lifecycle;
