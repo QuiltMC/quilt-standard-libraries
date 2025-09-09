@@ -39,8 +39,8 @@ public class RegistryLibBuilderTests implements ModInitializer {
 	public static final RegistryKey<Registry<GasType>> GAS_TYPE_KEY = RegistryKey.ofRegistry(id("gas_type"));
 
 	public static final Registry<GasType> GAS_TYPE = QuiltRegistryBuilder.of(GAS_TYPE_KEY)
-			.withIntrusiveHolders()
-			.withSyncRequired()
+			.frozen()
+			.syncRequired()
 			.build();
 
 	@Override

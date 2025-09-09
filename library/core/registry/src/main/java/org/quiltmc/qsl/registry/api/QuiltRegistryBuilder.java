@@ -44,9 +44,9 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 public final class QuiltRegistryBuilder<T> {
 	private final RegistryKey<Registry<T>> key;
 	private Lifecycle lifecycle;
-	private boolean useIntrusiveHolders;
+	private boolean frozen;
 	private Consumer<Registry<T>> bootstrap;
-	private Identifier defaultId;
+	private Identifier defaultMappingId;
 	private SyncBehavior syncBehavior;
 
 	/**
@@ -77,7 +77,7 @@ public final class QuiltRegistryBuilder<T> {
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> withLifecycle(@NotNull Lifecycle lifecycle) {
+	public @NotNull QuiltRegistryBuilder<T> lifecycle(@NotNull Lifecycle lifecycle) {
 		this.lifecycle = lifecycle;
 		return this;
 	}
@@ -86,24 +86,24 @@ public final class QuiltRegistryBuilder<T> {
 	 * Sets the lifecycle of this registry to be stable.
 	 *
 	 * @return this builder
-	 * @see #withLifecycle(Lifecycle)
+	 * @see #lifecycle(Lifecycle)
 	 * @see Lifecycle#stable()
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> stable() {
-		return this.withLifecycle(Lifecycle.stable());
+		return this.lifecycle(Lifecycle.stable());
 	}
 
 	/**
 	 * Sets the lifecycle of this registry to be experimental.
 	 *
 	 * @return this builder
-	 * @see #withLifecycle(Lifecycle)
+	 * @see #lifecycle(Lifecycle)
 	 * @see Lifecycle#experimental()
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> experimental() {
-		return this.withLifecycle(Lifecycle.experimental());
+		return this.lifecycle(Lifecycle.experimental());
 	}
 
 	/**
@@ -111,24 +111,25 @@ public final class QuiltRegistryBuilder<T> {
 	 *
 	 * @param since the data version this registry has been deprecated since
 	 * @return this builder
-	 * @see #withLifecycle(Lifecycle)
+	 * @see #lifecycle(Lifecycle)
 	 * @see Lifecycle#deprecated(int)
 	 */
 	@Contract("_ -> this")
 	public @NotNull QuiltRegistryBuilder<T> deprecated(int since) {
-		return this.withLifecycle(Lifecycle.deprecated(since));
+		return this.lifecycle(Lifecycle.deprecated(since));
 	}
 
 	/**
-	 * Enables the use of the {@link Registry#createIntrusiveHolder(Object)} method for this registry.
+	 * Ensures that the registry is frozen during initialization.
+	 * This also enables the use of the {@link Registry#createIntrusiveHolder(Object)} method for this registry.
 	 *
 	 * <p>By default, this is disabled.
 	 *
 	 * @return this builder
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> withIntrusiveHolders() {
-		this.useIntrusiveHolders = true;
+	public @NotNull QuiltRegistryBuilder<T> frozen() {
+		this.frozen = true;
 		return this;
 	}
 
@@ -142,13 +143,13 @@ public final class QuiltRegistryBuilder<T> {
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> withBootstrap(Consumer<Registry<T>> bootstrap) {
+	public @NotNull QuiltRegistryBuilder<T> bootstrap(Consumer<Registry<T>> bootstrap) {
 		this.bootstrap = bootstrap;
 		return this;
 	}
 
 	/**
-	 * Sets the default identifier of this registry.
+	 * Sets the default mapping of this registry.
 	 *
 	 * <p>Should a nonexistent entry be referenced in some way, the registry will instead
 	 * reference the entry identified by this.
@@ -156,12 +157,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * <p>By default, this is {@code null} - the registry will simply return {@code null}
 	 * when a nonexistent entry is referenced.
 	 *
-	 * @param defaultId the new default identifier
+	 * @param id the identifier of the new default mapping
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> withDefaultId(@Nullable Identifier defaultId) {
-		this.defaultId = defaultId;
+	public @NotNull QuiltRegistryBuilder<T> defaultMapping(@Nullable Identifier id) {
+		this.defaultMappingId = id;
 		return this;
 	}
 
@@ -174,7 +175,7 @@ public final class QuiltRegistryBuilder<T> {
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> withSyncBehavior(@NotNull QuiltRegistryBuilder.SyncBehavior syncBehavior) {
+	public @NotNull QuiltRegistryBuilder<T> syncBehavior(@NotNull QuiltRegistryBuilder.SyncBehavior syncBehavior) {
 		this.syncBehavior = syncBehavior;
 		return this;
 	}
@@ -183,12 +184,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * Sets the registry to <em>not</em> be synchronized at all.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see #syncBehavior(SyncBehavior)
 	 * @see SyncBehavior#SKIPPED
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> withSyncSkipped() {
-		return this.withSyncBehavior(SyncBehavior.SKIPPED);
+	public @NotNull QuiltRegistryBuilder<T> unsynchronized() {
+		return this.syncBehavior(SyncBehavior.SKIPPED);
 	}
 
 	/**
@@ -196,12 +197,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * <em>will</em> be kicked.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see #syncBehavior(SyncBehavior)
 	 * @see SyncBehavior#REQUIRED
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> withSyncRequired() {
-		return this.withSyncBehavior(SyncBehavior.REQUIRED);
+	public @NotNull QuiltRegistryBuilder<T> syncRequired() {
+		return this.syncBehavior(SyncBehavior.REQUIRED);
 	}
 
 	/**
@@ -209,12 +210,12 @@ public final class QuiltRegistryBuilder<T> {
 	 * <em>will not</em> be kicked.
 	 *
 	 * @return this builder.
-	 * @see #withSyncBehavior(SyncBehavior)
+	 * @see #syncBehavior(SyncBehavior)
 	 * @see SyncBehavior#OPTIONAL
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> withSyncOptional() {
-		return this.withSyncBehavior(SyncBehavior.OPTIONAL);
+	public @NotNull QuiltRegistryBuilder<T> syncOptional() {
+		return this.syncBehavior(SyncBehavior.OPTIONAL);
 	}
 
 	/**
@@ -226,11 +227,10 @@ public final class QuiltRegistryBuilder<T> {
 	@Contract("-> new")
 	public @NotNull Registry<T> build() {
 		SimpleRegistry<T> registry;
-		if (this.defaultId == null) {
-			registry = new SimpleRegistry<>(this.key, this.lifecycle, this.useIntrusiveHolders);
+		if (this.defaultMappingId == null) {
+			registry = new SimpleRegistry<>(this.key, this.lifecycle, this.frozen);
 		} else {
-			// this takes the identifier as a string, to guarantee that it's unique
-			registry = new DefaultMappedRegistry<>(this.defaultId.toString(), this.key, this.lifecycle, this.useIntrusiveHolders);
+			registry = new DefaultMappedRegistry<>(this.defaultMappingId.toString(), this.key, this.lifecycle, this.frozen);
 		}
 
 		Registry.register((Registry<Registry<Object>>) Registries.ROOT, this.key.getValue(), (Registry<Object>) registry);
