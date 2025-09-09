@@ -17,49 +17,36 @@
 package org.quiltmc.qsl.registry.api;
 
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.registry.DefaultMappedRegistry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.registry.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
 import java.util.function.Consumer;
 
 /**
- * Utility class to build a new {@link Registry}.
+ * Utility class to build a new code-driven {@link Registry}.
+ * <p>
+ * For data-driven registries, see {@link org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry}.
  *
  * @param <T>    the entry type tracked by this registry
- * @param <SELF> the type of the builder
  */
-public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<T, SELF>> {
-	protected final RegistryKey<Registry<T>> key;
-	protected Lifecycle lifecycle;
-	protected boolean useIntrusiveHolders;
-	protected Consumer<Registry<T>> bootstrap;
-	protected Identifier defaultId;
-	protected RegistrySynchronizationBehavior syncBehavior;
-
-	/**
-	 * Creates a new built-in {@code Registry} builder.
-	 *
-	 * @param key the key of the registry
-	 * @param <T> the entry type tracked by this registry
-	 * @return the newly created builder
-	 */
-	@Contract("_ -> new")
-	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull RegistryKey<Registry<T>> key) {
-		return new QuiltBuiltinRegistryBuilder<>(key);
-	}
+public final class QuiltRegistryBuilder<T> {
+	private final RegistryKey<Registry<T>> key;
+	private Lifecycle lifecycle;
+	private boolean useIntrusiveHolders;
+	private Consumer<Registry<T>> bootstrap;
+	private Identifier defaultId;
+	private RegistrySynchronizationBehavior syncBehavior;
 
 	/**
 	 * Creates a new {@code QuiltRegistryBuilder}.
 	 *
 	 * @param key the key of the registry
 	 */
-	protected QuiltRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
+	public QuiltRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
 		this.key = key;
 
 		this.lifecycle = Lifecycle.stable();
@@ -74,11 +61,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param lifecycle the new lifecycle
 	 * @return this builder
 	 */
-	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull SELF withLifecycle(@NotNull Lifecycle lifecycle) {
+	public @NotNull QuiltRegistryBuilder<T> withLifecycle(@NotNull Lifecycle lifecycle) {
 		this.lifecycle = lifecycle;
-		return (SELF) this;
+		return this;
 	}
 
 	/**
@@ -89,7 +75,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see Lifecycle#stable()
 	 */
 	@Contract("-> this")
-	public @NotNull SELF stable() {
+	public @NotNull QuiltRegistryBuilder<T> stable() {
 		return this.withLifecycle(Lifecycle.stable());
 	}
 
@@ -101,7 +87,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see Lifecycle#experimental()
 	 */
 	@Contract("-> this")
-	public @NotNull SELF experimental() {
+	public @NotNull QuiltRegistryBuilder<T> experimental() {
 		return this.withLifecycle(Lifecycle.experimental());
 	}
 
@@ -114,7 +100,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see Lifecycle#deprecated(int)
 	 */
 	@Contract("_ -> this")
-	public @NotNull SELF deprecated(int since) {
+	public @NotNull QuiltRegistryBuilder<T> deprecated(int since) {
 		return this.withLifecycle(Lifecycle.deprecated(since));
 	}
 
@@ -125,11 +111,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *
 	 * @return this builder
 	 */
-	@SuppressWarnings("unchecked")
 	@Contract("-> this")
-	public @NotNull SELF withIntrusiveHolders() {
+	public @NotNull QuiltRegistryBuilder<T> withIntrusiveHolders() {
 		this.useIntrusiveHolders = true;
-		return (SELF) this;
+		return this;
 	}
 
 	/**
@@ -141,11 +126,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param bootstrap the new bootstrap method
 	 * @return this builder
 	 */
-	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull SELF withBootstrap(Consumer<Registry<T>> bootstrap) {
+	public @NotNull QuiltRegistryBuilder<T> withBootstrap(Consumer<Registry<T>> bootstrap) {
 		this.bootstrap = bootstrap;
-		return (SELF) this;
+		return this;
 	}
 
 	/**
@@ -159,11 +143,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param defaultId the new default identifier
 	 * @return this builder
 	 */
-	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull SELF withDefaultId(@Nullable Identifier defaultId) {
+	public @NotNull QuiltRegistryBuilder<T> withDefaultId(@Nullable Identifier defaultId) {
 		this.defaultId = defaultId;
-		return (SELF) this;
+		return this;
 	}
 
 	/**
@@ -174,11 +157,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param syncBehavior the new synchronization behavior
 	 * @return this builder
 	 */
-	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull SELF withSyncBehavior(@NotNull RegistrySynchronizationBehavior syncBehavior) {
+	public @NotNull QuiltRegistryBuilder<T> withSyncBehavior(@NotNull RegistrySynchronizationBehavior syncBehavior) {
 		this.syncBehavior = syncBehavior;
-		return (SELF) this;
+		return this;
 	}
 
 	/**
@@ -189,7 +171,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see RegistrySynchronizationBehavior#SKIPPED
 	 */
 	@Contract("-> this")
-	public @NotNull SELF withSyncSkipped() {
+	public @NotNull QuiltRegistryBuilder<T> withSyncSkipped() {
 		return this.withSyncBehavior(RegistrySynchronizationBehavior.SKIPPED);
 	}
 
@@ -202,7 +184,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see RegistrySynchronizationBehavior#REQUIRED
 	 */
 	@Contract("-> this")
-	public @NotNull SELF withSyncRequired() {
+	public @NotNull QuiltRegistryBuilder<T> withSyncRequired() {
 		return this.withSyncBehavior(RegistrySynchronizationBehavior.REQUIRED);
 	}
 
@@ -215,19 +197,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @see RegistrySynchronizationBehavior#OPTIONAL
 	 */
 	@Contract("-> this")
-	public @NotNull SELF withSyncOptional() {
+	public @NotNull QuiltRegistryBuilder<T> withSyncOptional() {
 		return this.withSyncBehavior(RegistrySynchronizationBehavior.OPTIONAL);
-	}
-
-	/**
-	 * Called when a registry is built via {@link #build()}.
-	 *
-	 * @param registry the newly built registry
-	 */
-	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
-		if (this.bootstrap != null) {
-			this.bootstrap.accept(registry);
-		}
 	}
 
 	/**
@@ -235,6 +206,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *
 	 * @return the newly constructed registry
 	 */
+	@SuppressWarnings("unchecked")
 	@Contract("-> new")
 	public @NotNull Registry<T> build() {
 		SimpleRegistry<T> registry;
@@ -245,7 +217,19 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 			registry = new DefaultMappedRegistry<>(this.defaultId.toString(), this.key, this.lifecycle, this.useIntrusiveHolders);
 		}
 
-		this.onRegistryBuilt(registry);
+		Registry.register((Registry<Registry<Object>>) Registries.ROOT, this.key.getValue(), (Registry<Object>) registry);
+
+		if (this.syncBehavior == RegistrySynchronizationBehavior.REQUIRED || this.syncBehavior == RegistrySynchronizationBehavior.OPTIONAL) {
+			RegistrySynchronization.markForSync(registry);
+
+			if (this.syncBehavior == RegistrySynchronizationBehavior.OPTIONAL) {
+				RegistrySynchronization.setRegistryOptional(registry);
+			}
+		}
+
+		if (this.bootstrap != null) {
+			this.bootstrap.accept(registry);
+		}
 
 		return registry;
 	}
