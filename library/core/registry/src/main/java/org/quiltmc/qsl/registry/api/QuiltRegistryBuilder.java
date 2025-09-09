@@ -16,20 +16,26 @@
 
 package org.quiltmc.qsl.registry.api;
 
+import java.util.function.Consumer;
+
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.registry.*;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
-import java.util.function.Consumer;
+import net.minecraft.registry.DefaultMappedRegistry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
 /**
  * Utility class to build a new code-driven {@link Registry}.
- * <p>
- * For data-driven registries, see {@link org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry}.
+ *
+ * <p>For data-driven registries, see {@link org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry}.
  *
  * @param <T>    the entry type tracked by this registry
  */
@@ -62,8 +68,8 @@ public final class QuiltRegistryBuilder<T> {
 
 	/**
 	 * Sets the lifecycle of the registry.
-	 * <p>
-	 * By default, this is {@linkplain Lifecycle#stable() stable}.
+	 *
+	 * <p>By default, this is {@linkplain Lifecycle#stable() stable}.
 	 *
 	 * @param lifecycle the new lifecycle
 	 * @return this builder
@@ -113,8 +119,8 @@ public final class QuiltRegistryBuilder<T> {
 
 	/**
 	 * Enables the use of the {@link Registry#createIntrusiveHolder(Object)} method for this registry.
-	 * <p>
-	 * By default, this is disabled.
+	 *
+	 * <p>By default, this is disabled.
 	 *
 	 * @return this builder
 	 */
@@ -127,8 +133,8 @@ public final class QuiltRegistryBuilder<T> {
 	/**
 	 * Sets this registry's <em>bootstrap method</em>, that will be called with the registry instance
 	 * once it is {@linkplain #build() built}.
-	 * <p>
-	 * By default, this is {@code null}.
+	 *
+	 * <p>By default, this is {@code null}.
 	 *
 	 * @param bootstrap the new bootstrap method
 	 * @return this builder
@@ -141,11 +147,12 @@ public final class QuiltRegistryBuilder<T> {
 
 	/**
 	 * Sets the default identifier of this registry.
-	 * <p>
-	 * Should a nonexistent entry be referenced in some way, the registry will instead reference the entry identified
-	 * by this.
-	 * <p>
-	 * By default, this is {@code null} - the registry will simply return {@code null} when a nonexistent entry is referenced.
+	 *
+	 * <p>Should a nonexistent entry be referenced in some way, the registry will instead
+	 * reference the entry identified by this.
+	 *
+	 * <p>By default, this is {@code null} - the registry will simply return {@code null}
+	 * when a nonexistent entry is referenced.
 	 *
 	 * @param defaultId the new default identifier
 	 * @return this builder
@@ -158,8 +165,8 @@ public final class QuiltRegistryBuilder<T> {
 
 	/**
 	 * Sets the synchronization behavior of this registry.
-	 * <p>
-	 * By default, this is {@link SyncBehavior#SKIPPED}.
+	 *
+	 * <p>By default, this is {@link SyncBehavior#SKIPPED}.
 	 *
 	 * @param syncBehavior the new synchronization behavior
 	 * @return this builder

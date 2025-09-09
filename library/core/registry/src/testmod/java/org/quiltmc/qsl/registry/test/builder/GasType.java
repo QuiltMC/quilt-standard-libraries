@@ -26,6 +26,6 @@ public class GasType {
 	}
 
 	public Holder.Reference<GasType> getRegistryHolder() {
-		return registryHolder;
+		return this.registryHolder;
 	}
 }
