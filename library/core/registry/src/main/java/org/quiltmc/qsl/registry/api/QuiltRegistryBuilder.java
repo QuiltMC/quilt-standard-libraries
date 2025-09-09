@@ -226,7 +226,7 @@ public final class QuiltRegistryBuilder<T> {
 
 		Registry.register((Registry<Registry<Object>>) Registries.ROOT, this.key.getValue(), (Registry<Object>) registry);
 
-		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
+		if (this.syncBehavior != SyncBehavior.SKIPPED) {
 			RegistrySynchronization.markForSync(registry);
 
 			if (this.syncBehavior == SyncBehavior.OPTIONAL) {
