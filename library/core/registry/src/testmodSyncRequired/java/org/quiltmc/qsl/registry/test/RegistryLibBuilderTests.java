@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.test.builder;
+package org.quiltmc.qsl.registry.test;
 
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;

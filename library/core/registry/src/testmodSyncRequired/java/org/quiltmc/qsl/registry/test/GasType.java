@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.test.builder;
+package org.quiltmc.qsl.registry.test;
 
 import net.minecraft.registry.Holder;
 
