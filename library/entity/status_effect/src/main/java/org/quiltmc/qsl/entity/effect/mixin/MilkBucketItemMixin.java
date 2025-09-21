@@ -16,19 +16,22 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.MilkBucketItem;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
-@Mixin(MilkBucketItem.class)
+// See LivingEntityMixin
+@Mixin(value = MilkBucketItem.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class MilkBucketItemMixin {
-	@Redirect(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z"))
-	private boolean quilt$addRemovalReason(LivingEntity instance) {
+	@WrapOperation(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z"))
+	private boolean quilt$addRemovalReason(LivingEntity instance, Operation<Boolean> original) {
 		return instance.clearStatusEffects(StatusEffectRemovalReason.DRANK_MILK) > 0;
 	}
 }

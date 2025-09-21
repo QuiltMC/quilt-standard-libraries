@@ -16,17 +16,20 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.collect.Iterators;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.Entity;
@@ -41,8 +44,11 @@ import org.quiltmc.qsl.entity.effect.api.StatusEffectEvents;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(LivingEntity.class)
+// We want to make sure that our wrap operations are put before other mods, so that we wrap the vanilla call and not a mod's call.
+// This is because we do not call the vanilla method, so any mod adding something will not be called.
+@Mixin(value = LivingEntity.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
 	@SuppressWarnings("ConstantConditions")
 	public LivingEntityMixin() {
@@ -51,7 +57,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 
 	@Shadow
 	@Final
-	private Map<StatusEffect, StatusEffectInstance> activeStatusEffects;
+	private Map<Holder<StatusEffect>, StatusEffectInstance> activeStatusEffects;
 
 	@Shadow
 	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
@@ -61,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
-	public boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason) {
+	public boolean removeStatusEffect(@NotNull Holder<StatusEffect> type, @NotNull StatusEffectRemovalReason reason) {
 		var effect = this.activeStatusEffects.get(type);
 		if (effect == null) {
 			return false;
@@ -117,44 +123,79 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, false);
 	}
 
-	@Redirect(
+	@WrapOperation(
 			method = "onStatusEffectRemoved",
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
 			)
 	)
-	private void quilt$callOnRemovedWithReason(StatusEffect instance, AttributeContainer attributes) {
-		StatusEffectInstance effect = this.activeStatusEffects.get(instance);
+	private void quilt$callOnRemovedWithReason(StatusEffect instance, AttributeContainer attributes, Operation<Void> original, StatusEffectInstance effect) {
 		instance.onRemoved((LivingEntity) (Object) this, attributes, effect, this.quilt$lastRemovalReason);
 		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, effect, this.quilt$lastRemovalReason);
 	}
 
-	/**
-	 * @author The Quilt Project
-	 * @reason Adding removal reason
-	 */
-	@Overwrite
-	public boolean removeStatusEffect(Holder<StatusEffect> type) {
-		return this.removeStatusEffect(type.value(), StatusEffectRemovalReason.GENERIC_ONE);
+	@Inject(
+		method = "removeStatusEffect(Lnet/minecraft/registry/Holder;)Z",
+		at = @At(
+			value = "HEAD"
+		),
+		cancellable = true
+	)
+	public void quilt$shouldRemoveEffect(Holder<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
+		StatusEffectInstance instance = this.activeStatusEffects.get(effect);
+		if (instance != null) {
+			if (!StatusEffectUtils.shouldRemove((LivingEntity) (Object) this, instance, StatusEffectRemovalReason.GENERIC_ONE)) {
+				cir.setReturnValue(false);
+			}
+		}
 	}
 
-	/**
-	 * @author The Quilt Project
-	 * @reason Adding removal reason
-	 */
-	@Overwrite
-	public boolean clearStatusEffects() {
-		return this.clearStatusEffects(StatusEffectRemovalReason.GENERIC_ALL) > 0;
+	@WrapOperation(
+			method = "removeStatusEffect(Lnet/minecraft/registry/Holder;)Z",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/LivingEntity;onStatusEffectRemoved(Lnet/minecraft/entity/effect/StatusEffectInstance;)V"
+			)
+	)
+	public void quilt$addRemoveStatusEffectReason(LivingEntity instance, StatusEffectInstance effect, Operation<Void> original) {
+		this.quilt$lastRemovalReason = StatusEffectRemovalReason.GENERIC_ONE;
+		original.call(instance, effect);
+		this.quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 	}
 
-	@Redirect(method = "tickStatusEffects", at = @At(
+	@WrapOperation(
+			method = "clearStatusEffects",
+			at = @At(
+				value = "INVOKE",
+				target = "Ljava/util/Collection;iterator()Ljava/util/Iterator;"
+			)
+	)
+	private Iterator<StatusEffectInstance> quilt$filterStatusEffects(Collection<StatusEffectInstance> instance, Operation<Iterator<StatusEffectInstance>> original) {
+		return Iterators.filter(original.call(instance), effect -> StatusEffectUtils.shouldRemove(
+			(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
+		));
+	}
+
+	@WrapOperation(method = "tickStatusEffects", at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/entity/LivingEntity;onStatusEffectRemoved(Lnet/minecraft/entity/effect/StatusEffectInstance;)V")
 	)
-	private void quilt$removeWithExpiredReason(LivingEntity instance, StatusEffectInstance effect) {
-		instance.onStatusEffectRemoved(effect, StatusEffectRemovalReason.EXPIRED);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(instance, effect, StatusEffectRemovalReason.EXPIRED);
+	private void quilt$removeWithExpiredReason(LivingEntity instance, StatusEffectInstance effect, Operation<Void> original) {
+		this.quilt$lastRemovalReason = StatusEffectRemovalReason.EXPIRED;
+		original.call(instance, effect);
+	}
+
+	@WrapOperation(
+		method = "onStatusEffectUpgraded",
+		at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
+		)
+	)
+	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, AttributeContainer attributes, Operation<Void> original, StatusEffectInstance statusEffectInstance) {
+		instance.onRemoved((LivingEntity) (Object) this, attributes, statusEffectInstance, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
+		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, statusEffectInstance, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -168,15 +209,5 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	)
 	private void quilt$callOnAppliedEvent_upgradeReapplying(StatusEffectInstance effect, boolean reapplyEffect, Entity source, CallbackInfo ci) {
 		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, true);
-	}
-
-	@Redirect(method = "onStatusEffectUpgraded", at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V")
-	)
-	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, AttributeContainer attributes) {
-		StatusEffectInstance effect = this.activeStatusEffects.get(instance);
-		instance.onRemoved((LivingEntity) (Object) this, attributes, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
 	}
 }

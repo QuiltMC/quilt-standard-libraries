@@ -30,6 +30,8 @@ public final class QuiltStatusEffectInternals {
 
 	public static final String NAMESPACE = "quilt_status_effect";
 
+	public static final int MIXIN_PRIORITY = 500;
+
 	public static Identifier id(String path) {
 		return Identifier.of(NAMESPACE, path);
 	}

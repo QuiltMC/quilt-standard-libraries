@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.entity.effect.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
@@ -26,25 +27,27 @@ import net.minecraft.server.command.EffectCommand;
 import net.minecraft.registry.Holder;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
-@Mixin(EffectCommand.class)
+// See LivingEntityMixin
+@Mixin(value = EffectCommand.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
 public abstract class EffectCommandMixin {
-	@Redirect(
+	@WrapOperation(
 			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;)I",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z")
 	)
-	private static boolean quilt$addRemovalReason(LivingEntity instance) {
+	private static boolean quilt$addRemovalReason(LivingEntity instance, Operation<Boolean> original) {
 		return instance.clearStatusEffects(StatusEffectRemovalReason.COMMAND_ALL) > 0;
 	}
 
-	@Redirect(
+	@WrapOperation(
 			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/registry/Holder;)I",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/registry/Holder;)Z"
 			)
 	)
-	private static boolean quilt$addRemovalReason(LivingEntity instance, Holder<StatusEffect> type) {
-		return instance.removeStatusEffect(type.value(), StatusEffectRemovalReason.COMMAND_ONE);
+	private static boolean quilt$addRemovalReason(LivingEntity instance, Holder<StatusEffect> type, Operation<Boolean> original) {
+		return instance.removeStatusEffect(type, StatusEffectRemovalReason.COMMAND_ONE);
 	}
 }

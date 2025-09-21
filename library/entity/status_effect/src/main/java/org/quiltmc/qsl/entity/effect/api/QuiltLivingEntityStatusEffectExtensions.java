@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.Holder;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
@@ -36,7 +37,7 @@ public interface QuiltLivingEntityStatusEffectExtensions {
 	 * @param reason the reason to remove the status effect
 	 * @return {@code true} if the status effect was successfully removed, or {@code false} otherwise.
 	 */
-	default boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason) {
+	default boolean removeStatusEffect(@NotNull Holder<StatusEffect> type, @NotNull StatusEffectRemovalReason reason) {
 		throw new UnsupportedOperationException("No implementation of removeStatusEffect could be found.");
 	}
 
