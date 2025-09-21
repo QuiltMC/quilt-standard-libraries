@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.item.test;
 
 import net.minecraft.component.DataComponentType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolMaterials;
@@ -30,7 +31,6 @@ import net.minecraft.util.dynamic.Codecs;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 
 public class CustomDamageTest implements ModInitializer {
 	public static final DataComponentType<Integer> WEIRD = Registry.register(
@@ -59,7 +59,7 @@ public class CustomDamageTest implements ModInitializer {
 
 	public static class WeirdPick extends PickaxeItem {
 		protected WeirdPick() {
-			super(ToolMaterials.GOLD, new QuiltItemSettings().customDamage(WEIRD_DAMAGE_HANDLER));
+			super(ToolMaterials.GOLD, new Item.Settings().customDamage(WEIRD_DAMAGE_HANDLER));
 		}
 
 		@Override

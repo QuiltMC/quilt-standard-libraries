@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ItemMixin",
+    "ItemSettingMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
     "recipe_remainder.AbstractFurnaceBlockEntityMixin",

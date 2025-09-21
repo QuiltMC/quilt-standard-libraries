@@ -19,36 +19,25 @@ package org.quiltmc.qsl.item.setting.api;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.Contract;
-
-import net.minecraft.component.DataComponentType;
-import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.feature_flags.FeatureFlag;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.JukeboxSong;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Rarity;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
- * Quilt's version of {@link Item.Settings}.
- * Adds additional methods and hooks not found in the original class.
- *
- * <p>
- * To use it, simply replace {@code new Item.Settings()} with {@code new QuiltItemSettings()}.
+ * Quilt's additional methods and hooks for {@link Item.Settings}.
  */
-public class QuiltItemSettings extends Item.Settings {
+@InjectedInterface(Item.Settings.class)
+public interface QuiltItemSettings {
 	/**
 	 * Sets the {@link EquipmentSlotProvider} of the item.
 	 *
 	 * @param equipmentSlotProvider the {@link EquipmentSlotProvider}
 	 * @return this
 	 */
-	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
+	default Item.Settings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
 		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
 	}
 
@@ -58,7 +47,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param equipmentSlot the {@link EquipmentSlot}
 	 * @return this
 	 */
-	public QuiltItemSettings equipmentSlot(EquipmentSlot equipmentSlot) {
+	default Item.Settings equipmentSlot(EquipmentSlot equipmentSlot) {
 		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
 	}
 
@@ -70,7 +59,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 * @see CustomDamageHandler
 	 */
-	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
+	default Item.Settings customDamage(CustomDamageHandler handler) {
 		return this.customSetting(QuiltCustomItemSettings.CUSTOM_DAMAGE_HANDLER, handler);
 	}
 
@@ -80,7 +69,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param provider the {@link RecipeRemainderProvider} for the item
 	 */
-	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
+	default Item.Settings recipeRemainder(RecipeRemainderProvider provider) {
 		return this.recipeRemainder(provider, RecipeRemainderLocation.DEFAULT_LOCATIONS);
 	}
 
@@ -88,7 +77,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
 	 * Defaults to setting both crafting, furnace fuel remainder, and brewing stand addition, like vanilla.
 	 */
-	public QuiltItemSettings recipeDamageRemainder() {
+	default Item.Settings recipeDamageRemainder() {
 		return this.recipeDamageRemainder(1, RecipeRemainderLocation.DEFAULT_LOCATIONS);
 	}
 
@@ -96,7 +85,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * Sets the stack-aware recipe remainder to return the item itself.
 	 * Defaults to setting both crafting, furnace fuel remainder, and brewing stand addition, like vanilla.
 	 */
-	public QuiltItemSettings recipeSelfRemainder() {
+	default Item.Settings recipeSelfRemainder() {
 		return this.recipeDamageRemainder(0, RecipeRemainderLocation.DEFAULT_LOCATIONS);
 	}
 
@@ -106,24 +95,24 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param by the amount
 	 */
-	public QuiltItemSettings recipeDamageRemainder(int by) {
+	default Item.Settings recipeDamageRemainder(int by) {
 		return this.recipeDamageRemainder(by, RecipeRemainderLocation.DEFAULT_LOCATIONS);
 	}
 
 	/**
 	 * Sets the stack-aware recipe remainder provider of the item.
 	 *
-	 * @param provider the {@link RecipeRemainderProvider} for the item
+	 * @param provider  the {@link RecipeRemainderProvider} for the item
 	 * @param locations the {@link RecipeRemainderLocation locations} for the remainder
 	 */
-	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider, RecipeRemainderLocation... locations) {
+	default Item.Settings recipeRemainder(RecipeRemainderProvider provider, RecipeRemainderLocation... locations) {
 		for (var location : locations) {
 			((CustomItemSettingImpl<Map<RecipeRemainderLocation, RecipeRemainderProvider>>) QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER)
-					.get(this)
+					.get(((Item.Settings) this))
 					.put(location, provider);
 		}
 
-		return this;
+		return ((Item.Settings) this);
 	}
 
 	/**
@@ -131,7 +120,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param locations the {@link RecipeRemainderLocation locations} for the remainder
 	 */
-	public QuiltItemSettings recipeDamageRemainder(RecipeRemainderLocation... locations) {
+	default Item.Settings recipeDamageRemainder(RecipeRemainderLocation... locations) {
 		return this.recipeDamageRemainder(1, locations);
 	}
 
@@ -140,17 +129,17 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param locations the {@link RecipeRemainderLocation locations} for the remainder
 	 */
-	public QuiltItemSettings recipeSelfRemainder(RecipeRemainderLocation... locations) {
+	default Item.Settings recipeSelfRemainder(RecipeRemainderLocation... locations) {
 		return this.recipeDamageRemainder(0, locations);
 	}
 
 	/**
 	 * Sets the stack-aware recipe remainder to damage the item by a certain amount every time it is used in crafting.
 	 *
-	 * @param by       the amount
+	 * @param by        the amount
 	 * @param locations the {@link RecipeRemainderLocation location} for the remainder
 	 */
-	public QuiltItemSettings recipeDamageRemainder(int by, RecipeRemainderLocation... locations) {
+	default Item.Settings recipeDamageRemainder(int by, RecipeRemainderLocation... locations) {
 		if (by == 0) {
 			return this.recipeRemainder((original, recipe) -> original.copy(), locations);
 		}
@@ -180,83 +169,12 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param value   the object containing the setting itself
 	 * @return this builder
 	 */
-	public <T> QuiltItemSettings customSetting(CustomItemSetting<T> setting, T value) {
+	default <T> Item.Settings customSetting(CustomItemSetting<T> setting, T value) {
 		if (!(setting instanceof CustomItemSettingImpl)) {
 			throw new UnsupportedOperationException("CustomItemSetting should not be custom class " + setting.getClass().getSimpleName());
 		}
 
-		((CustomItemSettingImpl<T>) setting).set(this, value);
-		return this;
-	}
-
-	// Overrides of vanilla methods
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings food(FoodComponent foodComponent) {
-		super.food(foodComponent);
-		return this;
-	}
-
-	@Override
-	public QuiltItemSettings maxCount(int maxCount) {
-		super.maxCount(maxCount);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings maxDamage(int maxDamage) {
-		super.maxDamage(maxDamage);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings recipeRemainder(Item recipeRemainder) {
-		super.recipeRemainder(recipeRemainder);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings rarity(Rarity rarity) {
-		super.rarity(rarity);
-		return this;
-	}
-
-	@Override
-	@Contract("->this")
-	public QuiltItemSettings fireproof() {
-		super.fireproof();
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings requiredFlags(FeatureFlag... flags) {
-		super.requiredFlags(flags);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings jukeboxSong(RegistryKey<JukeboxSong> song) {
-		super.jukeboxSong(song);
-		return this;
-	}
-
-	@Override
-	@Contract("_,_->this")
-	public <T> QuiltItemSettings component(DataComponentType<T> type, T value) {
-		super.component(type, value);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
-	public QuiltItemSettings attributeModifiersComponent(AttributeModifiersComponent value) {
-		super.attributeModifiersComponent(value);
-		return this;
+		((CustomItemSettingImpl<T>) setting).set((Item.Settings) this, value);
+		return ((Item.Settings) this);
 	}
 }

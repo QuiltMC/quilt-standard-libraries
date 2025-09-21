@@ -25,6 +25,9 @@ qslModule {
 			testmodOnly("item_content_registry")
 		}
 	}
+	injectedInterface("net/minecraft/class_1792\u0024class_1793"){
+		values = ["org/quiltmc/qsl/item/setting/api/QuiltItemSettings"]
+	}
 }
 
 // Check that the QuiltItemSettings class has all required methods.
