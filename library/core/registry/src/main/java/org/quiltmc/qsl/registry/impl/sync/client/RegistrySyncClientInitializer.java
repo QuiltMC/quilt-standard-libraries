@@ -29,6 +29,5 @@ public class RegistrySyncClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientRegistrySync.registerHandlers();
-		ClientFabricRegistrySync.registerHandlers();
 	}
 }

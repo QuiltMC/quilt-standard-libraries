@@ -24,11 +24,14 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.networking.api.PayloadTypeRegistry;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationConnectionEvents;
+import org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.QuiltSyncTask;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.server.SetupSyncTask;
+import org.quiltmc.qsl.registry.mixin.AbstractServerPacketHandlerAccessor;
 
 @ApiStatus.Internal
 public class RegistrySyncInitializer implements ModInitializer {
@@ -68,6 +71,12 @@ public class RegistrySyncInitializer implements ModInitializer {
 		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
 			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
 		});
+
+		SetupSyncTask.registerSyncTask(SetupSyncTask.QUILT_SYNC_PRIORITY, new SetupSyncTask.SyncTask(
+				"quilt",
+				handler -> ServerConfigurationNetworking.getSendable(handler).contains(ServerPackets.Handshake.ID),
+				handler -> ((ServerConfigurationTaskManager) handler).addImmediateTask(new QuiltSyncTask(handler, ((AbstractServerPacketHandlerAccessor) handler).getConnection()))
+		));
 
 		ServerRegistrySync.registerHandlers();
 		PayloadTypeRegistry.configurationS2C().register(ServerPackets.Handshake.ID, ServerPackets.Handshake.CODEC);

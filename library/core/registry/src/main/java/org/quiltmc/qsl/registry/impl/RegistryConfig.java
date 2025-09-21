@@ -64,12 +64,6 @@ public class RegistryConfig extends ReflectiveConfig {
 		@Comment("Shows some details about why client couldn't connect.")
 		public final TrackedValue<Boolean> mismatched_entries_show_details = value(true);
 
-		@Comment("Allows players with Fabric API to connect, as long as they have all required mods.")
-		public final TrackedValue<Boolean> support_fabric_api_protocol = value(true);
-
-		@Comment("Forces unknown clients to use the Fabric Registry Sync protocol fallback. Disables preventing Vanilla clients from joining.")
-		public final TrackedValue<Boolean> force_fabric_api_protocol_fallback = value(false);
-
 		@Comment("Disables the Mod Protocol sync on server list/initial query.")
 		public final TrackedValue<Boolean> disable_mod_protocol_ping = value(false);
 

@@ -65,8 +65,6 @@ public final class ServerRegistrySync {
 	public static Text noRegistrySyncMessage = Text.empty();
 	public static Text errorStyleHeader = Text.empty();
 	public static Text errorStyleFooter = Text.empty();
-	public static boolean supportFabric = false;
-	public static boolean forceFabricFallback = false;
 	public static boolean forceDisable = false;
 	public static boolean showErrorDetails = false;
 	public static boolean stateValidation = true;
@@ -108,8 +106,6 @@ public final class ServerRegistrySync {
 		errorStyleHeader = text(config.mismatched_entries_top_message.value());
 		errorStyleFooter = text(config.mismatched_entries_bottom_message.value());
 
-		supportFabric = config.support_fabric_api_protocol.value();
-		forceFabricFallback = config.force_fabric_api_protocol_fallback.value();
 		forceDisable = config.disable_registry_sync.value();
 		showErrorDetails = config.mismatched_entries_show_details.value();
 		stateValidation = !config.disable_state_validation.value();
@@ -130,10 +126,6 @@ public final class ServerRegistrySync {
 					break;
 				}
 			}
-		}
-
-		if (supportFabric) {
-			SERVER_SUPPORTED_PROTOCOL.add(ProtocolVersions.FAPI_PROTOCOL);
 		}
 
 		if (forceDisable) {
