@@ -23,28 +23,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.server.WorldStem;
 import net.minecraft.test.TestServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModPackUtil;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 
 @Mixin(TestServer.class)
 public class TestServerMixin {
-	@ModifyArg(
-			method = "create",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/world/FeatureAndDataSettings;<init>(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/feature_flags/FeatureFlagBitSet;)V"
-			),
-			index = 0
-	)
-	private static DataPackSettings replaceDefaultDataPackSettings(DataPackSettings initialDataPacks) {
-		return ModPackUtil.DEFAULT_SETTINGS;
-	}
-
 	@ModifyVariable(method = "create", at = @At(value = "STORE"))
 	private static WorldStem onSuccessfulReloadResources(WorldStem resources) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
