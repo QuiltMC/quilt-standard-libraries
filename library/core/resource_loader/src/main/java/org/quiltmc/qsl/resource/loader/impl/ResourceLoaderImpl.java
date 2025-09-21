@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.gson.JsonObject;
@@ -47,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
@@ -101,7 +103,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
-	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
+	private final Set<ReloaderFactory> factories = new LinkedHashSet<>();
+	private final Set<ResourceReloader> currentReloaders = new ObjectOpenHashSet<>();
 	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
 	final Set<PackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
@@ -148,23 +151,35 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	/* Resource reloaders stuff */
 
-	public static void sort(ResourceType type, List<ResourceReloader> reloaders) {
-		get(type).sort(reloaders);
+	public static void sort(ResourceType type, List<ResourceReloader> reloaders, HolderLookup.Provider provider) {
+		get(type).sort(reloaders, provider);
 	}
 
-	@SuppressWarnings("removal")
 	@Override
 	public void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader) {
-		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
+		registerReloader(new Static(resourceReloader));
+	}
+
+	@Override
+	public void registerReloader(@NotNull Identifier id, Function<HolderLookup.Provider, @NotNull IdentifiableResourceReloader> reloaderFactory) {
+		if (this.type == ResourceType.CLIENT_RESOURCES) {
+			throw new IllegalStateException("Cannot register a dynamic reloader for client resources!");
+		}
+
+		registerReloader(new Dynamic(id, reloaderFactory));
+	}
+
+	private void registerReloader(ReloaderFactory factory) {
+		if (!this.addedReloaderIds.add(factory.id())) {
 			throw new IllegalStateException(
-					"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
+				"Tried to register resource reloader " + factory.id() + " twice!"
 			);
 		}
 
-		if (!this.addedReloaders.add(resourceReloader)) {
+		if (!this.factories.add(factory)) {
 			throw new IllegalStateException(
-					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
-							+ " already in resource reloader set!"
+				"Resource reloader with previously unknown ID " + factory.id()
+					+ " already in resource reloader set!"
 			);
 		}
 	}
@@ -231,10 +246,11 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * Sorts the given resource reloaders to satisfy dependencies.
 	 *
 	 * @param reloaders the resource reloaders to sort
+	 * @param provider
 	 */
-	private void sort(List<ResourceReloader> reloaders) {
+	private void sort(List<ResourceReloader> reloaders, HolderLookup.Provider provider) {
 		// Remove any modded reloaders to sort properly.
-		reloaders.removeAll(this.addedReloaders);
+		reloaders.removeAll(currentReloaders);
 
 		// General rules:
 		// - We *do not* touch the ordering of vanilla reloaders. Ever.
@@ -286,7 +302,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		PhaseData.link(last, afterVanilla);
 
 		// Add the modded reloaders.
-		for (var moddedReloader : this.addedReloaders) {
+		for (var factory : this.factories) {
+			var moddedReloader = factory.get(provider);
+			this.currentReloaders.add(moddedReloader);
 			var phase = new ResourceReloaderPhaseData(moddedReloader.getQuiltId(), moddedReloader);
 			runtimePhases.put(phase.getId(), phase);
 		}
@@ -521,6 +539,37 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 					}
 				}
 			}
+		}
+	}
+
+	private sealed interface ReloaderFactory permits Static, Dynamic {
+		Identifier id();
+
+		IdentifiableResourceReloader get(HolderLookup.Provider provider);
+	}
+
+	record Static(IdentifiableResourceReloader reloader) implements ReloaderFactory {
+		@Override
+		public Identifier id() {
+			return reloader.getQuiltId();
+		}
+
+		@Override
+		public IdentifiableResourceReloader get(HolderLookup.Provider provider) {
+			return reloader;
+		}
+	}
+
+	record Dynamic(Identifier id, Function<HolderLookup.Provider, IdentifiableResourceReloader> reloaderFactory) implements ReloaderFactory {
+		@Override
+		public IdentifiableResourceReloader get(HolderLookup.Provider provider) {
+			var reloader = reloaderFactory.apply(provider);
+
+			if (!id.equals(reloader.getQuiltId())) {
+				throw new IllegalStateException("Dynamic reloader with id " + id + " created a reloader with incorrect id " + reloader.getQuiltId());
+			}
+
+			return reloader;
 		}
 	}
 }

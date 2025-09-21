@@ -28,7 +28,6 @@ public class ProtocolVersions {
 	public static final IntSet IMPL_SUPPORTED_VERSIONS = IntSet.of(IntStream.rangeClosed(OLDEST_SUPPORTED_VERSION, CURRENT_VERSION).toArray());
 
 	public static final int NO_PROTOCOL = -1;
-	public static final int FAPI_PROTOCOL = -2;
 
 	public static int getHighestSupportedLocal(IntList supportedRemote) {
 		return getHighestSupported(IMPL_SUPPORTED_VERSIONS, supportedRemote);

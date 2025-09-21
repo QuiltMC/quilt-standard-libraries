@@ -16,35 +16,50 @@
 
 package org.quiltmc.qsl.registry.impl.sync.server;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
 import net.minecraft.server.network.ServerConfigurationNetworkHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.packet.Packet;
 
-import org.quiltmc.qsl.networking.api.server.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.server.ServerConfigurationTaskManager;
-import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.mixin.AbstractServerPacketHandlerAccessor;
 
 public record SetupSyncTask(ServerConfigurationNetworkHandler handler) implements ConfigurationTask {
 	public static final ConfigurationTask.Type TYPE = new Type("qsl:configure_sync");
 
+	public record SyncTask(String name, Predicate<ServerConfigurationNetworkHandler> shouldRun, Consumer<ServerConfigurationNetworkHandler> setupSync) {}
+
+	public static final int QUILT_SYNC_PRIORITY = 0;
+	public static final Int2ObjectMap<SyncTask> SYNC_TASKS = new Int2ObjectArrayMap<>();
+
+	public static void registerSyncTask(int priority, SyncTask syncTask) {
+		SYNC_TASKS.put(priority, syncTask);
+	}
+
 	@Override
 	public void start(Consumer<Packet<?>> task) {
 		if (!((AbstractServerPacketHandlerAccessor) this.handler).invokeIsHost() && ServerRegistrySync.shouldSync()) {
-			// First check if Quilt sync is available
-			if (ServerConfigurationNetworking.getSendable(this.handler).contains(ServerPackets.Handshake.ID)) {
-				((ServerConfigurationTaskManager) this.handler).addImmediateTask(new QuiltSyncTask(this.handler, ((AbstractServerPacketHandlerAccessor) this.handler).getConnection()));
-			} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ServerConfigurationNetworking.getSendable(this.handler).contains(ServerFabricRegistrySync.Payload.ID))) {
-				// TODO: If the client says that it supports fabric sync but then doesnt respond, the client will sit in an idle loop forever.
-				FabricSyncTask fabricSyncTask = new FabricSyncTask(this.handler);
-				ServerConfigurationNetworking.registerReceiver(this.handler, ServerFabricRegistrySync.SyncCompletePayload.ID, (server, handler, buf, responseSender) -> fabricSyncTask.handleComplete());
-				((ServerConfigurationTaskManager) this.handler).addImmediateTask(fabricSyncTask);
-			} else {
-				if (ServerRegistrySync.requiresSync()) {
-					((AbstractServerPacketHandlerAccessor) this.handler).getConnection().disconnect(ServerRegistrySync.noRegistrySyncMessage);
+			boolean synced = false;
+
+			List<SyncTask> sortedTasks = SYNC_TASKS.int2ObjectEntrySet().stream().sorted().map(Map.Entry::getValue).toList();
+
+			for (SyncTask syncTask : sortedTasks) {
+				if (syncTask.shouldRun().test(this.handler)) {
+					syncTask.setupSync().accept(this.handler);
+					synced = true;
+					break;
 				}
+			}
+
+			if (!synced && ServerRegistrySync.requiresSync()) {
+				((AbstractServerPacketHandlerAccessor) this.handler).getConnection().disconnect(ServerRegistrySync.noRegistrySyncMessage);
 			}
 		}
 

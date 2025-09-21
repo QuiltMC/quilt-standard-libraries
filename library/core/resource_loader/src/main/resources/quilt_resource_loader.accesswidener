@@ -4,6 +4,7 @@ accessible  class   net/minecraft/client/option/GameOptions$Visitor
 accessible  class   net/minecraft/client/option/GameOptions$TypeVisitor
 accessible  class   net/minecraft/resource/NamespaceResourceManager$ResourceEntry
 accessible  class   net/minecraft/client/MinecraftClient$LoadingContext
+accessible  class   net/minecraft/server/ServerReloadableResources$ServerProvider
 
 # accessible  method  net/minecraft/resource/pack/PackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/PackProfile$PackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/PackProfile$Info;Lnet/minecraft/resource/pack/PackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/PackSource;)V
 accessible  method  net/minecraft/resource/pack/BuiltinPackProvider wrapToFactory (Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/PackProfile$PackFactory;

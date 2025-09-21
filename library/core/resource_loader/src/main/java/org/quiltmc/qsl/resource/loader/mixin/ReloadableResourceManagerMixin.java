@@ -62,7 +62,7 @@ public class ReloadableResourceManagerMixin {
 			hooks.quilt$appendTopPacks();
 		}
 
-		ResourceLoaderImpl.sort(this.type, this.reloaders);
+		ResourceLoaderImpl.sort(this.type, this.reloaders, null);
 	}
 
 	/**

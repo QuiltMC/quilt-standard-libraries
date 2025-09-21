@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.client;
+package org.quiltmc.qsl.item.setting.mixin;
 
-import org.jetbrains.annotations.ApiStatus;
+import org.spongepowered.asm.mixin.Mixin;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import net.minecraft.item.Item;
 
-@ApiStatus.Internal
-@ClientOnly
-public class RegistrySyncClientInitializer implements ClientModInitializer {
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onInitializeClient(ModContainer mod) {
-		ClientRegistrySync.registerHandlers();
-	}
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+
+@Mixin(Item.Settings.class)
+abstract class ItemSettingMixin implements QuiltItemSettings {
 }

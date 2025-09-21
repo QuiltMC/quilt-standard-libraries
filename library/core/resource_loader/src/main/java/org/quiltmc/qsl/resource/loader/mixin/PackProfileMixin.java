@@ -18,15 +18,19 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.resource.PackPosition;
 import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.ResourcePack;
 
+import org.quiltmc.qsl.resource.loader.api.GroupPack;
 import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
 import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 
@@ -34,6 +38,11 @@ import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 public class PackProfileMixin implements QuiltPackProfile {
 	@Unique
 	private PackActivationType quilt$activationType;
+
+	@Shadow
+	public static PackProfile.Metadata loadMetadata(PackLocationInfo locationInfo, PackProfile.PackFactory packFactory, int currentPackFormat) {
+		throw new IllegalStateException("Mixin failed");
+	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void quilt$onInit(PackLocationInfo locationInfo, PackProfile.PackFactory packFactory, PackProfile.Metadata info, PackPosition position, CallbackInfo ci) {
@@ -45,5 +54,15 @@ public class PackProfileMixin implements QuiltPackProfile {
 	@Override
 	public @NotNull PackActivationType getActivationType() {
 		return this.quilt$activationType;
+	}
+
+	@Inject(method = "loadMetadata", at = @At("HEAD"))
+	private static void quilt$addMetatdataForWrappedPacks(PackLocationInfo locationInfo, PackProfile.PackFactory packFactory, int currentPackFormat, CallbackInfoReturnable<PackProfile.Metadata> cir) {
+		if (packFactory instanceof GroupPack.Wrapped.WrappedPackFactory factory) {
+			for (ResourcePack pack : factory.wrapped.getPacks()) {
+				PackProfile.Metadata metadata = loadMetadata(pack.getLocationInfo(), QuiltPackProfile.wrapToFactory(pack), currentPackFormat);
+				factory.addMetadata(pack, metadata);
+			}
+		}
 	}
 }

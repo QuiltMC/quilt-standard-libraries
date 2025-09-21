@@ -17,17 +17,20 @@
 package org.quiltmc.qsl.resource.loader.api;
 
 import java.nio.file.Path;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.PackProvider;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.event.Event;
@@ -57,6 +60,18 @@ public interface ResourceLoader {
 	 * @see #addReloaderOrdering(Identifier, Identifier) add an ordering rule for resource reloaders
 	 */
 	void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader);
+
+	/**
+	 * Register a resource reloader for a given resource manager type.
+	 *
+	 * <p> This function is only to be used when adding a reloader for server data, since client data does not have
+	 * access to dynamic registries. The provider will be null for client data.
+	 *
+	 * @param id the id for the reloaders
+	 * @param reloaderFactory the resource reloader factory
+	 * @see #addReloaderOrdering(Identifier, Identifier) add an ordering rule for resource reloaders
+	 */
+	void registerReloader(@NotNull Identifier id, Function<HolderLookup.@Nullable Provider, @NotNull IdentifiableResourceReloader> reloaderFactory);
 
 	/**
 	 * Requests that resource reloaders registered as the first identifier is applied before the other referenced resource reloader.

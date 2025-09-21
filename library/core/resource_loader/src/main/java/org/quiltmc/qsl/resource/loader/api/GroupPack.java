@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.CompositeResourcePack;
 import net.minecraft.resource.pack.PackLocationInfo;
 import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.resource.pack.ResourcePack;
@@ -237,26 +237,44 @@ public abstract class GroupPack implements ResourcePack {
 
 		@Override
 		public PackProfile.PackFactory wrapToFactory() {
-			return new PackProfile.PackFactory() {
-				@Override
-				public ResourcePack openPrimary(PackLocationInfo locationInfo) {
-					return Wrapped.this;
+			return new WrappedPackFactory(this);
+		}
+
+		public static class WrappedPackFactory implements PackProfile.PackFactory {
+			public final Wrapped wrapped;
+
+			private final Map<ResourcePack, PackProfile.Metadata> metadata = new HashMap<>();
+
+			public WrappedPackFactory(Wrapped wrapped) {
+				this.wrapped = wrapped;
+			}
+
+			public void addMetadata(ResourcePack pack, PackProfile.Metadata metadata) {
+				this.metadata.put(pack, metadata);
+			}
+
+			@Override
+			public ResourcePack openPrimary(PackLocationInfo locationInfo) {
+				return this.wrapped;
+			}
+
+			@Override
+			public ResourcePack open(PackLocationInfo locationInfo, PackProfile.Metadata metadata) {
+				List<ResourcePack> overlays = this.wrapped.streamPacks()
+						.flatMap(pack ->
+							this.metadata.get(pack)
+								.overlays()
+								.stream()
+								.map(pack::createOverlay)
+						)
+						.collect(Collectors.toCollection(ArrayList::new));
+
+				if (overlays.isEmpty()) {
+					return this.wrapped;
 				}
 
-				@Override
-				public ResourcePack open(PackLocationInfo locationInfo, PackProfile.Metadata metadata) {
-					if (metadata.overlays().isEmpty()) {
-						return Wrapped.this;
-					}
-
-					List<ResourcePack> overlays = metadata.overlays()
-							.stream()
-							.map(Wrapped.this::createOverlay)
-							.toList();
-
-					return new CompositeResourcePack(Wrapped.this, overlays);
-				}
-			};
+				return new Wrapped(this.wrapped.type, this.wrapped, overlays, false);
+			}
 		}
 	}
 }

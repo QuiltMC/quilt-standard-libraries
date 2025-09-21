@@ -43,6 +43,7 @@ import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions
 import org.quiltmc.qsl.entity.effect.api.StatusEffectEvents;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
+import org.quiltmc.qsl.entity.effect.impl.FilteringIterator;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -172,7 +173,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			)
 	)
 	private Iterator<StatusEffectInstance> quilt$filterStatusEffects(Collection<StatusEffectInstance> instance, Operation<Iterator<StatusEffectInstance>> original) {
-		return Iterators.filter(original.call(instance), effect -> StatusEffectUtils.shouldRemove(
+		return new FilteringIterator<>(original.call(instance), effect -> StatusEffectUtils.shouldRemove(
 			(LivingEntity) (Object) this, effect, StatusEffectRemovalReason.GENERIC_ALL
 		));
 	}

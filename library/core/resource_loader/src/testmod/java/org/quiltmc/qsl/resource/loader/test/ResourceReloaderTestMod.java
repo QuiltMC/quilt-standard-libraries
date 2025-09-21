@@ -17,11 +17,16 @@
 
 package org.quiltmc.qsl.resource.loader.test;
 
+import java.util.Objects;
+
 import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -134,5 +139,23 @@ public class ResourceReloaderTestMod implements ModInitializer {
 				}
 			}
 		});
+
+		resourceLoader.registerReloader(DynamicRegistryReloader.ID, DynamicRegistryReloader::new);
+	}
+
+	private record DynamicRegistryReloader(HolderLookup.Provider provider) implements SimpleSynchronousResourceReloader {
+		private static final Identifier ID = ResourceLoaderTestMod.id("dynamic_registry_reloader");
+
+		@Override
+		public void reload(ResourceManager manager) {
+			Objects.requireNonNull(provider, "Was given a null provider for server data!");
+			provider.getLookupOrThrow(RegistryKeys.ENCHANTMENT)
+				.getHolderOrThrow(Enchantments.FORTUNE);
+		}
+
+		@Override
+		public @NotNull Identifier getQuiltId() {
+			return ID;
+		}
 	}
 }
