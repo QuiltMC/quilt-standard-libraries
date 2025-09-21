@@ -22,7 +22,7 @@ public class GasType {
 	private final Holder.Reference<GasType> registryHolder;
 
 	public GasType() {
-		this.registryHolder = RegistryLibBuilderTests.GAS_TYPE.createIntrusiveHolder(this);
+		this.registryHolder = ModRegistries.GAS_TYPE.createIntrusiveHolder(this);
 	}
 
 	public Holder.Reference<GasType> getRegistryHolder() {

@@ -17,15 +17,15 @@
 package org.quiltmc.qsl.registry.test;
 
 import com.mojang.logging.LogUtils;
+import net.fabricmc.api.EnvType;
 import org.slf4j.Logger;
 
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.registry.api.QuiltRegistryBuilder;
 
 public class RegistryLibBuilderTests implements ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_test_builder";
@@ -36,18 +36,17 @@ public class RegistryLibBuilderTests implements ModInitializer {
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final RegistryKey<Registry<GasType>> GAS_TYPE_KEY = RegistryKey.ofRegistry(id("gas_type"));
-
-	public static final Registry<GasType> GAS_TYPE = QuiltRegistryBuilder.of(GAS_TYPE_KEY)
-			.frozen()
-			.unsynchronized()
-			.build();
-
 	@Override
 	public void onInitialize(ModContainer mod) {
-		var oxygen = new GasType();
-		LOGGER.info("Oxygen GasType holder is {}", oxygen.getRegistryHolder());
-		Registry.register(GAS_TYPE, id("oxygen"), oxygen);
-		LOGGER.info("Registered! Oxygen GasType holder is {}", oxygen.getRegistryHolder());
+		// horrible no good hack to make sure only the server is aware of the registry
+		// (can't just use DedicatedServerModInitializer since that's invoked after registries are frozen)
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.SERVER) {
+			var oxygen = new GasType();
+			LOGGER.info("Oxygen GasType holder is {}", oxygen.getRegistryHolder());
+			Registry.register(ModRegistries.GAS_TYPE, id("oxygen"), oxygen);
+			LOGGER.info("Registered! Oxygen GasType holder is {}", oxygen.getRegistryHolder());
+		} else {
+			LOGGER.info("...what on earth is a GasType?!");
+		}
 	}
 }

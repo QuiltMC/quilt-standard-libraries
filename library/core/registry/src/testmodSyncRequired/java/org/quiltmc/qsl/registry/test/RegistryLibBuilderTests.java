@@ -20,12 +20,10 @@ import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.registry.api.QuiltRegistryBuilder;
 
 public class RegistryLibBuilderTests implements ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_test_builder";
@@ -36,18 +34,11 @@ public class RegistryLibBuilderTests implements ModInitializer {
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final RegistryKey<Registry<GasType>> GAS_TYPE_KEY = RegistryKey.ofRegistry(id("gas_type"));
-
-	public static final Registry<GasType> GAS_TYPE = QuiltRegistryBuilder.of(GAS_TYPE_KEY)
-			.frozen()
-			.syncRequired()
-			.build();
-
 	@Override
 	public void onInitialize(ModContainer mod) {
 		var oxygen = new GasType();
 		LOGGER.info("Oxygen GasType holder is {}", oxygen.getRegistryHolder());
-		Registry.register(GAS_TYPE, id("oxygen"), oxygen);
+		Registry.register(ModRegistries.GAS_TYPE, id("oxygen"), oxygen);
 		LOGGER.info("Registered! Oxygen GasType holder is {}", oxygen.getRegistryHolder());
 	}
 }

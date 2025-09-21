@@ -47,6 +47,13 @@ sourceSets {
 
 loom {
 	runs {
+		testmodSyncSkippedClient {
+			client()
+			configName = "Testmod Client - Sync Skipped"
+			source(project.sourceSets.testmodSyncSkipped)
+			runDir("run/sync_skipped/client")
+		}
+
 		testmodSyncSkippedServer {
 			server()
 			configName = "Testmod Server - Sync Skipped"
