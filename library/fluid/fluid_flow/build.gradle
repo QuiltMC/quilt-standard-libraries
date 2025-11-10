@@ -1,0 +1,15 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Fluid Flow Event API"
+	moduleName = "fluid_flow"
+	id = "quilt_fluid_flow"
+	description = "Adds events for when fluids flow around other blocks."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}
