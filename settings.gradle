@@ -34,6 +34,7 @@ library("rendering")
 library("gui")
 library("item")
 library("management")
+library("rendering")
 library("worldgen")
 library("misc")
 
