@@ -44,7 +44,9 @@ public class CommonPacketsImpl {
 
 	public static void init(ModContainer mod) {
 		PayloadTypeRegistry.configurationC2S().register(CommonVersionPayload.PACKET_ID, CommonVersionPayload.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(CommonVersionPayload.PACKET_ID, CommonVersionPayload.CODEC);
 		PayloadTypeRegistry.configurationC2S().register(CommonRegisterPayload.PACKET_ID, CommonRegisterPayload.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(CommonRegisterPayload.PACKET_ID, CommonRegisterPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(CommonVersionPayload.PACKET_ID, CommonVersionPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(CommonRegisterPayload.PACKET_ID, CommonRegisterPayload.CODEC);
 
