@@ -136,7 +136,9 @@ public final class ClientNetworkingImpl {
 		ClientConfigurationConnectionEvents.DISCONNECT.register((handler, client) -> {
 			currentConfigurationAddon = null;
 		});
-		
+
+		PayloadTypeRegistry.configurationS2C().register(CommonVersionPayload.PACKET_ID, CommonVersionPayload.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(CommonRegisterPayload.PACKET_ID, CommonRegisterPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(CommonVersionPayload.PACKET_ID, CommonVersionPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(CommonRegisterPayload.PACKET_ID, CommonRegisterPayload.CODEC);
 
