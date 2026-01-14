@@ -20,8 +20,11 @@ import java.util.Optional;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.resource.pack.PackManager;
+import net.minecraft.world.SaveProperties;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -46,10 +49,14 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @ClientOnly
 @Mixin(IntegratedServerLoader.class)
 public abstract class IntegratedServerLoaderMixin {
+	@Shadow
+	protected abstract void method_57787(WorldSaveStorage.Session session, WorldStem worldStem, PackManager packManager, Runnable runnable);
+
 	@Unique
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
@@ -88,25 +95,22 @@ public abstract class IntegratedServerLoaderMixin {
 		return exception; // noop
 	}
 
-	@WrapOperation(
-			method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;"
-				+ "Lnet/minecraft/server/WorldStem;Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
-			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup("
-					+ "Lnet/minecraft/world/storage/WorldSaveStorage$Session;ZLjava/lang/Runnable;"
-					+ "Ljava/lang/Runnable;)V"
-			)
+	@Inject(
+		method = "method_57775(Lnet/minecraft/world/storage/WorldSaveStorage$Session;"
+			+ "Lnet/minecraft/server/WorldStem;Lnet/minecraft/resource/pack/PackManager;Ljava/lang/Runnable;)V",
+		at = @At(
+			value = "INVOKE_ASSIGN",
+			target = "Lnet/minecraft/world/SaveProperties;getLifecycle()Lcom/mojang/serialization/Lifecycle;",
+			shift = At.Shift.AFTER
+		),
+		locals = LocalCapture.CAPTURE_FAILHARD,
+		cancellable = true
 	)
-	private void onBackupExperimentalWarning(
-			IntegratedServerLoader instance, WorldSaveStorage.Session session, boolean legacyCustomized,
-			Runnable onProceeded, Runnable onCancelled,
-			Operation<Void> original
-	) {
-		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && !legacyCustomized) {
-			onCancelled.run();
-		} else {
-			original.call(instance, session, legacyCustomized, onProceeded, onCancelled);
+	private void onBackupExperimentalWarning(WorldSaveStorage.Session session, WorldStem worldStem, PackManager packManager, Runnable runnable, CallbackInfo ci, SaveProperties saveProperties, boolean bl) {
+		// bl == true if the world is a legacy customized world
+		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && !bl) {
+			this.method_57787(session, worldStem, packManager, runnable);
+			ci.cancel();
 		}
 	}
 
