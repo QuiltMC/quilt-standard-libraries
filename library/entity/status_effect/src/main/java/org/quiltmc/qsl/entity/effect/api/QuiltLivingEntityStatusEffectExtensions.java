@@ -42,7 +42,7 @@ public interface QuiltLivingEntityStatusEffectExtensions {
 	}
 
 	/**
-	 * Removes all status effects.
+	 * Removes the status effects that {@link StatusEffectRemovalReason#removesEffect(StatusEffectInstance)} returns {@code true} for.
 	 *
 	 * @param reason the reason to remove the status effects
 	 * @return the number of status effects that were successfully removed.

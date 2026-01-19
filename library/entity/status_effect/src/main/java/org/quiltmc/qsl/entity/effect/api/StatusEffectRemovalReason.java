@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.RemoveEffectsComponent;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
@@ -74,10 +76,14 @@ public class StatusEffectRemovalReason {
 			new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("command.one"));
 
 	/**
-	 * Used when effects are removed via drinking milk. Does <em>not</em> have to be the vanilla milk bucket.
+	 * The identifier used when effects are removed via the {@link net.minecraft.item.ClearAllEffectsComponent}, such as a milk bucket.
 	 */
-	public static final StatusEffectRemovalReason DRANK_MILK =
-			new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("action.drank_milk"));
+	public static final Identifier CLEAR_ALL_EFFECTS_COMPONENT_ID = QuiltStatusEffectInternals.id("action.consume.clear_all_effects");
+
+	/**
+	 * The identifier used when effects are removed via the {@link net.minecraft.item.RemoveEffectsComponent}, such as poison with honey bottles.
+	 */
+	public static final Identifier REMOVE_EFFECTS_COMPONENT_ID = QuiltStatusEffectInternals.id("action.consume.remove_effects");
 
 	protected final @NotNull Identifier id;
 
@@ -109,5 +115,38 @@ public class StatusEffectRemovalReason {
 	 */
 	public boolean removesEffect(StatusEffectInstance effect) {
 		return true;
+	}
+
+	/**
+	 * A removal reason that stems from a consumption action that has an associated {@link ItemStack}.
+	 */
+	public static class ConsumeRemovalReason extends StatusEffectRemovalReason {
+		private final ItemStack stack;
+
+		public ConsumeRemovalReason(@NotNull Identifier id, ItemStack stack) {
+			super(id);
+			this.stack = stack;
+		}
+
+		public ItemStack stack() {
+			return this.stack;
+		}
+	}
+
+	/**
+	 * A specific removal for the {@link RemoveEffectsComponent}.
+	 */
+	public static class RemoveEffectsComponentReason extends ConsumeRemovalReason {
+		private final net.minecraft.item.RemoveEffectsComponent component;
+
+		public RemoveEffectsComponentReason(ItemStack stack, net.minecraft.item.RemoveEffectsComponent component) {
+			super(REMOVE_EFFECTS_COMPONENT_ID, stack);
+			this.component = component;
+		}
+
+		@Override
+		public boolean removesEffect(StatusEffectInstance effect) {
+			return this.component.effects().contains(effect.getEffectType());
+		}
 	}
 }

@@ -21,23 +21,25 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import net.minecraft.item.ClearAllEffectsComponent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.RemoveEffectsComponent;
+import net.minecraft.registry.Holder;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
 // See LivingEntityMixin
-@Mixin(value = ClearAllEffectsComponent.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
-public abstract class ClearAllEffectsComponentMixin {
-	@WrapOperation(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z"))
+@Mixin(value = RemoveEffectsComponent.class, priority = QuiltStatusEffectInternals.MIXIN_PRIORITY)
+public abstract class RemoveEffectsComponentMixin {
+	@WrapOperation(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/registry/Holder;)Z"))
 	private boolean quilt$addRemovalReason(
-			LivingEntity instance, Operation<Boolean> original, World world, ItemStack stack
+			LivingEntity instance, Holder<StatusEffect> effect, Operation<Boolean> original, World world, ItemStack stack
 	) {
-		return instance.clearStatusEffects(
-			new StatusEffectRemovalReason.ConsumeRemovalReason(StatusEffectRemovalReason.CLEAR_ALL_EFFECTS_COMPONENT_ID, stack)
-		) > 0;
+		return instance.removeStatusEffect(
+			effect, new StatusEffectRemovalReason.RemoveEffectsComponentReason(stack, ((RemoveEffectsComponent) (Object) this))
+		);
 	}
 }
