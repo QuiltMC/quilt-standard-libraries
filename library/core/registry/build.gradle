@@ -32,3 +32,57 @@ qslModule {
 	}
 	accessWidener()
 }
+
+sourceSets {
+	testmodSyncSkipped {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+
+	testmodSyncRequired {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
+loom {
+	runs {
+		testmodSyncSkippedClient {
+			client()
+			configName = "Testmod Client - Sync Skipped"
+			source(project.sourceSets.testmodSyncSkipped)
+			runDir("run/sync_skipped/client")
+		}
+
+		testmodSyncSkippedServer {
+			server()
+			configName = "Testmod Server - Sync Skipped"
+			source(project.sourceSets.testmodSyncSkipped)
+			programArg("--nogui")
+			runDir("run/sync_skipped/server")
+		}
+
+		testmodSyncRequiredClient {
+			client()
+			configName = "Testmod Client - Sync Required"
+			source(project.sourceSets.testmodSyncRequired)
+			runDir("run/sync_required/client")
+		}
+
+		testmodSyncRequiredServer {
+			server()
+			configName = "Testmod Server - Sync Required"
+			source(project.sourceSets.testmodSyncRequired)
+			programArg("--nogui")
+			runDir("run/sync_required/server")
+		}
+	}
+
+	createRemapConfigurations(sourceSets.testmodSyncSkipped)
+	createRemapConfigurations(sourceSets.testmodSyncRequired)
+}
+
+dependencies {
+	testmodSyncSkippedImplementation sourceSets.main.output
+	testmodSyncRequiredImplementation sourceSets.main.output
+}
