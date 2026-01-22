@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkPhase;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 
@@ -141,7 +141,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	@Override
-	public void sendPacket(Packet<?> packet, PacketSendListener callback) {
+	public void sendPacket(Packet<?> packet, ChannelFutureListener callback) {
 		Objects.requireNonNull(packet, "Packet cannot be null");
 
 		this.connection.send(packet, callback);
@@ -174,7 +174,8 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	@Override
 	public void onCommonRegisterPacket(CommonRegisterPayload payload) {
 		if (payload.version() != this.getNegotiatedVersion()) {
-			throw new IllegalStateException("Negotiated common packet version: %d but received packet with version: %d".formatted(this.commonVersion, payload.version()));
+			throw new IllegalStateException(
+				"Negotiated common packet version: %d but received packet with version: %d".formatted(this.commonVersion, payload.version()));
 		}
 
 		String currentPhase = this.getPhase();

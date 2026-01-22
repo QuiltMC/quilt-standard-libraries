@@ -41,7 +41,7 @@ public final class QuiltBuiltinPackProfile extends PackProfile {
 	private final ResourcePack pack;
 
 	static @Nullable QuiltBuiltinPackProfile of(ModNioPack pack) {
-		int version = SharedConstants.getGameVersion().getResourceVersion(pack.type);
+		int version = SharedConstants.getGameVersion().getPackVersion(pack.type);
 		Metadata info = loadMetadata(pack.getLocationInfo(), QuiltPackProfile.wrapToFactory(pack), version);
 
 		if (info == null) {
@@ -58,9 +58,9 @@ public final class QuiltBuiltinPackProfile extends PackProfile {
 				QuiltPackProfile.wrapToFactory(pack),
 				info,
 				new PackPosition(
-					true,
-					PackProfile.InsertionPosition.TOP,
-					false
+						true,
+						PackProfile.InsertionPosition.TOP,
+						false
 				)
 		);
 		this.pack = pack;

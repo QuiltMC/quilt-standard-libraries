@@ -19,10 +19,10 @@ package org.quiltmc.qsl.rendering.entity.mixin.client;
 
 import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
 
-import org.jetbrains.annotations.Nullable;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,9 +59,10 @@ abstract class ArmorFeatureRendererMixin<
 		> extends FeatureRenderer<S, M> {
 	@Shadow
 	@Final
-	private EquipmentRenderer equipmentRenderer;
+	private EquipmentRenderer field_54183;
 
-	@Unique private S quilt$capturedState;
+	@Unique
+	private S quilt$capturedState;
 
 	private ArmorFeatureRendererMixin(FeatureRendererContext<S, M> context) {
 		super(context);
@@ -125,8 +126,8 @@ abstract class ArmorFeatureRendererMixin<
 			Operation<Void> original,
 			MatrixStack matrices2, VertexConsumerProvider vertexConsumers2, ItemStack stack2, EquipmentSlot armorSlot
 	) {
-		EquipmentRendererExtensions extendedEquipmentRenderer =
-				(EquipmentRendererExtensions) this.equipmentRenderer;
+		final EquipmentRendererExtensions extendedEquipmentRenderer =
+				(EquipmentRendererExtensions) this.field_54183;
 
 		try {
 			extendedEquipmentRenderer.quilt$setArmorRenderLayerContext(new ArmorRenderLayerContext(

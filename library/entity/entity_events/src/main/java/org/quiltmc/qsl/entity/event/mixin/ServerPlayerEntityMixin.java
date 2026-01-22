@@ -26,7 +26,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
@@ -34,8 +33,8 @@ import org.quiltmc.qsl.entity.event.api.ServerPlayerEntityCopyCallback;
 
 @Mixin(ServerPlayerEntity.class)
 abstract class ServerPlayerEntityMixin extends PlayerEntity {
-	private ServerPlayerEntityMixin(World world, BlockPos blockPos, float f, GameProfile gameProfile) {
-		super(world, blockPos, f, gameProfile);
+	private ServerPlayerEntityMixin(World world, GameProfile gameProfile) {
+		super(world, gameProfile);
 	}
 
 	/**

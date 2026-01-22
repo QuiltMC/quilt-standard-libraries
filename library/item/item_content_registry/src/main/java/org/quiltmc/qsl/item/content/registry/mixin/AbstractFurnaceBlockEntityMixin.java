@@ -23,11 +23,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.HolderLookup;
+import net.minecraft.world.storage.DataReader;
+import net.minecraft.world.storage.DataWriter;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
-abstract class AbstractFurnaceBlockEntityMixin {
+public abstract class AbstractFurnaceBlockEntityMixin {
 	@Shadow
 	int burnTime;
 
@@ -35,12 +35,12 @@ abstract class AbstractFurnaceBlockEntityMixin {
 	// Should not cause any desyncs as BE sync packets are now NBT.
 
 	@Inject(method = "readNbtImpl", at = @At("TAIL"))
-	private void readBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		this.burnTime = nbt.getInt("lit_time_remaining").orElseThrow();
+	private void readBurnTimeAsInt(DataReader reader, CallbackInfo ci) {
+		this.burnTime = reader.readInt("lit_time_remaining").orElseThrow();
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
-	private void writeBurnTimeAsInt(NbtCompound nbt, HolderLookup.Provider lookupProvider, CallbackInfo info) {
-		nbt.putInt("lit_time_remaining", this.burnTime);
+	private void writeBurnTimeAsInt(DataWriter writer, CallbackInfo ci) {
+		writer.writeInt("lit_time_remaining", this.burnTime);
 	}
 }

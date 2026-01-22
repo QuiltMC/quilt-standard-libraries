@@ -46,13 +46,13 @@ public class RegistryConfig extends ReflectiveConfig {
 		public final TrackedValue<String> modpack_protocol_name = this.value("My Quilt Modpack");
 
 		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> missing_registry_sync_message = this.value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
+		public final TrackedValue<String> missing_registry_sync_message = this.value(TextSerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
 				Unsupported (vanilla?) client!
 				This server requires a modded client to join!
 				"""), DynamicRegistryManager.EMPTY));
 
 		@Comment("Top part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final TrackedValue<String> mismatched_entries_top_message = this.value(Text.SerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
+		public final TrackedValue<String> mismatched_entries_top_message = this.value(TextSerializationUtil.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
 				Failed to synchronize client with the server!
 				This can happen when client's and server's mods don't match.
 				"""), DynamicRegistryManager.EMPTY));

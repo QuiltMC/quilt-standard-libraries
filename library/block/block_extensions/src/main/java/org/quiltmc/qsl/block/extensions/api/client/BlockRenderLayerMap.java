@@ -19,6 +19,7 @@ package org.quiltmc.qsl.block.extensions.api.client;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.unmapped.C_nihubpux;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
@@ -36,7 +37,7 @@ public final class BlockRenderLayerMap {
 	 * @param layer  new render layer
 	 * @param blocks target blocks
 	 */
-	public static void put(RenderLayer layer, Block... blocks) {
+	public static void put(C_nihubpux layer, Block... blocks) {
 		for (var block : blocks) {
 			BlockRenderLayerMapImpl.put(block, layer);
 		}
@@ -48,7 +49,7 @@ public final class BlockRenderLayerMap {
 	 * @param layer  new render layer
 	 * @param fluids target fluids
 	 */
-	public static void put(RenderLayer layer, Fluid... fluids) {
+	public static void put(C_nihubpux layer, Fluid... fluids) {
 		for (var fluid : fluids) {
 			BlockRenderLayerMapImpl.put(fluid, layer);
 		}

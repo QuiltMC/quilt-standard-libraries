@@ -34,14 +34,14 @@ public class PackScreenTooltips implements ScreenEvents.AfterRender {
 			PackEntryListWidget.PackEntry availableEntry = ((PackScreenAccessor) packScreen).getAvailablePackList().getHoveredEntry();
 			if (availableEntry != null) {
 				if (((ResourcePackEntryAccessor) availableEntry).getPack().getSource() instanceof QuiltBuiltinPackProfile.BuiltinPackSource source) {
-					graphics.drawTooltip(((QuiltScreen) packScreen).getTextRenderer(), source.getTooltip(), mouseX, mouseY);
+					graphics.deferDrawingTooltip(((QuiltScreen) packScreen).getTextRenderer(), source.getTooltip(), mouseX, mouseY);
 				}
 			}
 
 			PackEntryListWidget.PackEntry selectedEntry = ((PackScreenAccessor) packScreen).getSelectedPackList().getHoveredEntry();
 			if (selectedEntry != null) {
 				if (((ResourcePackEntryAccessor) selectedEntry).getPack().getSource() instanceof QuiltBuiltinPackProfile.BuiltinPackSource source) {
-					graphics.drawTooltip(((QuiltScreen) packScreen).getTextRenderer(), source.getTooltip(), mouseX, mouseY);
+					graphics.deferDrawingTooltip(((QuiltScreen) packScreen).getTextRenderer(), source.getTooltip(), mouseX, mouseY);
 				}
 			}
 		}

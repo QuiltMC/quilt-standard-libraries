@@ -42,7 +42,7 @@ import org.quiltmc.qsl.networking.impl.server.ServerLoginNetworkAddon;
 @Mixin(ServerLoginNetworkHandler.class)
 abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtensions, DisconnectPacketSource, PacketCallbackListener {
 	@Shadow
-	protected abstract void method_52419(GameProfile gameProfile);
+	protected abstract void verify(GameProfile gameProfile);
 
 	@Unique
 	private ServerLoginNetworkAddon addon;
@@ -52,11 +52,11 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon = new ServerLoginNetworkAddon((ServerLoginNetworkHandler) (Object) this);
 	}
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;method_52419(Lcom/mojang/authlib/GameProfile;)V"))
+	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;verify(Lcom/mojang/authlib/GameProfile;)V"))
 	private void handlePlayerJoin(ServerLoginNetworkHandler handler, GameProfile profile) {
 		// Do not accept the player, thereby moving into play stage until all login futures being waited on are completed
 		if (this.addon.queryTick()) {
-			this.method_52419(profile);
+			this.verify(profile);
 		}
 	}
 
@@ -68,7 +68,7 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		}
 	}
 
-	@Redirect(method = "method_52419", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getNetworkCompressionThreshold()I", ordinal = 0))
+	@Redirect(method = "verify", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getNetworkCompressionThreshold()I", ordinal = 0))
 	private int removeLateCompressionPacketSending(MinecraftServer server) {
 		return -1;
 	}
@@ -78,7 +78,7 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon.handleDisconnect();
 	}
 
-	@Inject(method = "method_52420", at = @At("HEAD"))
+	@Inject(method = "finishLogin", at = @At("HEAD"))
 	private void handlePlayTransitionNormal(GameProfile profile, CallbackInfo ci) {
 		this.addon.handlePlayTransition();
 	}

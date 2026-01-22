@@ -19,27 +19,28 @@ package org.quiltmc.qsl.block.extensions.impl.client;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.unmapped.C_nihubpux;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 @ApiStatus.Internal
 @ClientOnly
 public final class BlockRenderLayerMapImpl {
-	private BlockRenderLayerMapImpl() {}
+	private BlockRenderLayerMapImpl() {
+	}
 
-	private static Map<Block, RenderLayer> blockMap = new Reference2ReferenceOpenHashMap<>();
-	private static Map<Fluid, RenderLayer> fluidMap = new Reference2ReferenceOpenHashMap<>();
+	private static Map<Block, C_nihubpux> blockMap = new Reference2ReferenceOpenHashMap<>();
+	private static Map<Fluid, C_nihubpux> fluidMap = new Reference2ReferenceOpenHashMap<>();
 
-	private static BiConsumer<Block, RenderLayer> blockHandler = blockMap::put;
-	private static BiConsumer<Fluid, RenderLayer> fluidHandler = fluidMap::put;
+	private static BiConsumer<Block, C_nihubpux> blockHandler = blockMap::put;
+	private static BiConsumer<Fluid, C_nihubpux> fluidHandler = fluidMap::put;
 
-	public static void initialize(BiConsumer<Block, RenderLayer> blockHandlerIn, BiConsumer<Fluid, RenderLayer> fluidHandlerIn) {
+	public static void initialize(BiConsumer<Block, C_nihubpux> blockHandlerIn, BiConsumer<Fluid, C_nihubpux> fluidHandlerIn) {
 		// Add pre-existing render layer assignments.
 		if (blockMap != null) {
 			blockMap.forEach(blockHandlerIn);
@@ -58,11 +59,11 @@ public final class BlockRenderLayerMapImpl {
 		fluidMap = null;
 	}
 
-	public static void put(Block block, RenderLayer layer) {
+	public static void put(Block block, C_nihubpux layer) {
 		blockHandler.accept(block, layer);
 	}
 
-	public static void put(Fluid fluid, RenderLayer layer) {
+	public static void put(Fluid fluid, C_nihubpux layer) {
 		fluidHandler.accept(fluid, layer);
 	}
 }

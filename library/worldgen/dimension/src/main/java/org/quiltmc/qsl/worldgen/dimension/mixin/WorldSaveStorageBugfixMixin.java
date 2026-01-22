@@ -85,8 +85,7 @@ abstract class WorldSaveStorageBugfixMixin {
 			for (RegistryKey<DimensionOptions> dimId : BASE_DIMENSIONS) {
 				String strId = dimId.getValue().toString();
 
-				// method_10545 is containsKey
-				if (dimensions.method_10545(strId)) {
+				if (dimensions.containsKey(strId)) {
 					newDimensions.put(strId, dimensions.getCompound(strId).orElseThrow());
 				}
 			}

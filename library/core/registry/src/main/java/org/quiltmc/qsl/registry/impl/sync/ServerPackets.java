@@ -34,6 +34,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.registry.impl.TextSerializationUtil;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolDef;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
@@ -339,14 +340,14 @@ public final class ServerPackets {
 		public static final PacketCodec<PacketByteBuf, ErrorStyle> CODEC = CustomPayload.create(ErrorStyle::write, ErrorStyle::new);
 
 		public ErrorStyle(PacketByteBuf buf) {
-			this(Text.SerializationUtil.fromLenientJson(buf.readString(PacketByteBuf.MAX_TEXT_LENGTH), DynamicRegistryManager.EMPTY),
-					Text.SerializationUtil.fromLenientJson(buf.readString(PacketByteBuf.MAX_TEXT_LENGTH), DynamicRegistryManager.EMPTY),
+			this(TextSerializationUtil.fromJson(buf.readString(PacketByteBuf.MAX_TEXT_LENGTH), DynamicRegistryManager.EMPTY),
+					TextSerializationUtil.fromJson(buf.readString(PacketByteBuf.MAX_TEXT_LENGTH), DynamicRegistryManager.EMPTY),
 					buf.readBoolean());
 		}
 
 		private void write(PacketByteBuf buf) {
-			buf.writeString(Text.SerializationUtil.toJson(this.errorHeader, DynamicRegistryManager.EMPTY));
-			buf.writeString(Text.SerializationUtil.toJson(this.errorFooter, DynamicRegistryManager.EMPTY));
+			buf.writeString(TextSerializationUtil.toJson(this.errorHeader, DynamicRegistryManager.EMPTY));
+			buf.writeString(TextSerializationUtil.toJson(this.errorFooter, DynamicRegistryManager.EMPTY));
 			buf.writeBoolean(this.showError);
 		}
 

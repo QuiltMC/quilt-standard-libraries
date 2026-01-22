@@ -18,9 +18,9 @@ package org.quiltmc.qsl.networking.api;
 
 import java.util.Objects;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
 
 /**
@@ -49,7 +49,7 @@ public interface PacketSender<C> {
 	 * @param packet   the packet
 	 * @param listener an optional listener containing callbacks to execute after the packet is sent, may be {@code null}
 	 */
-	void sendPacket(Packet<?> packet, @Nullable PacketSendListener listener);
+	void sendPacket(Packet<?> packet, @Nullable ChannelFutureListener listener);
 
 	/**
 	 * Sends a packet to a channel.

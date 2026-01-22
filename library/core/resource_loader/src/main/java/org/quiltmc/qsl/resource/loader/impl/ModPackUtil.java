@@ -56,7 +56,7 @@ public final class ModPackUtil {
 		return String.format("""
 						{"pack":{"pack_format":%d,"description":"%s"}}
 						""",
-				SharedConstants.getGameVersion().getResourceVersion(type), description);
+				SharedConstants.getGameVersion().getPackVersion(type), description);
 	}
 
 	public static @Nullable ResourceIoSupplier<InputStream> openDefault(ModMetadata info, ResourceType type, String filename) {

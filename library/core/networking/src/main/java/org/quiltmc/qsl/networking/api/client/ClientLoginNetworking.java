@@ -21,13 +21,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import io.netty.channel.ChannelFutureListener;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
@@ -171,7 +171,7 @@ public final class ClientLoginNetworking {
 		 */
 		CompletableFuture<PacketByteBuf> receive(
 				MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf,
-				Consumer<PacketSendListener> listenerAdder
+				Consumer<ChannelFutureListener> listenerAdder
 		);
 	}
 }

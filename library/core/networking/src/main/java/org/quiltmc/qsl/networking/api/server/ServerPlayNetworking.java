@@ -290,7 +290,7 @@ public final class ServerPlayNetworking {
 	public static MinecraftServer getServer(ServerPlayNetworkHandler handler) {
 		Objects.requireNonNull(handler, "Network handler cannot be null");
 
-		return handler.player.server;
+		return handler.player.getServer();
 	}
 
 	private ServerPlayNetworking() {

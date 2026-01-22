@@ -22,12 +22,13 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.storage.DataReader;
+import net.minecraft.world.storage.DataWriter;
 
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
@@ -60,11 +61,11 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	protected void readCustomDataFromNbt(NbtCompound nbt) {
+	protected void readCustomData(DataReader nbt) {
 	}
 
 	@Override
-	protected void writeCustomDataToNbt(NbtCompound nbt) {
+	protected void writeCustomData(DataWriter nbt) {
 	}
 
 	@Override

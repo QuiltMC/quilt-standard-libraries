@@ -82,13 +82,6 @@ abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetworkHandle
 		);
 	}
 
-	@Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
-	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
-		if (ClientCommandInternals.executeCommand(command, true)) {
-			cir.setReturnValue(true);
-		}
-	}
-
 	@Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {

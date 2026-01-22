@@ -36,10 +36,10 @@ abstract class EntityMixin {
 	private World world;
 
 	@ModifyReturnValue(method = "teleportAcrossDimensions", at = @At("RETURN"))
-	private @Nullable Entity quilt$invokeAfterWorldChange(Entity newEntity, ServerWorld world, TeleportTarget target) {
+	private @Nullable Entity quilt$invokeAfterWorldChange(Entity newEntity, ServerWorld from, ServerWorld to, TeleportTarget target) {
 		if (newEntity != null) {
 			EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker()
-					.afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), target.newWorld());
+					.afterWorldChange((Entity) (Object) this, newEntity, from, to);
 		}
 
 		return newEntity;

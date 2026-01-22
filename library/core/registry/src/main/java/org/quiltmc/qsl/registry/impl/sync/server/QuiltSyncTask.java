@@ -87,7 +87,7 @@ public class QuiltSyncTask implements ConfigurationTask {
 
 	public void handleEnd(ClientPackets.End end) {
 		if (this.syncVersion == ProtocolVersions.NO_PROTOCOL && ServerRegistrySync.requiresSync()) {
-			this.packetHandler.method_52396(ServerRegistrySync.noRegistrySyncMessage);
+			this.packetHandler.disconnect(ServerRegistrySync.noRegistrySyncMessage);
 		} else {
 			((ServerConfigurationTaskManager) this.packetHandler).finishTask(TYPE);
 		}

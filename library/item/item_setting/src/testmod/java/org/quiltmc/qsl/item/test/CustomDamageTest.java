@@ -22,11 +22,11 @@ import static org.quiltmc.qsl.item.test.QuiltItemSettingsExtensionsTests.registe
 import net.minecraft.component.DataComponentType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
-import net.minecraft.unmapped.C_bemqmqey;
 import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -48,9 +48,7 @@ public class CustomDamageTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		Item.Settings weirdPickSettings = new Item.Settings();
 		weirdPickSettings
-			// method_66330 is pickaxe
-			// C_bemqmqey.INCORRECT_FOR_GOLD_TOOL is ToolMaterial.GOLD
-			.method_66330(C_bemqmqey.INCORRECT_FOR_GOLD_TOOL, 1.0F, -2.8F);
+			.pickaxe(ToolMaterial.GOLD, 1.0F, -2.8F);
 
 		registerItem("weird_pickaxe", WeirdPick::new, weirdPickSettings);
 	}

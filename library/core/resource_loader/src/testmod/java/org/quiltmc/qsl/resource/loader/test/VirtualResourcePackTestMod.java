@@ -79,16 +79,15 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 
 		pack.putText("pack.mcmeta", String.format("""
 				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
-					""", SharedConstants.getGameVersion().getResourceVersion(type)));
-
+				""", SharedConstants.getGameVersion().getPackVersion(type)));
 		pack.putText(ResourceType.CLIENT_RESOURCES, Identifier.ofDefault("models/block/dandelion.json"), """
 				{
 					"parent": "minecraft:block/cube_all",
 					"textures": {
 						"all": "minecraft:block/dandelion"
 					}
-				}
-				""");
+				}""");
+
 		pack.putText(ResourceType.SERVER_DATA, Identifier.ofDefault("loot_table/blocks/dandelion.json"), """
 				{
 					"type": "minecraft:block",
@@ -116,9 +115,9 @@ public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrat
 				QuiltPackProfile.wrapToFactory(pack),
 				type,
 				new PackPosition(
-					false,
-					PackProfile.InsertionPosition.TOP,
-					false
+						false,
+						PackProfile.InsertionPosition.TOP,
+						false
 				)));
 	}
 

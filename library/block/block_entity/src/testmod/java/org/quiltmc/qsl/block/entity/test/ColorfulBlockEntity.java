@@ -28,6 +28,8 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.world.storage.DataReader;
+import net.minecraft.world.storage.DataWriter;
 
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntity;
 
@@ -55,11 +57,11 @@ public class ColorfulBlockEntity extends BlockEntity implements QuiltBlockEntity
 	/* Serialization */
 
 	@Override
-	public void readNbtImpl(NbtCompound nbt, HolderLookup.Provider lookupProvider) {
-		super.readNbtImpl(nbt, lookupProvider);
+	public void readNbtImpl(DataReader reader) {
+		super.readNbtImpl(reader);
 
 		try {
-			this.color = Integer.parseInt(nbt.getString("color").orElseThrow(), 16);
+			this.color = Integer.parseInt(reader.readString("color").orElseThrow(), 16);
 		} catch (NumberFormatException e) {
 			this.color = 0;
 		}
@@ -80,14 +82,14 @@ public class ColorfulBlockEntity extends BlockEntity implements QuiltBlockEntity
 	}
 
 	@Override
-	public void writeNbt(NbtCompound nbt, HolderLookup.Provider lookupProvider) {
-		super.writeNbt(nbt, lookupProvider);
-		nbt.putString("color", Integer.toHexString(this.color));
+	public void writeNbt(DataWriter writer) {
+		super.writeNbt(writer);
+		writer.writeString("color", Integer.toHexString(this.color));
 	}
 
 	@Override
 	public NbtCompound toSyncedNbt(HolderLookup.Provider lookupProvider) {
-		return this.toNbt(lookupProvider);
+		return this.method_38244(lookupProvider);
 	}
 
 	@Override
